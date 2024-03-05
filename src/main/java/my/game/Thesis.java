@@ -24,5 +24,7 @@ public class Thesis
         
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        
+        panel.startGameThread();
     }
 }
