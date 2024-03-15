@@ -30,6 +30,21 @@ public class Hex
         return (p + q + r == 0) ? new Hex(p, q, r) : null;
     }
     
+    public int getP()
+    {
+        return pCoord;
+    }
+    
+    public int getQ()
+    {
+        return qCoord;
+    }
+    
+    public int getR()
+    {
+        return rCoord;
+    }
+    
     @Override
     public boolean equals(Object other)
     {
@@ -130,6 +145,6 @@ public class Hex
     @Override
     public String toString()
     {
-        return String.format("Hex(p=%i, q=%i, r=%i)", pCoord, qCoord, rCoord);
+        return String.format("Hex(p=%d, q=%d, r=%d)", pCoord, qCoord, rCoord);
     }
 }
