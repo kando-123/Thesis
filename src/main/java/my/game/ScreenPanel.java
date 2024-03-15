@@ -8,36 +8,50 @@ import java.awt.*;
 import javax.swing.*;
 
 /**
- * 
+ *
  * @author Kay Jay O'Nail
  */
-public class GamePanel extends JPanel implements Runnable
+public class ScreenPanel extends JPanel implements Runnable
 {
+    public final int hexOuterRadius;
+    public final int hexInnerRadius;
+    public final int colsCount;
+    public final int rowsCount;
+    public final int screenWidth;
+    public final int screenHeight;
+
     private Thread gameThread;
-    
-    public GamePanel()
+
+    public ScreenPanel()
     {
-        setPreferredSize(new Dimension(300, 200));
+        hexOuterRadius = 25;
+        hexInnerRadius = (int) ((double) hexOuterRadius * Math.sin(Math.PI / 6.0));
+        colsCount = 30;
+        rowsCount = 30;
+        screenWidth = colsCount * hexOuterRadius * 3 / 2;
+        screenHeight = rowsCount * hexInnerRadius * 2;
+        
+        setPreferredSize(new Dimension(screenWidth, screenHeight));
     }
-    
+
     public void startGameThread()
     {
         gameThread = new Thread(this);
         gameThread.start();
     }
-    
+
     private final int NANOSECONDS_PER_SECOND = 1_000_000_000;
-    private final int fps = 60;
-    
+    private final int FPS = 60;
+    private final long PERIOD = (long) (NANOSECONDS_PER_SECOND / FPS);
+
     @Override
     public void run()
     {
-        long period = (long) ((double) NANOSECONDS_PER_SECOND / (double) fps);
         long recentTime = System.nanoTime();
         while (gameThread != null)
         {
             long currentTime = System.nanoTime();
-            if (currentTime - recentTime >= period)
+            if (currentTime - recentTime >= PERIOD)
             {
                 /* UPDATE */
                 update();
@@ -50,20 +64,21 @@ public class GamePanel extends JPanel implements Runnable
             }
         }
     }
-    
+
     private void update()
     {
         /* Update stuff. */
     }
-    
+
     @Override
     public void paintComponent(Graphics graphics)
     {
         super.paintComponent(graphics);
 
         Graphics2D graphics2D = (Graphics2D) graphics;
-        /* Draw all. */
         
+        /* Draw stuff. */
+
         graphics2D.dispose();
     }
 }

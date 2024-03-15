@@ -18,7 +18,7 @@ public class Thesis
         frame.setResizable(false);
         frame.setTitle("The Global Empire");
         
-        GamePanel panel = new GamePanel();
+        ScreenPanel panel = new ScreenPanel();
         frame.add(panel);
         frame.pack();
         
