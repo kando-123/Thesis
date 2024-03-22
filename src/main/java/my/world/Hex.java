@@ -45,20 +45,6 @@ public class Hex
         return rCoord;
     }
     
-    @Override
-    public boolean equals(Object other)
-    {
-        if (other.getClass() == Hex.class)
-        {
-            Hex hex = (Hex) other;
-            return pCoord == hex.pCoord && qCoord == hex.qCoord && rCoord == hex.rCoord;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    
     public Hex plus(Hex other)
     {
         int p = pCoord + other.pCoord;
@@ -143,8 +129,32 @@ public class Hex
     }
     
     @Override
+    public boolean equals(Object other)
+    {
+        if (other.getClass() == Hex.class)
+        {
+            Hex hex = (Hex) other;
+            return pCoord == hex.pCoord && qCoord == hex.qCoord && rCoord == hex.rCoord;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 19 * hash + this.pCoord;
+        hash = 19 * hash + this.qCoord;
+        hash = 19 * hash + this.rCoord;
+        return hash;
+    }
+    
+    @Override
     public String toString()
     {
-        return String.format("Hex(p=%d, q=%d, r=%d)", pCoord, qCoord, rCoord);
+        return String.format("Hex@(p=%d, q=%d, r=%d)", pCoord, qCoord, rCoord);
     }
 }

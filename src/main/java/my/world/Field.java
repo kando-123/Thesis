@@ -4,11 +4,14 @@
  */
 package my.world;
 
+import java.awt.image.BufferedImage;
+
 /**
  *
  * @author Kay Jay O'Nail
  */
 public class Field
 {
-    
+    private FieldType type;
+    private BufferedImage image;
 }
