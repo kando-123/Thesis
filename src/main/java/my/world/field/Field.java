@@ -2,9 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package my.world;
-
-import java.awt.image.BufferedImage;
+package my.world.field;
 
 /**
  *
@@ -12,6 +10,15 @@ import java.awt.image.BufferedImage;
  */
 public class Field
 {
-    private FieldType type;
-    private BufferedImage image;
+    private final FieldType type;
+    
+    public Field(FieldType type)
+    {
+        this.type = type;
+    }
+    
+    public FieldType getType()
+    {
+        return type;
+    }
 }

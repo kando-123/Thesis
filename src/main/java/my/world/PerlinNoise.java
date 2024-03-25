@@ -6,22 +6,10 @@ package my.world;
 
 import java.util.*;
 
-class Point<N extends Number>
-{
-    public N x;
-    public N y;
-    
-    public Point(N x, N y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-}
-
 class Scaler
 {
-    private double slope;
-    private double intercept;
+    private final double slope;
+    private final double intercept;
     
     public Scaler(double xMin, double xMax, double yMin, double yMax)
     {
@@ -73,7 +61,7 @@ public class PerlinNoise
      * The grid of the gradients. The gradients are stored as pairs of <i>x</i>
      * and <i>y</i> coordinates.
      */
-    private final ArrayList<ArrayList<Point<Double>>> gradientVectors;
+    private final Map<Pixel, Point> gradientVectors;
 
     /**
      * Number of octaves in noise generation. The default value is
@@ -138,7 +126,7 @@ public class PerlinNoise
     }
 
     /**
-     *
+     * Smoothstep function.
      */
     private double smoothstep(double x)
     {
@@ -165,19 +153,17 @@ public class PerlinNoise
 
             gradientCols = Math.ceilDiv(areaWidth, chunkSize) + 1;
             gradientRows = Math.ceilDiv(areaHeight, chunkSize) + 1;
-            gradientVectors = new ArrayList<>(gradientCols);
+            gradientVectors = new HashMap<>(gradientCols);
             Random random = new Random();
             for (int i = 0; i < gradientCols; ++i)
             {
-                var column = new ArrayList<Point<Double>>(gradientRows);
                 for (int j = 0; j < gradientRows; ++j)
                 {
                     double angle = random.nextDouble(0.0d, Math.TAU);
                     double xCoord = Math.cos(angle);
                     double yCoord = Math.sin(angle);
-                    column.add(new Point(xCoord, yCoord));
+                    gradientVectors.put(new Pixel(i, j), new Point(xCoord, yCoord));
                 }
-                gradientVectors.add(column);
             }
             octavesCount = 1;
             persistence = 0.5f;
@@ -276,16 +262,16 @@ public class PerlinNoise
         double pixelBottomQ = (double) (pixelY - chunkBottomY) / (double) chunkSize;
 
         /* Find the gradients. */
-        var gradientA = gradientVectors.get(chunkCol).get(chunkRow);
-        var gradientB = gradientVectors.get(chunkCol + 1).get(chunkRow);
-        var gradientC = gradientVectors.get(chunkCol).get(chunkRow + 1);
-        var gradientD = gradientVectors.get(chunkCol + 1).get(chunkRow + 1);
+        var gradientA = gradientVectors.get(new Pixel(chunkCol, chunkRow));
+        var gradientB = gradientVectors.get(new Pixel(chunkCol + 1, chunkRow));
+        var gradientC = gradientVectors.get(new Pixel(chunkCol, chunkRow + 1));
+        var gradientD = gradientVectors.get(new Pixel(chunkCol + 1, chunkRow + 1));
 
         /* Calculate the products. */
-        double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.x, gradientA.y);
-        double productB = dotProduct(pixelRightP, pixelTopQ, gradientB.x, gradientB.y);
-        double productC = dotProduct(pixelLeftP, pixelBottomQ, gradientC.x, gradientC.y);
-        double productD = dotProduct(pixelRightP, pixelBottomQ, gradientD.x, gradientD.y);
+        double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.getX(), gradientA.getY());
+        double productB = dotProduct(pixelRightP, pixelTopQ, gradientB.getX(), gradientB.getY());
+        double productC = dotProduct(pixelLeftP, pixelBottomQ, gradientC.getX(), gradientC.getY());
+        double productD = dotProduct(pixelRightP, pixelBottomQ, gradientD.getX(), gradientD.getY());
 
         /* Interpolate. */
         double horizontalTop = lerp(productA, productB, pixelLeftP);
@@ -294,7 +280,7 @@ public class PerlinNoise
         return lerp(horizontalTop, horizontalBottom, pixelTopQ);
     }
 
-    public List<Double> makeNoise(List<Point<Integer>> points) throws Exception
+    public List<Double> makeNoise(List<Pixel> points) throws Exception
     {
         boolean success = true;
 
@@ -303,18 +289,18 @@ public class PerlinNoise
         double maximum = Double.MIN_VALUE;
         for (var point : points)
         {
-            if (point.x < 0 || point.x >= areaWidth || point.y < 0 || point.y >= areaHeight)
+            if (point.getX() < 0 || point.getX() >= areaWidth || point.getY() < 0 || point.getY() >= areaHeight)
             {
                 success = false;
                 break;
             }
-            double noise = getRawNoise(point.x, point.y);
+            double noise = getRawNoise(point.getX(), point.getY());
             double frequency = lacunarity;
             double amplitude = persistence;
             for (int i = 1; i < octavesCount; ++i)
             {
-                int newX = (int) (frequency * (double) point.x);
-                int newY = (int) (frequency * (double) point.y);
+                int newX = (int) (frequency * (double) point.getX());
+                int newY = (int) (frequency * (double) point.getY());
                 noise += amplitude * getRawNoise(newX, newY);
                 frequency *= lacunarity;
                 amplitude *= persistence;

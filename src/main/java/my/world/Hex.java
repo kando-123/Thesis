@@ -128,6 +128,34 @@ public class Hex
         return hexes;
     }
     
+    public Pixel getCentralPixel(int R, int r)
+    {
+        int x = pCoord * R * 3 / 2;
+        int y = (qCoord - rCoord) * r;
+        return new Pixel(x, y);
+    }
+    
+    public Pixel getCornerPixel(int R, int r)
+    {
+        int x = pCoord * R * 3 / 2 - R;
+        int y = (qCoord - rCoord) * r - r;
+        return new Pixel(x, y);
+    }
+    
+    public Point getCentralPoint(double R, double r)
+    {
+        double x = (double) (pCoord) * R * 1.5;
+        double y = (double) (qCoord - rCoord) * r;
+        return new Point(x, y);
+    }
+    
+    public Point getCornerPoint(double R, double r)
+    {
+        double x = (double) (pCoord) * R * 1.5 - R;
+        double y = (double) (qCoord - rCoord) * r - r;
+        return new Point(x, y);
+    }
+    
     @Override
     public boolean equals(Object other)
     {

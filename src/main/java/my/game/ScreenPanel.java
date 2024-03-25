@@ -5,9 +5,6 @@
 package my.game;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import my.world.*;
 
@@ -17,8 +14,6 @@ import my.world.*;
  */
 public class ScreenPanel extends JPanel implements Runnable
 {
-    public final int hexOuterRadius;
-    public final int hexInnerRadius;
     public final int colsCount;
     public final int rowsCount;
     public final int screenWidth;
@@ -26,16 +21,16 @@ public class ScreenPanel extends JPanel implements Runnable
 
     private Thread gameThread;
     
-    private World world;
+    private final World world;
     
     public ScreenPanel()
     {
-        hexOuterRadius = 25;
-        hexInnerRadius = (int) ((double) hexOuterRadius * Math.sin(Math.PI / 6.0));
+        world = new World(10);
+        
         colsCount = 30;
-        rowsCount = 30;
-        screenWidth = colsCount * hexOuterRadius * 3 / 2;
-        screenHeight = rowsCount * hexInnerRadius * 2;
+        rowsCount = 20;
+        screenWidth = (int) (((double) colsCount * 0.75 + 0.25) * (double) world.hexWidth);
+        screenHeight = rowsCount * world.hexHeight;
         
         setPreferredSize(new Dimension(screenWidth, screenHeight));
         setBackground(Color.black);
@@ -85,7 +80,7 @@ public class ScreenPanel extends JPanel implements Runnable
         Graphics2D graphics2D = (Graphics2D) graphics;
         
         /* Draw stuff. */
-        //world.draw(graphics2D);
+        world.draw(graphics2D);
 
         graphics2D.dispose();
     }
