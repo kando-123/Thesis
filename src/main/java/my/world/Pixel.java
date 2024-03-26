@@ -13,23 +13,13 @@ import java.util.Objects;
  */
 public class Pixel
 {
-    private final int xCoord;
-    private final int yCoord;
+    public int xCoord;
+    public int yCoord;
     
     public Pixel(int x, int y)
     {
         this.xCoord = x;
         this.yCoord = y;
-    }
-    
-    public int getX()
-    {
-        return xCoord;
-    }
-    
-    public int getY()
-    {
-        return yCoord;
     }
     
     public Pixel plus(Pixel other)
@@ -51,6 +41,24 @@ public class Pixel
         int x = factor * xCoord;
         int y = factor * yCoord;
         return new Pixel(x, y);
+    }
+    
+    public void add(Pixel other)
+    {
+        xCoord += other.xCoord;
+        yCoord += other.yCoord;
+    }
+    
+    public void subtract(Pixel other)
+    {
+        xCoord -= other.xCoord;
+        yCoord -= other.yCoord;
+    }
+    
+    public void multiply(int factor)
+    {
+        xCoord *= factor;
+        yCoord *= factor;
     }
     
     @Override

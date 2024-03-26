@@ -25,12 +25,14 @@ public class ScreenPanel extends JPanel implements Runnable
     
     public ScreenPanel()
     {
-        world = new World(10);
+        world = new World(5);
         
         colsCount = 30;
         rowsCount = 20;
         screenWidth = (int) (((double) colsCount * 0.75 + 0.25) * (double) world.hexWidth);
         screenHeight = rowsCount * world.hexHeight;
+        
+        world.setCenter(new Pixel(screenWidth / 2, screenHeight / 2));
         
         setPreferredSize(new Dimension(screenWidth, screenHeight));
         setBackground(Color.black);
@@ -69,7 +71,7 @@ public class ScreenPanel extends JPanel implements Runnable
 
     private void update()
     {
-        /* Update stuff. */
+        world.update();
     }
 
     @Override

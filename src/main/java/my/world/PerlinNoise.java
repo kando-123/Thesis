@@ -268,10 +268,10 @@ public class PerlinNoise
         var gradientD = gradientVectors.get(new Pixel(chunkCol + 1, chunkRow + 1));
 
         /* Calculate the products. */
-        double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.getX(), gradientA.getY());
-        double productB = dotProduct(pixelRightP, pixelTopQ, gradientB.getX(), gradientB.getY());
-        double productC = dotProduct(pixelLeftP, pixelBottomQ, gradientC.getX(), gradientC.getY());
-        double productD = dotProduct(pixelRightP, pixelBottomQ, gradientD.getX(), gradientD.getY());
+        double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.xCoord, gradientA.yCoord);
+        double productB = dotProduct(pixelRightP, pixelTopQ, gradientB.xCoord, gradientB.yCoord);
+        double productC = dotProduct(pixelLeftP, pixelBottomQ, gradientC.xCoord, gradientC.yCoord);
+        double productD = dotProduct(pixelRightP, pixelBottomQ, gradientD.xCoord, gradientD.yCoord);
 
         /* Interpolate. */
         double horizontalTop = lerp(productA, productB, pixelLeftP);
@@ -289,18 +289,18 @@ public class PerlinNoise
         double maximum = Double.MIN_VALUE;
         for (var point : points)
         {
-            if (point.getX() < 0 || point.getX() >= areaWidth || point.getY() < 0 || point.getY() >= areaHeight)
+            if (point.xCoord < 0 || point.xCoord >= areaWidth || point.yCoord < 0 || point.yCoord >= areaHeight)
             {
                 success = false;
                 break;
             }
-            double noise = getRawNoise(point.getX(), point.getY());
+            double noise = getRawNoise(point.xCoord, point.yCoord);
             double frequency = lacunarity;
             double amplitude = persistence;
             for (int i = 1; i < octavesCount; ++i)
             {
-                int newX = (int) (frequency * (double) point.getX());
-                int newY = (int) (frequency * (double) point.getY());
+                int newX = (int) (frequency * (double) point.xCoord);
+                int newY = (int) (frequency * (double) point.yCoord);
                 noise += amplitude * getRawNoise(newX, newY);
                 frequency *= lacunarity;
                 amplitude *= persistence;

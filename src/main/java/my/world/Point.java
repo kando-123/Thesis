@@ -10,23 +10,13 @@ package my.world;
  */
 public class Point
 {
-    private final double xCoord;
-    private final double yCoord;
+    public double xCoord;
+    public double yCoord;
     
     public Point(double x, double y)
     {
         this.xCoord = x;
         this.yCoord = y;
-    }
-    
-    public double getX()
-    {
-        return xCoord;
-    }
-    
-    public double getY()
-    {
-        return yCoord;
     }
     
     public Point plus(Point other)
@@ -48,6 +38,24 @@ public class Point
         double x = factor * xCoord;
         double y = factor * yCoord;
         return new Point(x, y);
+    }
+    
+    public void add(Pixel other)
+    {
+        xCoord += other.xCoord;
+        yCoord += other.yCoord;
+    }
+    
+    public void subtract(Pixel other)
+    {
+        xCoord -= other.xCoord;
+        yCoord -= other.yCoord;
+    }
+    
+    public void multiply(int factor)
+    {
+        xCoord *= factor;
+        yCoord *= factor;
     }
     
     @Override

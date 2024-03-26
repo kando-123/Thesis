@@ -4,6 +4,7 @@
 package my.game;
 
 import javax.swing.*;
+import my.input.InputHandler;
 
 /**
  *
@@ -15,12 +16,14 @@ public class Thesis
     {        
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
         frame.setTitle("The Global Empire");
         
         ScreenPanel panel = new ScreenPanel();
         frame.add(panel);
         frame.pack();
+        
+        InputHandler inputHandler = InputHandler.getInstance();
+        frame.addKeyListener(inputHandler);
         
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

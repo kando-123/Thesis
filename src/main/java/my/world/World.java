@@ -8,6 +8,7 @@ import my.world.field.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import my.input.InputHandler;
 
 /**
  *
@@ -22,8 +23,11 @@ public class World
     public final int gridSide;
     
     private Pixel gridCenterOffset;
+    private double scale;
     
     private Map<Hex, Field> fields;
+    
+    private InputHandler inputHandler;
     
     private int hexSurface(int side)
     {
@@ -32,16 +36,23 @@ public class World
     
     public World(int side)
     {
-        hexOuterRadius = 35;
+        hexOuterRadius = 30;
         hexInnerRadius = (int) ((double) hexOuterRadius * Math.sin(Math.PI / 3.0));
         hexWidth = 2 * hexOuterRadius;
         hexHeight = 2 * hexInnerRadius;
+        scale = 1.0;
         gridSide = side;
+        createGrid(gridSide);
         
-        int centerX = hexOuterRadius * (int) (1.5 * (double) gridSide - 0.25);
-        int centerY = gridSide * hexHeight - hexInnerRadius;
-        gridCenterOffset = new Pixel(centerX, centerY);
-        
+        inputHandler = InputHandler.getInstance();
+        eastwards = new Pixel(+5, 0);
+        southwards = new Pixel(0, +5);
+        westwards = new Pixel(-5, 0);
+        northwards = new Pixel(0, -5);
+    }
+    
+    private void createGrid(int side)
+    {
         assert (side > 0);
         
         fields = new HashMap<>(hexSurface(side));
@@ -103,6 +114,45 @@ public class World
         }
     }
     
+    public void setCenter(Pixel newCenterOffset)
+    {
+        gridCenterOffset = newCenterOffset;
+    }
+    
+    private final Pixel eastwards;
+    private final Pixel southwards;
+    private final Pixel westwards;
+    private final Pixel northwards;
+    
+    public void update()
+    {
+        if (inputHandler.shiftEastwards())
+        {
+            gridCenterOffset.add(eastwards);
+        }
+        else if (inputHandler.shiftSouthwards())
+        {
+            gridCenterOffset.add(southwards);
+        }
+        else if (inputHandler.shiftWestwards())
+        {
+            gridCenterOffset.add(westwards);
+        }
+        else if (inputHandler.shiftNorthwards())
+        {
+            gridCenterOffset.add(northwards);
+        }
+        
+        if (inputHandler.zoomIn())
+        {
+            scale = Math.min(scale + 0.1, 2.5);
+        }
+        else if (inputHandler.zoomOut())
+        {
+            scale = Math.max(scale - 0.1, 0.5);
+        }
+    }
+    
     public void draw(Graphics2D graphics)
     {
         FieldManager fieldManager = FieldManager.getInstance();
@@ -112,12 +162,17 @@ public class World
             Map.Entry<Hex, Field> entry = iterator.next();
             
             Hex hex = entry.getKey();
-            Pixel pixel = hex.getCornerPixel(hexOuterRadius, hexInnerRadius).plus(gridCenterOffset);
+            Pixel pixel = hex.getCornerPixel(hexOuterRadius, hexInnerRadius);
             
             Field field = entry.getValue();
             BufferedImage image = fieldManager.getImage(field.getType());
             
-            graphics.drawImage(image, pixel.getX(), pixel.getY(), hexWidth, hexHeight, null);
+            int x = (int) ((double) pixel.xCoord * scale) + gridCenterOffset.xCoord;
+            int y = (int) ((double) pixel.yCoord * scale) + gridCenterOffset.yCoord;
+            int w = (int) ((double) hexWidth * scale);
+            int h = (int) ((double) hexHeight * scale);
+            
+            graphics.drawImage(image, x, y, w, h, null);
         }
     }
 }
