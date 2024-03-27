@@ -98,7 +98,7 @@ public class Hex
         return (pDistance + qDistance + rDistance) / 2;
     }
     
-    public Hex neighbor(Direction direction)
+    public Hex neighbor(HexagonalDirection direction)
     {
         int p = pCoord;
         int q = qCoord;
@@ -141,15 +141,15 @@ public class Hex
     
     public List<Hex> neighbors()
     {
-        List<Hex> hexes = new ArrayList<>(Direction.values().length);
-        for (var direction : Direction.values())
+        List<Hex> hexes = new ArrayList<>(HexagonalDirection.values().length);
+        for (var direction : HexagonalDirection.values())
         {
             hexes.add(neighbor(direction));
         }
         return hexes;
     }
     
-    public void shift(Direction direction)
+    public void shift(HexagonalDirection direction)
     {
         switch (direction)
         {

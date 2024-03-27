@@ -6,6 +6,7 @@ package my.input;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import my.world.OrthogonalDirection;
 
 /**
  *
@@ -13,7 +14,7 @@ import java.awt.event.KeyListener;
  */
 public class InputHandler implements KeyListener
 {
-    private int directions = 0;
+    private int directions;
     private boolean east;
     private boolean south;
     private boolean west;
@@ -24,7 +25,7 @@ public class InputHandler implements KeyListener
     
     private InputHandler()
     {
-        return;
+        directions = 0;
     }
     
     private static InputHandler instance = null;
@@ -52,32 +53,43 @@ public class InputHandler implements KeyListener
         {
             case KeyEvent.VK_RIGHT ->
             {
-                //++directions;
+                if (!east)
+                {
+                    ++directions;
+                }
                 east = true;
             }
             case KeyEvent.VK_DOWN ->
             {
-                //++directions;
+                if (!south)
+                {
+                    ++directions;
+                }
                 south = true;
             }
             case KeyEvent.VK_LEFT ->
             {
-                //++directions;
+                if (!west)
+                {
+                    ++directions;
+                }
                 west = true;
             }
             case KeyEvent.VK_UP ->
             {
-                //++directions;
+                if (!north)
+                {
+                    ++directions;
+                }
                 north = true;
             }
-            case KeyEvent.VK_Q ->
+            
+            case KeyEvent.VK_OPEN_BRACKET ->
             {
-                System.out.println("plus");
                 zoomIn = true;
             }
-            case KeyEvent.VK_W ->
+            case KeyEvent.VK_CLOSE_BRACKET ->
             {
-                System.out.println("minus");
                 zoomOut = true;
             }
         }
@@ -91,58 +103,94 @@ public class InputHandler implements KeyListener
         {
             case KeyEvent.VK_RIGHT ->
             {
-                //--directions;
                 east = false;
+                --directions;
             }
             case KeyEvent.VK_DOWN ->
             {
-                //--directions;
                 south = false;
+                --directions;
             }
             case KeyEvent.VK_LEFT ->
             {
-                //--directions;
                 west = false;
+                --directions;
             }
             case KeyEvent.VK_UP ->
             {
-                //--directions;
                 north = false;
+                --directions;
+            }
+            case KeyEvent.VK_OPEN_BRACKET ->
+            {
+                zoomIn = false;
+            }
+            case KeyEvent.VK_CLOSE_BRACKET ->
+            {
+                zoomOut = false;
             }
         }
     }
-
-    public boolean shiftEastwards()
+    
+    public OrthogonalDirection getShiftingDirection()
     {
-        return east /*&& directions == 1*/;
-    }
-
-    public boolean shiftSouthwards()
-    {
-        return south /*&& directions == 1*/;
-    }
-
-    public boolean shiftWestwards()
-    {
-        return west /*&& directions == 1*/;
-    }
-
-    public boolean shiftNorthwards()
-    {
-        return north /*&& directions == 1*/;
+        OrthogonalDirection direction = null;
+        
+        if (directions == 1)
+        {
+            if (east)
+            {
+                direction = OrthogonalDirection.EAST;
+            }
+            else if (south)
+            {
+                direction = OrthogonalDirection.SOUTH;
+            }
+            else if (west)
+            {
+                direction = OrthogonalDirection.WEST;
+            }
+            else if (north)
+            {
+                direction = OrthogonalDirection.NORTH;
+            }
+        }
+        else if (directions == 2)
+        {
+            if (south)
+            {
+                if (east)
+                {
+                    direction = OrthogonalDirection.SOUTHEAST;
+                }
+                else if (west)
+                {
+                    direction = OrthogonalDirection.SOUTHWEST;
+                }
+            }
+            else if (north)
+            {
+                if (west)
+                {
+                    direction = OrthogonalDirection.NORTHWEST;
+                }
+                else if (east)
+                {
+                    direction = OrthogonalDirection.NORTHEAST;
+                }
+            }
+        }
+        
+        return direction;
     }
     
     public boolean zoomIn()
     {
-        boolean value = zoomIn;
-        zoomIn = false;
-        return value;
+        return zoomIn;
     }
     
     public boolean zoomOut()
     {
-        boolean value = zoomOut;
-        zoomOut = false;
-        return value;
+        return zoomOut;
     }
 }

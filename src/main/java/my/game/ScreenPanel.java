@@ -25,7 +25,7 @@ public class ScreenPanel extends JPanel implements Runnable
     
     public ScreenPanel()
     {
-        world = new World(5);
+        world = new World(10);
         
         colsCount = 30;
         rowsCount = 20;

@@ -8,7 +8,7 @@ package my.world;
  *
  * @author Kay Jay O'Nail
  */
-public enum Direction
+public enum HexagonalDirection
 {
     UP,
     RIGHT_UP,
@@ -17,9 +17,9 @@ public enum Direction
     LEFT_DOWN,
     LEFT_UP;
 
-    public Direction next()
+    public HexagonalDirection next()
     {
-        Direction result = null;
+        HexagonalDirection result = null;
         switch (this)
         {
             case UP ->
@@ -38,9 +38,9 @@ public enum Direction
         return result;
     }
     
-    public Direction prev()
+    public HexagonalDirection prev()
     {
-        Direction result = null;
+        HexagonalDirection result = null;
         switch (this)
         {
             case UP ->
@@ -59,9 +59,9 @@ public enum Direction
         return result;
     }
     
-    public Direction opposite()
+    public HexagonalDirection opposite()
     {
-        Direction result = null;
+        HexagonalDirection result = null;
         switch (this)
         {
             case UP ->

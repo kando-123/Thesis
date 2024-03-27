@@ -16,27 +16,32 @@ import javax.imageio.ImageIO;
  */
 public class FieldManager
 {
-    private Map<FieldType, BufferedImage> images;
+    private Map<FieldType, List<BufferedImage>> images;
     
     private FieldManager()
     {
         images = new HashMap<>(FieldType.values().length);
         for (var fieldType : FieldType.values())
         {
-            InputStream stream = getClass().getResourceAsStream(fieldType.path);
-            BufferedImage image;
-            try
+            List<BufferedImage> imagesList = new ArrayList<>(fieldType.paths.size());
+            for (var path : fieldType.paths)
             {
-                image = ImageIO.read(stream);
-                images.put(fieldType, image);
+                InputStream stream = getClass().getResourceAsStream(path);
+                BufferedImage image;
+                try
+                {
+                    image = ImageIO.read(stream);
+                    imagesList.add(image);
+                }
+                catch (IOException e)
+                {
+                    /* The exception will not have been thrown in a correct program.
+                       Behavior of this function depends only on internal files,
+                       not on external input. */
+                    System.err.println("Internal error. Some resources are lacking.");
+                }                
             }
-            catch (IOException e)
-            {
-                /* The exception will not have been thrown in a correct program.
-                   Behavior of this function depends only on internal files,
-                   not on external input. */
-                System.err.println("Internal error. Some resources are lacking.");
-            }
+            images.put(fieldType, imagesList);
         }
     }
     
@@ -51,8 +56,11 @@ public class FieldManager
         return instance;
     }
     
+    private static Random random = new Random();
+    
     public BufferedImage getImage(FieldType type)
     {
-        return images.get(type);
+        List<BufferedImage> list = images.get(type);
+        return list.get(random.nextInt(0, list.size()));
     }
 }

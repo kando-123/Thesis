@@ -24,10 +24,14 @@ public class World
     
     private Pixel gridCenterOffset;
     private double scale;
+    private double scaleChange;
+    private double maxScale;
+    private double minScale;
     
     private Map<Hex, Field> fields;
     
     private final InputHandler inputHandler;
+    private final FieldManager fieldManager;
     
     private int hexSurface(int side)
     {
@@ -36,19 +40,20 @@ public class World
     
     public World(int side)
     {
-        hexOuterRadius = 30;
+        hexOuterRadius = 40;
         hexInnerRadius = (int) ((double) hexOuterRadius * Math.sin(Math.PI / 3.0));
         hexWidth = 2 * hexOuterRadius;
         hexHeight = 2 * hexInnerRadius;
         scale = 1.0;
+        scaleChange = 0.01;
+        maxScale = 2.5;
+        minScale = 0.5;
+        
         gridSide = side;
         createGrid(gridSide);
         
         inputHandler = InputHandler.getInstance();
-        eastwards = new Pixel(+5, 0);
-        southwards = new Pixel(0, +5);
-        westwards = new Pixel(-5, 0);
-        northwards = new Pixel(0, -5);
+        fieldManager = FieldManager.getInstance();
     }
     
     private void createGrid(int side)
@@ -58,57 +63,51 @@ public class World
         fields = new HashMap<>(hexSurface(side));
         {
             Hex hex = Hex.make(0, 0, 0);
-            Field field = new Field(FieldType.LAND_1);
+            Field field = new Field(FieldType.LAND);
             fields.put(hex, field);
         }
         for (int i = 1; i < side; ++i)
         {
-            /* Right side: p = +i. */
-            for (int j = 0; j < i; ++j)
+            for (int j = 0; j < i; ++j) // Right side: p = +i.
             {
                 Hex hex = Hex.make(+i, -i + j, -j);
                 assert (hex != null);
-                Field field = new Field(FieldType.LAND_1);
+                Field field = new Field(FieldType.LAND);
                 fields.put(hex, field);
             }
-            /* Left side: p = -i. */
-            for (int j = 0; j < i; ++j)
+            for (int j = 0; j < i; ++j) // Left side: p = -i.
             {
                 Hex hex = Hex.make(-i, +i - j, +j);
                 assert (hex != null);
-                Field field = new Field(FieldType.LAND_1);
+                Field field = new Field(FieldType.LAND);
                 fields.put(hex, field);
             }
-            /* Bottom left side: q = +i. */
-            for (int j = 0; j < i; ++j)
+            for (int j = 0; j < i; ++j) // Bottom left side: q = +i.
             {
                 Hex hex = Hex.make(-j, +i, -i + j);
                 assert (hex != null);
-                Field field = new Field(FieldType.LAND_1);
+                Field field = new Field(FieldType.LAND);
                 fields.put(hex, field);
             }
-            /* Top right side: q = -i. */
-            for (int j = 0; j < i; ++j)
+            for (int j = 0; j < i; ++j) // Top right side: q = -i.
             {
                 Hex hex = Hex.make(+j, -i, +i - j);
                 assert (hex != null);
-                Field field = new Field(FieldType.LAND_1);
+                Field field = new Field(FieldType.LAND);
                 fields.put(hex, field);
             }
-            /* Top left side: r = +i. */
-            for (int j = 0; j < i; ++j)
+            for (int j = 0; j < i; ++j) // Top left side: r = +i.
             {
                 Hex hex = Hex.make(-i + j, -j, +i);
                 assert (hex != null);
-                Field field = new Field(FieldType.LAND_1);
+                Field field = new Field(FieldType.LAND);
                 fields.put(hex, field);
             }
-            /* Bottom right side: r = -i. */
-            for (int j = 0; j < i; ++j)
+            for (int j = 0; j < i; ++j) // Bottom right side: r = -i.
             {
                 Hex hex = Hex.make(+i - j, +j, -i);
                 assert (hex != null);
-                Field field = new Field(FieldType.LAND_1);
+                Field field = new Field(FieldType.LAND);
                 fields.put(hex, field);
             }
         }
@@ -119,43 +118,26 @@ public class World
         gridCenterOffset = newCenterOffset;
     }
     
-    private final Pixel eastwards;
-    private final Pixel southwards;
-    private final Pixel westwards;
-    private final Pixel northwards;
-    
     public void update()
     {
-        if (inputHandler.shiftEastwards())
+        OrthogonalDirection shift = inputHandler.getShiftingDirection();
+        if (shift != null)
         {
-            gridCenterOffset.add(eastwards);
-        }
-        else if (inputHandler.shiftSouthwards())
-        {
-            gridCenterOffset.add(southwards);
-        }
-        else if (inputHandler.shiftWestwards())
-        {
-            gridCenterOffset.add(westwards);
-        }
-        else if (inputHandler.shiftNorthwards())
-        {
-            gridCenterOffset.add(northwards);
+            gridCenterOffset.add(shift.getOffset());
         }
         
         if (inputHandler.zoomIn())
         {
-            scale = Math.min(scale + 0.02, 2.5);
+            scale = Math.min(scale + scaleChange, maxScale);
         }
         else if (inputHandler.zoomOut())
         {
-            scale = Math.max(scale - 0.02, 0.5);
+            scale = Math.max(scale - scaleChange, minScale);
         }
     }
     
     public void draw(Graphics2D graphics)
     {
-        FieldManager fieldManager = FieldManager.getInstance();
         var iterator = fields.entrySet().iterator();
         while (iterator.hasNext())
         {
