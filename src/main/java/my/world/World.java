@@ -27,7 +27,7 @@ public class World
     
     private Map<Hex, Field> fields;
     
-    private InputHandler inputHandler;
+    private final InputHandler inputHandler;
     
     private int hexSurface(int side)
     {
@@ -145,11 +145,11 @@ public class World
         
         if (inputHandler.zoomIn())
         {
-            scale = Math.min(scale + 0.1, 2.5);
+            scale = Math.min(scale + 0.02, 2.5);
         }
         else if (inputHandler.zoomOut())
         {
-            scale = Math.max(scale - 0.1, 0.5);
+            scale = Math.max(scale - 0.02, 0.5);
         }
     }
     

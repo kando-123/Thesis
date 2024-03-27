@@ -12,9 +12,9 @@ import java.util.*;
  */
 public class Hex
 {
-    private final int pCoord;
-    private final int qCoord;
-    private final int rCoord;
+    private int pCoord;
+    private int qCoord;
+    private int rCoord;
     
     private Hex(int p, int q, int r)
     {
@@ -63,10 +63,31 @@ public class Hex
     
     public Hex times(int factor)
     {
-        int p = factor * pCoord;
-        int q = factor * qCoord;
-        int r = factor * rCoord;
+        int p = pCoord * factor;
+        int q = qCoord * factor;
+        int r = rCoord * factor;
         return new Hex(p, q, r);
+    }
+    
+    public void add(Hex other)
+    {
+        pCoord += other.pCoord;
+        qCoord += other.qCoord;
+        rCoord += other.rCoord;
+    }
+    
+    public void subtract(Hex other)
+    {
+        pCoord -= other.pCoord;
+        qCoord -= other.qCoord;
+        rCoord -= other.rCoord;
+    }
+    
+    public void multiply(int factor)
+    {
+        pCoord *= factor;
+        qCoord *= factor;
+        rCoord *= factor;
     }
     
     public int distance(Hex other)
@@ -126,6 +147,43 @@ public class Hex
             hexes.add(neighbor(direction));
         }
         return hexes;
+    }
+    
+    public void shift(Direction direction)
+    {
+        switch (direction)
+        {
+            case UP ->
+            {
+                --qCoord;
+                ++rCoord;
+            }
+            case RIGHT_UP ->
+            {
+                ++pCoord;
+                --qCoord;
+            }
+            case RIGHT_DOWN ->
+            {
+                ++pCoord;
+                --rCoord;
+            }
+            case DOWN ->
+            {
+                ++qCoord;
+                --rCoord;
+            }
+            case LEFT_DOWN ->
+            {
+                --pCoord;
+                ++qCoord;
+            }
+            case LEFT_UP ->
+            {
+                --pCoord;
+                ++rCoord;
+            }
+        }
     }
     
     public Pixel getCentralPixel(int R, int r)

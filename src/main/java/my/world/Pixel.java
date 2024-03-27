@@ -9,7 +9,6 @@ import java.util.Objects;
 /**
  *
  * @author Kay Jay O'Nail
- * @param <N> 
  */
 public class Pixel
 {
