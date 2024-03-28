@@ -16,9 +16,11 @@ public class Thesis
     {        
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("The Global Empire");
+        frame.setTitle("The Global Empire");  
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
         
-        ScreenPanel panel = new ScreenPanel();
+        GamePanel panel = new GamePanel(frame.getSize(), 50);
         frame.add(panel);
         frame.pack();
         
@@ -26,7 +28,6 @@ public class Thesis
         frame.addKeyListener(inputHandler);
         
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
         
         panel.startGameThread();
     }

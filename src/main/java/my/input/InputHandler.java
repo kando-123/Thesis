@@ -84,11 +84,11 @@ public class InputHandler implements KeyListener
                 north = true;
             }
             
-            case KeyEvent.VK_OPEN_BRACKET ->
+            case KeyEvent.VK_CLOSE_BRACKET ->
             {
                 zoomIn = true;
             }
-            case KeyEvent.VK_CLOSE_BRACKET ->
+            case KeyEvent.VK_OPEN_BRACKET ->
             {
                 zoomOut = true;
             }
@@ -121,11 +121,11 @@ public class InputHandler implements KeyListener
                 north = false;
                 --directions;
             }
-            case KeyEvent.VK_OPEN_BRACKET ->
+            case KeyEvent.VK_CLOSE_BRACKET ->
             {
                 zoomIn = false;
             }
-            case KeyEvent.VK_CLOSE_BRACKET ->
+            case KeyEvent.VK_OPEN_BRACKET ->
             {
                 zoomOut = false;
             }

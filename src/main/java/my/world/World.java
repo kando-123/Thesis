@@ -4,6 +4,7 @@
  */
 package my.world;
 
+import java.awt.Dimension;
 import my.world.field.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -20,40 +21,50 @@ public class World
     public final int hexInnerRadius;
     public final int hexWidth;
     public final int hexHeight;
-    public final int gridSide;
+    public int gridSide;
     
-    private Pixel gridCenterOffset;
+    private Pixel centerOffset;
     private double scale;
-    private double scaleChange;
-    private double maxScale;
-    private double minScale;
+    private final double scaleChange;
+    private final double maxScale;
+    private final double minScale;
+    
+    private final int screenWidth;
+    private final int screenHeight;
     
     private Map<Hex, Field> fields;
     
     private final InputHandler inputHandler;
-    private final FieldManager fieldManager;
     
     private int hexSurface(int side)
     {
         return 3 * side * (side - 1) + 1;
     }
     
-    public World(int side)
+    public World(Dimension screenSize)
     {
         hexOuterRadius = 40;
         hexInnerRadius = (int) ((double) hexOuterRadius * Math.sin(Math.PI / 3.0));
         hexWidth = 2 * hexOuterRadius;
         hexHeight = 2 * hexInnerRadius;
+        
         scale = 1.0;
         scaleChange = 0.01;
         maxScale = 2.5;
         minScale = 0.5;
         
-        gridSide = side;
-        createGrid(gridSide);
+        screenWidth = screenSize.width;
+        screenHeight = screenSize.height;
+        centerOffset = new Pixel(screenWidth / 2, screenHeight / 2);
         
         inputHandler = InputHandler.getInstance();
-        fieldManager = FieldManager.getInstance();
+        FieldManager.getInstance();
+    }
+    
+    public void makeWorld(int side)
+    {
+        gridSide = side;
+        createGrid(gridSide);
     }
     
     private void createGrid(int side)
@@ -113,17 +124,12 @@ public class World
         }
     }
     
-    public void setCenter(Pixel newCenterOffset)
-    {
-        gridCenterOffset = newCenterOffset;
-    }
-    
     public void update()
     {
         OrthogonalDirection shift = inputHandler.getShiftingDirection();
         if (shift != null)
         {
-            gridCenterOffset.add(shift.getOffset());
+            centerOffset.add(shift.getOffset());
         }
         
         if (inputHandler.zoomIn())
@@ -147,14 +153,17 @@ public class World
             Pixel pixel = hex.getCornerPixel(hexOuterRadius, hexInnerRadius);
             
             Field field = entry.getValue();
-            BufferedImage image = fieldManager.getImage(field.getType());
+            BufferedImage image = field.getImage();
             
-            int x = (int) ((double) pixel.xCoord * scale) + gridCenterOffset.xCoord;
-            int y = (int) ((double) pixel.yCoord * scale) + gridCenterOffset.yCoord;
+            int x = centerOffset.xCoord + (int) ((double) pixel.xCoord * scale);
+            int y = centerOffset.yCoord + (int) ((double) pixel.yCoord * scale);
             int w = (int) ((double) hexWidth * scale);
             int h = (int) ((double) hexHeight * scale);
             
-            graphics.drawImage(image, x, y, w, h, null);
+            if (x + w >= 0 && x < screenWidth && y + h >= 0 && y < screenHeight)
+            {
+                graphics.drawImage(image, x, y, w, h, null);
+            }
         }
     }
 }

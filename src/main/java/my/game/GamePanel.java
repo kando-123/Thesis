@@ -12,10 +12,8 @@ import my.world.*;
  *
  * @author Kay Jay O'Nail
  */
-public class ScreenPanel extends JPanel implements Runnable
+public class GamePanel extends JPanel implements Runnable
 {
-    public final int colsCount;
-    public final int rowsCount;
     public final int screenWidth;
     public final int screenHeight;
 
@@ -23,16 +21,13 @@ public class ScreenPanel extends JPanel implements Runnable
     
     private final World world;
     
-    public ScreenPanel()
+    public GamePanel(Dimension dimensions, int worldSize)
     {
-        world = new World(10);
+        world = new World(dimensions);
+        world.makeWorld(worldSize);
         
-        colsCount = 30;
-        rowsCount = 20;
-        screenWidth = (int) (((double) colsCount * 0.75 + 0.25) * (double) world.hexWidth);
-        screenHeight = rowsCount * world.hexHeight;
-        
-        world.setCenter(new Pixel(screenWidth / 2, screenHeight / 2));
+        screenWidth = dimensions.width;
+        screenHeight = dimensions.height;
         
         setPreferredSize(new Dimension(screenWidth, screenHeight));
         setBackground(Color.black);
