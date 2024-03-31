@@ -20,8 +20,12 @@ public class Thesis
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
         
-        GamePanel panel = new GamePanel(frame.getSize(), 50);
-        frame.add(panel);
+//        InvitationPanel panel = new InvitationPanel();
+//        frame.setContentPane(panel);
+//        frame.pack();
+        
+        GamePanel panel = new GamePanel(frame.getSize());
+        frame.setContentPane(panel);
         frame.pack();
         
         InputHandler inputHandler = InputHandler.getInstance();

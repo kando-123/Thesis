@@ -5,18 +5,19 @@
 package my.world;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 class Scaler
 {
     private final double slope;
     private final double intercept;
-    
+
     public Scaler(double xMin, double xMax, double yMin, double yMax)
     {
         slope = (yMax - yMin) / (xMax - xMin);
         intercept = yMin - slope * xMin;
     }
-    
+
     public double transform(double x)
     {
         return slope * x + intercept;
@@ -83,17 +84,17 @@ public class PerlinNoise
      * <code>2.0</code>.
      */
     private double lacunarity;
-    
+
     /**
      * The lower bound of noise value.
-     * 
+     *
      * The default value is 0.
      */
     private double lowerBound;
-    
+
     /**
      * The upper bound of noise value.
-     * 
+     *
      * The default value is 1.
      */
     private double upperBound;
@@ -170,8 +171,7 @@ public class PerlinNoise
             lacunarity = 2.0f;
             lowerBound = 0d;
             upperBound = 1d;
-        }
-        else
+        } else
         {
             throw new Exception("PerlinNoise.PerlinNoise");
         }
@@ -193,8 +193,7 @@ public class PerlinNoise
         if (newValue > 0)
         {
             octavesCount = newValue;
-        }
-        else
+        } else
         {
             throw new Exception("PerlinNoise.setOctavesCount");
         }
@@ -205,8 +204,7 @@ public class PerlinNoise
         if (newValue > 0.0d && newValue < 1.0d)
         {
             persistence = newValue;
-        }
-        else
+        } else
         {
             throw new Exception("PerlinNoise.setPersistence");
         }
@@ -217,20 +215,19 @@ public class PerlinNoise
         if (newValue > 1.0d)
         {
             lacunarity = newValue;
-        }
-        else
+        } else
         {
             throw new Exception("PerlinNoise.setLacunarity");
         }
     }
-    
+
     public void setBounds(double lower, double upper)
     {
         lowerBound = lower;
         upperBound = upper;
     }
 
-    private double getRawNoise(int pixelX, int pixelY)
+    private double getRawNoise(Pixel pixel)
     {
         /* Naming */
         // x, y - refer to global position within the area, counted in pixels
@@ -239,15 +236,15 @@ public class PerlinNoise
         // a, b, c, d - refer to corners of the chunk, respectively:
         //  top left, top right, bottom left, bottom right.
 
-        assert (pixelX >= 0 && pixelY >= 0);
+        assert (pixel.xCoord >= 0 && pixel.yCoord >= 0);
 
         /* Adjust the coords. */
-        pixelX %= areaWidth;
-        pixelY %= areaHeight;
+        pixel.xCoord %= areaWidth;
+        pixel.yCoord %= areaHeight;
 
         /* Find the chunk's indices. */
-        int chunkCol = pixelX / chunkSize;
-        int chunkRow = pixelY / chunkSize;
+        int chunkCol = pixel.xCoord / chunkSize;
+        int chunkRow = pixel.yCoord / chunkSize;
 
         /* Find the coordinates of the corners. */
         int chunkLeftX = chunkCol * chunkSize;
@@ -256,10 +253,10 @@ public class PerlinNoise
         int chunkBottomY = chunkTopY + chunkSize;
 
         /* Find the local coordinates of the point. */
-        double pixelLeftP = (double) (pixelX - chunkLeftX) / (double) chunkSize;
-        double pixelTopQ = (double) (pixelY - chunkTopY) / (double) chunkSize;
-        double pixelRightP = (double) (pixelX - chunkRightX) / (double) chunkSize;
-        double pixelBottomQ = (double) (pixelY - chunkBottomY) / (double) chunkSize;
+        double pixelLeftP = (double) (pixel.xCoord - chunkLeftX) / (double) chunkSize;
+        double pixelTopQ = (double) (pixel.yCoord - chunkTopY) / (double) chunkSize;
+        double pixelRightP = (double) (pixel.xCoord - chunkRightX) / (double) chunkSize;
+        double pixelBottomQ = (double) (pixel.yCoord - chunkBottomY) / (double) chunkSize;
 
         /* Find the gradients. */
         var gradientA = gradientVectors.get(new Pixel(chunkCol, chunkRow));
@@ -280,28 +277,29 @@ public class PerlinNoise
         return lerp(horizontalTop, horizontalBottom, pixelTopQ);
     }
 
-    public List<Double> makeNoise(List<Pixel> points) throws Exception
+    public List<Double> makeNoise(List<Pixel> pixels) throws Exception
     {
         boolean success = true;
 
-        List<Double> result = new ArrayList<>(points.size());
+        List<Double> result = new ArrayList<>(pixels.size());
         double minimum = Double.MAX_VALUE;
         double maximum = Double.MIN_VALUE;
-        for (var point : points)
+        for (var pixel : pixels)
         {
-            if (point.xCoord < 0 || point.xCoord >= areaWidth || point.yCoord < 0 || point.yCoord >= areaHeight)
+            if (pixel.xCoord < 0 || pixel.xCoord >= areaWidth || pixel.yCoord < 0 || pixel.yCoord >= areaHeight)
             {
                 success = false;
                 break;
             }
-            double noise = getRawNoise(point.xCoord, point.yCoord);
+            double noise = getRawNoise(pixel);
             double frequency = lacunarity;
             double amplitude = persistence;
             for (int i = 1; i < octavesCount; ++i)
             {
-                int newX = (int) (frequency * (double) point.xCoord);
-                int newY = (int) (frequency * (double) point.yCoord);
-                noise += amplitude * getRawNoise(newX, newY);
+                Pixel newPixel = new Pixel(0, 0);
+                pixel.xCoord = (int) (frequency * (double) pixel.xCoord);
+                pixel.yCoord = (int) (frequency * (double) pixel.yCoord);
+                noise += amplitude * getRawNoise(newPixel);
                 frequency *= lacunarity;
                 amplitude *= persistence;
             }
@@ -330,18 +328,14 @@ public class PerlinNoise
                     value = scaler.transform(value);
                     result.set(i, value);
                 }
-            }
-            else
+            } else
             {
                 // Do something, maybe.
             }
             return result;
-        }
-        else
+        } else
         {
             throw new Exception("PerlinNoise.makeNoise");
         }
     }
-    
-    
 }

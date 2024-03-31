@@ -186,31 +186,59 @@ public class Hex
         }
     }
     
-    public Pixel getCentralPixel(int R, int r)
+    public Pixel getCentralPixel(int outerRadius, int innerRadius)
     {
-        int x = pCoord * R * 3 / 2;
-        int y = (qCoord - rCoord) * r;
+        int x = pCoord * outerRadius * 3 / 2;
+        int y = (qCoord - rCoord) * innerRadius;
         return new Pixel(x, y);
     }
     
-    public Pixel getCornerPixel(int R, int r)
+    public Pixel getCornerPixel(int outerRadius, int innerRadius)
     {
-        int x = pCoord * R * 3 / 2 - R;
-        int y = (qCoord - rCoord) * r - r;
+        int x = pCoord * outerRadius * 3 / 2 - outerRadius;
+        int y = (qCoord - rCoord) * innerRadius - innerRadius;
         return new Pixel(x, y);
     }
     
-    public Point getCentralPoint(double R, double r)
+    public Point getCentralPoint(double outerRadius, double innerRadius)
     {
-        double x = (double) (pCoord) * R * 1.5;
-        double y = (double) (qCoord - rCoord) * r;
+        double x = (double) (pCoord) * outerRadius * 1.5;
+        double y = (double) (qCoord - rCoord) * innerRadius;
         return new Point(x, y);
     }
     
-    public Point getCornerPoint(double R, double r)
+    public Point getCornerPoint(double outerRadius, double innerRadius)
     {
-        double x = (double) (pCoord) * R * 1.5 - R;
-        double y = (double) (qCoord - rCoord) * r - r;
+        double x = (double) (pCoord) * outerRadius * 1.5 - outerRadius;
+        double y = (double) (qCoord - rCoord) * innerRadius - innerRadius;
+        return new Point(x, y);
+    }
+    
+    public static Pixel getCentralPixelOf(int p, int q, int r, int outerRadius, int innerRadius)
+    {
+        int x = p * outerRadius * 3 / 2;
+        int y = (q - r) * innerRadius;
+        return new Pixel(x, y);
+    }
+    
+    public static Pixel getCornerPixelOf(int p, int q, int r, int outerRadius, int innerRadius)
+    {
+        int x = p * outerRadius * 3 / 2 - outerRadius;
+        int y = (q - r) * innerRadius - innerRadius;
+        return new Pixel(x, y);
+    }
+    
+    public static Point getCentralPointOf(int p, int q, int r, double outerRadius, double innerRadius)
+    {
+        double x = (double) (p) * outerRadius * 1.5;
+        double y = (double) (q - r) * innerRadius;
+        return new Point(x, y);
+    }
+    
+    public static Point getCornerPointOf(int p, int q, int r, double outerRadius, double innerRadius)
+    {
+        double x = (double) (p) * outerRadius * 1.5 - outerRadius;
+        double y = (double) (q - r) * innerRadius - innerRadius;
         return new Point(x, y);
     }
     

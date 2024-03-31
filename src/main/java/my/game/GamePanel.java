@@ -21,10 +21,10 @@ public class GamePanel extends JPanel implements Runnable
     
     private final World world;
     
-    public GamePanel(Dimension dimensions, int worldSize)
+    public GamePanel(Dimension dimensions)
     {
         world = new World(dimensions);
-        world.makeWorld(worldSize);
+        world.makeWorld();
         
         screenWidth = dimensions.width;
         screenHeight = dimensions.height;
