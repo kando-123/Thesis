@@ -5,7 +5,6 @@
 package my.world;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 class Scaler
 {
@@ -142,39 +141,33 @@ public class PerlinNoise
      * @param areaWidth width of the noised area, in pixels
      * @param areaHeight height of the noised area, in pixels
      * @param chunkSize side of the chunk
-     * @throws Exception if any argument is non-positive
      */
-    public PerlinNoise(int areaWidth, int areaHeight, int chunkSize) throws Exception
+    public PerlinNoise(int areaWidth, int areaHeight, int chunkSize)
     {
-        if (areaWidth > 0 && areaHeight > 0 && chunkSize > 0)
-        {
-            this.areaWidth = areaWidth;
-            this.areaHeight = areaHeight;
-            this.chunkSize = chunkSize;
+        assert (areaWidth > 0 && areaHeight > 0 && chunkSize > 0);
+        this.areaWidth = areaWidth;
+        this.areaHeight = areaHeight;
+        this.chunkSize = chunkSize;
 
-            gradientCols = Math.ceilDiv(areaWidth, chunkSize) + 1;
-            gradientRows = Math.ceilDiv(areaHeight, chunkSize) + 1;
-            gradientVectors = new HashMap<>(gradientCols);
-            Random random = new Random();
-            for (int i = 0; i < gradientCols; ++i)
-            {
-                for (int j = 0; j < gradientRows; ++j)
-                {
-                    double angle = random.nextDouble(0.0d, Math.TAU);
-                    double xCoord = Math.cos(angle);
-                    double yCoord = Math.sin(angle);
-                    gradientVectors.put(new Pixel(i, j), new Point(xCoord, yCoord));
-                }
-            }
-            octavesCount = 1;
-            persistence = 0.5f;
-            lacunarity = 2.0f;
-            lowerBound = 0d;
-            upperBound = 1d;
-        } else
+        gradientCols = Math.ceilDiv(areaWidth, chunkSize) + 1;
+        gradientRows = Math.ceilDiv(areaHeight, chunkSize) + 1;
+        gradientVectors = new HashMap<>(gradientCols);
+        Random random = new Random();
+        for (int i = 0; i < gradientCols; ++i)
         {
-            throw new Exception("PerlinNoise.PerlinNoise");
+            for (int j = 0; j < gradientRows; ++j)
+            {
+                double angle = random.nextDouble(0.0d, Math.TAU);
+                double xCoord = Math.cos(angle);
+                double yCoord = Math.sin(angle);
+                gradientVectors.put(new Pixel(i, j), new Point(xCoord, yCoord));
+            }
         }
+        octavesCount = 1;
+        persistence = 0.5f;
+        lacunarity = 2.0f;
+        lowerBound = 0d;
+        upperBound = 1d;
     }
 
     /**
@@ -186,38 +179,28 @@ public class PerlinNoise
      * In case of a non-positive value, an exception is thrown.
      *
      * @param newValue new octaves count
-     * @throws Exception if <code>newValue</code> is non-positive
      */
-    public void setOctaves(int newValue) throws Exception
+    public void setOctaves(int newValue)
     {
         if (newValue > 0)
         {
             octavesCount = newValue;
-        } else
-        {
-            throw new Exception("PerlinNoise.setOctavesCount");
         }
     }
 
-    public void setPersistence(double newValue) throws Exception
+    public void setPersistence(double newValue)
     {
         if (newValue > 0.0d && newValue < 1.0d)
         {
             persistence = newValue;
-        } else
-        {
-            throw new Exception("PerlinNoise.setPersistence");
         }
     }
 
-    public void setLacunarity(double newValue) throws Exception
+    public void setLacunarity(double newValue)
     {
         if (newValue > 1.0d)
         {
             lacunarity = newValue;
-        } else
-        {
-            throw new Exception("PerlinNoise.setLacunarity");
         }
     }
 
@@ -328,12 +311,14 @@ public class PerlinNoise
                     value = scaler.transform(value);
                     result.set(i, value);
                 }
-            } else
+            }
+            else
             {
                 // Do something, maybe.
             }
             return result;
-        } else
+        }
+        else
         {
             throw new Exception("PerlinNoise.makeNoise");
         }

@@ -30,6 +30,11 @@ public class Hex
         return (p + q + r == 0) ? new Hex(p, q, r) : null;
     }
     
+    public Hex clone()
+    {
+        return new Hex(pCoord, qCoord, rCoord);
+    }
+    
     public int getP()
     {
         return pCoord;

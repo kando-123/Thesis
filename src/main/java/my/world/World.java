@@ -65,7 +65,7 @@ public class World
 
     public void makeWorld()
     {
-        int side = 20;
+        int side = 10;
         int surface = hexSurface(side);
 
         int westmostX = Hex.getCornerPixelOf(-side, 0, +side, hexOuterRadius, hexInnerRadius).xCoord;
@@ -76,74 +76,98 @@ public class World
         int areaHeight = southmostY - northmostY;
         int chunkSide = (hexOuterRadius + hexInnerRadius) / 2 * 4;
         Pixel offset = new Pixel(eastmostX, southmostY);
+
         List<Pixel> centers = new ArrayList<>(surface);
+        Hex h = Hex.make(0, 0, 0);
+        centers.add(h.getCentralPixel(hexOuterRadius, hexInnerRadius).plus(offset));
+        for (int radius = 1; radius < side; ++radius)
         {
-            centers.add(Hex.getCentralPixelOf(0, 0, 0, hexOuterRadius, hexInnerRadius).plus(offset));
+            //int p = 0, q = -radius, r = +radius;
+            //int Δp = +1, Δq = 0, Δr = -1;
+            h.shift(HexagonalDirection.UP);
+            Hex beginning = h.clone();
+            HexagonalDirection direction = HexagonalDirection.RIGHT_DOWN;
+            do
+            {
+                /* Processing current hex. */
+                System.out.println(String.format("Now being processed: %s", h.toString()));
+                centers.add(h.getCentralPixel(hexOuterRadius, hexInnerRadius).plus(offset));
+
+                /* Shifting the hex. */
+                h.shift(direction);
+
+                /* Changing the direction, if necessary. */
+                if (h.getP() == 0 || h.getQ() == 0 || h.getR() == 0)
+                {
+                    direction = direction.next();
+                }
+//                p += Δp;
+//                q += Δq;
+//                r += Δr;
+//                if (p == 0 || q == 0 || r == 0)
+//                {
+//                    if (p > 0)
+//                    {
+//                        --Δp;
+//                    }
+//                    else if (p < 0)
+//                    {
+//                        ++Δp;
+//                    }
+//                    if (q > 0)
+//                    {
+//                        --Δq;
+//                    }
+//                    else if (q < 0)
+//                    {
+//                        ++Δq;
+//                    }
+//                    if (r > 0)
+//                    {
+//                        --Δr;
+//                    }
+//                    else if (r < 0)
+//                    {
+//                        ++Δr;
+//                    }
+//            }
+            }
+            while (!h.equals(beginning));
         }
-        for (int i = 1; i < side; ++i)
-        {
-            for (int j = 0; j < i; ++j) // Right side: p = +i.
-            {
-                centers.add(Hex.getCentralPixelOf(+i, -i + j, -j, hexOuterRadius, hexInnerRadius).plus(offset));
-            }
-            for (int j = 0; j < i; ++j) // Left side: p = -i.
-            {
-                centers.add(Hex.getCentralPixelOf(-i, +i - j, +j, hexOuterRadius, hexInnerRadius).plus(offset));
-            }
-            for (int j = 0; j < i; ++j) // Bottom left side: q = +i.
-            {
-                centers.add(Hex.getCentralPixelOf(-j, +i, -i + j, hexOuterRadius, hexInnerRadius).plus(offset));
-            }
-            for (int j = 0; j < i; ++j) // Top right side: q = -i.
-            {
-                centers.add(Hex.getCentralPixelOf(+j, -i, +i - j, hexOuterRadius, hexInnerRadius).plus(offset));
-            }
-            for (int j = 0; j < i; ++j) // Top left side: r = +i.
-            {
-                centers.add(Hex.getCentralPixelOf(-i + j, -j, +i, hexOuterRadius, hexInnerRadius).plus(offset));
-            }
-            for (int j = 0; j < i; ++j) // Bottom right side: r = -i.
-            {
-                centers.add(Hex.getCentralPixelOf(+i - j, +j, -i, hexOuterRadius, hexInnerRadius).plus(offset));
-            }
-        }
-        PerlinNoise landscapePerlin = null;
-        try
-        {
-            landscapePerlin = new PerlinNoise(areaWidth, areaHeight, chunkSide);
-            landscapePerlin.setOctaves(3);
-        }
-        catch (Exception e)
-        {
-            assert (false);
-        }
+
+        PerlinNoise landscapePerlin = new PerlinNoise(areaWidth, areaHeight, chunkSide);
+
+        landscapePerlin.setOctaves(5);
         List<Double> landscapeNoise = null;
+
         try
         {
             landscapeNoise = landscapePerlin.makeNoise(centers);
         }
         catch (Exception e)
         {
-            assert (false);
+
         }
         int counter = 0;
         fields = new HashMap<>(surface);
         {
             Hex hex = Hex.make(0, 0, 0);
             assert (hex != null);
-            FieldType type = landscapeNoise.get(counter++) > 0.5
+            FieldType type = landscapeNoise.get(counter++) > 0.3
                     ? FieldType.LAND
                     : FieldType.SEE;
             Field field = new Field(type);
             fields.put(hex, field);
         }
-        for (int i = 1; i < side; ++i)
+        for (int i = 1;
+                i < side;
+                ++i)
         {
             for (int j = 0; j < i; ++j) // Right side: p = +i.
             {
                 Hex hex = Hex.make(+i, -i + j, -j);
                 assert (hex != null);
-                FieldType type = landscapeNoise.get(counter++) > 0.5
+                FieldType type = landscapeNoise.get(counter++) > 0.3
                         ? FieldType.LAND
                         : FieldType.SEE;
                 Field field = new Field(type);
@@ -153,7 +177,7 @@ public class World
             {
                 Hex hex = Hex.make(-i, +i - j, +j);
                 assert (hex != null);
-                FieldType type = landscapeNoise.get(counter++) > 0.5
+                FieldType type = landscapeNoise.get(counter++) > 0.3
                         ? FieldType.LAND
                         : FieldType.SEE;
                 Field field = new Field(type);
@@ -163,7 +187,7 @@ public class World
             {
                 Hex hex = Hex.make(-j, +i, -i + j);
                 assert (hex != null);
-                FieldType type = landscapeNoise.get(counter++) > 0.5
+                FieldType type = landscapeNoise.get(counter++) > 0.3
                         ? FieldType.LAND
                         : FieldType.SEE;
                 Field field = new Field(type);
@@ -173,7 +197,7 @@ public class World
             {
                 Hex hex = Hex.make(+j, -i, +i - j);
                 assert (hex != null);
-                FieldType type = landscapeNoise.get(counter++) > 0.5
+                FieldType type = landscapeNoise.get(counter++) > 0.3
                         ? FieldType.LAND
                         : FieldType.SEE;
                 Field field = new Field(type);
@@ -183,7 +207,7 @@ public class World
             {
                 Hex hex = Hex.make(-i + j, -j, +i);
                 assert (hex != null);
-                FieldType type = landscapeNoise.get(counter++) > 0.5
+                FieldType type = landscapeNoise.get(counter++) > 0.3
                         ? FieldType.LAND
                         : FieldType.SEE;
                 Field field = new Field(type);
@@ -193,7 +217,7 @@ public class World
             {
                 Hex hex = Hex.make(+i - j, +j, -i);
                 assert (hex != null);
-                FieldType type = landscapeNoise.get(counter++) > 0.5
+                FieldType type = landscapeNoise.get(counter++) > 0.3
                         ? FieldType.LAND
                         : FieldType.SEE;
                 Field field = new Field(type);
