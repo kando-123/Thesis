@@ -280,8 +280,8 @@ public class PerlinNoise
             for (int i = 1; i < octavesCount; ++i)
             {
                 Pixel newPixel = new Pixel(0, 0);
-                pixel.xCoord = (int) (frequency * (double) pixel.xCoord);
-                pixel.yCoord = (int) (frequency * (double) pixel.yCoord);
+                newPixel.xCoord = (int) (frequency * (double) pixel.xCoord);
+                newPixel.yCoord = (int) (frequency * (double) pixel.yCoord);
                 noise += amplitude * getRawNoise(newPixel);
                 frequency *= lacunarity;
                 amplitude *= persistence;
@@ -310,6 +310,76 @@ public class PerlinNoise
                     value = smoothstep(value);
                     value = scaler.transform(value);
                     result.set(i, value);
+                }
+            }
+            else
+            {
+                // Do something, maybe.
+            }
+            return result;
+        }
+        else
+        {
+            throw new Exception("PerlinNoise.makeNoise");
+        }
+    }
+    
+    public Map<Object, Double> makeNoise(Map<Object, Pixel> pixels) throws Exception
+    {
+        boolean success = true;
+
+        Map<Object, Double> result = new HashMap<>(pixels.size());
+        double minimum = Double.MAX_VALUE;
+        double maximum = Double.MIN_VALUE;
+        var pixelsIterator = pixels.entrySet().iterator();
+        while (pixelsIterator.hasNext())
+        {
+            var entry = pixelsIterator.next();
+            Object key = entry.getKey();
+            Pixel pixel = entry.getValue();
+            if (pixel.xCoord < 0 || pixel.xCoord >= areaWidth || pixel.yCoord < 0 || pixel.yCoord >= areaHeight)
+            {
+                success = false;
+                break;
+            }
+            double noise = getRawNoise(pixel);
+            double frequency = lacunarity;
+            double amplitude = persistence;
+            for (int i = 1; i < octavesCount; ++i)
+            {
+                Pixel newPixel = new Pixel(0, 0);
+                newPixel.xCoord = (int) (frequency * (double) pixel.xCoord);
+                newPixel.yCoord = (int) (frequency * (double) pixel.yCoord);
+                noise += amplitude * getRawNoise(newPixel);
+                frequency *= lacunarity;
+                amplitude *= persistence;
+            }
+            result.put(key, noise);
+            if (noise > maximum)
+            {
+                maximum = noise;
+            }
+            if (noise < minimum)
+            {
+                minimum = noise;
+            }
+        }
+
+        if (success)
+        {
+            if (minimum != maximum)
+            {
+                var prescaler = new Scaler(minimum, maximum, 0d, 1d);
+                var scaler = new Scaler(0d, 1d, lowerBound, upperBound);
+                var resultIterator = result.entrySet().iterator();
+                while (resultIterator.hasNext())
+                {
+                    var entry = resultIterator.next();
+                    double value = entry.getValue();
+                    value = prescaler.transform(value);
+                    value = smoothstep(value);
+                    value = scaler.transform(value);
+                    entry.setValue(value);
                 }
             }
             else

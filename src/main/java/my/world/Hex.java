@@ -103,6 +103,16 @@ public class Hex
         return (pDistance + qDistance + rDistance) / 2;
     }
     
+    public boolean isRadial()
+    {
+        return pCoord == 0 || qCoord == 0 || rCoord == 0;
+    }
+    
+    public int ring()
+    {
+        return (Math.abs(pCoord) + Math.abs(qCoord) + Math.abs(rCoord)) / 2;
+    }
+    
     public Hex neighbor(HexagonalDirection direction)
     {
         int p = pCoord;
