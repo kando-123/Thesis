@@ -265,8 +265,8 @@ public class PerlinNoise
         boolean success = true;
 
         List<Double> result = new ArrayList<>(pixels.size());
-        double minimum = Double.MAX_VALUE;
-        double maximum = Double.MIN_VALUE;
+        double minimum = +Double.MAX_VALUE;
+        double maximum = -Double.MAX_VALUE;
         for (var pixel : pixels)
         {
             if (pixel.xCoord < 0 || pixel.xCoord >= areaWidth || pixel.yCoord < 0 || pixel.yCoord >= areaHeight)
@@ -329,8 +329,8 @@ public class PerlinNoise
         boolean success = true;
 
         Map<Object, Double> result = new HashMap<>(pixels.size());
-        double minimum = Double.MAX_VALUE;
-        double maximum = Double.MIN_VALUE;
+        double minimum = +Double.MAX_VALUE;
+        double maximum = -Double.MAX_VALUE;
         var pixelsIterator = pixels.entrySet().iterator();
         while (pixelsIterator.hasNext())
         {

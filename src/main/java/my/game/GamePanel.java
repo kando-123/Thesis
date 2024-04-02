@@ -5,6 +5,8 @@
 package my.game;
 
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import javax.swing.*;
 import my.world.*;
 
@@ -12,24 +14,52 @@ import my.world.*;
  *
  * @author Kay Jay O'Nail
  */
-public class GamePanel extends JPanel implements Runnable
+public class GamePanel extends JPanel implements Runnable, ComponentListener
 {
-    public final int screenWidth;
-    public final int screenHeight;
+    public int panelWidth;
+    public int panelHeight;
 
     private Thread gameThread;
     
-    private final World world;
+    private final WorldPanel world;
     
-    public GamePanel(Dimension dimensions)
+    public GamePanel(Dimension panelSize)
     {
-        world = new World(dimensions);
-        world.makeWorld();
+        super(new BorderLayout());
         
-        screenWidth = dimensions.width;
-        screenHeight = dimensions.height;
+        panelWidth = panelSize.width;
+        panelHeight = panelSize.height;
         
-        setPreferredSize(new Dimension(screenWidth, screenHeight));
+        JPanel north = new JPanel();
+        JPanel east = new JPanel();
+        JPanel south = new JPanel();
+        JPanel west = new JPanel();
+        //JPanel center = new JPanel();
+        north.add(new JLabel("North"));
+        east.add(new JLabel("East"));
+        south.add(new JLabel("South"));
+        west.add(new JLabel("West"));
+        
+        Dimension horizontal = new Dimension(panelWidth, panelHeight / 20);
+        Dimension vertical = new Dimension(panelWidth / 20, panelHeight);
+        north.setPreferredSize(horizontal);
+        south.setPreferredSize(horizontal);
+        east.setPreferredSize(vertical);
+        west.setPreferredSize(vertical);
+        
+        int worldWidth = panelSize.width - 2 * vertical.width;
+        int worldHeight = panelSize.height - 2 * horizontal.height;
+        Dimension worldSize = new Dimension(worldWidth, worldHeight);
+        world = new WorldPanel();
+        world.makeWorld(worldSize);
+        
+        add(world, BorderLayout.CENTER);
+        add(north, BorderLayout.NORTH);
+        add(east, BorderLayout.EAST);
+        add(south, BorderLayout.SOUTH);
+        add(west, BorderLayout.WEST);
+        
+        setPreferredSize(new Dimension(panelWidth, panelHeight));
         setBackground(Color.black);
     }
 
@@ -68,17 +98,29 @@ public class GamePanel extends JPanel implements Runnable
     {
         world.update();
     }
+    
+    @Override
+    public void componentResized(ComponentEvent e)
+    {
+        /* To be implemented... */
+        System.out.println("The frame has been resized.");
+    }
 
     @Override
-    public void paintComponent(Graphics graphics)
+    public void componentMoved(ComponentEvent e)
     {
-        super.paintComponent(graphics);
+        return;
+    }
 
-        Graphics2D graphics2D = (Graphics2D) graphics;
-        
-        /* Draw stuff. */
-        world.draw(graphics2D);
+    @Override
+    public void componentShown(ComponentEvent e)
+    {
+        return;
+    }
 
-        graphics2D.dispose();
+    @Override
+    public void componentHidden(ComponentEvent e)
+    {
+        return;
     }
 }

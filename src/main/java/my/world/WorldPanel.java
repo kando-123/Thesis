@@ -4,20 +4,21 @@
  */
 package my.world;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import my.world.field.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JPanel;
 import my.input.InputHandler;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class World
+public class WorldPanel extends JPanel
 {
     public final int hexOuterRadius;
     public final int hexInnerRadius;
@@ -25,14 +26,13 @@ public class World
     public final int hexHeight;
     public int gridSide;
 
+    private int panelWidth;
+    private int panelHeight;
     private Pixel centerOffset;
     private double scale;
     private final double scaleChange;
     private final double maxScale;
     private final double minScale;
-
-    private final int screenWidth;
-    private final int screenHeight;
 
     private Map<Hex, Field> fields;
 
@@ -43,7 +43,7 @@ public class World
         return 3 * side * (side - 1) + 1;
     }
 
-    public World(Dimension screenSize)
+    public WorldPanel()
     {
         hexOuterRadius = 40;
         hexInnerRadius = (int) ((double) hexOuterRadius * Math.sin(Math.PI / 3.0));
@@ -55,18 +55,18 @@ public class World
         maxScale = 2.5;
         minScale = 0.25;
 
-        screenWidth = screenSize.width;
-        screenHeight = screenSize.height;
-        centerOffset = new Pixel(screenWidth / 2, screenHeight / 2);
-
         inputHandler = InputHandler.getInstance();
         FieldManager.getInstance();
 
         fields = new HashMap<>();
     }
 
-    public void makeWorld()
+    public void makeWorld(Dimension panelSize)
     {
+        panelWidth = panelSize.width;
+        panelHeight = panelSize.height;
+        centerOffset = new Pixel(panelWidth / 2, panelHeight / 2);
+
         int side = 10;
         int surface = hexSurface(side);
 
@@ -74,13 +74,11 @@ public class World
         int eastmostX = Hex.getCornerPixelOf(+side, 0, -side, hexOuterRadius, hexInnerRadius).xCoord + hexWidth;
         int northmostY = Hex.getCornerPixelOf(0, -side, +side, hexOuterRadius, hexInnerRadius).yCoord;
         int southmostY = Hex.getCornerPixelOf(0, +side, -side, hexOuterRadius, hexInnerRadius).yCoord + hexHeight;
-        int areaWidth = eastmostX - westmostX;
-        int areaHeight = southmostY - northmostY;
-        int chunkSide = (hexOuterRadius + hexInnerRadius) / 2 * 4;
+
         Pixel offset = new Pixel(eastmostX, southmostY);
 
         Map<Object, Pixel> centers = new HashMap<>(surface);
-        Hex hex = Hex.make(0, 0, 0);
+        Hex hex = Hex.getOrigin();
         centers.put(hex.clone(), hex.getCentralPixel(hexOuterRadius, hexInnerRadius).plus(offset));
         for (int ring = 1; ring < side; ++ring)
         {
@@ -99,17 +97,28 @@ public class World
             while (!hex.equals(beginning));
         }
 
-        PerlinNoise shorelinePerlin = new PerlinNoise(areaWidth, areaHeight, chunkSide);
-        PerlinNoise woodsPerlin = new PerlinNoise(areaWidth, areaHeight, chunkSide);
+        int areaWidth = eastmostX - westmostX;
+        int areaHeight = southmostY - northmostY;
 
-        shorelinePerlin.setOctaves(5);
-        Map<Object, Double> shorelineNoise = null;
-        Map<Object, Double> woodsNoise = null;
+        int hexSize = (int) Math.sqrt((double) (hexWidth * hexWidth + hexHeight * hexHeight) / 2.0);
+
+        int shorelineChunkSide = hexSize * side / 3;
+        PerlinNoise shorelinePerlin = new PerlinNoise(areaWidth, areaHeight, shorelineChunkSide);
+        shorelinePerlin.setOctaves(3);
+
+        int mountainsChunkSide = hexSize * (int) Math.sqrt(side);
+        PerlinNoise mountainsPerlin = new PerlinNoise(areaWidth, areaHeight, mountainsChunkSide);
+        mountainsPerlin.setOctaves(7);
+
+        int woodsChunkSide = hexSize * side / 7;
+        PerlinNoise woodsPerlin = new PerlinNoise(areaWidth, areaHeight, woodsChunkSide);
+        woodsPerlin.setOctaves(5);
 
         try
         {
-            shorelineNoise = shorelinePerlin.makeNoise(centers);
-            woodsNoise = woodsPerlin.makeNoise(centers);
+            Map<Object, Double> shorelineNoise = shorelinePerlin.makeNoise(centers);
+            Map<Object, Double> mountainsNoise = mountainsPerlin.makeNoise(centers);
+            Map<Object, Double> woodsNoise = woodsPerlin.makeNoise(centers);
 
             var iterator = shorelineNoise.entrySet().iterator();
             while (iterator.hasNext())
@@ -118,14 +127,25 @@ public class World
                 hex = (Hex) entry.getKey();
                 double heightASL = entry.getValue();
                 FieldType type;
-                if (heightASL > 0.7)
+                if (heightASL > 0.25)
                 {
-                    type = FieldType.MOUNTS;
-                }
-                else if (heightASL > 0.4)
-                {
-                    double wood = woodsNoise.get(hex);
-                    type = wood > 0.5 ? FieldType.WOOD : FieldType.LAND;
+                    double mountainsValue = mountainsNoise.get(hex);
+                    double woodValue = woodsNoise.get(hex);
+                    if (mountainsValue > 0.75)
+                    {
+                        type = FieldType.MOUNTS;
+                    }
+                    else
+                    {
+                        if (woodValue > 0.5)
+                        {
+                            type = FieldType.WOOD;
+                        }
+                        else
+                        {
+                            type = FieldType.LAND;
+                        }
+                    }
                 }
                 else
                 {
@@ -159,8 +179,14 @@ public class World
         }
     }
 
-    public void draw(Graphics2D graphics)
+    @Override
+    public void paintComponent(Graphics graphics)
+    //public void draw(Graphics2D graphics)
     {
+        Graphics2D graphics2D = (Graphics2D) graphics;
+        graphics2D.setBackground(Color.black);
+        graphics2D.clearRect(0, 0, panelWidth, panelHeight);
+
         var iterator = fields.entrySet().iterator();
         while (iterator.hasNext())
         {
@@ -178,9 +204,9 @@ public class World
             int w = (int) ((double) hexWidth * scale);
             int h = (int) ((double) hexHeight * scale);
 
-            if (x + w >= 0 && x < screenWidth && y + h >= 0 && y < screenHeight)
+            if (x + w >= 0 && x < panelWidth && y + h >= 0 && y < panelHeight)
             {
-                graphics.drawImage(image, x, y, w, h, null);
+                graphics2D.drawImage(image, x, y, w, h, null);
             }
         }
     }
