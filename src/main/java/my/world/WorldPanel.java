@@ -67,7 +67,7 @@ public class WorldPanel extends JPanel
         panelHeight = panelSize.height;
         centerOffset = new Pixel(panelWidth / 2, panelHeight / 2);
 
-        int side = 10;
+        int side = 20;
         int surface = hexSurface(side);
 
         int westmostX = Hex.getCornerPixelOf(-side, 0, +side, hexOuterRadius, hexInnerRadius).xCoord;
