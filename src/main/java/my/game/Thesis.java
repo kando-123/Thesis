@@ -33,6 +33,7 @@ public class Thesis
         GamePanel panel = new GamePanel(frameSize);
         frame.setContentPane(panel);
         frame.addComponentListener(panel);
+        frame.addMouseListener(panel);
         frame.pack();
         
         InputHandler inputHandler = InputHandler.getInstance();

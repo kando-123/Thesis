@@ -7,6 +7,8 @@ package my.game;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.*;
 import my.world.*;
 
@@ -14,7 +16,7 @@ import my.world.*;
  *
  * @author Kay Jay O'Nail
  */
-public class GamePanel extends JPanel implements Runnable, ComponentListener
+public class GamePanel extends JPanel implements Runnable, ComponentListener, MouseListener
 {
     public int panelWidth;
     public int panelHeight;
@@ -120,6 +122,37 @@ public class GamePanel extends JPanel implements Runnable, ComponentListener
 
     @Override
     public void componentHidden(ComponentEvent e)
+    {
+        return;
+    }
+    
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {
+        Pixel pixel = new Pixel(e.getPoint().x, e.getPoint().y);
+        world.clickHex(pixel);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+        return;
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+        return;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+        return;
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e)
     {
         return;
     }

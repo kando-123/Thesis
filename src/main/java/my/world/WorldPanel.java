@@ -210,4 +210,14 @@ public class WorldPanel extends JPanel
             }
         }
     }
+    
+    public void clickHex(Pixel pixel)
+    {
+        Hex hex = Hex.atPixel(pixel, hexInnerRadius);
+        if (fields.containsKey(hex))
+        {
+            Field field = new Field(FieldType.CAPITAL);
+            fields.put(hex, field);
+        }
+    }
 }
