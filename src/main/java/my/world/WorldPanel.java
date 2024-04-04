@@ -34,7 +34,7 @@ public class WorldPanel extends JPanel
     private final double maxScale;
     private final double minScale;
 
-    private Map<Hex, Field> fields;
+    private final Map<Hex, Field> fields;
 
     private final InputHandler inputHandler;
 
