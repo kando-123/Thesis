@@ -37,14 +37,6 @@ public class Hex
     {
         return (p + q + r == 0) ? new Hex(p, q, r) : null;
     }
-    
-    public static Hex atPixel(Pixel pixel, int innerRadius)
-    {
-        int xSqrt3 = (int) (Math.sqrt(3.0) * (double) pixel.xCoord);
-        int p = (xSqrt3 + 2 * innerRadius) / (4 * innerRadius);
-        int q = (2 * pixel.yCoord - pixel.xCoord + 2 * innerRadius) / (4 * innerRadius);
-        return new Hex(p, q, -(p + q));
-    }
 
     public static Hex getOrigin()
     {

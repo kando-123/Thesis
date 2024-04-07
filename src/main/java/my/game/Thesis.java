@@ -17,7 +17,8 @@ public class Thesis
     {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("The Global Empire");  
+        frame.setTitle("The Global Empire");
+        frame.setResizable(false);
         
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
@@ -26,15 +27,14 @@ public class Thesis
         Dimension frameSize = new Dimension(frameWidth, frameHeight);
         frame.setSize(frameSize);
         
-//        InvitationPanel panel = new InvitationPanel();
-//        frame.setContentPane(panel);
-//        frame.pack();
-        
-        GamePanel panel = new GamePanel(frameSize);
+        InvitationPanel panel = new InvitationPanel(frame);
         frame.setContentPane(panel);
-        frame.addComponentListener(panel);
-        frame.addMouseListener(panel);
         frame.pack();
+        
+//        GamePanel panel = new GamePanel(frameSize);
+//        frame.setContentPane(panel);
+//        frame.addComponentListener(panel);
+//        frame.pack();
         
         InputHandler inputHandler = InputHandler.getInstance();
         frame.addKeyListener(inputHandler);
@@ -42,6 +42,6 @@ public class Thesis
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         
-        panel.startGameThread();
+//        panel.startGameThread();
     }
 }

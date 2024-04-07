@@ -4,15 +4,12 @@
  */
 package my.world;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import my.world.field.*;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import java.awt.*;
+import java.awt.image.*;
 import java.util.*;
-import javax.swing.JPanel;
-import my.input.InputHandler;
+import javax.swing.*;
+import my.input.*;
+import my.world.field.*;
 
 /**
  *
@@ -51,7 +48,7 @@ public class WorldPanel extends JPanel
         hexHeight = 2 * hexInnerRadius;
 
         scale = 1.0;
-        scaleChange = 0.01;
+        scaleChange = 1.01;
         maxScale = 2.5;
         minScale = 0.25;
 
@@ -171,17 +168,16 @@ public class WorldPanel extends JPanel
 
         if (inputHandler.zoomIn())
         {
-            scale = Math.min(scale + scaleChange, maxScale);
+            scale = Math.min(scale * scaleChange, maxScale);
         }
         else if (inputHandler.zoomOut())
         {
-            scale = Math.max(scale - scaleChange, minScale);
+            scale = Math.max(scale / scaleChange, minScale);
         }
     }
 
     @Override
     public void paintComponent(Graphics graphics)
-    //public void draw(Graphics2D graphics)
     {
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setBackground(Color.black);
@@ -208,16 +204,6 @@ public class WorldPanel extends JPanel
             {
                 graphics2D.drawImage(image, x, y, w, h, null);
             }
-        }
-    }
-    
-    public void clickHex(Pixel pixel)
-    {
-        Hex hex = Hex.atPixel(pixel, hexInnerRadius);
-        if (fields.containsKey(hex))
-        {
-            Field field = new Field(FieldType.CAPITAL);
-            fields.put(hex, field);
         }
     }
 }

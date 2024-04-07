@@ -129,8 +129,7 @@ public class GamePanel extends JPanel implements Runnable, ComponentListener, Mo
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        Pixel pixel = new Pixel(e.getPoint().x, e.getPoint().y);
-        world.clickHex(pixel);
+        return;
     }
 
     @Override
