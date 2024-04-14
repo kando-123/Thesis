@@ -20,7 +20,10 @@ public enum Statement
             "Tryb wieloosobowy: Gość"),
     
     LANGUAGE("Language",
-            "Język");
+            "Język"),
+    
+    READY("Ready",
+            "Gotowe");
 
     private String inEnglish;
     private String inPolish;

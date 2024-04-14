@@ -29,7 +29,7 @@ public class Main
         int frameHeight = (int) ((double) screenSize.height / Math.sqrt(2.0));
         Dimension frameSize = new Dimension(frameWidth, frameHeight);
         master.setSize(frameSize);
-        
+
         InvitationPanel invitationPanel = new InvitationPanel(master);
         master.setContentPane(invitationPanel);
         master.pack();

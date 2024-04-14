@@ -11,6 +11,9 @@ package my.i18n;
 public enum Language
 {
     ENGLISH,
-    POLISH
-    // ...
+    POLISH,
+    GERMAN,
+    SPANISH,
+    ITALIAN,
+    FRENCH
 }

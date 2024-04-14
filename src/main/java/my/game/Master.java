@@ -3,6 +3,7 @@
  */
 package my.game;
 
+import java.awt.Dimension;
 import javax.swing.*;
 
 /**
@@ -12,6 +13,8 @@ import javax.swing.*;
 public class Master extends JFrame
 {
     private GameMode gameMode = null;
+    
+    private LanguagePanel languagePanel = null;
     
     private Master()
     {
@@ -29,13 +32,27 @@ public class Master extends JFrame
         return instance;
     }
     
-    public void serveAction(String actionCommand)
+    public void serveAction(String command)
     {
-        switch (actionCommand)
+        switch (command)
         {
-            case "language" ->
+            case "select language" ->
             {
-                
+                if (languagePanel == null)
+                {
+                    languagePanel = new LanguagePanel(this);
+                    Dimension frameDimension = getSize();
+                    languagePanel.setPreferredSize(frameDimension);
+                }
+                setContentPane(languagePanel);
+                pack();
+                setLocationRelativeTo(null);
+            }
+            case "language selected" ->
+            {
+                setContentPane(new InvitationPanel(this));
+                pack();
+                setLocationRelativeTo(null);
             }
             case "singleplayer" ->
             {

@@ -69,7 +69,7 @@ public class InvitationPanel extends JPanel implements ActionListener
         JButton languageButton = new JButton();
         text = dictionary.translate(Statement.LANGUAGE);
         languageButton.setText(text);
-        languageButton.setActionCommand("language");
+        languageButton.setActionCommand("select language");
         languageButton.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 2;
@@ -117,6 +117,6 @@ public class InvitationPanel extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        System.out.println(e.getActionCommand());
+        master.serveAction(e.getActionCommand());
     }
 }

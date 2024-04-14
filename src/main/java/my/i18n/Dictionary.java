@@ -14,7 +14,12 @@ public class Dictionary
     
     private Dictionary()
     {
-        language = Language.POLISH;
+        language = Language.ENGLISH;
+    }
+    
+    public void setLanguage(Language newLanguage)
+    {
+        language = newLanguage;
     }
     
     public String translate(Statement statement)

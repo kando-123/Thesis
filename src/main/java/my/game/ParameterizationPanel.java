@@ -16,10 +16,10 @@ import javax.swing.JSlider;
  */
 public class ParameterizationPanel extends JPanel
 {
-    private JSlider worldSizeSlider;
-    private JSlider landPercentageSlider;
-    private JSlider mountainsPercentageSlider;
-    private JSlider woodsPErcentageSlider;
+    private JSlider worldSizeSlider; /* 10 : 30 */
+    private JSlider seaPercentageSlider; /* 0.10 : 0.90 */
+    private JSlider mountainsPercentageSlider; /* 0.10 : 0.50 */
+    private JSlider woodsPErcentageSlider; /* 0.10 : 0.40 */
     
     public ParameterizationPanel(Dimension dimension)
     {
