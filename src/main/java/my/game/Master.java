@@ -3,9 +3,7 @@
  */
 package my.game;
 
-import java.awt.*;
 import javax.swing.*;
-import my.input.*;
 
 /**
  *
@@ -13,31 +11,11 @@ import my.input.*;
  */
 public class Master extends JFrame
 {
+    private GameMode gameMode = null;
+    
     private Master()
     {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("The Global Empire");
-        setResizable(false);
         
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
-        int frameWidth = (int) ((double) screenSize.width / Math.sqrt(2.0));
-        int frameHeight = (int) ((double) screenSize.height / Math.sqrt(2.0));
-        Dimension frameSize = new Dimension(frameWidth, frameHeight);
-        setSize(frameSize);
-        
-        GamePanel panel = new GamePanel(frameSize);
-        setContentPane(panel);
-        addComponentListener(panel);
-        pack();
-        
-        InputHandler inputHandler = InputHandler.getInstance();
-        addKeyListener(inputHandler);
-        
-        setVisible(true);
-        setLocationRelativeTo(null);
-        
-        panel.startGameThread();
     }
     
     private static Master instance = null;
@@ -49,5 +27,31 @@ public class Master extends JFrame
             instance = new Master();
         }
         return instance;
+    }
+    
+    public void serveAction(String actionCommand)
+    {
+        switch (actionCommand)
+        {
+            case "language" ->
+            {
+                
+            }
+            case "singleplayer" ->
+            {
+                gameMode = GameMode.SINGLEPLAYER;
+                // ...
+            }
+            case "host" ->
+            {
+                gameMode = GameMode.MULTIPLAYER_HOST;
+                // ...
+            }
+            case "guest" ->
+            {
+                gameMode = GameMode.MULTIPLAYER_GUEST;
+                // ...
+            }
+        }
     }
 }

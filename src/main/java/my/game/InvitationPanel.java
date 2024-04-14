@@ -9,6 +9,8 @@ import java.awt.event.*;
 import java.io.*;
 import javax.imageio.*;
 import javax.swing.*;
+import my.i18n.Dictionary;
+import my.i18n.Statement;
 
 /**
  *
@@ -16,13 +18,15 @@ import javax.swing.*;
  */
 public class InvitationPanel extends JPanel implements ActionListener
 {
-    private final Dimension dimension;
+    private final Master master;
     
-    public InvitationPanel()
+    public InvitationPanel(Master parentFrame)
     {
         super(new GridBagLayout());
         
-        dimension = new Dimension();
+        master = parentFrame;
+        
+        Dictionary dictionary = Dictionary.getInstance();
         
         /* Logo. */
         GridBagConstraints c;
@@ -36,9 +40,9 @@ public class InvitationPanel extends JPanel implements ActionListener
             c.gridx = 0;
             c.gridy = 0;
             c.gridwidth = GridBagConstraints.REMAINDER;
+            c.gridheight = 1;
+            c.fill = GridBagConstraints.BOTH;
             add(imageLabel, c);
-            dimension.width = imageLabel.getWidth();
-            dimension.height = imageLabel.getHeight();
         }
         catch (IOException e)
         {
@@ -46,54 +50,73 @@ public class InvitationPanel extends JPanel implements ActionListener
         }
         
         /* Singleplayer button. */
-        JButton singleplayerButton = new JButton("Singleplayer");
+        JButton singleplayerButton = new JButton();
+        String text = dictionary.translate(Statement.SINGLEPLAYER);
+        singleplayerButton.setText(text);
         singleplayerButton.setActionCommand("singleplayer");
         singleplayerButton.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = 2;
+        c.gridheight = 1;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 20.0;
+        c.weighty = 1.0;
         add(singleplayerButton, c);
-        dimension.height += singleplayerButton.getHeight();
+        
+        /* Language selection button. */
+        JButton languageButton = new JButton();
+        text = dictionary.translate(Statement.LANGUAGE);
+        languageButton.setText(text);
+        languageButton.setActionCommand("language");
+        languageButton.addActionListener(this);
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 2;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        add(languageButton, c);
         
         /* Multiplayer-host button. */
-        JButton hostButton = new JButton("Multiplayer: Host");
+        JButton hostButton = new JButton();
+        text = dictionary.translate(Statement.MULTIPLAYER_HOST);
+        hostButton.setText(text);
         hostButton.setActionCommand("host");
         hostButton.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 2;
-        c.weightx = 1.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.CENTER;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 10.0;
+        c.weighty = 1.0;
         add(hostButton, c);
         
         /* Multiplayer-host button. */
-        JButton guestButton = new JButton("Multiplayer: Guest");
+        JButton guestButton = new JButton();
+        text = dictionary.translate(Statement.MULTIPLAYER_GUEST);
+        guestButton.setText(text);
         guestButton.setActionCommand("guest");
         guestButton.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 2;
-        c.weightx = 1.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.CENTER;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 10.0;
+        c.weighty = 1.0;
         add(guestButton, c);
-        
-        dimension.height += Math.max(hostButton.getHeight(), guestButton.getHeight());
-        
-        setPreferredSize(dimension);
     }
     
     @Override
     public void actionPerformed(ActionEvent e)
     {
         System.out.println(e.getActionCommand());
-    }
-    
-    public Dimension getDimension()
-    {
-        return dimension;
     }
 }
