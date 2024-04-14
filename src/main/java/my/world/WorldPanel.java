@@ -4,10 +4,16 @@
  */
 package my.world;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JPanel;
 import my.input.*;
 import my.world.field.*;
 
@@ -58,14 +64,18 @@ public class WorldPanel extends JPanel
         fields = new HashMap<>();
     }
 
-    public void makeWorld(Dimension panelSize)
+    public void makeWorld(Dimension panelSize, WorldParameters parameters)
     {
+        assert (parameters.worldSide >= 10 && parameters.worldSide <= 30);
+        assert (parameters.seaPercentage >= 0.10 && parameters.seaPercentage <= 0.90);
+        assert (parameters.mountainsOnLandPercentage >= 0.10 && parameters.mountainsOnLandPercentage <= 0.50);
+        assert (parameters.woodsOnLandPercentage >= 0.10 && parameters.woodsOnLandPercentage <= 0.40);
+
         panelWidth = panelSize.width;
         panelHeight = panelSize.height;
         centerOffset = new Pixel(panelWidth / 2, panelHeight / 2);
 
-        int side = 20;
-        int surface = hexSurface(side);
+        int side = parameters.worldSide;
 
         int westmostX = Hex.getCornerPixelOf(-side, 0, +side, hexOuterRadius, hexInnerRadius).xCoord;
         int eastmostX = Hex.getCornerPixelOf(+side, 0, -side, hexOuterRadius, hexInnerRadius).xCoord + hexWidth;
@@ -73,26 +83,7 @@ public class WorldPanel extends JPanel
         int southmostY = Hex.getCornerPixelOf(0, +side, -side, hexOuterRadius, hexInnerRadius).yCoord + hexHeight;
 
         Pixel offset = new Pixel(eastmostX, southmostY);
-
-        Map<Object, Pixel> centers = new HashMap<>(surface);
-        Hex hex = Hex.getOrigin();
-        centers.put(hex.clone(), hex.getCentralPixel(hexOuterRadius, hexInnerRadius).plus(offset));
-        for (int ring = 1; ring < side; ++ring)
-        {
-            hex.shift(HexagonalDirection.UP);
-            Hex beginning = hex.clone();
-            HexagonalDirection direction = HexagonalDirection.RIGHT_DOWN;
-            do
-            {
-                centers.put(hex.clone(), hex.getCentralPixel(hexOuterRadius, hexInnerRadius).plus(offset));
-                hex.shift(direction);
-                if (hex.isRadial())
-                {
-                    direction = direction.next();
-                }
-            }
-            while (!hex.equals(beginning));
-        }
+        Map<Object, Pixel> centers = getCenters(side, offset);
 
         int areaWidth = eastmostX - westmostX;
         int areaHeight = southmostY - northmostY;
@@ -111,51 +102,127 @@ public class WorldPanel extends JPanel
         PerlinNoise woodsPerlin = new PerlinNoise(areaWidth, areaHeight, woodsChunkSide);
         woodsPerlin.setOctaves(5);
 
-        try
-        {
-            Map<Object, Double> shorelineNoise = shorelinePerlin.makeNoise(centers);
-            Map<Object, Double> mountainsNoise = mountainsPerlin.makeNoise(centers);
-            Map<Object, Double> woodsNoise = woodsPerlin.makeNoise(centers);
+        Map<Object, Double> shorelineNoise = shorelinePerlin.makeNoise(centers);
+        double seaThreshold = calculateThreshold(shorelineNoise, parameters.seaPercentage);
 
-            var iterator = shorelineNoise.entrySet().iterator();
-            while (iterator.hasNext())
+        var iterator = shorelineNoise.entrySet().iterator();
+        List<Hex> keysForRemoval = new ArrayList<>();
+        while (iterator.hasNext())
+        {
+            var entry = iterator.next();
+            Hex hex = (Hex) entry.getKey();
+            double noise = entry.getValue();
+            if (noise < seaThreshold)
             {
-                var entry = iterator.next();
-                hex = (Hex) entry.getKey();
-                double heightASL = entry.getValue();
-                FieldType type;
-                if (heightASL > 0.25)
-                {
-                    double mountainsValue = mountainsNoise.get(hex);
-                    double woodValue = woodsNoise.get(hex);
-                    if (mountainsValue > 0.75)
-                    {
-                        type = FieldType.MOUNTS;
-                    }
-                    else
-                    {
-                        if (woodValue > 0.5)
-                        {
-                            type = FieldType.WOOD;
-                        }
-                        else
-                        {
-                            type = FieldType.LAND;
-                        }
-                    }
-                }
-                else
-                {
-                    type = FieldType.SEE;
-                }
-                Field field = new Field(type);
+                Field field = new Field(FieldType.SEE);
+                fields.put(hex, field);
+                keysForRemoval.add(hex);
+            }
+        }
+        for (var key : keysForRemoval)
+        {
+            centers.remove(key);
+        }
+
+        Map<Object, Double> mountainsNoise = mountainsPerlin.makeNoise(centers);
+        double mountainsThreshold = calculateThreshold(mountainsNoise, parameters.mountainsOnLandPercentage);
+
+        iterator = mountainsNoise.entrySet().iterator();
+        keysForRemoval = new ArrayList<>();
+        while (iterator.hasNext())
+        {
+            var entry = iterator.next();
+            Hex hex = (Hex) entry.getKey();
+            double noise = entry.getValue();
+            if (noise < mountainsThreshold)
+            {
+                Field field = new Field(FieldType.MOUNTS);
+                fields.put(hex, field);
+                keysForRemoval.add(hex);
+            }
+        }
+        for (var key : keysForRemoval)
+        {
+            centers.remove(key);
+        }
+
+        Map<Object, Double> woodsNoise = woodsPerlin.makeNoise(centers);
+        double woodsThreshold = calculateThreshold(woodsNoise, parameters.woodsOnLandPercentage);
+
+        iterator = woodsNoise.entrySet().iterator();
+        while (iterator.hasNext())
+        {
+            var entry = iterator.next();
+            Hex hex = (Hex) entry.getKey();
+            double noise = entry.getValue();
+            if (noise < woodsThreshold)
+            {
+                Field field = new Field(FieldType.WOOD);
+                fields.put(hex, field);
+            }
+            else
+            {
+                Field field = new Field(FieldType.LAND);
                 fields.put(hex, field);
             }
         }
-        catch (Exception e)
+    }
+
+    private Map<Object, Pixel> getCenters(int side, Pixel offset)
+    {
+        Map<Object, Pixel> centers = new HashMap<>(hexSurface(side));
+        Hex hex = Hex.getOrigin();
+        centers.put(hex.clone(), hex.getCentralPixel(hexOuterRadius, hexInnerRadius).plus(offset));
+        for (int ring = 1; ring < side; ++ring)
         {
-            System.err.println(e);
+            hex.shift(HexagonalDirection.UP);
+            Hex beginning = hex.clone();
+            HexagonalDirection direction = HexagonalDirection.RIGHT_DOWN;
+            do
+            {
+                centers.put(hex.clone(), hex.getCentralPixel(hexOuterRadius, hexInnerRadius).plus(offset));
+                hex.shift(direction);
+                if (hex.isRadial())
+                {
+                    direction = direction.next();
+                }
+            }
+            while (!hex.equals(beginning));
         }
+        return centers;
+    }
+
+    private static final double ACCURACY = 0.05;
+    private static final int TIERS_COUNT = (int) (1.0 / ACCURACY) + 1;
+
+    private double calculateThreshold(Map<Object, Double> noise, double percentage)
+    {
+        /* The i-th interval will store the number of entries whose value falls
+           within the range from i*accuracy (incl.) to (i+1)*accuracy (excl.). */
+        List<Integer> noiseIntervals = new ArrayList(TIERS_COUNT);
+        for (int i = 0; i < TIERS_COUNT; ++i)
+        {
+            noiseIntervals.add(0);
+        }
+        noise.forEach((Object key, Double value) ->
+        {
+            int tier = (int) (value / ACCURACY);
+            noiseIntervals.set(tier, noiseIntervals.get(tier) + 1);
+        }
+        );
+        final int minimalSum = (int) (percentage * (double) noise.size());
+        int currentSum = 0;
+        double threshold = 0.0;
+        for (int i = 0; i < TIERS_COUNT; ++i)
+        {
+            currentSum += noiseIntervals.get(i);
+            if (currentSum >= minimalSum)
+            {
+                threshold = (double) (i + 1) * ACCURACY;
+                break;
+            }
+        }
+        return threshold;
     }
 
     public void update()

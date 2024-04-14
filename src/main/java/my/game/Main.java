@@ -2,21 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package my.world;
+package my.game;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class WorldParameters
+public class Main
 {
-    public int worldSide;
-    public double seaPercentage;
-    public double mountainsOnLandPercentage;
-    public double woodsOnLandPercentage;
-    
-    public WorldParameters()
+    public static void main(String[] args)
     {
-        
+        Master master = Master.getInstance();
     }
 }

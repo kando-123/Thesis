@@ -16,13 +16,13 @@ import javax.swing.*;
  */
 public class InvitationPanel extends JPanel implements ActionListener
 {
-    private JFrame parentFrame;
+    private final Dimension dimension;
     
-    public InvitationPanel(JFrame parentFrame)
+    public InvitationPanel()
     {
         super(new GridBagLayout());
         
-        this.parentFrame = parentFrame;
+        dimension = new Dimension();
         
         /* Logo. */
         GridBagConstraints c;
@@ -37,6 +37,8 @@ public class InvitationPanel extends JPanel implements ActionListener
             c.gridy = 0;
             c.gridwidth = GridBagConstraints.REMAINDER;
             add(imageLabel, c);
+            dimension.width = imageLabel.getWidth();
+            dimension.height = imageLabel.getHeight();
         }
         catch (IOException e)
         {
@@ -53,6 +55,7 @@ public class InvitationPanel extends JPanel implements ActionListener
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = GridBagConstraints.REMAINDER;
         add(singleplayerButton, c);
+        dimension.height += singleplayerButton.getHeight();
         
         /* Multiplayer-host button. */
         JButton hostButton = new JButton("Multiplayer: Host");
@@ -77,11 +80,20 @@ public class InvitationPanel extends JPanel implements ActionListener
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.CENTER;
         add(guestButton, c);
+        
+        dimension.height += Math.max(hostButton.getHeight(), guestButton.getHeight());
+        
+        setPreferredSize(dimension);
     }
     
     @Override
     public void actionPerformed(ActionEvent e)
     {
         System.out.println(e.getActionCommand());
+    }
+    
+    public Dimension getDimension()
+    {
+        return dimension;
     }
 }

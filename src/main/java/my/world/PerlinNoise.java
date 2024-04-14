@@ -260,20 +260,16 @@ public class PerlinNoise
         return lerp(horizontalTop, horizontalBottom, pixelTopQ);
     }
 
-    public List<Double> makeNoise(List<Pixel> pixels) throws Exception
+    public List<Double> makeNoise(List<Pixel> pixels)
     {
-        boolean success = true;
-
         List<Double> result = new ArrayList<>(pixels.size());
         double minimum = +Double.MAX_VALUE;
         double maximum = -Double.MAX_VALUE;
         for (var pixel : pixels)
         {
-            if (pixel.xCoord < 0 || pixel.xCoord >= areaWidth || pixel.yCoord < 0 || pixel.yCoord >= areaHeight)
-            {
-                success = false;
-                break;
-            }
+            assert (pixel.xCoord >= 0 && pixel.xCoord < areaWidth);
+            assert (pixel.yCoord >= 0 && pixel.yCoord < areaHeight);
+
             double noise = getRawNoise(pixel);
             double frequency = lacunarity;
             double amplitude = persistence;
@@ -297,37 +293,28 @@ public class PerlinNoise
             }
         }
 
-        if (success)
+        if (minimum != maximum)
         {
-            if (minimum != maximum)
+            var prescaler = new Scaler(minimum, maximum, 0d, 1d);
+            var scaler = new Scaler(0d, 1d, lowerBound, upperBound);
+            for (int i = 0; i < result.size(); ++i)
             {
-                var prescaler = new Scaler(minimum, maximum, 0d, 1d);
-                var scaler = new Scaler(0d, 1d, lowerBound, upperBound);
-                for (int i = 0; i < result.size(); ++i)
-                {
-                    double value = result.get(i);
-                    value = prescaler.transform(value);
-                    value = smoothstep(value);
-                    value = scaler.transform(value);
-                    result.set(i, value);
-                }
+                double value = result.get(i);
+                value = prescaler.transform(value);
+                value = smoothstep(value);
+                value = scaler.transform(value);
+                result.set(i, value);
             }
-            else
-            {
-                // Do something, maybe.
-            }
-            return result;
         }
         else
         {
-            throw new Exception("PerlinNoise.makeNoise");
+            // Do something, maybe.
         }
+        return result;
     }
-    
-    public Map<Object, Double> makeNoise(Map<Object, Pixel> pixels) throws Exception
-    {
-        boolean success = true;
 
+    public Map<Object, Double> makeNoise(Map<Object, Pixel> pixels)
+    {
         Map<Object, Double> result = new HashMap<>(pixels.size());
         double minimum = +Double.MAX_VALUE;
         double maximum = -Double.MAX_VALUE;
@@ -337,11 +324,10 @@ public class PerlinNoise
             var entry = pixelsIterator.next();
             Object key = entry.getKey();
             Pixel pixel = entry.getValue();
-            if (pixel.xCoord < 0 || pixel.xCoord >= areaWidth || pixel.yCoord < 0 || pixel.yCoord >= areaHeight)
-            {
-                success = false;
-                break;
-            }
+
+            assert (pixel.xCoord >= 0 && pixel.xCoord < areaWidth);
+            assert (pixel.yCoord >= 0 && pixel.yCoord < areaHeight);
+
             double noise = getRawNoise(pixel);
             double frequency = lacunarity;
             double amplitude = persistence;
@@ -365,32 +351,25 @@ public class PerlinNoise
             }
         }
 
-        if (success)
+        if (minimum != maximum)
         {
-            if (minimum != maximum)
+            var prescaler = new Scaler(minimum, maximum, 0d, 1d);
+            var scaler = new Scaler(0d, 1d, lowerBound, upperBound);
+            var resultIterator = result.entrySet().iterator();
+            while (resultIterator.hasNext())
             {
-                var prescaler = new Scaler(minimum, maximum, 0d, 1d);
-                var scaler = new Scaler(0d, 1d, lowerBound, upperBound);
-                var resultIterator = result.entrySet().iterator();
-                while (resultIterator.hasNext())
-                {
-                    var entry = resultIterator.next();
-                    double value = entry.getValue();
-                    value = prescaler.transform(value);
-                    value = smoothstep(value);
-                    value = scaler.transform(value);
-                    entry.setValue(value);
-                }
+                var entry = resultIterator.next();
+                double value = entry.getValue();
+                value = prescaler.transform(value);
+                value = smoothstep(value);
+                value = scaler.transform(value);
+                entry.setValue(value);
             }
-            else
-            {
-                // Do something, maybe.
-            }
-            return result;
         }
         else
         {
-            throw new Exception("PerlinNoise.makeNoise");
+            // Do something, maybe.
         }
+        return result;
     }
 }

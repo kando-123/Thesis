@@ -23,7 +23,7 @@ public class GamePanel extends JPanel implements Runnable, ComponentListener, Mo
 
     private Thread gameThread;
     
-    private final WorldPanel world;
+    private final WorldPanel worldPanel;
     
     public GamePanel(Dimension panelSize)
     {
@@ -51,11 +51,16 @@ public class GamePanel extends JPanel implements Runnable, ComponentListener, Mo
         
         int worldWidth = panelSize.width - 2 * vertical.width;
         int worldHeight = panelSize.height - 2 * horizontal.height;
-        Dimension worldSize = new Dimension(worldWidth, worldHeight);
-        world = new WorldPanel();
-        world.makeWorld(worldSize);
+        Dimension worldPanelSize = new Dimension(worldWidth, worldHeight);
+        WorldParameters worldParameters = new WorldParameters();
+        worldParameters.worldSide = 20;
+        worldParameters.seaPercentage = 0.50;
+        worldParameters.mountainsOnLandPercentage = 0.40;
+        worldParameters.woodsOnLandPercentage = 0.30;
+        worldPanel = new WorldPanel();
+        worldPanel.makeWorld(worldPanelSize, worldParameters);
         
-        add(world, BorderLayout.CENTER);
+        add(worldPanel, BorderLayout.CENTER);
         add(north, BorderLayout.NORTH);
         add(east, BorderLayout.EAST);
         add(south, BorderLayout.SOUTH);
@@ -98,7 +103,7 @@ public class GamePanel extends JPanel implements Runnable, ComponentListener, Mo
 
     private void update()
     {
-        world.update();
+        worldPanel.update();
     }
     
     @Override
