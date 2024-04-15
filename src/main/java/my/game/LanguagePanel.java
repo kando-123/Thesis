@@ -30,13 +30,18 @@ public class LanguagePanel extends JPanel implements ActionListener
         super(new GridBagLayout());
         
         master = parentFrame;
-        language = Language.ENGLISH;
+        
+        Dictionary dictionary = Dictionary.getInstance();
+        language = dictionary.getLanguage();
         
         GridBagConstraints c = new GridBagConstraints();
         JRadioButton english = new JRadioButton("English");
         english.setActionCommand("English");
         english.addActionListener(this);
-        english.setSelected(true);
+        if (language == language.ENGLISH)
+        {
+            english.setSelected(true);
+        }
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -48,6 +53,10 @@ public class LanguagePanel extends JPanel implements ActionListener
         JRadioButton polish = new JRadioButton("Polski");
         polish.setActionCommand("Polish");
         polish.addActionListener(this);
+        if (language == language.POLISH)
+        {
+            polish.setSelected(true);
+        }
         c.gridx = 0;
         c.gridy = 1;
         c.anchor = GridBagConstraints.LINE_START;
@@ -60,6 +69,10 @@ public class LanguagePanel extends JPanel implements ActionListener
         german.setActionCommand("German");
         german.addActionListener(this);
         german.setEnabled(false);
+        if (language == language.GERMAN)
+        {
+            german.setSelected(true);
+        }
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
@@ -72,6 +85,10 @@ public class LanguagePanel extends JPanel implements ActionListener
         spanish.setActionCommand("Spanish");
         spanish.addActionListener(this);
         spanish.setEnabled(false);
+        if (language == language.SPANISH)
+        {
+            spanish.setSelected(true);
+        }
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_START;
@@ -84,6 +101,10 @@ public class LanguagePanel extends JPanel implements ActionListener
         italian.setActionCommand("Italian");
         italian.addActionListener(this);
         italian.setEnabled(false);
+        if (language == language.ITALIAN)
+        {
+            italian.setSelected(true);
+        }
         c.gridx = 0;
         c.gridy = 4;
         c.anchor = GridBagConstraints.LINE_START;
@@ -96,6 +117,10 @@ public class LanguagePanel extends JPanel implements ActionListener
         french.setActionCommand("French");
         french.addActionListener(this);
         french.setEnabled(false);
+        if (language == language.FRENCH)
+        {
+            french.setSelected(true);
+        }
         c.gridx = 0;
         c.gridy = 5;
         c.anchor = GridBagConstraints.LINE_START;
@@ -112,7 +137,6 @@ public class LanguagePanel extends JPanel implements ActionListener
         group.add(french);
         
         c = new GridBagConstraints();
-        Dictionary dictionary = Dictionary.getInstance();
         String text = dictionary.translate(Statement.READY);
         JButton readyButton = new JButton(text);
         readyButton.setActionCommand("ready");

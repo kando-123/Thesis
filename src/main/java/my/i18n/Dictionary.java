@@ -22,6 +22,11 @@ public class Dictionary
         language = newLanguage;
     }
     
+    public Language getLanguage()
+    {
+        return language;
+    }
+    
     public String translate(Statement statement)
     {
         String translation = "";

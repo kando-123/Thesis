@@ -14,8 +14,6 @@ public class Master extends JFrame
 {
     private GameMode gameMode = null;
     
-    private LanguagePanel languagePanel = null;
-    
     private Master()
     {
         
@@ -38,12 +36,10 @@ public class Master extends JFrame
         {
             case "select language" ->
             {
-                if (languagePanel == null)
-                {
-                    languagePanel = new LanguagePanel(this);
-                    Dimension frameDimension = getSize();
-                    languagePanel.setPreferredSize(frameDimension);
-                }
+                LanguagePanel languagePanel = new LanguagePanel(this);
+                Dimension frameDimension = getSize();
+                languagePanel.setPreferredSize(frameDimension);
+                
                 setContentPane(languagePanel);
                 pack();
                 setLocationRelativeTo(null);
