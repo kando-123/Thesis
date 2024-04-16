@@ -10,14 +10,14 @@ package my.i18n;
  */
 public enum Statement
 {   
-    SINGLEPLAYER("Singleplayer",
-            "Tryb jednoosobowy"),
+    LOCAL("Local",
+            "Tryb lokalny"),
     
-    MULTIPLAYER_HOST("Multiplayer: Host",
-            "Tryb wieloosobowy: Gospodarz"),
+    REMOTE_HOST("Remote: Host",
+            "Tryb zdalny: Gospodarz"),
     
-    MULTIPLAYER_GUEST("Multiplayer: Guest",
-            "Tryb wieloosobowy: Gość"),
+    REMOTE_GUEST("Remote: Guest",
+            "Tryb zdalny: Gość"),
     
     LANGUAGE("Language",
             "Język"),

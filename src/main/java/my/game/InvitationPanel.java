@@ -51,9 +51,9 @@ public class InvitationPanel extends JPanel implements ActionListener
         
         /* Singleplayer button. */
         JButton singleplayerButton = new JButton();
-        String text = dictionary.translate(Statement.SINGLEPLAYER);
+        String text = dictionary.translate(Statement.LOCAL);
         singleplayerButton.setText(text);
-        singleplayerButton.setActionCommand("singleplayer");
+        singleplayerButton.setActionCommand("local");
         singleplayerButton.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -83,7 +83,7 @@ public class InvitationPanel extends JPanel implements ActionListener
         
         /* Multiplayer-host button. */
         JButton hostButton = new JButton();
-        text = dictionary.translate(Statement.MULTIPLAYER_HOST);
+        text = dictionary.translate(Statement.REMOTE_HOST);
         hostButton.setText(text);
         hostButton.setActionCommand("host");
         hostButton.addActionListener(this);
@@ -99,7 +99,7 @@ public class InvitationPanel extends JPanel implements ActionListener
         
         /* Multiplayer-host button. */
         JButton guestButton = new JButton();
-        text = dictionary.translate(Statement.MULTIPLAYER_GUEST);
+        text = dictionary.translate(Statement.REMOTE_GUEST);
         guestButton.setText(text);
         guestButton.setActionCommand("guest");
         guestButton.addActionListener(this);

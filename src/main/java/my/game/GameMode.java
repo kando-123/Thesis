@@ -10,7 +10,7 @@ package my.game;
  */
 public enum GameMode
 {
-    SINGLEPLAYER,
-    MULTIPLAYER_HOST,
-    MULTIPLAYER_GUEST;
+    LOCAL,
+    REMOTE_HOST,
+    REMOTE_GUEST;
 }

@@ -6,6 +6,7 @@ package my.game;
 import my.i18n.LanguagePanel;
 import java.awt.Dimension;
 import javax.swing.*;
+import my.player.PlayerSelectionPanel;
 
 /**
  *
@@ -51,20 +52,29 @@ public class Master extends JFrame
                 pack();
                 setLocationRelativeTo(null);
             }
-            case "singleplayer" ->
+            case "local" ->
             {
-                gameMode = GameMode.SINGLEPLAYER;
-                // ...
+                gameMode = GameMode.LOCAL;
+                
+                setContentPane(new PlayerSelectionPanel(gameMode));
+                pack();
+                setLocationRelativeTo(null);
             }
             case "host" ->
             {
-                gameMode = GameMode.MULTIPLAYER_HOST;
-                // ...
+                gameMode = GameMode.REMOTE_HOST;
+                
+                setContentPane(new PlayerSelectionPanel(gameMode));
+                pack();
+                setLocationRelativeTo(null);
             }
             case "guest" ->
             {
-                gameMode = GameMode.MULTIPLAYER_GUEST;
-                // ...
+                gameMode = GameMode.REMOTE_GUEST;
+                
+                setContentPane(new PlayerSelectionPanel(gameMode));
+                pack();
+                setLocationRelativeTo(null);
             }
         }
     }

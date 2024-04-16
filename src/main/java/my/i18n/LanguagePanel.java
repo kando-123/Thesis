@@ -13,9 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import my.game.Master;
-import my.i18n.Dictionary;
-import my.i18n.Language;
-import my.i18n.Statement;
 
 /**
  *
@@ -23,7 +20,7 @@ import my.i18n.Statement;
  */
 public class LanguagePanel extends JPanel implements ActionListener
 {
-    private Master master;
+    private final Master master;
     private Language language;
     
     public LanguagePanel(Master parentFrame)
@@ -39,7 +36,7 @@ public class LanguagePanel extends JPanel implements ActionListener
         JRadioButton english = new JRadioButton("English");
         english.setActionCommand("English");
         english.addActionListener(this);
-        if (language == language.ENGLISH)
+        if (language == Language.ENGLISH)
         {
             english.setSelected(true);
         }
@@ -54,7 +51,7 @@ public class LanguagePanel extends JPanel implements ActionListener
         JRadioButton polish = new JRadioButton("Polski");
         polish.setActionCommand("Polish");
         polish.addActionListener(this);
-        if (language == language.POLISH)
+        if (language == Language.POLISH)
         {
             polish.setSelected(true);
         }
@@ -70,7 +67,7 @@ public class LanguagePanel extends JPanel implements ActionListener
         german.setActionCommand("German");
         german.addActionListener(this);
         german.setEnabled(false);
-        if (language == language.GERMAN)
+        if (language == Language.GERMAN)
         {
             german.setSelected(true);
         }
@@ -86,7 +83,7 @@ public class LanguagePanel extends JPanel implements ActionListener
         spanish.setActionCommand("Spanish");
         spanish.addActionListener(this);
         spanish.setEnabled(false);
-        if (language == language.SPANISH)
+        if (language == Language.SPANISH)
         {
             spanish.setSelected(true);
         }
@@ -102,7 +99,7 @@ public class LanguagePanel extends JPanel implements ActionListener
         italian.setActionCommand("Italian");
         italian.addActionListener(this);
         italian.setEnabled(false);
-        if (language == language.ITALIAN)
+        if (language == Language.ITALIAN)
         {
             italian.setSelected(true);
         }
@@ -118,7 +115,7 @@ public class LanguagePanel extends JPanel implements ActionListener
         french.setActionCommand("French");
         french.addActionListener(this);
         french.setEnabled(false);
-        if (language == language.FRENCH)
+        if (language == Language.FRENCH)
         {
             french.setSelected(true);
         }

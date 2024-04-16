@@ -52,11 +52,13 @@ public class GamePanel extends JPanel implements Runnable, ComponentListener, Mo
         int worldWidth = panelSize.width - 2 * vertical.width;
         int worldHeight = panelSize.height - 2 * horizontal.height;
         Dimension worldPanelSize = new Dimension(worldWidth, worldHeight);
+        
         WorldParameters worldParameters = new WorldParameters();
         worldParameters.worldSide = 20;
         worldParameters.seaPercentage = 0.40;
         worldParameters.mountainsOnLandPercentage = 0.30;
         worldParameters.woodsOnLandPercentage = 0.20;
+        
         worldPanel = new WorldPanel();
         worldPanel.makeWorld(worldPanelSize, worldParameters);
         
