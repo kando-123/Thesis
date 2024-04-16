@@ -3,6 +3,7 @@
  */
 package my.game;
 
+import my.i18n.LanguagePanel;
 import java.awt.Dimension;
 import javax.swing.*;
 
