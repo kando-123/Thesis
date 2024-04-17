@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package my.player;
 
 import javax.swing.JPanel;
@@ -20,6 +16,7 @@ public class PlayerSelectionPanel extends JPanel
         
         /* Local players selection panel; LOCAL, REMOTE_HOST, REMOTE_GUEST */
         
+        JPanel localPlayers = new JPanel();
         
         
         /* Artificial players selection panel; LOCAL, REMOTE_HOST */

@@ -1,6 +1,3 @@
- /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
 package my.game;
 
 import my.i18n.LanguagePanel;
