@@ -1,4 +1,4 @@
-package my.player;
+package my.player.selection;
 
 /**
  *

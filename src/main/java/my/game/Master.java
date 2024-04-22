@@ -1,9 +1,8 @@
 package my.game;
 
 import my.i18n.LanguagePanel;
-import java.awt.Dimension;
 import javax.swing.*;
-import my.player.PlayerSelectionPanel;
+import my.player.selection.PlayerSelection;
 
 /**
  *
@@ -35,11 +34,7 @@ public class Master extends JFrame
         {
             case "select language" ->
             {
-                LanguagePanel languagePanel = new LanguagePanel(this);
-                Dimension frameDimension = getSize();
-                languagePanel.setPreferredSize(frameDimension);
-                
-                setContentPane(languagePanel);
+                setContentPane(new LanguagePanel(this));
                 pack();
                 setLocationRelativeTo(null);
             }
@@ -53,7 +48,7 @@ public class Master extends JFrame
             {
                 gameMode = GameMode.LOCAL;
                 
-                setContentPane(new PlayerSelectionPanel(gameMode));
+                setContentPane(new PlayerSelection(gameMode));
                 pack();
                 setLocationRelativeTo(null);
             }
@@ -61,7 +56,7 @@ public class Master extends JFrame
             {
                 gameMode = GameMode.REMOTE_HOST;
                 
-                setContentPane(new PlayerSelectionPanel(gameMode));
+                setContentPane(new PlayerSelection(gameMode));
                 pack();
                 setLocationRelativeTo(null);
             }
@@ -69,10 +64,11 @@ public class Master extends JFrame
             {
                 gameMode = GameMode.REMOTE_GUEST;
                 
-                setContentPane(new PlayerSelectionPanel(gameMode));
+                setContentPane(new PlayerSelection(gameMode));
                 pack();
                 setLocationRelativeTo(null);
             }
+
         }
     }
 }
