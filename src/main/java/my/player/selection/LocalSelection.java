@@ -77,9 +77,7 @@ public class LocalSelection extends JPanel implements ActionListener
             model.addElement("Random");
             for (var color : PlayerColor.values())
             {
-                String name = color.name();
-                String nameFormatted = name.substring(0, 1).concat(name.substring(1).toLowerCase());
-                model.addElement(nameFormatted);
+                model.addElement(color.toTitleCase());
             }
             models.add(model);
             

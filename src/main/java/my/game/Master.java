@@ -10,11 +10,11 @@ import my.player.selection.PlayerSelection;
  */
 public class Master extends JFrame
 {
-    private GameMode gameMode = null;
+    private GameMode gameMode;
     
     private Master()
     {
-        
+        gameMode = null;
     }
     
     private static Master instance = null;

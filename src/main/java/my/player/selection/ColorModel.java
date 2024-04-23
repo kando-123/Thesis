@@ -1,6 +1,7 @@
 package my.player.selection;
 
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.event.ListDataListener;
 
@@ -8,12 +9,20 @@ import javax.swing.event.ListDataListener;
  *
  * @author Kay Jay O'Nail
  */
-public class ColorModel implements MutableComboBoxModel<String>
+public class ColorModel implements MutableComboBoxModel<PlayerColor>
 {
-    @Override
-    public void addElement(String item)
+    private LinkedList<String> items;
+    
+    public ColorModel()
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        items = new LinkedList<>();
+        items.add("Random");
+    }
+
+    @Override
+    public void addElement(PlayerColor item)
+    {
+        
     }
 
     @Override
@@ -23,7 +32,7 @@ public class ColorModel implements MutableComboBoxModel<String>
     }
 
     @Override
-    public void insertElementAt(String item, int index)
+    public void insertElementAt(PlayerColor item, int index)
     {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
@@ -53,14 +62,9 @@ public class ColorModel implements MutableComboBoxModel<String>
     }
 
     @Override
-    public String getElementAt(int index)
+    public PlayerColor getElementAt(int index)
     {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
-    public void addActionListener(ActionListener listener)
-    {
-        
     }
 
     @Override
@@ -74,5 +78,4 @@ public class ColorModel implements MutableComboBoxModel<String>
     {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
 }
