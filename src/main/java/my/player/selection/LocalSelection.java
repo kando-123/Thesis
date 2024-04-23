@@ -59,7 +59,7 @@ public class LocalSelection extends JPanel implements ActionListener
             c.gridx = 0;
             c.gridy = i + 1;
             JRadioButton radioButton = new JRadioButton(String.valueOf(i + 1));
-            radioButton.setActionCommand(String.valueOf(i + 1));
+            radioButton.setActionCommand("R%d".formatted(i + 1));
             radioButton.addActionListener(this);
             group.add(radioButton);
             radioButtons.add(radioButton);
@@ -97,22 +97,31 @@ public class LocalSelection extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        try
+        String actionCommand = e.getActionCommand();
+        String initial = actionCommand.substring(0, 1);
+        switch (initial)
         {
-            int index = Integer.parseInt(e.getActionCommand());
-            if (index >= 1 && index <= PlayerColor.values().length)
+            case "R" ->
             {
-                System.out.println(index);
-                for (int i = 0; i < textFields.size(); ++i)
+                try
                 {
-                    textFields.get(i).setEnabled(i < index);
-                    comboBoxes.get(i).setEnabled(i < index);
+                    String number = actionCommand.substring(1);
+                    int index = Integer.parseInt(number);
+                    if (index >= 1 && index <= PlayerColor.values().length)
+                    {
+                        System.out.println(index);
+                        for (int i = 0; i < textFields.size(); ++i)
+                        {
+                            textFields.get(i).setEnabled(i < index);
+                            comboBoxes.get(i).setEnabled(i < index);
+                        }
+                    }
+                }
+                catch (NumberFormatException n)
+                {
+                    System.err.println("Impossible happened!");
                 }
             }
-        }
-        catch (NumberFormatException n)
-        {
-            
         }
     }
 }
