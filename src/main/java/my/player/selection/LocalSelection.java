@@ -6,79 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.MutableComboBoxModel;
-import javax.swing.event.ListDataListener;
-
-class Model<E> implements MutableComboBoxModel<E>
-{
-    @Override
-    public void addElement(E item)
-    {
-        
-    }
-
-    @Override
-    public void removeElement(Object obj)
-    {
-        
-    }
-
-    @Override
-    public void insertElementAt(E item, int index)
-    {
-        
-    }
-
-    @Override
-    public void removeElementAt(int index)
-    {
-        
-    }
-
-    @Override
-    public void setSelectedItem(Object anItem)
-    {
-        
-    }
-
-    @Override
-    public Object getSelectedItem()
-    {
-        
-    }
-
-    @Override
-    public int getSize()
-    {
-        
-    }
-
-    @Override
-    public E getElementAt(int index)
-    {
-        
-    }
-
-    @Override
-    public void addListDataListener(ListDataListener l)
-    {
-        
-    }
-
-    @Override
-    public void removeListDataListener(ListDataListener l)
-    {
-        
-    }
-    
-}
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -89,14 +23,17 @@ public class LocalSelection extends JPanel implements ActionListener
     private final List<JRadioButton> radioButtons;
     private final List<JTextField> textFields;
     private final List<JComboBox> comboBoxes;
+    private final List<DefaultComboBoxModel> models;
     
     public LocalSelection()
     {
         super (new GridBagLayout());
         
-        radioButtons = new ArrayList<>(PlayerColor.values().length);
-        textFields = new ArrayList<>(PlayerColor.values().length);
-        comboBoxes = new ArrayList<>(PlayerColor.values().length);
+        int playersCount = PlayerColor.values().length;
+        radioButtons = new ArrayList<>(playersCount);
+        textFields = new ArrayList<>(playersCount);
+        comboBoxes = new ArrayList<>(playersCount);
+        models = new ArrayList<>(playersCount);
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -136,10 +73,20 @@ public class LocalSelection extends JPanel implements ActionListener
             textFields.add(textField);
             add(textField, c);
             
+            DefaultComboBoxModel model = new DefaultComboBoxModel<String>();
+            model.addElement("Random");
+            for (var color : PlayerColor.values())
+            {
+                String name = color.name();
+                String nameFormatted = name.substring(0, 1).concat(name.substring(1).toLowerCase());
+                model.addElement(nameFormatted);
+            }
+            models.add(model);
+            
             c = new GridBagConstraints();
             c.gridx = 2;
             c.gridy = i + 1;
-            JComboBox comboBox = new JComboBox(PlayerColor.values());
+            JComboBox comboBox = new JComboBox(model);
             comboBox.setEnabled(i < initialNumber);
             comboBoxes.add(comboBox);
             add(comboBox, c);
