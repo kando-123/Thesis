@@ -1,72 +1,28 @@
 package my.player.selection;
 
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.AbstractListModel;
 import javax.swing.MutableComboBoxModel;
-import javax.swing.event.ListDataListener;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class ColorModel implements MutableComboBoxModel<PlayerColor>
+public class ColorModel extends AbstractListModel<PlayerColor> implements MutableComboBoxModel<PlayerColor>
 {
-    private final LinkedList<PlayerColor> items;
-    private PlayerColor selectedItem;
-    
-    //private final List<ActionListener> listeners;
+    private final List<PlayerColor> items;
+    private PlayerColor selectedColor;
+    private final List<ColorSelectionListener> listeners;
     
     public ColorModel()
     {
         items = new LinkedList<>();
-        for (var color : PlayerColor.values())
-        {
-            items.add(color);
-        }
-        selectedItem = items.getFirst();
-        
-        //listeners = new ArrayList<>();
-    }
-
-    @Override
-    public void addElement(PlayerColor item)
-    {
-        items.add(item); // to be sorted
-    }
-
-    @Override
-    public void removeElement(Object obj)
-    {
-        assert (obj.getClass() == PlayerColor.class);
-        items.remove((PlayerColor) obj);
-    }
-
-    @Override
-    public void insertElementAt(PlayerColor item, int index)
-    {
-        items.add(index, item);
-    }
-
-    @Override
-    public void removeElementAt(int index)
-    {
-        items.remove(index);
-    }
-
-    @Override
-    public void setSelectedItem(Object anItem)
-    {
-        assert (anItem.getClass() == PlayerColor.class);
-        selectedItem = (PlayerColor) anItem;
-        // Inform the listeners that a color is being released, and another is being taken.
-    }
-
-    @Override
-    public Object getSelectedItem()
-    {
-        return selectedItem;
+        items.addAll(Arrays.asList(PlayerColor.values()));
+        selectedColor = PlayerColor.RANDOM;
+        listeners = new ArrayList<>();
     }
 
     @Override
@@ -82,14 +38,68 @@ public class ColorModel implements MutableComboBoxModel<PlayerColor>
     }
 
     @Override
-    public void addListDataListener(ListDataListener l)
+    public void addElement(PlayerColor item)
     {
-        
+        int index = 0;
+        while (index < items.size())
+        {
+            if (item.compareTo(items.get(index)) < 0)
+            {
+                break;
+            }
+            else
+            {
+                ++index;
+            }
+        }
+        items.add(index, item);
     }
 
     @Override
-    public void removeListDataListener(ListDataListener l)
+    public void removeElement(Object object)
     {
+        assert (object.getClass() == PlayerColor.class);
         
+        items.remove((PlayerColor) object);
+    }
+
+    @Override
+    public void insertElementAt(PlayerColor item, int index)
+    {
+        items.add(index, item);
+    }
+
+    @Override
+    public void removeElementAt(int index)
+    {
+        items.remove(index);
+    }
+
+    @Override
+    public void setSelectedItem(Object newItem)
+    {
+        assert (newItem.getClass() == PlayerColor.class);
+        
+        PlayerColor newColor = (PlayerColor) newItem;
+        if (newColor != selectedColor)
+        {
+            for (var listener : listeners)
+            {
+                listener.colorDeselected(selectedColor);
+                listener.colorSelected(newColor);
+            }
+            selectedColor = newColor;
+        }
+    }
+
+    @Override
+    public Object getSelectedItem()
+    {
+        return selectedColor;
+    }
+    
+    public void addColorSelectionListener(ColorSelectionListener listener)
+    {
+        listeners.add(listener);
     }
 }

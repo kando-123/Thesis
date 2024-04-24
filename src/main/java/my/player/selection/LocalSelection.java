@@ -17,42 +17,41 @@ import javax.swing.JTextField;
  *
  * @author Kay Jay O'Nail
  */
-public class LocalSelection extends JPanel implements ActionListener
+public class LocalSelection extends JPanel implements ActionListener, ColorSelectionListener
 {
     private final List<JRadioButton> radioButtons;
     private final List<JTextField> textFields;
     private final List<JComboBox> comboBoxes;
     private final List<ColorModel> models;
-    
+
     public LocalSelection()
     {
-        super (new GridBagLayout());
-        
-        int playersCount = PlayerColor.values().length;
-        radioButtons = new ArrayList<>(playersCount);
-        textFields = new ArrayList<>(playersCount);
-        comboBoxes = new ArrayList<>(playersCount);
-        models = new ArrayList<>(playersCount);
-        
+        super(new GridBagLayout());
+
+        radioButtons = new ArrayList<>(PlayerColor.PLAYERS_COUNT);
+        textFields = new ArrayList<>(PlayerColor.PLAYERS_COUNT);
+        comboBoxes = new ArrayList<>(PlayerColor.PLAYERS_COUNT);
+        models = new ArrayList<>(PlayerColor.PLAYERS_COUNT);
+
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
         add(new JLabel("<html><p align=\"center\">Number<br>of Players</p></html>"), c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
         add(new JLabel("Name"), c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 2;
         c.gridy = 0;
         add(new JLabel("Color"), c);
-        
+
         ButtonGroup group = new ButtonGroup();
-        
+
         final int initialNumber = 2;
-        for (int i = 0; i < PlayerColor.values().length; ++i)
+        for (int i = 0; i < PlayerColor.PLAYERS_COUNT; ++i)
         {
             c = new GridBagConstraints();
             c.gridx = 0;
@@ -63,7 +62,7 @@ public class LocalSelection extends JPanel implements ActionListener
             group.add(radioButton);
             radioButtons.add(radioButton);
             add(radioButton, c);
-            
+
             c = new GridBagConstraints();
             c.gridx = 1;
             c.gridy = i + 1;
@@ -71,10 +70,11 @@ public class LocalSelection extends JPanel implements ActionListener
             textField.setEnabled(i < initialNumber);
             textFields.add(textField);
             add(textField, c);
-            
+
             ColorModel model = new ColorModel();
+            model.addColorSelectionListener(this);
             models.add(model);
-            
+
             c = new GridBagConstraints();
             c.gridx = 2;
             c.gridy = i + 1;
@@ -99,13 +99,14 @@ public class LocalSelection extends JPanel implements ActionListener
                 {
                     String number = actionCommand.substring(1);
                     int index = Integer.parseInt(number);
-                    if (index >= 1 && index <= PlayerColor.values().length)
+                    if (index >= 1 && index <= PlayerColor.PLAYERS_COUNT)
                     {
                         System.out.println(index);
                         for (int i = 0; i < textFields.size(); ++i)
                         {
                             textFields.get(i).setEnabled(i < index);
                             comboBoxes.get(i).setEnabled(i < index);
+                            // release colors
                         }
                     }
                 }
@@ -115,5 +116,24 @@ public class LocalSelection extends JPanel implements ActionListener
                 }
             }
         }
+    }
+
+    @Override
+    public void colorSelected(PlayerColor color)
+    {
+        System.out.println("Selected: %s".formatted(color.toString()));
+        if (color != PlayerColor.RANDOM)
+        {
+            for (var model : models)
+            {
+                model.removeElement(color);
+            }
+        }
+    }
+
+    @Override
+    public void colorDeselected(PlayerColor color)
+    {
+        System.out.println("Deselected: %s".formatted(color.toString()));
     }
 }
