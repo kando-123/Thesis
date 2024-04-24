@@ -1,7 +1,9 @@
 package my.player.selection;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.event.ListDataListener;
 
@@ -11,71 +13,83 @@ import javax.swing.event.ListDataListener;
  */
 public class ColorModel implements MutableComboBoxModel<PlayerColor>
 {
-    private LinkedList<String> items;
+    private final LinkedList<PlayerColor> items;
+    private PlayerColor selectedItem;
+    
+    //private final List<ActionListener> listeners;
     
     public ColorModel()
     {
         items = new LinkedList<>();
-        items.add("Random");
+        for (var color : PlayerColor.values())
+        {
+            items.add(color);
+        }
+        selectedItem = items.getFirst();
+        
+        //listeners = new ArrayList<>();
     }
 
     @Override
     public void addElement(PlayerColor item)
     {
-        
+        items.add(item); // to be sorted
     }
 
     @Override
     public void removeElement(Object obj)
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        assert (obj.getClass() == PlayerColor.class);
+        items.remove((PlayerColor) obj);
     }
 
     @Override
     public void insertElementAt(PlayerColor item, int index)
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        items.add(index, item);
     }
 
     @Override
     public void removeElementAt(int index)
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        items.remove(index);
     }
 
     @Override
     public void setSelectedItem(Object anItem)
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        assert (anItem.getClass() == PlayerColor.class);
+        selectedItem = (PlayerColor) anItem;
+        // Inform the listeners that a color is being released, and another is being taken.
     }
 
     @Override
     public Object getSelectedItem()
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return selectedItem;
     }
 
     @Override
     public int getSize()
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return items.size();
     }
 
     @Override
     public PlayerColor getElementAt(int index)
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return items.get(index);
     }
 
     @Override
     public void addListDataListener(ListDataListener l)
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
     }
 
     @Override
     public void removeListDataListener(ListDataListener l)
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
     }
 }

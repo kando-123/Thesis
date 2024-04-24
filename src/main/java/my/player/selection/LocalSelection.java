@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -23,7 +22,7 @@ public class LocalSelection extends JPanel implements ActionListener
     private final List<JRadioButton> radioButtons;
     private final List<JTextField> textFields;
     private final List<JComboBox> comboBoxes;
-    private final List<DefaultComboBoxModel> models;
+    private final List<ColorModel> models;
     
     public LocalSelection()
     {
@@ -73,12 +72,7 @@ public class LocalSelection extends JPanel implements ActionListener
             textFields.add(textField);
             add(textField, c);
             
-            DefaultComboBoxModel model = new DefaultComboBoxModel<String>();
-            model.addElement("Random");
-            for (var color : PlayerColor.values())
-            {
-                model.addElement(color.toTitleCase());
-            }
+            ColorModel model = new ColorModel();
             models.add(model);
             
             c = new GridBagConstraints();

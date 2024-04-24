@@ -6,6 +6,8 @@ package my.player.selection;
  */
 public enum PlayerColor
 {
+    RANDOM,
+    
     RED,
     ORANGE,
     YELLOW,
@@ -14,7 +16,8 @@ public enum PlayerColor
     VIOLET,
     MAGENTA;
     
-    public String toTitleCase()
+    @Override
+    public String toString()
     {
         String name = name();
         return name.substring(0, 1).concat(name.substring(1).toLowerCase());
