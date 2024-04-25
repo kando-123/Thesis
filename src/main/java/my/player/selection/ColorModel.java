@@ -85,8 +85,8 @@ public class ColorModel extends AbstractListModel<PlayerColor> implements Mutabl
         {
             for (var listener : listeners)
             {
-                listener.colorDeselected(selectedColor);
-                listener.colorSelected(newColor);
+                listener.colorDeselected(selectedColor, this);
+                listener.colorSelected(newColor, this);
             }
             selectedColor = newColor;
         }

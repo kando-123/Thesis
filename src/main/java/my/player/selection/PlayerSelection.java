@@ -16,12 +16,13 @@ public class PlayerSelection extends JPanel
         
         /* Local players selection panel; LOCAL, REMOTE_HOST, REMOTE_GUEST */
         
-        JPanel localSelection = new LocalSelection();
+        JPanel localSelection = new SelectionPanel();
         tabbedPane.add("Local", localSelection);
         
         /* Artificial players selection panel; LOCAL, REMOTE_HOST */
         
-        
+        JPanel artificialSelection = new SelectionPanel();
+        tabbedPane.add("Artificial", artificialSelection);
         
         /* Remote players selection panel; REMOTE_HOST */
         

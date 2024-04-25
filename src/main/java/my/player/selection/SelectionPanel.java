@@ -17,14 +17,14 @@ import javax.swing.JTextField;
  *
  * @author Kay Jay O'Nail
  */
-public class LocalSelection extends JPanel implements ActionListener, ColorSelectionListener
+public class SelectionPanel extends JPanel implements ActionListener, ColorSelectionListener
 {
     private final List<JRadioButton> radioButtons;
     private final List<JTextField> textFields;
     private final List<JComboBox> comboBoxes;
     private final List<ColorModel> models;
 
-    public LocalSelection()
+    public SelectionPanel()
     {
         super(new GridBagLayout());
 
@@ -102,11 +102,21 @@ public class LocalSelection extends JPanel implements ActionListener, ColorSelec
                     if (index >= 1 && index <= PlayerColor.PLAYERS_COUNT)
                     {
                         System.out.println(index);
-                        for (int i = 0; i < textFields.size(); ++i)
+                        for (int i = 0; i < index; ++i)
                         {
-                            textFields.get(i).setEnabled(i < index);
-                            comboBoxes.get(i).setEnabled(i < index);
-                            // release colors
+                            textFields.get(i).setEnabled(true);
+                            comboBoxes.get(i).setEnabled(true);
+                        }
+                        for (int i = index; i < textFields.size(); ++i)
+                        {
+                            textFields.get(i).setEnabled(false);
+                            JComboBox comboBox = comboBoxes.get(i);
+                            if (comboBox.isEnabled())
+                            {
+                                ColorModel model = models.get(i);
+                                model.setSelectedItem(PlayerColor.RANDOM);
+                            }
+                            comboBox.setEnabled(false);
                         }
                     }
                 }
@@ -119,21 +129,34 @@ public class LocalSelection extends JPanel implements ActionListener, ColorSelec
     }
 
     @Override
-    public void colorSelected(PlayerColor color)
+    public void colorSelected(PlayerColor color, ColorModel skip)
     {
         System.out.println("Selected: %s".formatted(color.toString()));
         if (color != PlayerColor.RANDOM)
         {
             for (var model : models)
             {
-                model.removeElement(color);
+                if (model != skip)
+                {
+                    model.removeElement(color);
+                }
             }
         }
     }
 
     @Override
-    public void colorDeselected(PlayerColor color)
+    public void colorDeselected(PlayerColor color, ColorModel skip)
     {
         System.out.println("Deselected: %s".formatted(color.toString()));
+        if (color != PlayerColor.RANDOM)
+        {
+            for (var model : models)
+            {
+                if (model != skip)
+                {
+                    model.addElement(color);
+                }
+            }
+        }
     }
 }
