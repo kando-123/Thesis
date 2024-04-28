@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -17,22 +16,17 @@ import javax.swing.JTextField;
  *
  * @author Kay Jay O'Nail
  */
-public class SelectionPanel extends JPanel implements ActionListener, ColorSelectionListener
+public class PartialSelectionPanel extends JPanel implements ActionListener, ColorSelectionListener
 {
     private final List<JRadioButton> radioButtons;
     private final List<JTextField> textFields;
-    private final List<JComboBox> comboBoxes;
-    private final List<ColorModel> models;
 
-    public SelectionPanel()
+    public PartialSelectionPanel()
     {
         super(new GridBagLayout());
 
         radioButtons = new ArrayList<>(PlayerColor.PLAYERS_COUNT);
         textFields = new ArrayList<>(PlayerColor.PLAYERS_COUNT);
-        comboBoxes = new ArrayList<>(PlayerColor.PLAYERS_COUNT);
-        models = new ArrayList<>(PlayerColor.PLAYERS_COUNT);
-
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -42,11 +36,6 @@ public class SelectionPanel extends JPanel implements ActionListener, ColorSelec
         c.gridx = 1;
         c.gridy = 0;
         add(new JLabel("Name"), c);
-
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 0;
-        add(new JLabel("Color"), c);
 
         ButtonGroup group = new ButtonGroup();
 
@@ -70,18 +59,6 @@ public class SelectionPanel extends JPanel implements ActionListener, ColorSelec
             textField.setEnabled(i < initialNumber);
             textFields.add(textField);
             add(textField, c);
-
-            ColorModel model = new ColorModel();
-            model.addColorSelectionListener(this);
-            models.add(model);
-
-            c = new GridBagConstraints();
-            c.gridx = 2;
-            c.gridy = i + 1;
-            JComboBox comboBox = new JComboBox(model);
-            comboBox.setEnabled(i < initialNumber);
-            comboBoxes.add(comboBox);
-            add(comboBox, c);
         }
         radioButtons.get(initialNumber - 1).setSelected(true);
     }
@@ -105,18 +82,10 @@ public class SelectionPanel extends JPanel implements ActionListener, ColorSelec
                         for (int i = 0; i < index; ++i)
                         {
                             textFields.get(i).setEnabled(true);
-                            comboBoxes.get(i).setEnabled(true);
                         }
                         for (int i = index; i < textFields.size(); ++i)
                         {
                             textFields.get(i).setEnabled(false);
-                            JComboBox comboBox = comboBoxes.get(i);
-                            if (comboBox.isEnabled())
-                            {
-                                ColorModel model = models.get(i);
-                                model.setSelectedItem(PlayerColor.RANDOM);
-                            }
-                            comboBox.setEnabled(false);
                         }
                     }
                 }
@@ -131,32 +100,12 @@ public class SelectionPanel extends JPanel implements ActionListener, ColorSelec
     @Override
     public void colorSelected(PlayerColor color, ColorModel skip)
     {
-        System.out.println("Selected: %s".formatted(color.toString()));
-        if (color != PlayerColor.RANDOM)
-        {
-            for (var model : models)
-            {
-                if (model != skip)
-                {
-                    model.removeElement(color);
-                }
-            }
-        }
+        
     }
 
     @Override
     public void colorDeselected(PlayerColor color, ColorModel skip)
     {
-        System.out.println("Deselected: %s".formatted(color.toString()));
-        if (color != PlayerColor.RANDOM)
-        {
-            for (var model : models)
-            {
-                if (model != skip)
-                {
-                    model.addElement(color);
-                }
-            }
-        }
+        
     }
 }
