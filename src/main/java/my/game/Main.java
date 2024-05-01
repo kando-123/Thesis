@@ -19,14 +19,14 @@ public class Main
         master.setTitle("The Global Empire");
         master.setResizable(false);
         
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
-        int frameWidth = (int) ((double) screenSize.width / Math.sqrt(2.0));
-        int frameHeight = (int) ((double) screenSize.height / Math.sqrt(2.0));
-        Dimension frameSize = new Dimension(frameWidth, frameHeight);
-        master.setSize(frameSize);
+//        Toolkit toolkit = Toolkit.getDefaultToolkit();
+//        Dimension screenSize = toolkit.getScreenSize();
+//        int frameWidth = (int) ((double) screenSize.width / Math.sqrt(2.0));
+//        int frameHeight = (int) ((double) screenSize.height / Math.sqrt(2.0));
+//        Dimension frameSize = new Dimension(frameWidth, frameHeight);
+//        master.setSize(frameSize);
 
-        InvitationPanel invitationPanel = new InvitationPanel(master);
+        InvitationContentPane invitationPanel = new InvitationContentPane();
         master.setContentPane(invitationPanel);
         master.pack();
         

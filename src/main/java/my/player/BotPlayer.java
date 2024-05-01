@@ -4,7 +4,7 @@ package my.player;
  *
  * @author Kay Jay O'Nail
  */
-public class ArtificialPlayer extends GenericPlayer
+public class BotPlayer extends GenericPlayer
 {
     
 }

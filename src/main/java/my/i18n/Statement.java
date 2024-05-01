@@ -6,14 +6,11 @@ package my.i18n;
  */
 public enum Statement
 {   
-    LOCAL("Local",
-            "Tryb lokalny"),
+    PLAY("Play",
+        "Graj"),
     
-    REMOTE_HOST("Remote: Host",
-            "Tryb zdalny: Gospodarz"),
-    
-    REMOTE_GUEST("Remote: Guest",
-            "Tryb zdalny: Gość"),
+    JOIN("Join",
+        "Dołącz"),
     
     LANGUAGE("Language",
             "Język"),
@@ -21,8 +18,8 @@ public enum Statement
     READY("Ready",
             "Gotowe");
 
-    private String inEnglish;
-    private String inPolish;
+    private final String inEnglish;
+    private final String inPolish;
 
     private Statement(String english, String polish)
     {

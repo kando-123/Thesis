@@ -6,7 +6,6 @@ package my.game;
  */
 public enum GameMode
 {
-    LOCAL,
-    REMOTE_HOST,
-    REMOTE_GUEST;
+    HOST,
+    GUEST
 }

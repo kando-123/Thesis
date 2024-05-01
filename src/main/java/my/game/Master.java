@@ -1,14 +1,16 @@
 package my.game;
 
-import my.i18n.LanguagePanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import my.i18n.LanguageSelectionContentPane;
 import javax.swing.*;
-import my.player.selection.PlayerSelection;
+import my.player.selection.PlayerSelectionContentPane;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class Master extends JFrame
+public class Master extends JFrame implements ActionListener
 {
     private GameMode gameMode;
     
@@ -28,47 +30,48 @@ public class Master extends JFrame
         return instance;
     }
     
-    public void serveAction(String command)
+    public GameMode getGameMode()
     {
-        switch (command)
+        return gameMode;
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        switch (e.getActionCommand())
         {
-            case "select language" ->
+            case "select-language" ->
             {
-                setContentPane(new LanguagePanel(this));
+                setContentPane(new LanguageSelectionContentPane());
                 pack();
                 setLocationRelativeTo(null);
             }
-            case "language selected" ->
+            case "language-selected" ->
             {
-                setContentPane(new InvitationPanel(this));
+                setContentPane(new InvitationContentPane());
                 pack();
                 setLocationRelativeTo(null);
             }
-            case "local" ->
+            case "play" ->
             {
-                gameMode = GameMode.LOCAL;
+                gameMode = GameMode.HOST;
                 
-                setContentPane(new PlayerSelection(gameMode));
+                setContentPane(new PlayerSelectionContentPane());
                 pack();
                 setLocationRelativeTo(null);
             }
-            case "host" ->
+            case "join" ->
             {
-                gameMode = GameMode.REMOTE_HOST;
+                gameMode = GameMode.GUEST;
                 
-                setContentPane(new PlayerSelection(gameMode));
+                setContentPane(new PlayerSelectionContentPane());
                 pack();
                 setLocationRelativeTo(null);
             }
-            case "guest" ->
+            case "players-selected" ->
             {
-                gameMode = GameMode.REMOTE_GUEST;
                 
-                setContentPane(new PlayerSelection(gameMode));
-                pack();
-                setLocationRelativeTo(null);
             }
-
         }
     }
 }

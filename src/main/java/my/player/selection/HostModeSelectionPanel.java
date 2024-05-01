@@ -1,0 +1,128 @@
+package my.player.selection;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.border.Border;
+import my.player.GenericPlayer;
+
+class UnitPanel extends JPanel implements ActionListener
+{
+    private ActionListener listener = null;
+    private int currentlySelected;
+    private int limit;
+
+    public UnitPanel(int min, int max)
+    {
+        super(new GridBagLayout());
+        
+        currentlySelected = min;
+        limit = max;
+
+        ButtonGroup group = new ButtonGroup();
+        Insets insets = new Insets(5, 10, 5, 10);
+        for (int i = min; i <= max; ++i)
+        {
+            String index = String.valueOf(i);
+
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = i - min;
+            c.insets = insets;
+            JRadioButton button = new JRadioButton(index);
+            button.setSelected(i == currentlySelected);
+            button.setActionCommand(index);
+            button.addActionListener(this);
+            group.add(button);
+            add(button, c);
+        }
+    }
+
+    public void addActionListener(ActionListener newListener)
+    {
+        listener = newListener;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        try
+        {
+            int index = Integer.parseInt(e.getActionCommand());
+            int difference = currentlySelected - index;
+            if (difference > 0)
+            {
+                System.out.print(difference);
+                System.out.println(" places released");
+            }
+            else if (difference < 0)
+            {
+                System.out.print(difference);
+                System.out.println(" places taken");
+            }
+            currentlySelected = index;
+        }
+        catch (NumberFormatException nf)
+        {
+            
+        }
+    }
+}
+
+/**
+ *
+ * @author Kay Jay O'Nail
+ */
+public class HostModeSelectionPanel extends JPanel implements ActionListener, PlayerSelector
+{
+    private final UnitPanel localPanel;
+    private final UnitPanel remotePanel;
+    private final UnitPanel botPanel;
+
+    public HostModeSelectionPanel()
+    {
+        super(new GridBagLayout());
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        localPanel = new UnitPanel(1, GenericPlayer.PLAYERS_COUNT);
+        Border localBorder = BorderFactory.createTitledBorder("Local");
+        localPanel.setBorder(localBorder);
+        add(localPanel, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 0;
+        remotePanel = new UnitPanel(0, GenericPlayer.PLAYERS_COUNT - 1);
+        Border remoteBorder = BorderFactory.createTitledBorder("Remote");
+        remotePanel.setBorder(remoteBorder);
+        add(remotePanel, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        botPanel = new UnitPanel(0, GenericPlayer.PLAYERS_COUNT - 1);
+        Border botBorder = BorderFactory.createTitledBorder("Bot");
+        botPanel.setBorder(botBorder);
+        add(botPanel, c);
+    }
+
+    @Override
+    public PlayersNumber getCounts()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+}
