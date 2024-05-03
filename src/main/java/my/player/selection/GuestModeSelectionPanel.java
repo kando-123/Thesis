@@ -1,7 +1,5 @@
 package my.player.selection;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -48,12 +46,6 @@ public class GuestModeSelectionPanel extends JPanel implements PlayerSelector, A
             add(button, c);
         }
     }
-    
-    @Override
-    public PlayersNumber getCounts()
-    {
-        return new PlayersNumber(currentlySelected, 0, 0);
-    }
 
     @Override
     public void actionPerformed(ActionEvent e)
@@ -66,5 +58,23 @@ public class GuestModeSelectionPanel extends JPanel implements PlayerSelector, A
         {
             
         }
+    }
+
+    @Override
+    public int getLocalsNumber()
+    {
+        return currentlySelected;
+    }
+
+    @Override
+    public int getRemotesNumber()
+    {
+        return 0;
+    }
+
+    @Override
+    public int getBotsNumber()
+    {
+        return 0;
     }
 }

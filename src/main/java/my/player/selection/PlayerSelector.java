@@ -6,5 +6,9 @@ package my.player.selection;
  */
 public interface PlayerSelector
 {
-    public PlayersNumber getCounts();
+    public int getLocalsNumber();
+    
+    public int getRemotesNumber();
+    
+    public int getBotsNumber();
 }
