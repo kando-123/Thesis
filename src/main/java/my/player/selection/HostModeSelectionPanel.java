@@ -64,10 +64,6 @@ class UnitPanel extends JPanel implements ActionListener
             int index = Integer.parseInt(e.getActionCommand());
             int difference = index - currentlySelected;
             currentlySelected = index;
-            
-            System.out.print(difference);
-            System.out.println(" places taken");
-            
             ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, String.valueOf(difference));
             listener.actionPerformed(event);
         }

@@ -2,6 +2,7 @@ package my.i18n;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
@@ -38,12 +39,14 @@ public class LanguageSelectionContentPane extends JPanel implements ActionListen
         }
         c.gridx = 0;
         c.gridy = 0;
-        c.anchor = GridBagConstraints.LINE_START;
+        c.anchor = GridBagConstraints.CENTER;
         c.weightx = 1.0;
         c.weighty = 1.0;
+        c.insets = new Insets(5, 10, 5, 10);
         add(english, c);
 
-        c = new GridBagConstraints();
+        //c = new GridBagConstraints();
+        ++c.gridy;
         JRadioButton polish = new JRadioButton("Polski");
         polish.setActionCommand("Polish");
         polish.addActionListener(this);
@@ -51,14 +54,15 @@ public class LanguageSelectionContentPane extends JPanel implements ActionListen
         {
             polish.setSelected(true);
         }
-        c.gridx = 0;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+//        c.gridx = 0;
+//        c.gridy = 1;
+//        c.anchor = GridBagConstraints.LINE_START;
+//        c.weightx = 1.0;
+//        c.weighty = 1.0;
         add(polish, c);
 
-        c = new GridBagConstraints();
+//        c = new GridBagConstraints();
+        ++c.gridy;
         JRadioButton german = new JRadioButton("Deutsch");
         german.setActionCommand("German");
         german.addActionListener(this);
@@ -67,14 +71,15 @@ public class LanguageSelectionContentPane extends JPanel implements ActionListen
         {
             german.setSelected(true);
         }
-        c.gridx = 0;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+//        c.gridx = 0;
+//        c.gridy = 2;
+//        c.anchor = GridBagConstraints.LINE_START;
+//        c.weightx = 1.0;
+//        c.weighty = 1.0;
         add(german, c);
 
-        c = new GridBagConstraints();
+//        c = new GridBagConstraints();
+        ++c.gridy;
         JRadioButton spanish = new JRadioButton("Español");
         spanish.setActionCommand("Spanish");
         spanish.addActionListener(this);
@@ -83,14 +88,15 @@ public class LanguageSelectionContentPane extends JPanel implements ActionListen
         {
             spanish.setSelected(true);
         }
-        c.gridx = 0;
-        c.gridy = 3;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+//        c.gridx = 0;
+//        c.gridy = 3;
+//        c.anchor = GridBagConstraints.LINE_START;
+//        c.weightx = 1.0;
+//        c.weighty = 1.0;
         add(spanish, c);
 
-        c = new GridBagConstraints();
+//        c = new GridBagConstraints();
+        ++c.gridy;
         JRadioButton italian = new JRadioButton("Italiano");
         italian.setActionCommand("Italian");
         italian.addActionListener(this);
@@ -99,14 +105,15 @@ public class LanguageSelectionContentPane extends JPanel implements ActionListen
         {
             italian.setSelected(true);
         }
-        c.gridx = 0;
-        c.gridy = 4;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+//        c.gridx = 0;
+//        c.gridy = 4;
+//        c.anchor = GridBagConstraints.LINE_START;
+//        c.weightx = 1.0;
+//        c.weighty = 1.0;
         add(italian, c);
 
-        c = new GridBagConstraints();
+//        c = new GridBagConstraints();
+        ++c.gridy;
         JRadioButton french = new JRadioButton("Français");
         french.setActionCommand("French");
         french.addActionListener(this);
@@ -115,11 +122,11 @@ public class LanguageSelectionContentPane extends JPanel implements ActionListen
         {
             french.setSelected(true);
         }
-        c.gridx = 0;
-        c.gridy = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+//        c.gridx = 0;
+//        c.gridy = 5;
+//        c.anchor = GridBagConstraints.LINE_START;
+//        c.weightx = 1.0;
+//        c.weighty = 1.0;
         add(french, c);
 
         ButtonGroup group = new ButtonGroup();

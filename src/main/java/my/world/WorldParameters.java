@@ -13,6 +13,6 @@ public class WorldParameters
     
     public WorldParameters()
     {
-        
+        return;
     }
 }

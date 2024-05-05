@@ -3,8 +3,6 @@ package my.player.selection;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,7 +15,7 @@ import my.i18n.Statement;
  *
  * @author Kay Jay O'Nail
  */
-public class PlayerSelectionContentPane extends JPanel implements ActionListener
+public class PlayerSelectionContentPane extends JPanel
 {
     private final Master master;
     private final PlayerSelector selector;
@@ -57,13 +55,22 @@ public class PlayerSelectionContentPane extends JPanel implements ActionListener
         Dictionary dictionary = Dictionary.getInstance();
         JButton button = new JButton(dictionary.translate(Statement.READY));
         button.setActionCommand("players-selected");
-        button.addActionListener(this);
+        button.addActionListener(master);
         add(button, c);
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
+    
+    public int getLocalPlayersCount()
     {
-        /* Prepare PlayerParameters and notify the Master the selection is ready. */
+        return selector.getLocalsNumber();
+    }
+    
+    public int getRemotePlayersCount()
+    {
+        return selector.getRemotesNumber();
+    }
+    
+    public int getBotsPlayersCount()
+    {
+        return selector.getBotsNumber();
     }
 }
