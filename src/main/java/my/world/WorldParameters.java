@@ -8,8 +8,7 @@ public class WorldParameters
 {
     public int worldSide;
     public double seaPercentage;
-    public double mountainsOnLandPercentage;
-    public double woodsOnLandPercentage;
+    public double mountsPercentage;
     
     public WorldParameters()
     {

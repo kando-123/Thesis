@@ -59,13 +59,14 @@ public class WorldPanel extends JPanel
 
         fields = new HashMap<>();
     }
+    
+    private static final double WOODS_PERCENTAGE = 0.10;
 
     public void makeWorld(Dimension panelSize, WorldParameters parameters)
     {
         assert (parameters.worldSide >= 10 && parameters.worldSide <= 30);
-        assert (parameters.seaPercentage >= 0.10 && parameters.seaPercentage <= 0.90);
-        assert (parameters.mountainsOnLandPercentage >= 0.10 && parameters.mountainsOnLandPercentage <= 0.50);
-        assert (parameters.woodsOnLandPercentage >= 0.10 && parameters.woodsOnLandPercentage <= 0.40);
+        assert (parameters.seaPercentage >= 0.20 && parameters.seaPercentage <= 0.70);
+        assert (parameters.mountsPercentage >= 0.10 && parameters.mountsPercentage <= 0.40);
 
         panelWidth = panelSize.width;
         panelHeight = panelSize.height;
@@ -121,7 +122,7 @@ public class WorldPanel extends JPanel
         }
 
         Map<Object, Double> mountainsNoise = mountainsPerlin.makeNoise(centers);
-        double mountainsThreshold = calculateThreshold(mountainsNoise, parameters.mountainsOnLandPercentage);
+        double mountainsThreshold = calculateThreshold(mountainsNoise, parameters.mountsPercentage);
 
         iterator = mountainsNoise.entrySet().iterator();
         keysForRemoval = new ArrayList<>();
@@ -143,7 +144,7 @@ public class WorldPanel extends JPanel
         }
 
         Map<Object, Double> woodsNoise = woodsPerlin.makeNoise(centers);
-        double woodsThreshold = calculateThreshold(woodsNoise, parameters.woodsOnLandPercentage);
+        double woodsThreshold = calculateThreshold(woodsNoise, WOODS_PERCENTAGE);
 
         iterator = woodsNoise.entrySet().iterator();
         while (iterator.hasNext())

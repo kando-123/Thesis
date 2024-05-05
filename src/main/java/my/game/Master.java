@@ -10,6 +10,7 @@ import my.i18n.LanguageSelectionContentPane;
 import javax.swing.*;
 import my.player.selection.PlayerSelectionContentPane;
 import my.world.WorldParameterizationContentPane;
+import my.world.WorldParameters;
 
 /**
  *
@@ -19,6 +20,8 @@ public class Master extends JFrame implements ActionListener
 {
     private GameMode gameMode;
 
+    private JPanel contentPane;
+    
     private int localPlayersCount;
     private int remotePlayersCount;
     private int botPlayersCount;
@@ -76,9 +79,9 @@ public class Master extends JFrame implements ActionListener
         {
             case "select-language" ->
             {
-                JPanel newContentPane = new LanguageSelectionContentPane();
-                newContentPane.setPreferredSize(getSize());
-                setContentPane(newContentPane);
+                contentPane = new LanguageSelectionContentPane();
+                contentPane.setPreferredSize(getSize());
+                setContentPane(contentPane);
                 pack();
                 setLocationRelativeTo(null);
             }
@@ -92,9 +95,9 @@ public class Master extends JFrame implements ActionListener
             {
                 gameMode = GameMode.HOST;
 
-                JPanel newContentPane = new PlayerSelectionContentPane();
-                newContentPane.setPreferredSize(getSize());
-                setContentPane(newContentPane);
+                contentPane = new PlayerSelectionContentPane();
+                contentPane.setPreferredSize(getSize());
+                setContentPane(contentPane);
                 pack();
                 setLocationRelativeTo(null);
             }
@@ -102,9 +105,9 @@ public class Master extends JFrame implements ActionListener
             {
                 gameMode = GameMode.GUEST;
 
-                JPanel newContentPane = new PlayerSelectionContentPane();
-                newContentPane.setPreferredSize(getSize());
-                setContentPane(newContentPane);
+                contentPane = new PlayerSelectionContentPane();
+                contentPane.setPreferredSize(getSize());
+                setContentPane(contentPane);
                 pack();
                 setLocationRelativeTo(null);
             }
@@ -112,14 +115,14 @@ public class Master extends JFrame implements ActionListener
             {
                 if (gameMode == GameMode.HOST)
                 {
-                    assert (getContentPane().getClass() == PlayerSelectionContentPane.class);
-                    var pane = (PlayerSelectionContentPane) getContentPane();
-                    localPlayersCount = pane.getLocalPlayersCount();
-                    remotePlayersCount = pane.getRemotePlayersCount();
-                    botPlayersCount = pane.getBotsPlayersCount();
+                    assert (contentPane.getClass() == PlayerSelectionContentPane.class);
+                    localPlayersCount = ((PlayerSelectionContentPane) contentPane).getLocalPlayersCount();
+                    remotePlayersCount = ((PlayerSelectionContentPane) contentPane).getRemotePlayersCount();
+                    botPlayersCount = ((PlayerSelectionContentPane) contentPane).getBotsPlayersCount();
                     if (localPlayersCount + remotePlayersCount + botPlayersCount > 1)
                     {
-                        setContentPane(new WorldParameterizationContentPane());
+                        contentPane = new WorldParameterizationContentPane();
+                        setContentPane(contentPane);
                         pack();
                         setLocationRelativeTo(null);
                     }
@@ -129,6 +132,13 @@ public class Master extends JFrame implements ActionListener
                     }
                 }
 
+            }
+            case "world-parameters-selected" ->
+            {
+                assert (contentPane.getClass() == WorldParameterizationContentPane.class);
+                WorldParameters parameters = ((WorldParameterizationContentPane) contentPane).getParameters();
+                System.out.println(String.format("side=%d, sea=%.2f, mounts=%.2f",
+                        parameters.worldSide, parameters.seaPercentage, parameters.mountsPercentage));
             }
         }
     }

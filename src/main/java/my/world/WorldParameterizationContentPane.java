@@ -4,9 +4,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Hashtable;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import my.game.Master;
 
 /**
  *
@@ -15,9 +17,9 @@ import javax.swing.JSlider;
 public class WorldParameterizationContentPane extends JPanel
 {
     private final JSlider worldSizeSlider;
-    private JSlider seaPercentageSlider;
-    private JSlider mountsOnLandPercentageSlider;
-    private JSlider woodsOnLandPercentageSlider;
+    private final JSlider seaPercentageSlider;
+    private final JSlider mountsPercentageSlider;
+    private JSlider woodsPercentageSlider;
     
     private static final int SLIDER_WIDTH = 200;
     private static final int SLIDER_HEIGHT = 20;
@@ -68,8 +70,52 @@ public class WorldParameterizationContentPane extends JPanel
         seaPercentageSliderPanel.add(seaPercentageSlider);
         
         /* Select mounts-on-land percentage. Range: 10-40% */
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 3;
+        JPanel mountsPercentageSliderPanel = new JPanel();
+        mountsPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Mounts"));
+        add(mountsPercentageSliderPanel, c);
+        mountsPercentageSlider = new JSlider(JSlider.HORIZONTAL, 10, 40, 25);
+        mountsPercentageSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
+        Hashtable<Integer, JLabel> mountsPercentageLabels = new Hashtable<>(3);
+        mountsPercentageLabels.put(10, new JLabel("few"));
+        mountsPercentageLabels.put(25, new JLabel("medium"));
+        mountsPercentageLabels.put(40, new JLabel("many"));
+        mountsPercentageSlider.setLabelTable(mountsPercentageLabels);
+        mountsPercentageSlider.setPaintLabels(true);
+        mountsPercentageSliderPanel.add(mountsPercentageSlider);
         
-        /* Select woods-on-land percentage. Range: 5-30% */
-        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 4;
+        JButton button = new JButton("Ready");
+        button.setActionCommand("world-parameters-selected");
+        button.addActionListener(Master.getInstance());
+        add(button, c);
+    }
+    
+    public int getWorldSide()
+    {
+        return worldSizeSlider.getValue();
+    }
+
+    public double getSeaPercentage()
+    {
+        return seaPercentageSlider.getValue();
+    }
+
+    public double getMountsPercentage()
+    {
+        return mountsPercentageSlider.getValue();
+    }
+
+    public WorldParameters getParameters()
+    {
+        WorldParameters parameters = new WorldParameters();
+        parameters.worldSide = worldSizeSlider.getValue();
+        parameters.seaPercentage = 0.01 * (double) seaPercentageSlider.getValue();
+        parameters.mountsPercentage = 0.01 * (double) mountsPercentageSlider.getValue();
+        return parameters;
     }
 }
