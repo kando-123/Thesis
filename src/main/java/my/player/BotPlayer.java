@@ -6,5 +6,8 @@ package my.player;
  */
 public class BotPlayer extends AbstractPlayer
 {
-    
+    public BotPlayer()
+    {
+        super(PlayerType.BOT);
+    }
 }

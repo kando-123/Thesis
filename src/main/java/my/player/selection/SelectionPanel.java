@@ -1,11 +1,11 @@
 package my.player.selection;
 
+import my.player.PlayerColor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -18,31 +18,32 @@ public class SelectionPanel extends JPanel implements ActionListener
     private final int maximum;
     private int limit;
     private int selected;
-    
-    private List<JRadioButton> radioButtons;
-    private List<JTextField> textFields;
-    private List<JComboBox> comboBoxes;
-    private List<ColorModel> colorModels;
-    
+
+    private final HashMap<Integer, JRadioButton> radioButtons;
+    private final HashMap<Integer, JTextField> textFields;
+    private final HashMap<Integer, JComboBox> comboBoxes;
+    private final HashMap<Integer, ColorModel> colorModels;
+
     protected ActionListener parent;
-    
+
     public SelectionPanel(int min, int max, int lim, int sel)
     {
         super(new GridBagLayout());
-        assert (0 <= min && min <= sel && sel <= lim && lim <= max);
         
+        assert (0 <= min && min <= sel && sel <= lim && lim <= max);
+
         minimum = min;
         maximum = max;
         limit = lim;
         selected = sel;
-        
-        radioButtons = new ArrayList<>(maximum - minimum + 1);
-        textFields = new ArrayList<>(maximum - minimum + 1);
-        comboBoxes = new ArrayList<>(maximum - minimum + 1);
-        colorModels = new ArrayList<>(maximum - minimum + 1);
-        
+
+        radioButtons = new HashMap<>(maximum - minimum + 1);
+        textFields = new HashMap<>(maximum - minimum + 1);
+        comboBoxes = new HashMap<>(maximum - minimum + 1);
+        colorModels = new HashMap<>(maximum - minimum + 1);
+
         GridBagConstraints c;
-        ButtonGroup group = new ButtonGroup(); 
+        ButtonGroup group = new ButtonGroup();
         for (int i = minimum; i <= maximum; ++i)
         {
             c = new GridBagConstraints();
@@ -51,45 +52,146 @@ public class SelectionPanel extends JPanel implements ActionListener
             JRadioButton button = new JRadioButton(String.valueOf(i));
             button.setSelected(i == selected);
             button.setEnabled(i <= limit);
+            button.setActionCommand("RAD;%d".formatted(i));
+            button.addActionListener(this);
             group.add(button);
-            radioButtons.add(button);
+            radioButtons.put(i, button);
             add(button, c);
-            
+
             if (i > 0)
             {
                 c.gridx = 1;
                 JTextField field = new JTextField(12);
                 field.setEnabled(i <= selected);
-                textFields.add(field);
+                textFields.put(i, field);
                 add(field, c);
-                
+
                 c.gridx = 2;
                 ColorModel model = new ColorModel();
-                colorModels.add(model);
+                model.addActionListener(this);
+                colorModels.put(i, model);
                 JComboBox combo = new JComboBox(model);
-                comboBoxes.add(combo);
+                combo.setEnabled(i <= selected);
+                comboBoxes.put(i, combo);
                 add(combo, c);
             }
         }
     }
-    
+
     public void setDefaultNames(String name)
     {
-        int i = 0;
-        for (var field : textFields)
+        for (int i = minimum; i <= maximum; ++i)
         {
-            field.setText(String.format("%s%d", name, ++i));
+            if (i > 0)
+            {
+                textFields.get(i).setText(String.format("%s%d", name, i));
+            }
         }
     }
-    
+
     public void addActionListener(ActionListener parent)
     {
-        
+        this.parent = parent;
     }
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        String[] particles = e.getActionCommand().split(";");
+        switch (particles[0])
+        {
+            case "RAD" ->
+            {
+                int index = Integer.parseInt(particles[1]);
+
+                assert (minimum <= index && index <= maximum);
+
+                if (index != selected)
+                {
+                    for (int i = minimum; i <= maximum; ++i)
+                    {
+                        boolean disable = (i > index);
+                        if (i > 0)
+                        {
+                            JTextField field = textFields.get(i);
+                            field.setEnabled(!disable);
+
+                            JComboBox combo = comboBoxes.get(i);
+                            combo.setEnabled(!disable);
+                            
+                            if (disable)
+                            {
+                                colorModels.get(i).setSelectedItem(PlayerColor.RANDOM);
+                            }
+                        }
+                    }
+                    
+                    int difference = selected - index;
+                    String command = "REL;%d".formatted(difference);
+                    ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command);
+                    parent.actionPerformed(event);
+
+                    selected = index;
+                }
+            }
+            case "REL" ->
+            {
+                int number = Integer.parseInt(particles[1]);
+                limit += number;
+                
+                assert (minimum <= limit && limit <= maximum);
+                
+                for (int i = minimum; i <= maximum; ++i)
+                {
+                    boolean disable = (i > limit);
+                    radioButtons.get(i).setEnabled(!disable);
+                }
+            }
+            case "SEL" ->
+            {
+                PlayerColor color = PlayerColor.valueOf(particles[1]);
+                Object source = e.getSource();
+                if (color != PlayerColor.RANDOM && source != null)
+                {
+                    for (int i = minimum; i <= maximum; ++i)
+                    {
+                        ColorModel model = colorModels.get(i);
+                        if (i > 0 && model != source)
+                        {
+                            model.removeElement(color);
+                        }
+                    }
+                    if (!particles[2].equals("STOP"))
+                    {
+                        String command = e.getActionCommand();
+                        ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command);
+                        parent.actionPerformed(event);
+                    }
+                }
+            }
+            case "DES" ->
+            {
+                PlayerColor color = PlayerColor.valueOf(particles[1]);
+                Object source = e.getSource();
+                if (color != PlayerColor.RANDOM && source != null)
+                {
+                    for (int i = minimum; i <= maximum; ++i)
+                    {
+                        ColorModel model = colorModels.get(i);
+                        if (i > 0 && model != source)
+                        {
+                            model.addElement(color);
+                        }
+                    }
+                }
+                if (!particles[2].equals("STOP"))
+                {
+                    String command = e.getActionCommand();
+                    ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command);
+                    parent.actionPerformed(event);
+                }
+            }
+        }
     }
 }

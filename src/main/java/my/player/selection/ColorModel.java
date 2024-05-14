@@ -1,8 +1,8 @@
 package my.player.selection;
 
+import my.player.PlayerColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,14 +17,13 @@ public class ColorModel extends AbstractListModel<PlayerColor> implements Mutabl
 {
     private final List<PlayerColor> items;
     private PlayerColor selectedColor;
-    private final List<ActionListener> listeners;
-    
+    private ActionListener listener;
+
     public ColorModel()
     {
         items = new LinkedList<>();
         items.addAll(Arrays.asList(PlayerColor.values()));
         selectedColor = PlayerColor.RANDOM;
-        listeners = new ArrayList<>();
     }
 
     @Override
@@ -61,7 +60,7 @@ public class ColorModel extends AbstractListModel<PlayerColor> implements Mutabl
     public void removeElement(Object object)
     {
         assert (object.getClass() == PlayerColor.class);
-        
+
         items.remove((PlayerColor) object);
     }
 
@@ -81,26 +80,21 @@ public class ColorModel extends AbstractListModel<PlayerColor> implements Mutabl
     public void setSelectedItem(Object newItem)
     {
         assert (newItem.getClass() == PlayerColor.class);
-        
+
         PlayerColor newColor = (PlayerColor) newItem;
         if (newColor != selectedColor)
         {
-            for (var listener : listeners)
+            if (listener != null)
             {
-                ActionEvent deselected = new ActionEvent(
-                        this,
-                        ActionEvent.ACTION_PERFORMED,
-                        String.format("DES;%s", selectedColor.toString())
-                );
+                String deselection = String.format("DES;%s;CONT", selectedColor.name());
+                ActionEvent deselected = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, deselection);
                 listener.actionPerformed(deselected);
-                
-                ActionEvent selected = new ActionEvent(
-                        this,
-                        ActionEvent.ACTION_PERFORMED,
-                        String.format("SEL;%s", newColor.toString())
-                );
+
+                String selection = String.format("SEL;%s;CONT", newColor.name());
+                ActionEvent selected = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, selection);
                 listener.actionPerformed(selected);
             }
+
             selectedColor = newColor;
         }
     }
@@ -110,9 +104,9 @@ public class ColorModel extends AbstractListModel<PlayerColor> implements Mutabl
     {
         return selectedColor;
     }
-    
-    public void addColorSelectionListener(ActionListener listener)
+
+    public void addActionListener(ActionListener listener)
     {
-        listeners.add(listener);
+        this.listener = listener;
     }
 }

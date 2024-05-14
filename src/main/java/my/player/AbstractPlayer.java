@@ -1,7 +1,5 @@
 package my.player;
 
-import my.player.selection.PlayerColor;
-
 /**
  *
  * @author Kay Jay O'Nail
@@ -9,4 +7,16 @@ import my.player.selection.PlayerColor;
 public abstract class AbstractPlayer
 {
     public static final int PLAYERS_COUNT = PlayerColor.values().length - 1;
+    
+    private final PlayerType type;
+    
+    protected AbstractPlayer(PlayerType type)
+    {
+        this.type = type;
+    }
+    
+    public PlayerType getType()
+    {
+        return type;
+    }
 }
