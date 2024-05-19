@@ -8,6 +8,6 @@ package my.player;
 public class PlayerParameters
 {
     public PlayerType type;
-    public String name;
     public PlayerColor color;
+    public String name;
 }

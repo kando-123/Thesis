@@ -4,12 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import my.game.Master;
 import my.player.AbstractPlayer;
 import my.player.PlayerParameters;
+import my.player.PlayerType;
 
 /**
  *
@@ -21,6 +23,8 @@ public class PlayerSelectionContentPane extends JPanel implements ActionListener
     
     public PlayerSelectionContentPane()
     {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        
         JTabbedPane tabbedPane = new JTabbedPane();
         add(tabbedPane);
         
@@ -29,12 +33,14 @@ public class PlayerSelectionContentPane extends JPanel implements ActionListener
         final int players = AbstractPlayer.PLAYERS_COUNT;
         
         SelectionPanel usersSelection = new SelectionPanel(1, players, players - 1, 1);
+        usersSelection.setPlayerType(PlayerType.USER);
         usersSelection.setDefaultNames("Player");
         usersSelection.addActionListener(this);
         tabbedPane.add("Users", usersSelection);
         panels.add(usersSelection);
         
         SelectionPanel botsSelection = new SelectionPanel(0, players - 1, players - 1, 1);
+        botsSelection.setPlayerType(PlayerType.BOT);
         botsSelection.setDefaultNames("Bot");
         botsSelection.addActionListener(this);
         tabbedPane.add("Bots", botsSelection);
@@ -78,5 +84,25 @@ public class PlayerSelectionContentPane extends JPanel implements ActionListener
                 }
             }
         }
+    }
+    
+    public int getTotalNumberOfPlayers()
+    {
+        int sum = 0;
+        for (var panel : panels)
+        {
+            sum += panel.getSelected();
+        }
+        return sum;
+    }
+    
+    public List<PlayerParameters> getPlayerParameters()
+    {
+        List<PlayerParameters> list = new ArrayList<>();
+        for (var panel : panels)
+        {
+            list.addAll(panel.getPlayerParameters());
+        }
+        return list;
     }
 }

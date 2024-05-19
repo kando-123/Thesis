@@ -5,12 +5,16 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import my.player.PlayerParameters;
+import my.player.PlayerType;
 
 public class SelectionPanel extends JPanel implements ActionListener
 {
@@ -24,7 +28,9 @@ public class SelectionPanel extends JPanel implements ActionListener
     private final HashMap<Integer, JComboBox> comboBoxes;
     private final HashMap<Integer, ColorModel> colorModels;
 
-    protected ActionListener parent;
+    private ActionListener parent;
+    
+    private PlayerType type;
 
     public SelectionPanel(int min, int max, int lim, int sel)
     {
@@ -52,7 +58,7 @@ public class SelectionPanel extends JPanel implements ActionListener
             JRadioButton button = new JRadioButton(String.valueOf(i));
             button.setSelected(i == selected);
             button.setEnabled(i <= limit);
-            button.setActionCommand("RAD;%d".formatted(i));
+            button.setActionCommand("NUM;%d".formatted(i));
             button.addActionListener(this);
             group.add(button);
             radioButtons.put(i, button);
@@ -76,6 +82,11 @@ public class SelectionPanel extends JPanel implements ActionListener
                 add(combo, c);
             }
         }
+    }
+    
+    public void setPlayerType(PlayerType type)
+    {
+        this.type = type;
     }
 
     public void setDefaultNames(String name)
@@ -101,7 +112,7 @@ public class SelectionPanel extends JPanel implements ActionListener
         String[] particles = e.getActionCommand().split(";");
         switch (particles[0])
         {
-            case "RAD" ->
+            case "NUM" ->
             {
                 int index = Integer.parseInt(particles[1]);
 
@@ -193,5 +204,23 @@ public class SelectionPanel extends JPanel implements ActionListener
                 }
             }
         }
+    }
+    
+    public int getSelected()
+    {
+        return selected;
+    }
+    
+    public List<PlayerParameters> getPlayerParameters()
+    {
+        List<PlayerParameters> list = new ArrayList<>();
+        for (int i = Math.max(minimum, 1); i <= selected; ++i)
+        {
+            PlayerParameters parameters = new PlayerParameters();
+            parameters.type = type;
+            parameters.name = textFields.get(i).getText();
+            parameters.color = (PlayerColor) colorModels.get(i).getSelectedItem();
+        }
+        return list;
     }
 }
