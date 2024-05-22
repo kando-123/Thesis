@@ -285,7 +285,7 @@ public class Hex
         return new Point(x, y);
     }
 
-    public static Pixel getCentralPixelOf(int p, int q, int r, int outerRadius, int innerRadius)
+    public static Pixel getCentralPixelAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
         Pixel pixel = null;
         if (p + q + r == 0)
@@ -297,7 +297,7 @@ public class Hex
         return pixel;
     }
 
-    public static Pixel getCornerPixelOf(int p, int q, int r, int outerRadius, int innerRadius)
+    public static Pixel getCornerPixelAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
         Pixel pixel = null;
         if (p + q + r == 0)
@@ -309,7 +309,7 @@ public class Hex
         return pixel;
     }
 
-    public static Point getCentralPointOf(int p, int q, int r, double outerRadius, double innerRadius)
+    public static Point getCentralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
     {
         Point point = null;
         if (p + q + r == 0)
@@ -321,7 +321,7 @@ public class Hex
         return point;
     }
 
-    public static Point getCornerPointOf(int p, int q, int r, double outerRadius, double innerRadius)
+    public static Point getCornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
     {
         Point point = null;
         if (p + q + r == 0)
@@ -332,6 +332,11 @@ public class Hex
         }
         return point;
     }
+    
+//    public static Hex getHexAt(int x, int y)
+//    {
+//        
+//    }
 
     /* Other */
     
