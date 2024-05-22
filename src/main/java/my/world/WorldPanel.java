@@ -65,7 +65,7 @@ public class WorldPanel extends JPanel
     public void makeWorld(Dimension panelSize, WorldParameters parameters)
     {
         assert (parameters.worldSide >= 10 && parameters.worldSide <= 30);
-        assert (parameters.seaPercentage >= 0.20 && parameters.seaPercentage <= 0.70);
+        assert (parameters.seaPercentage >= 0.25 && parameters.seaPercentage <= 0.65);
         assert (parameters.mountsPercentage >= 0.10 && parameters.mountsPercentage <= 0.40);
 
         panelWidth = panelSize.width;

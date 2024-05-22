@@ -220,6 +220,7 @@ public class SelectionPanel extends JPanel implements ActionListener
             parameters.type = type;
             parameters.name = textFields.get(i).getText();
             parameters.color = (PlayerColor) colorModels.get(i).getSelectedItem();
+            list.add(parameters);
         }
         return list;
     }

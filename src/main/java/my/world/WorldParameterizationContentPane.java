@@ -19,7 +19,6 @@ public class WorldParameterizationContentPane extends JPanel
     private final JSlider worldSizeSlider;
     private final JSlider seaPercentageSlider;
     private final JSlider mountsPercentageSlider;
-    private JSlider woodsPercentageSlider;
     
     private static final int SLIDER_WIDTH = 200;
     private static final int SLIDER_HEIGHT = 20;
@@ -59,7 +58,7 @@ public class WorldParameterizationContentPane extends JPanel
         JPanel seaPercentageSliderPanel = new JPanel();
         seaPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Sea"));
         add(seaPercentageSliderPanel, c);
-        seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 20, 70, 40);
+        seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 25, 65, 40);
         seaPercentageSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
         Hashtable<Integer, JLabel> seaPercentageLabels = new Hashtable<>(3);
         seaPercentageLabels.put(25, new JLabel("lakes"));

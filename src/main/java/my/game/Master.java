@@ -5,13 +5,17 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import my.gameplay.GameplayContentPane;
 import my.player.*;
 import my.player.selection.*;
+import my.world.WorldParameterizationContentPane;
 
 /**
  *
@@ -19,11 +23,14 @@ import my.player.selection.*;
  */
 public class Master extends JFrame implements ActionListener
 {
+    private State state;
     private JPanel contentPane;
+
     private List<AbstractPlayer> players;
 
     private Master()
     {
+        state = State.INITIAL;
         try
         {
             InputStream stream = getClass().getResourceAsStream("/Logo/Icon.png");
@@ -54,27 +61,38 @@ public class Master extends JFrame implements ActionListener
         {
             case "play" ->
             {
+                assert (state == State.INITIAL);
+
                 contentPane = new PlayerSelectionContentPane();
                 contentPane.setPreferredSize(getSize());
                 setContentPane(contentPane);
                 pack();
                 setLocationRelativeTo(null);
+
+                state = State.PLAYERS_SELECTION;
             }
             case "players-selected" ->
             {
-                List<PlayerParameters> playersData = ((PlayerSelectionContentPane) contentPane).getPlayerParameters();
-                if (playersData.size() < 2)
+                assert (state == State.PLAYERS_SELECTION);
+
+                var currentContentPane = (PlayerSelectionContentPane) contentPane;
+
+                List<PlayerParameters> playersData = currentContentPane.getPlayerParameters();
+                int playersNumber = playersData.size();
+                if (playersNumber < 2)
                 {
                     JOptionPane.showMessageDialog(this, "Select at least 2 players.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else
                 {
+                    Collections.shuffle(playersData);
+
+                    players = new ArrayList<>(playersNumber);
                     for (var data : playersData)
                     {
                         assert (data.type != null);
 
-                        AbstractPlayer player =
-                        switch (data.type)
+                        AbstractPlayer player = switch (data.type)
                         {
                             case USER ->
                             {
@@ -85,12 +103,29 @@ public class Master extends JFrame implements ActionListener
                                 yield new BotPlayer();
                             }
                         };
+                        player.setName(data.name);
+                        player.setColor(data.color);
+
+                        players.add(player);
                     }
+
+                    contentPane = new WorldParameterizationContentPane();
+                    setContentPane(contentPane);
+                    pack();
+                    setLocationRelativeTo(null);
+
+                    state = State.WORLD_PARAMETERIZATION;
                 }
             }
             case "world-parameters-selected" ->
             {
+                assert (state == State.WORLD_PARAMETERIZATION);
 
+                contentPane = new GameplayContentPane();
+                setContentPane(contentPane);
+                setResizable(true);
+                pack();
+                setLocationRelativeTo(null);
             }
         }
     }
