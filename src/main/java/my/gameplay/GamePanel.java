@@ -1,5 +1,6 @@
-package my.game;
+package my.gameplay;
 
+import my.gameplay.WorldPanel;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;

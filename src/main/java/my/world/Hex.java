@@ -254,7 +254,12 @@ public class Hex
     {
         return (Math.abs(pCoord) + Math.abs(qCoord) + Math.abs(rCoord)) / 2;
     }
-
+    
+    public static int getHexSurfaceSize(int side)
+    {
+        return 3 * side * (side - 1) + 1;
+    }
+    
     /* Geometry */
     
     public Pixel getCentralPixel(int outerRadius, int innerRadius)

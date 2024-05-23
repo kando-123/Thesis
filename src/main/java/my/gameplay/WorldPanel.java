@@ -1,4 +1,4 @@
-package my.world;
+package my.gameplay;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JPanel;
 import my.input.*;
+import my.world.OrthogonalDirection;
+import my.world.Pixel;
+import my.world.World;
+import my.world.WorldParameters;
 import my.world.field.*;
 
 /**
@@ -72,13 +76,13 @@ public class WorldPanel extends JPanel
         centerOffset = new Pixel(panelWidth / 2, panelHeight / 2);
     }
 
-    @Override
-    public void paintComponent(Graphics graphics)
-    {
-        Graphics2D graphics2D = (Graphics2D) graphics;
-        graphics2D.setBackground(Color.black);
-        graphics2D.clearRect(0, 0, panelWidth, panelHeight);
-
+//    @Override
+//    public void paintComponent(Graphics graphics)
+//    {
+//        Graphics2D graphics2D = (Graphics2D) graphics;
+//        graphics2D.setBackground(Color.black);
+//        graphics2D.clearRect(0, 0, panelWidth, panelHeight);
+//
 //        var iterator = fields.entrySet().iterator();
 //        while (iterator.hasNext())
 //        {
@@ -101,5 +105,5 @@ public class WorldPanel extends JPanel
 //                graphics2D.drawImage(image, x, y, w, h, null);
 //            }
 //        }
-    }
+//    }
 }

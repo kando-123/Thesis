@@ -22,11 +22,6 @@ public class World
     
     private final Map<Hex, Field> fields;
     
-    private int hexSurface(int side)
-    {
-        return 3 * side * (side - 1) + 1;
-    }
-    
     public World(WorldParameters parameters)
     {
         int side = parameters.worldSide;
@@ -37,7 +32,7 @@ public class World
         assert (seaPercentage >= 0.00 && seaPercentage <= 1.00);
         assert (mountsPercentage >= 0.00 && mountsPercentage <= 1.00);
         
-        int surface = hexSurface(side);
+        int surface = Hex.getHexSurfaceSize(side);
         int westmostX = Hex.getCornerPixelAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
         int eastmostX = Hex.getCornerPixelAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
         int northmostY = Hex.getCornerPixelAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
@@ -132,7 +127,7 @@ public class World
     
     private Map<Object, Pixel> generateCenters(int side, Pixel offset)
     {
-        Map<Object, Pixel> centers = new HashMap<>(hexSurface(side));
+        Map<Object, Pixel> centers = new HashMap<>(Hex.getHexSurfaceSize(side));
         Hex hex = Hex.getOrigin();
         centers.put(hex.clone(), hex.getCentralPixel(HEX_OUTER_RADIUS, HEX_INNER_RADIUS).plus(offset));
         for (int ring = 1; ring < side; ++ring)
