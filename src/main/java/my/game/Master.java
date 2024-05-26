@@ -1,5 +1,7 @@
 package my.game;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -12,10 +14,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import my.gameplay.GameplayContentPane;
+import my.gameplay.*;
 import my.player.*;
 import my.player.selection.*;
-import my.world.WorldParameterizationContentPane;
+import my.world.*;
 
 /**
  *
@@ -120,12 +122,15 @@ public class Master extends JFrame implements ActionListener
             case "world-parameters-selected" ->
             {
                 assert (state == State.WORLD_PARAMETERIZATION);
-
-                contentPane = new GameplayContentPane();
+                
+                var parameters = ((WorldParameterizationContentPane) contentPane).getParameters();
+                contentPane = new GameplayContentPane(parameters);
                 setContentPane(contentPane);
                 setResizable(true);
                 pack();
                 setLocationRelativeTo(null);
+                
+                state = State.GAMEPLAY;
             }
         }
     }
