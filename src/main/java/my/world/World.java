@@ -241,12 +241,12 @@ public class World
 
             Field field = entry.getValue();
 
-            int w = (int) (field.getWidth() * scale);
-            int h = (int) (field.getHeight() * scale);
+            int w = (int) (HEX_WIDTH * scale);
+            int h = (int) (HEX_HEIGHT * scale);
 
             if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
             {
-                field.draw(graphics, pixel.plus(offset), scale);
+                field.draw(graphics, pixel.plus(offset), new Dimension(w, h));
             }
         }
     }
