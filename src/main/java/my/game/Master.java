@@ -1,7 +1,5 @@
 package my.game;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -63,74 +61,77 @@ public class Master extends JFrame implements ActionListener
         {
             case "play" ->
             {
-                assert (state == State.INITIAL);
-
-                contentPane = new PlayerSelectionContentPane();
-                contentPane.setPreferredSize(getSize());
-                setContentPane(contentPane);
-                pack();
-                setLocationRelativeTo(null);
-
-                state = State.PLAYERS_SELECTION;
-            }
-            case "players-selected" ->
-            {
-                assert (state == State.PLAYERS_SELECTION);
-
-                var currentContentPane = (PlayerSelectionContentPane) contentPane;
-
-                List<PlayerParameters> playersData = currentContentPane.getPlayerParameters();
-                int playersNumber = playersData.size();
-                if (playersNumber < 2)
+                if (state == State.INITIAL)
                 {
-                    JOptionPane.showMessageDialog(this, "Select at least 2 players.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else
-                {
-                    Collections.shuffle(playersData);
-
-                    players = new ArrayList<>(playersNumber);
-                    for (var data : playersData)
-                    {
-                        assert (data.type != null);
-
-                        AbstractPlayer player = switch (data.type)
-                        {
-                            case USER ->
-                            {
-                                yield new UserPlayer();
-                            }
-                            case BOT ->
-                            {
-                                yield new BotPlayer();
-                            }
-                        };
-                        player.setName(data.name);
-                        player.setColor(data.color);
-
-                        players.add(player);
-                    }
-
-                    contentPane = new WorldParameterizationContentPane();
+                    contentPane = new PlayerSelectionContentPane();
+                    contentPane.setPreferredSize(getSize());
                     setContentPane(contentPane);
                     pack();
                     setLocationRelativeTo(null);
 
-                    state = State.WORLD_PARAMETERIZATION;
+                    state = State.PLAYERS_SELECTION;
+                }
+            }
+            case "players-selected" ->
+            {
+                if (state == State.PLAYERS_SELECTION)
+                {
+                    var currentContentPane = (PlayerSelectionContentPane) contentPane;
+
+                    List<PlayerParameters> playersData = currentContentPane.getPlayerParameters();
+                    int playersNumber = playersData.size();
+                    if (playersNumber < 2)
+                    {
+                        JOptionPane.showMessageDialog(this, "Select at least 2 players.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    else
+                    {
+                        Collections.shuffle(playersData);
+
+                        players = new ArrayList<>(playersNumber);
+                        for (var data : playersData)
+                        {
+                            assert (data.type != null);
+
+                            AbstractPlayer player = switch (data.type)
+                            {
+                                case USER ->
+                                {
+                                    yield new UserPlayer();
+                                }
+                                case BOT ->
+                                {
+                                    yield new BotPlayer();
+                                }
+                            };
+                            player.setName(data.name);
+                            player.setColor(data.color);
+
+                            players.add(player);
+                        }
+
+                        contentPane = new WorldParameterizationContentPane();
+                        setContentPane(contentPane);
+                        pack();
+                        setLocationRelativeTo(null);
+
+                        state = State.WORLD_PARAMETERIZATION;
+                    }
                 }
             }
             case "world-parameters-selected" ->
             {
-                assert (state == State.WORLD_PARAMETERIZATION);
-                
-                var parameters = ((WorldParameterizationContentPane) contentPane).getParameters();
-                contentPane = new GameplayContentPane(parameters);
-                setContentPane(contentPane);
-                setResizable(true);
-                pack();
-                setLocationRelativeTo(null);
-                
-                state = State.GAMEPLAY;
+                if (state == State.WORLD_PARAMETERIZATION)
+                {
+                    var parameters = ((WorldParameterizationContentPane) contentPane).getParameters();
+                    contentPane = new GameplayContentPane(parameters);
+                    setContentPane(contentPane);
+                    setResizable(true);
+                    pack();
+                    setLocationRelativeTo(null);
+
+                    state = State.GAMEPLAY;
+                }
             }
         }
     }

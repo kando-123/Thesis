@@ -34,10 +34,9 @@ public class WorldPanel extends JPanel
         inputHandler = InputHandler.getInstance();
     }
 
-    public void makeWorld(WorldParameters parameters)
+    public void setWorld(World newWorld)
     {
-        FieldManager.getInstance();
-        world = new World(parameters);
+        world = newWorld;
     }
 
     @Override

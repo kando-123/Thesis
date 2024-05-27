@@ -1,9 +1,6 @@
 package my.game;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import javax.swing.JFrame;
-import my.gameplay.WorldPanel;
 import my.input.InputHandler;
 
 /**
