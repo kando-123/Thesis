@@ -3,8 +3,10 @@ package my.gameplay;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import my.game.Master;
 import my.world.WorldParameters;
 
 /**
@@ -23,11 +25,11 @@ public class GameplayContentPane extends JPanel
         Dimension screenSize = toolkit.getScreenSize();
         int frameWidth = (int) (screenSize.width / Math.sqrt(2.0));
         int frameHeight = (int) (screenSize.height / Math.sqrt(2.0));
-        Dimension frameSize = new Dimension(frameWidth, frameHeight);
         
+        Dimension panelSize = new Dimension(frameWidth, (int) (0.9 * frameHeight));
         worldPanel = new WorldPanel();
         worldPanel.makeWorld(parameters);
-        worldPanel.setPreferredSize(frameSize);
+        worldPanel.setPreferredSize(panelSize);
         add(worldPanel, BorderLayout.CENTER);
         
         JPanel panel = new JPanel();

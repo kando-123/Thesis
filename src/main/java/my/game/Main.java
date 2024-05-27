@@ -29,7 +29,5 @@ public class Main
         
         master.setVisible(true);
         master.setLocationRelativeTo(null);
-        
-//        panel.startGameThread();
     }
 }

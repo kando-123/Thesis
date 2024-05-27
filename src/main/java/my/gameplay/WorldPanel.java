@@ -16,15 +16,16 @@ import my.world.field.*;
 public class WorldPanel extends JPanel
 {
     private Dimension panelSize;
+
     private Pixel worldCenter;
     private double scale;
-    
+
     private final double SCALE_FACTOR = 1.01;
     private final double MAX_SCALE = 2.5;
     private final double MIN_SCALE = 0.25;
 
     private final InputHandler inputHandler;
-    
+
     private World world;
 
     public WorldPanel()
@@ -39,29 +40,11 @@ public class WorldPanel extends JPanel
         world = new World(parameters);
     }
 
-    public void update()
-    {
-        OrthogonalDirection shift = inputHandler.getShiftingDirection();
-        if (shift != null)
-        {
-            worldCenter.add(shift.getOffset());
-        }
-
-        if (inputHandler.zoomIn())
-        {
-            scale = Math.min(scale * SCALE_FACTOR, MAX_SCALE);
-        }
-        else if (inputHandler.zoomOut())
-        {
-            scale = Math.max(scale / SCALE_FACTOR, MIN_SCALE);
-        }
-    }
-    
     @Override
     public void setPreferredSize(Dimension newSize)
     {
         super.setPreferredSize(newSize);
-        
+
         panelSize = newSize;
         worldCenter = new Pixel(panelSize.width / 2, panelSize.height / 2);
     }
@@ -72,7 +55,7 @@ public class WorldPanel extends JPanel
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setBackground(Color.black);
         graphics2D.clearRect(0, 0, panelSize.width, panelSize.height);
-        
+
         world.draw(graphics2D, worldCenter, scale, panelSize);
     }
 }

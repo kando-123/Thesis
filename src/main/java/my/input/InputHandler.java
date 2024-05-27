@@ -2,6 +2,7 @@ package my.input;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelListener;
 import my.world.OrthogonalDirection;
 
 /**

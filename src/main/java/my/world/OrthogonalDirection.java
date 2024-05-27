@@ -20,15 +20,10 @@ public enum OrthogonalDirection
     private static final int unitOffset = 6;
     private static final int unitDiagonal = 4;
     
-    private final Pixel offset;
+    public final Pixel offset;
     
     private OrthogonalDirection(int xOffset, int yOffset)
     {
         offset = new Pixel(xOffset, yOffset);
-    }
-    
-    public Pixel getOffset()
-    {
-        return offset;
     }
 }
