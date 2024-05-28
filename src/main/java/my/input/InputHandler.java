@@ -22,7 +22,7 @@ public class InputHandler implements KeyListener
     
     private InputHandler()
     {
-        directions = 0;
+        
     }
     
     private static InputHandler instance = null;

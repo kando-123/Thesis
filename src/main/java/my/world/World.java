@@ -246,7 +246,7 @@ public class World
 
             if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
             {
-                field.draw(graphics, pixel.plus(offset), new Dimension(w, h));
+                field.draw(graphics, new Pixel(x, y), new Dimension(w, h));
             }
         }
     }

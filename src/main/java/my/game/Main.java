@@ -23,6 +23,8 @@ public class Main
         
         InputHandler inputHandler = InputHandler.getInstance();
         master.addKeyListener(inputHandler);
+        master.setFocusable(true);
+        master.requestFocus();
         
         master.setVisible(true);
         master.setLocationRelativeTo(null);

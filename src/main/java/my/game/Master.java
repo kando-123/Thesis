@@ -133,6 +133,14 @@ public class Master extends JFrame implements ActionListener
                     state = State.GAMEPLAY;
                 }
             }
+            
+            case "END" ->
+            {
+                System.out.println("It might not look like but the game is over.");
+                
+                ThreadPool pool = ThreadPool.getInstance();
+                pool.joinAll();
+            }
         }
     }
 }
