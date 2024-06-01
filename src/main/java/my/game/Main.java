@@ -23,6 +23,7 @@ public class Main
         
         InputHandler inputHandler = InputHandler.getInstance();
         master.addKeyListener(inputHandler);
+        master.addMouseWheelListener(inputHandler);
         master.setFocusable(true);
         master.requestFocus();
         

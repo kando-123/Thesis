@@ -226,7 +226,7 @@ public class World
         }
     }
     
-    public void draw(Graphics2D graphics, Pixel offset, double scale, Dimension panelSize)
+    public void draw(Graphics2D graphics, Point offset, double scale, Dimension panelSize)
     {
         var iterator = fields.entrySet().iterator();
         while (iterator.hasNext())
@@ -236,8 +236,8 @@ public class World
             Hex hex = entry.getKey();
             Pixel pixel = hex.getCornerPixel(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
 
-            int x = offset.xCoord + (int) (pixel.xCoord * scale);
-            int y = offset.yCoord + (int) (pixel.yCoord * scale);
+            int x = (int) offset.xCoord + (int) (pixel.xCoord * scale);
+            int y = (int) offset.yCoord + (int) (pixel.yCoord * scale);
 
             Field field = entry.getValue();
 

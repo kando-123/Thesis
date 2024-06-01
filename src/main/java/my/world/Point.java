@@ -15,6 +15,11 @@ public class Point
         this.yCoord = y;
     }
     
+    public Point clone()
+    {
+        return new Point(xCoord, yCoord);
+    }
+    
     public Point plus(Point other)
     {
         double x = xCoord + other.xCoord;
@@ -29,26 +34,26 @@ public class Point
         return new Point(x, y);
     }
     
-    public Point times(int factor)
+    public Point times(double factor)
     {
         double x = factor * xCoord;
         double y = factor * yCoord;
         return new Point(x, y);
     }
     
-    public void add(Pixel other)
+    public void add(Point other)
     {
         xCoord += other.xCoord;
         yCoord += other.yCoord;
     }
     
-    public void subtract(Pixel other)
+    public void subtract(Point other)
     {
         xCoord -= other.xCoord;
         yCoord -= other.yCoord;
     }
     
-    public void multiply(int factor)
+    public void multiply(double factor)
     {
         xCoord *= factor;
         yCoord *= factor;

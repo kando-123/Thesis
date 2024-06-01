@@ -1,5 +1,7 @@
 package my.player;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -11,6 +13,8 @@ public abstract class AbstractPlayer
     private final PlayerType type;
     private PlayerColor color;
     private String name;
+    
+    private JPanel panel;
     
     protected AbstractPlayer(PlayerType type)
     {

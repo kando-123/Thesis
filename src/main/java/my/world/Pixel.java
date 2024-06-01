@@ -17,6 +17,11 @@ public class Pixel
         this.yCoord = y;
     }
     
+    public Pixel clone()
+    {
+        return new Pixel(xCoord, yCoord);
+    }
+    
     public Pixel plus(Pixel other)
     {
         int x = xCoord + other.xCoord;
