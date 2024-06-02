@@ -1,6 +1,5 @@
 package my.world;
 
-import java.awt.Dimension;
 import java.util.*;
 
 /**
@@ -256,12 +255,12 @@ public class Hex
         return (Math.abs(pCoord) + Math.abs(qCoord) + Math.abs(rCoord)) / 2;
     }
     
+    /* Geometry */
+    
     public static int getHexSurfaceSize(int side)
     {
         return 3 * side * (side - 1) + 1;
     }
-    
-    /* Geometry */
     
     public Pixel getCentralPixel(int outerRadius, int innerRadius)
     {
@@ -337,6 +336,26 @@ public class Hex
             point = new Point(x, y);
         }
         return point;
+    }
+    
+    public static int computeSurfaceWidth(int side, int outerRadius)
+    {
+        return 3 * (side - 1) * outerRadius + 2 * outerRadius;
+    }
+    
+    public static int computeSurfaceHeight(int side, int innerRadius)
+    {
+        return 4 * (side - 1) * innerRadius + 2 * innerRadius;
+    }
+    
+    public static double computeSurfaceWidth(int side, double outerRadius)
+    {
+        return 3 * (side - 1) * outerRadius + 2 * outerRadius;
+    }
+    
+    public static double computeSurfaceHeight(int side, double innerRadius)
+    {
+        return 4 * (side - 1) * innerRadius + 2 * innerRadius;
     }
     
 //    public static Hex getHexAt(int x, int y)

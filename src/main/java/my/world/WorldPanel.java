@@ -20,7 +20,7 @@ public class WorldPanel extends JPanel implements Runnable
     private static final double UNIT_STEP = 5;
     private static final double SIN_30DEG = Math.sin(Math.toRadians(30));
     private static final double COS_30DEG = Math.cos(Math.toRadians(30));
-    
+
     private double scale;
     private static final double SCALE_FACTOR = 1.01;
     private static final double MAX_SCALE = 2.5;
@@ -55,14 +55,14 @@ public class WorldPanel extends JPanel implements Runnable
     public void paintComponent(Graphics graphics)
     {
         super.paintComponent(graphics);
-        
+
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setBackground(Color.black);
         graphics2D.clearRect(0, 0, panelSize.width, panelSize.height);
 
         world.draw(graphics2D, worldCenter, scale, panelSize);
     }
-    
+
     void update()
     {
         OrthogonalDirection direction = inputHandler.getShiftingDirection();
@@ -107,16 +107,12 @@ public class WorldPanel extends JPanel implements Runnable
                     worldCenter.yCoord += UNIT_STEP * SIN_30DEG;
                 }
             }
-            worldCenter.xCoord = Math.min(worldCenter.xCoord, +panelSize.width);
-            worldCenter.xCoord = Math.max(worldCenter.xCoord, 0);
-            worldCenter.yCoord = Math.min(worldCenter.yCoord, +panelSize.height);
-            worldCenter.yCoord = Math.max(worldCenter.yCoord, 0);
         }
-        
+
         if (inputHandler.zoomIn() && scale < MAX_SCALE)
         {
             scale = Math.min(scale * SCALE_FACTOR, MAX_SCALE);
-            
+
             Point relative = screenCenter.minus(worldCenter);
             Point offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.subtract(offset);
@@ -124,13 +120,41 @@ public class WorldPanel extends JPanel implements Runnable
         else if (inputHandler.zoomOut() && scale > MIN_SCALE)
         {
             scale = Math.max(scale / SCALE_FACTOR, MIN_SCALE);
-            
+
             Point relative = screenCenter.minus(worldCenter);
-            Point offset = relative.times(1 - SCALE_FACTOR);
-            worldCenter.subtract(offset);
+            Point offset = relative.times(SCALE_FACTOR - 1);
+            worldCenter.add(offset);
         }
+
+        /* This works well if the world is not smaller than the screen. With this issue solved,
+           this code will run perfectly well. */
+//        int side = world.getSide();
+//        int panelWidth = getSize().width;
+//        int panelHeight = getSize().height;
+//        double maxXCoord = 0.5 * Hex.computeSurfaceWidth(side, scale * World.HEX_OUTER_RADIUS);
+//        double minXCoord = panelWidth - maxXCoord;
+//        double maxYCoord = 0.5 * Hex.computeSurfaceHeight(side, scale * World.HEX_INNER_RADIUS);
+//        double minYCoord = panelHeight - maxYCoord;
+//
+//        if (worldCenter.xCoord > maxXCoord)
+//        {
+//            worldCenter.xCoord = maxXCoord;
+//        }
+//        else if (worldCenter.xCoord < minXCoord)
+//        {
+//            worldCenter.xCoord = minXCoord;
+//        }
+//
+//        if (worldCenter.yCoord > maxYCoord)
+//        {
+//            worldCenter.yCoord = maxYCoord;
+//        }
+//        else if (worldCenter.yCoord < minYCoord)
+//        {
+//            worldCenter.yCoord = minYCoord;
+//        }
     }
-    
+
     @Override
     public void run()
     {

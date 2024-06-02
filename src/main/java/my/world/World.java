@@ -25,7 +25,7 @@ public class World
     private final int side;
     private final Map<Hex, Field> fields;
     
-    public World(WorldParameters parameters)
+    public World(WorldConfiguration parameters)
     {
         /* Extract the fields of `parameters`. */
         side = parameters.worldSide;
@@ -54,6 +54,11 @@ public class World
         generateSeaFields(seaPercentage, centers);
         generateMountsFields(mountsPercentage, centers);
         generateWoodAndLandFields(centers);
+    }
+    
+    public int getSide()
+    {
+        return side;
     }
     
     private Map<Object, Pixel> generateCenters(int side, Pixel offset)

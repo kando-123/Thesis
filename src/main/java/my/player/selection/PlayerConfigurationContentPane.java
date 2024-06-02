@@ -17,11 +17,11 @@ import my.player.PlayerType;
  *
  * @author Kay Jay O'Nail
  */
-public class PlayerSelectionContentPane extends JPanel implements ActionListener
+public class PlayerConfigurationContentPane extends JPanel implements ActionListener
 {
     private List<SelectionPanel> panels;
     
-    public PlayerSelectionContentPane()
+    public PlayerConfigurationContentPane()
     {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         

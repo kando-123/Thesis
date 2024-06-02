@@ -1,9 +1,11 @@
 package my.world;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Hashtable;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,32 +16,27 @@ import my.game.Master;
  *
  * @author Kay Jay O'Nail
  */
-public class WorldParameterizationContentPane extends JPanel
+public class WorldConfigurationContentPane extends JPanel
 {
     private final JSlider worldSizeSlider;
     private final JSlider seaPercentageSlider;
     private final JSlider mountsPercentageSlider;
     
-    private static final int SLIDER_WIDTH = 200;
+    private static final int SLIDER_WIDTH = 500;
     private static final int SLIDER_HEIGHT = 20;
     
-    public WorldParameterizationContentPane()
+    public WorldConfigurationContentPane()
     {
-        super(new GridBagLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
         JLabel label = new JLabel("Select world parameters...");
-        add(label, c);
+        label.setAlignmentX(CENTER_ALIGNMENT);
+        add(label);
         
         /* Select the world size. Range: 10-30 */
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
         JPanel worldSizeSliderPanel = new JPanel();
         worldSizeSliderPanel.setBorder(BorderFactory.createTitledBorder("World size"));
-        add(worldSizeSliderPanel, c);
+        add(worldSizeSliderPanel);
         worldSizeSlider = new JSlider(JSlider.HORIZONTAL, 10, 30, 15);
         worldSizeSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
         Hashtable<Integer, JLabel> worldSizeLabels = new Hashtable<>(4);
@@ -52,12 +49,9 @@ public class WorldParameterizationContentPane extends JPanel
         worldSizeSliderPanel.add(worldSizeSlider);
         
         /* Select seas percentage. Range: 0-80% */
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 2;
         JPanel seaPercentageSliderPanel = new JPanel();
         seaPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Sea"));
-        add(seaPercentageSliderPanel, c);
+        add(seaPercentageSliderPanel);
         seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 25, 65, 40);
         seaPercentageSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
         Hashtable<Integer, JLabel> seaPercentageLabels = new Hashtable<>(3);
@@ -69,12 +63,9 @@ public class WorldParameterizationContentPane extends JPanel
         seaPercentageSliderPanel.add(seaPercentageSlider);
         
         /* Select mounts-on-land percentage. Range: 10-40% */
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 3;
         JPanel mountsPercentageSliderPanel = new JPanel();
         mountsPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Mounts"));
-        add(mountsPercentageSliderPanel, c);
+        add(mountsPercentageSliderPanel);
         mountsPercentageSlider = new JSlider(JSlider.HORIZONTAL, 10, 40, 25);
         mountsPercentageSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
         Hashtable<Integer, JLabel> mountsPercentageLabels = new Hashtable<>(3);
@@ -85,13 +76,10 @@ public class WorldParameterizationContentPane extends JPanel
         mountsPercentageSlider.setPaintLabels(true);
         mountsPercentageSliderPanel.add(mountsPercentageSlider);
         
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 4;
         JButton button = new JButton("Ready");
         button.setActionCommand("world-parameters-selected");
         button.addActionListener(Master.getInstance());
-        add(button, c);
+        add(button);
     }
     
     public int getWorldSide()
@@ -109,12 +97,12 @@ public class WorldParameterizationContentPane extends JPanel
         return mountsPercentageSlider.getValue();
     }
 
-    public WorldParameters getParameters()
+    public WorldConfiguration getConfiguration()
     {
-        WorldParameters parameters = new WorldParameters();
-        parameters.worldSide = worldSizeSlider.getValue();
-        parameters.seaPercentage = 0.01 * (double) seaPercentageSlider.getValue();
-        parameters.mountsPercentage = 0.01 * (double) mountsPercentageSlider.getValue();
-        return parameters;
+        WorldConfiguration configuration = new WorldConfiguration();
+        configuration.worldSide = worldSizeSlider.getValue();
+        configuration.seaPercentage = 0.01 * (double) seaPercentageSlider.getValue();
+        configuration.mountsPercentage = 0.01 * (double) mountsPercentageSlider.getValue();
+        return configuration;
     }
 }

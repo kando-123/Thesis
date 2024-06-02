@@ -27,7 +27,7 @@ public class GameplayManager
         return instance;
     }
     
-    public void makeWorld(WorldParameters parameters)
+    public void makeWorld(WorldConfiguration parameters)
     {
         FieldManager.getInstance();
         world = new World(parameters);

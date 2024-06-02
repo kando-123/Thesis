@@ -18,22 +18,20 @@ public class GameplayContentPane extends JPanel
 {
     private final WorldPanel worldPanel;
     
-    public GameplayContentPane(WorldParameters parameters)
+    public GameplayContentPane(WorldConfiguration parameters)
     {
         super(new BorderLayout());
         
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
-//        int frameWidth = (int) (screenSize.width / Math.sqrt(2.0));
-//        int frameHeight = (int) (screenSize.height / Math.sqrt(2.0));
-        int frameWidth = screenSize.width;
-        int frameHeight = screenSize.height;
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
         
         GameplayManager manager = GameplayManager.getInstance();
         manager.makeWorld(parameters);
         World world = manager.getWorld();
         
-        Dimension panelSize = new Dimension(frameWidth, (int) (0.9 * frameHeight));
+        Dimension panelSize = new Dimension(screenWidth, (int) (0.9 * screenHeight));
         worldPanel = new WorldPanel();
         worldPanel.setWorld(world);
         worldPanel.setPreferredSize(panelSize);
@@ -47,7 +45,7 @@ public class GameplayContentPane extends JPanel
         JButton end = new JButton("END");
         end.addActionListener(Master.getInstance());
         panel.add(end);
-        panel.setPreferredSize(new Dimension(frameWidth, (int) (0.1 * frameHeight)));
+        panel.setPreferredSize(new Dimension(screenWidth, (int) (0.1 * screenHeight)));
         add(panel, BorderLayout.SOUTH);
     }
 }

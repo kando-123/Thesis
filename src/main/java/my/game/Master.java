@@ -1,5 +1,6 @@
 package my.game;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -24,7 +25,10 @@ import my.world.*;
 public class Master extends JFrame implements ActionListener
 {
     private State state;
-    private JPanel contentPane;
+    
+    private PlayerConfigurationContentPane playerContentPane;
+    private WorldConfigurationContentPane worldContentPane;
+    private GameplayContentPane gameplayContentPane;
 
     private List<AbstractPlayer> players;
 
@@ -63,9 +67,13 @@ public class Master extends JFrame implements ActionListener
             {
                 if (state == State.INITIAL)
                 {
-                    contentPane = new PlayerSelectionContentPane();
-                    contentPane.setPreferredSize(getSize());
-                    setContentPane(contentPane);
+                    Dimension newDimension = getSize();
+                    newDimension.width *= 0.75;
+                    newDimension.height *= 0.75;
+                    
+                    playerContentPane = new PlayerConfigurationContentPane();
+                    playerContentPane.setPreferredSize(newDimension);
+                    setContentPane(playerContentPane);
                     pack();
                     setLocationRelativeTo(null);
 
@@ -76,42 +84,45 @@ public class Master extends JFrame implements ActionListener
             {
                 if (state == State.PLAYERS_SELECTION)
                 {
-                    var currentContentPane = (PlayerSelectionContentPane) contentPane;
-
-                    List<PlayerParameters> playersData = currentContentPane.getPlayerParameters();
+                    List<PlayerParameters> playersData = playerContentPane.getPlayerParameters();
                     int playersNumber = playersData.size();
                     if (playersNumber < 2)
                     {
-                        JOptionPane.showMessageDialog(this, "Select at least 2 players.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this,
+                                "Select at least 2 players.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
                     else
                     {
-                        Collections.shuffle(playersData);
+//                        Collections.shuffle(playersData);
+//
+//                        players = new ArrayList<>(playersNumber);
+//                        for (var data : playersData)
+//                        {
+//                            assert (data.type != null);
+//
+//                            AbstractPlayer player = switch (data.type)
+//                            {
+//                                case USER ->
+//                                {
+//                                    yield new UserPlayer();
+//                                }
+//                                case BOT ->
+//                                {
+//                                    yield new BotPlayer();
+//                                }
+//                            };
+//                            player.setName(data.name);
+//                            player.setColor(data.color);
+//
+//                            players.add(player);
+//                        }
 
-                        players = new ArrayList<>(playersNumber);
-                        for (var data : playersData)
-                        {
-                            assert (data.type != null);
-
-                            AbstractPlayer player = switch (data.type)
-                            {
-                                case USER ->
-                                {
-                                    yield new UserPlayer();
-                                }
-                                case BOT ->
-                                {
-                                    yield new BotPlayer();
-                                }
-                            };
-                            player.setName(data.name);
-                            player.setColor(data.color);
-
-                            players.add(player);
-                        }
-
-                        contentPane = new WorldParameterizationContentPane();
-                        setContentPane(contentPane);
+                        worldContentPane = new WorldConfigurationContentPane();
+                        worldContentPane.setPreferredSize(getSize());
+                        setContentPane(worldContentPane);
                         pack();
                         setLocationRelativeTo(null);
 
@@ -123,9 +134,9 @@ public class Master extends JFrame implements ActionListener
             {
                 if (state == State.WORLD_PARAMETERIZATION)
                 {
-                    var parameters = ((WorldParameterizationContentPane) contentPane).getParameters();
-                    contentPane = new GameplayContentPane(parameters);
-                    setContentPane(contentPane);
+                    WorldConfiguration configuration = worldContentPane.getConfiguration();
+                    gameplayContentPane = new GameplayContentPane(configuration);
+                    setContentPane(gameplayContentPane);
                     setResizable(true);
                     pack();
                     setLocationRelativeTo(null);
