@@ -12,6 +12,8 @@ import my.world.OrthogonalDirection;
  */
 public class InputHandler implements KeyListener, MouseWheelListener
 {
+    private boolean control;
+    
     private MovementMode movementMode;
     private int directions;
     private boolean east;
@@ -94,9 +96,22 @@ public class InputHandler implements KeyListener, MouseWheelListener
             
             case KeyEvent.VK_M ->
             {
-                movementMode = (movementMode == MovementMode.MOVE_CAMERA)
-                        ? MovementMode.MOVE_WORLD
-                        : MovementMode.MOVE_CAMERA;
+                if (control)
+                {
+                    if (movementMode == MovementMode.MOVE_CAMERA)
+                    {
+                        movementMode = MovementMode.MOVE_WORLD;
+                    }
+                    else
+                    {
+                        movementMode = MovementMode.MOVE_CAMERA;
+                    }
+                }
+            }
+            
+            case KeyEvent.VK_CONTROL ->
+            {
+                control = true;
             }
         }
     }
@@ -134,6 +149,11 @@ public class InputHandler implements KeyListener, MouseWheelListener
             case KeyEvent.VK_OPEN_BRACKET ->
             {
                 zoomOut = false;
+            }
+            
+            case KeyEvent.VK_CONTROL ->
+            {
+                control = false;
             }
         }
     }
