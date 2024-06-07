@@ -3,6 +3,7 @@ package my.world.field;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import my.player.AbstractPlayer;
 import my.world.Pixel;
 
 /**
@@ -36,6 +37,13 @@ public class Field
         return image.getHeight();
     }
     
+    private AbstractPlayer owner;
+    
+    public boolean isOwned()
+    {
+        return (owner == null);
+    }
+    
     public void draw(Graphics2D graphics, Pixel position, Dimension size)
     {
         graphics.drawImage(image,
@@ -44,6 +52,7 @@ public class Field
                 null);
         
         // draw contour, if any
+        
 
         // draw entity, if any
         

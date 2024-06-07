@@ -77,7 +77,7 @@ public class WorldConfigurationContentPane extends JPanel
         mountsPercentageSliderPanel.add(mountsPercentageSlider);
         
         JButton button = new JButton("Ready");
-        button.setActionCommand("world-parameters-selected");
+        button.setActionCommand("world-configured");
         button.addActionListener(Master.getInstance());
         add(button);
     }

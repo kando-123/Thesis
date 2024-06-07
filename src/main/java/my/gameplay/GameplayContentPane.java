@@ -18,7 +18,7 @@ public class GameplayContentPane extends JPanel
 {
     private final WorldPanel worldPanel;
     
-    public GameplayContentPane(WorldConfiguration parameters)
+    public GameplayContentPane(World world)
     {
         super(new BorderLayout());
         
@@ -26,10 +26,6 @@ public class GameplayContentPane extends JPanel
         Dimension screenSize = toolkit.getScreenSize();
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
-        
-        GameplayManager manager = GameplayManager.getInstance();
-        manager.makeWorld(parameters);
-        World world = manager.getWorld();
         
         Dimension panelSize = new Dimension(screenWidth, (int) (0.9 * screenHeight));
         worldPanel = new WorldPanel();

@@ -128,31 +128,58 @@ public class WorldPanel extends JPanel implements Runnable
 
         /* This works well if the world is not smaller than the screen. With this issue solved,
            this code will run perfectly well. */
-//        int side = world.getSide();
-//        int panelWidth = getSize().width;
-//        int panelHeight = getSize().height;
-//        double maxXCoord = 0.5 * Hex.computeSurfaceWidth(side, scale * World.HEX_OUTER_RADIUS);
-//        double minXCoord = panelWidth - maxXCoord;
-//        double maxYCoord = 0.5 * Hex.computeSurfaceHeight(side, scale * World.HEX_INNER_RADIUS);
-//        double minYCoord = panelHeight - maxYCoord;
-//
-//        if (worldCenter.xCoord > maxXCoord)
-//        {
-//            worldCenter.xCoord = maxXCoord;
-//        }
-//        else if (worldCenter.xCoord < minXCoord)
-//        {
-//            worldCenter.xCoord = minXCoord;
-//        }
-//
-//        if (worldCenter.yCoord > maxYCoord)
-//        {
-//            worldCenter.yCoord = maxYCoord;
-//        }
-//        else if (worldCenter.yCoord < minYCoord)
-//        {
-//            worldCenter.yCoord = minYCoord;
-//        }
+        int side = world.getSide();
+        
+        double worldWidth = Hex.computeSurfaceWidth(side, scale * World.HEX_OUTER_RADIUS);
+        double worldHeight = Hex.computeSurfaceHeight(side, scale * World.HEX_INNER_RADIUS);
+        
+        int panelWidth = getSize().width;
+        int panelHeight = getSize().height;
+        
+        double maxXCoord;
+        double minXCoord;
+        double maxYCoord;
+        double minYCoord;
+        
+        if (worldWidth > panelWidth)
+        {
+            maxXCoord = 0.5 * Hex.computeSurfaceWidth(side, scale * World.HEX_OUTER_RADIUS);
+            minXCoord = panelWidth - maxXCoord;
+        }
+        else
+        {
+            minXCoord = 0.5 * worldWidth;
+            maxXCoord = panelWidth - minXCoord;
+        }
+        
+        if (worldHeight > panelHeight)
+        {
+            maxYCoord = 0.5 * Hex.computeSurfaceHeight(side, scale * World.HEX_INNER_RADIUS);
+            minYCoord = panelHeight - maxYCoord;
+        }
+        else
+        {
+            minYCoord = 0.5 * worldHeight;
+            maxYCoord = panelHeight - minYCoord;
+        }
+
+        if (worldCenter.xCoord > maxXCoord)
+        {
+            worldCenter.xCoord = maxXCoord;
+        }
+        else if (worldCenter.xCoord < minXCoord)
+        {
+            worldCenter.xCoord = minXCoord;
+        }
+
+        if (worldCenter.yCoord > maxYCoord)
+        {
+            worldCenter.yCoord = maxYCoord;
+        }
+        else if (worldCenter.yCoord < minYCoord)
+        {
+            worldCenter.yCoord = minYCoord;
+        }
     }
 
     @Override

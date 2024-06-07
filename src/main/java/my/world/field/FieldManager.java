@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import javax.imageio.ImageIO;
+import my.player.PlayerColor;
 
 /**
  *
@@ -13,31 +14,49 @@ import javax.imageio.ImageIO;
 public class FieldManager
 {
     private Map<FieldType, List<BufferedImage>> images;
+    private Map<PlayerColor, BufferedImage> contours;
     
     private FieldManager()
     {
         images = new HashMap<>(FieldType.values().length);
-        for (var fieldType : FieldType.values())
+        for (var type : FieldType.values())
         {
-            List<BufferedImage> imagesList = new ArrayList<>(fieldType.paths.size());
-            for (var path : fieldType.paths)
+            List<BufferedImage> imagesList = new ArrayList<>(type.paths.size());
+            for (var path : type.paths)
             {
                 InputStream stream = getClass().getResourceAsStream(path);
-                BufferedImage image;
                 try
                 {
-                    image = ImageIO.read(stream);
+                    BufferedImage image = ImageIO.read(stream);
                     imagesList.add(image);
                 }
-                catch (IOException e)
+                catch (IOException io)
                 {
-                    /* The exception will not have been thrown in a correct program.
-                       Behavior of this function depends only on internal files,
-                       not on external input. */
-                    System.err.println("Internal error. Some resources are lacking.");
+                    System.err.println(io.getMessage());
                 }                
             }
-            images.put(fieldType, imagesList);
+            images.put(type, imagesList);
+        }
+        
+        contours = new HashMap<>(PlayerColor.values().length);
+        for (var color : PlayerColor.values())
+        {
+            if (color == PlayerColor.RANDOM)
+            {
+                continue;
+            }
+            
+            String path = String.format("/Contours/%s.png", color.toString());
+            InputStream stream = getClass().getResourceAsStream(path);
+            try
+            {
+                BufferedImage image = ImageIO.read(stream);
+                contours.put(color, image);
+            }
+            catch (IOException io)
+            {
+                System.err.println(io.getMessage());
+            }
         }
     }
     
@@ -58,5 +77,10 @@ public class FieldManager
     {
         List<BufferedImage> list = images.get(type);
         return list.get(random.nextInt(0, list.size()));
+    }
+    
+    public BufferedImage getImage(PlayerColor color)
+    {
+        return contours.get(color);
     }
 }

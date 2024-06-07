@@ -25,12 +25,12 @@ import my.world.*;
 public class Master extends JFrame implements ActionListener
 {
     private State state;
-    
+
     private PlayerConfigurationContentPane playerContentPane;
     private WorldConfigurationContentPane worldContentPane;
     private GameplayContentPane gameplayContentPane;
 
-    private List<AbstractPlayer> players;
+    private World world;
 
     private Master()
     {
@@ -58,6 +58,67 @@ public class Master extends JFrame implements ActionListener
         return instance;
     }
 
+    private void beginPlayerSelection()
+    {
+        if (state == State.INITIAL)
+        {
+            Dimension newDimension = getSize();
+            newDimension.width *= 0.75;
+            newDimension.height *= 0.75;
+
+            playerContentPane = new PlayerConfigurationContentPane();
+            playerContentPane.setPreferredSize(newDimension);
+            setContentPane(playerContentPane);
+            pack();
+            setLocationRelativeTo(null);
+
+            state = State.PLAYERS_SELECTION;
+        }
+    }
+
+    private void beginWorldConfiguration()
+    {
+        if (state == State.PLAYERS_SELECTION)
+        {
+            List<PlayerParameters> playersData = playerContentPane.getPlayerParameters();
+            int playersNumber = playersData.size();
+            if (playersNumber < 2)
+            {
+                JOptionPane.showMessageDialog(this,
+                        "Select at least 2 players.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+            else
+            {
+                worldContentPane = new WorldConfigurationContentPane();
+                worldContentPane.setPreferredSize(getSize());
+                setContentPane(worldContentPane);
+                pack();
+                setLocationRelativeTo(null);
+
+                state = State.WORLD_PARAMETERIZATION;
+            }
+        }
+    }
+
+    private void beginGameplay()
+    {
+        if (state == State.WORLD_PARAMETERIZATION)
+        {
+            WorldConfiguration configuration = worldContentPane.getConfiguration();
+            world = new World(configuration);
+            gameplayContentPane = new GameplayContentPane(world);
+            setContentPane(gameplayContentPane);
+            setResizable(true);
+            pack();
+            setLocationRelativeTo(null);
+
+            state = State.GAMEPLAY;
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -65,93 +126,25 @@ public class Master extends JFrame implements ActionListener
         {
             case "play" ->
             {
-                if (state == State.INITIAL)
-                {
-                    Dimension newDimension = getSize();
-                    newDimension.width *= 0.75;
-                    newDimension.height *= 0.75;
-                    
-                    playerContentPane = new PlayerConfigurationContentPane();
-                    playerContentPane.setPreferredSize(newDimension);
-                    setContentPane(playerContentPane);
-                    pack();
-                    setLocationRelativeTo(null);
-
-                    state = State.PLAYERS_SELECTION;
-                }
+                beginPlayerSelection();
             }
-            case "players-selected" ->
+            case "players-configured" ->
             {
-                if (state == State.PLAYERS_SELECTION)
-                {
-                    List<PlayerParameters> playersData = playerContentPane.getPlayerParameters();
-                    int playersNumber = playersData.size();
-                    if (playersNumber < 2)
-                    {
-                        JOptionPane.showMessageDialog(this,
-                                "Select at least 2 players.",
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE
-                        );
-                    }
-                    else
-                    {
-//                        Collections.shuffle(playersData);
-//
-//                        players = new ArrayList<>(playersNumber);
-//                        for (var data : playersData)
-//                        {
-//                            assert (data.type != null);
-//
-//                            AbstractPlayer player = switch (data.type)
-//                            {
-//                                case USER ->
-//                                {
-//                                    yield new UserPlayer();
-//                                }
-//                                case BOT ->
-//                                {
-//                                    yield new BotPlayer();
-//                                }
-//                            };
-//                            player.setName(data.name);
-//                            player.setColor(data.color);
-//
-//                            players.add(player);
-//                        }
-
-                        worldContentPane = new WorldConfigurationContentPane();
-                        worldContentPane.setPreferredSize(getSize());
-                        setContentPane(worldContentPane);
-                        pack();
-                        setLocationRelativeTo(null);
-
-                        state = State.WORLD_PARAMETERIZATION;
-                    }
-                }
+                beginWorldConfiguration();
             }
-            case "world-parameters-selected" ->
+            case "world-configured" ->
             {
-                if (state == State.WORLD_PARAMETERIZATION)
-                {
-                    WorldConfiguration configuration = worldContentPane.getConfiguration();
-                    gameplayContentPane = new GameplayContentPane(configuration);
-                    setContentPane(gameplayContentPane);
-                    setResizable(true);
-                    pack();
-                    setLocationRelativeTo(null);
-
-                    state = State.GAMEPLAY;
-                }
+                beginGameplay();
             }
-            
+
             case "END" ->
             {
                 System.out.println("It might not look like but the game is over.");
-                
+
                 ThreadPool pool = ThreadPool.getInstance();
                 pool.joinAll();
             }
         }
     }
+
 }

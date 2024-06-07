@@ -48,7 +48,7 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
         
         Master master = Master.getInstance();
         JButton button = new JButton("Ready");
-        button.setActionCommand("players-selected");
+        button.setActionCommand("players-configured");
         button.addActionListener(master);
         add(button);
     }
