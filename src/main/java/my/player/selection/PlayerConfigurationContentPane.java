@@ -1,10 +1,11 @@
 package my.player.selection;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -19,14 +20,18 @@ import my.player.PlayerType;
  */
 public class PlayerConfigurationContentPane extends JPanel implements ActionListener
 {
-    private List<SelectionPanel> panels;
+    private final List<SelectionPanel> panels;
     
     public PlayerConfigurationContentPane()
     {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        super(new GridBagLayout());
         
         JTabbedPane tabbedPane = new JTabbedPane();
-        add(tabbedPane);
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weighty = 1.0;
+        add(tabbedPane, c);
         
         panels = new ArrayList<>(2);
         
@@ -48,9 +53,13 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
         
         Master master = Master.getInstance();
         JButton button = new JButton("Ready");
-        button.setActionCommand("players-configured");
+        button.setActionCommand("->world");
         button.addActionListener(master);
-        add(button);
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.weighty = 1.0;
+        add(button, c);
     }
 
     @Override

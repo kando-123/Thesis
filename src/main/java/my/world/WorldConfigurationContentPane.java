@@ -1,6 +1,5 @@
 package my.world;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Hashtable;
@@ -27,16 +26,32 @@ public class WorldConfigurationContentPane extends JPanel
     
     public WorldConfigurationContentPane()
     {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        super(new GridBagLayout());
         
         JLabel label = new JLabel("Select world parameters...");
         label.setAlignmentX(CENTER_ALIGNMENT);
-        add(label);
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        add(label, c);
         
         /* Select the world size. Range: 10-30 */
         JPanel worldSizeSliderPanel = new JPanel();
         worldSizeSliderPanel.setBorder(BorderFactory.createTitledBorder("World size"));
-        add(worldSizeSliderPanel);
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        add(worldSizeSliderPanel, c);
         worldSizeSlider = new JSlider(JSlider.HORIZONTAL, 10, 30, 15);
         worldSizeSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
         Hashtable<Integer, JLabel> worldSizeLabels = new Hashtable<>(4);
@@ -51,7 +66,15 @@ public class WorldConfigurationContentPane extends JPanel
         /* Select seas percentage. Range: 0-80% */
         JPanel seaPercentageSliderPanel = new JPanel();
         seaPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Sea"));
-        add(seaPercentageSliderPanel);
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        add(seaPercentageSliderPanel, c);
         seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 25, 65, 40);
         seaPercentageSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
         Hashtable<Integer, JLabel> seaPercentageLabels = new Hashtable<>(3);
@@ -65,7 +88,15 @@ public class WorldConfigurationContentPane extends JPanel
         /* Select mounts-on-land percentage. Range: 10-40% */
         JPanel mountsPercentageSliderPanel = new JPanel();
         mountsPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Mounts"));
-        add(mountsPercentageSliderPanel);
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 3;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        add(mountsPercentageSliderPanel, c);
         mountsPercentageSlider = new JSlider(JSlider.HORIZONTAL, 10, 40, 25);
         mountsPercentageSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
         Hashtable<Integer, JLabel> mountsPercentageLabels = new Hashtable<>(3);
@@ -76,10 +107,31 @@ public class WorldConfigurationContentPane extends JPanel
         mountsPercentageSlider.setPaintLabels(true);
         mountsPercentageSliderPanel.add(mountsPercentageSlider);
         
+        JButton back = new JButton("Back");
+        back.setActionCommand("->players");
+        back.addActionListener(Master.getInstance());
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 4;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        add(back, c);
+        
         JButton button = new JButton("Ready");
-        button.setActionCommand("world-configured");
+        button.setActionCommand("->gameplay");
         button.addActionListener(Master.getInstance());
-        add(button);
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 4;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.CENTER;
+        add(button, c);
     }
     
     public int getWorldSide()

@@ -44,7 +44,7 @@ public class InvitationContentPane extends JPanel
         c.fill = GridBagConstraints.BOTH;
         JButton playButton = new JButton();
         playButton.setText("Play");
-        playButton.setActionCommand("play");
+        playButton.setActionCommand("->players");
         playButton.addActionListener(master);
         add(playButton, c);
     }

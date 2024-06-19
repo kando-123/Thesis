@@ -6,13 +6,10 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import my.gameplay.*;
 import my.player.*;
 import my.player.selection.*;
@@ -43,7 +40,7 @@ public class Master extends JFrame implements ActionListener
         }
         catch (IOException io)
         {
-
+            
         }
     }
 
@@ -60,14 +57,17 @@ public class Master extends JFrame implements ActionListener
 
     private void beginPlayerSelection()
     {
-        if (state == State.INITIAL)
+        if (state == State.INITIAL || state == State.WORLD_CONFIGURATION)
         {
             Dimension newDimension = getSize();
             newDimension.width *= 0.75;
             newDimension.height *= 0.75;
 
-            playerContentPane = new PlayerConfigurationContentPane();
-            playerContentPane.setPreferredSize(newDimension);
+            if (state == State.INITIAL)
+            {
+                playerContentPane = new PlayerConfigurationContentPane();
+                playerContentPane.setPreferredSize(newDimension);
+            }
             setContentPane(playerContentPane);
             pack();
             setLocationRelativeTo(null);
@@ -98,14 +98,14 @@ public class Master extends JFrame implements ActionListener
                 pack();
                 setLocationRelativeTo(null);
 
-                state = State.WORLD_PARAMETERIZATION;
+                state = State.WORLD_CONFIGURATION;
             }
         }
     }
 
     private void beginGameplay()
     {
-        if (state == State.WORLD_PARAMETERIZATION)
+        if (state == State.WORLD_CONFIGURATION)
         {
             WorldConfiguration configuration = worldContentPane.getConfiguration();
             world = new World(configuration);
@@ -124,15 +124,15 @@ public class Master extends JFrame implements ActionListener
     {
         switch (e.getActionCommand())
         {
-            case "play" ->
+            case "->players" ->
             {
                 beginPlayerSelection();
             }
-            case "players-configured" ->
+            case "->world" ->
             {
                 beginWorldConfiguration();
             }
-            case "world-configured" ->
+            case "->gameplay" ->
             {
                 beginGameplay();
             }
