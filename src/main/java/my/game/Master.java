@@ -109,6 +109,9 @@ public class Master extends JFrame implements ActionListener
         {
             WorldConfiguration configuration = worldContentPane.getConfiguration();
             world = new World(configuration);
+            
+            world.locateCapitals(7);
+            
             gameplayContentPane = new GameplayContentPane(world);
             setContentPane(gameplayContentPane);
             setResizable(true);

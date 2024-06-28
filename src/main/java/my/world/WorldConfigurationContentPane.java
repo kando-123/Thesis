@@ -4,7 +4,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Hashtable;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -63,7 +62,7 @@ public class WorldConfigurationContentPane extends JPanel
         worldSizeSlider.setPaintLabels(true);
         worldSizeSliderPanel.add(worldSizeSlider);
         
-        /* Select seas percentage. Range: 0-80% */
+        /* Select seas percentage. Range: 20-60 */
         JPanel seaPercentageSliderPanel = new JPanel();
         seaPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Sea"));
         c = new GridBagConstraints();
@@ -75,12 +74,12 @@ public class WorldConfigurationContentPane extends JPanel
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(seaPercentageSliderPanel, c);
-        seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 25, 65, 40);
+        seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 20, 60, 30);
         seaPercentageSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
         Hashtable<Integer, JLabel> seaPercentageLabels = new Hashtable<>(3);
-        seaPercentageLabels.put(25, new JLabel("lakes"));
-        seaPercentageLabels.put(45, new JLabel("seas"));
-        seaPercentageLabels.put(65, new JLabel("oceans"));
+        seaPercentageLabels.put(20, new JLabel("lakes"));
+        seaPercentageLabels.put(40, new JLabel("seas"));
+        seaPercentageLabels.put(60, new JLabel("oceans"));
         seaPercentageSlider.setLabelTable(seaPercentageLabels);
         seaPercentageSlider.setPaintLabels(true);
         seaPercentageSliderPanel.add(seaPercentageSlider);

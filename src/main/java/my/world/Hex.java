@@ -392,6 +392,6 @@ public class Hex
     @Override
     public String toString()
     {
-        return String.format("Hex@(p=%d, q=%d, r=%d)", pCoord, qCoord, rCoord);
+        return String.format("Hex@[p=%d, q=%d, r=%d]", pCoord, qCoord, rCoord);
     }
 }

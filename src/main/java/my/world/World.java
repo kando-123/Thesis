@@ -4,8 +4,12 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import my.world.field.Field;
 import my.world.field.FieldType;
 
@@ -253,6 +257,32 @@ public class World
             {
                 field.draw(graphics, new Pixel(x, y), new Dimension(w, h));
             }
+        }
+    }
+    
+    public void locateCapitals(int count)
+    {
+        List<Hex> landHexes = new LinkedList<>();
+        
+        Set<Map.Entry<Hex, Field>> entries = fields.entrySet();
+        for (var entry : entries)
+        {
+            var key = entry.getKey();
+            var value = entry.getValue();
+            
+            if (value.getType() == FieldType.LAND)
+            {
+                landHexes.add(key);
+            }
+        }
+        
+        Random random = new Random();
+        for (int i = 0; i < count; ++i)
+        {
+            int index = random.nextInt(0, landHexes.size());
+            Hex hex = landHexes.get(index);
+            fields.put(hex, new Field(FieldType.CAPITAL));
+            landHexes.remove(index);
         }
     }
 }
