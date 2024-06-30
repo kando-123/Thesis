@@ -14,8 +14,6 @@ public abstract class AbstractPlayer
     private PlayerColor color;
     private String name;
     
-    private JPanel panel;
-    
     protected AbstractPlayer(PlayerType type)
     {
         this.type = type;
@@ -45,6 +43,4 @@ public abstract class AbstractPlayer
     {
         return name;
     }
-    
-    
 }

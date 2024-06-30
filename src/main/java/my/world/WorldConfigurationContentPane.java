@@ -51,11 +51,10 @@ public class WorldConfigurationContentPane extends JPanel
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(worldSizeSliderPanel, c);
-        worldSizeSlider = new JSlider(JSlider.HORIZONTAL, 10, 30, 15);
+        worldSizeSlider = new JSlider(JSlider.HORIZONTAL, 15, 30, 20);
         worldSizeSlider.setSize(SLIDER_WIDTH, SLIDER_HEIGHT);
-        Hashtable<Integer, JLabel> worldSizeLabels = new Hashtable<>(4);
-        worldSizeLabels.put(10, new JLabel("small"));
-        worldSizeLabels.put(15, new JLabel("medium"));
+        Hashtable<Integer, JLabel> worldSizeLabels = new Hashtable<>(3);
+        worldSizeLabels.put(15, new JLabel("small"));
         worldSizeLabels.put(20, new JLabel("big"));
         worldSizeLabels.put(30, new JLabel("large"));
         worldSizeSlider.setLabelTable(worldSizeLabels);

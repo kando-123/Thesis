@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +132,7 @@ public class World
         
         int hexDimension = (int) (Math.hypot(HEX_WIDTH, HEX_HEIGHT) / Math.sqrt(2.0));
         
-        int shorelineChunkSide = hexDimension * side / 3;
+        int shorelineChunkSide = hexDimension * side / 5;
         PerlinNoise shorelinePerlin = new PerlinNoise(areaWidth, areaHeight, shorelineChunkSide);
         shorelinePerlin.setOctaves(3);
 
@@ -260,9 +259,10 @@ public class World
         }
     }
     
-    public void locateCapitals(int count)
+    public List<Hex> locateCapitals(int count)
     {
         List<Hex> landHexes = new LinkedList<>();
+        List<Hex> capitalHexes = new ArrayList<>(count);
         
         Set<Map.Entry<Hex, Field>> entries = fields.entrySet();
         for (var entry : entries)
@@ -282,7 +282,10 @@ public class World
             int index = random.nextInt(0, landHexes.size());
             Hex hex = landHexes.get(index);
             fields.put(hex, new Field(FieldType.CAPITAL));
+            capitalHexes.add(hex);
             landHexes.remove(index);
         }
+        
+        return capitalHexes;
     }
 }
