@@ -79,7 +79,7 @@ public class FieldManager
         return list.get(random.nextInt(0, list.size()));
     }
     
-    public BufferedImage getImage(PlayerColor color)
+    public BufferedImage getContour(PlayerColor color)
     {
         return contours.get(color);
     }

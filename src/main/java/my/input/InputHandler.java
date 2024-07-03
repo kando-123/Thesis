@@ -2,15 +2,13 @@ package my.input;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import my.world.OrthogonalDirection;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class InputHandler implements KeyListener, MouseWheelListener
+public class InputHandler implements KeyListener
 {
     private boolean control;
     
@@ -156,11 +154,6 @@ public class InputHandler implements KeyListener, MouseWheelListener
                 control = false;
             }
         }
-    }
-    
-    public void mouseWheelMoved(MouseWheelEvent e)
-    {
-        System.out.println(e.paramString());
     }
     
     public OrthogonalDirection getShiftingDirection()

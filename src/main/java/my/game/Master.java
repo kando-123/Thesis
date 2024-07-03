@@ -60,8 +60,8 @@ public class Master extends JFrame implements ActionListener
         if (state == State.INITIAL || state == State.WORLD_CONFIGURATION)
         {
             Dimension newDimension = getSize();
-            newDimension.width *= 0.75;
-            newDimension.height *= 0.75;
+            newDimension.width *= 0.8;
+            newDimension.height *= 0.8;
 
             if (state == State.INITIAL)
             {
@@ -110,7 +110,7 @@ public class Master extends JFrame implements ActionListener
             WorldConfiguration configuration = worldContentPane.getConfiguration();
             world = new World(configuration);
             
-            world.locateCapitals(7);
+            world.locateCapitals(AbstractPlayer.PLAYERS_COUNT);
             
             gameplayContentPane = new GameplayContentPane(world);
             setContentPane(gameplayContentPane);

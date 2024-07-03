@@ -225,13 +225,16 @@ public class Hex
         return new Hex(p, q, r);
     }
 
-    public List<Hex> neighbors()
+    public Hex[] neighbors()
     {
-        List<Hex> hexes = new ArrayList<>(HexagonalDirection.values().length);
-        for (var direction : HexagonalDirection.values())
+        HexagonalDirection[] directions = HexagonalDirection.values();
+        
+        Hex[] hexes = new Hex[directions.length];
+        for (int i = 0; i < directions.length; ++i)
         {
-            hexes.add(neighbor(direction));
+            hexes[i] = neighbor(directions[i]);
         }
+        
         return hexes;
     }
 
