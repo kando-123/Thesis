@@ -3,20 +3,16 @@ package my.world;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
-import my.player.AbstractPlayer;
-import my.player.PlayerColor;
-import my.player.UserPlayer;
-import my.world.field.Field;
-import my.world.field.FieldType;
+import java.util.Stack;
+import my.player.*;
+import my.world.field.*;
 
 /**
  *
@@ -265,15 +261,52 @@ public class World
         }
     }
 
+    private class Region
+    {
+        private HashSet<Hex> surface;
+        private HashSet<Hex> origins;
+
+        public Region()
+        {
+            surface = new HashSet<>();
+            origins = new HashSet<>();
+        }
+
+        public void addOrigin(Hex hex)
+        {
+            origins.add(hex);
+            surface.add(hex);
+        }
+
+        public void addTerritory(Hex hex)
+        {
+            surface.add(hex);
+        }
+        
+        public int size()
+        {
+            return surface.size();
+        }
+        
+        /* -- DEBUG -- */
+        public void capture(AbstractPlayer newOwner)
+        {
+            for (var origin : origins)
+            {
+                fields.get(origin).capture(newOwner);
+            }
+        }
+    }
+
     public List<Hex> locateCapitals(int number)
     {
         List<Hex> capitalHexes = new ArrayList<>(number);
-        
+
         /* Discard the seas and the mounts. Divide the lands and woods into the periphery
            and the pool. */
         HashSet<Hex> periphery = new HashSet<>();
         HashSet<Hex> pool = new HashSet<>();
-        
+
         Set<Map.Entry<Hex, Field>> entries = fields.entrySet();
         for (var entry : entries)
         {
@@ -312,7 +345,7 @@ public class World
                 }
             }
         }
-        
+
         /* Compute the inlandness for the periphery and prepare the next layer. */
         HashMap<Hex, Integer> inlandness = new HashMap<>();
         HashSet<Hex> landwardLayer = new HashSet<>();
@@ -357,14 +390,14 @@ public class World
                 inlandness.put(hex, value);
             }
         }
-        
+
         /* Propagate landwards. */
         while (!landwardLayer.isEmpty())
         {
             HashSet<Hex> previousLayer = periphery;
             periphery = landwardLayer;
             landwardLayer = new HashSet<>();
-            
+
             for (var hex : periphery)
             {
                 int maximum = 0;
@@ -383,16 +416,83 @@ public class World
                 inlandness.put(hex, maximum + 1);
             }
         }
+
+        /* Find local maxima. */
+        LinkedList<Hex> maxima = new LinkedList<>();
+
+        for (var entry : inlandness.entrySet())
+        {
+            var key = entry.getKey();
+            var value = entry.getValue();
+
+            boolean isMaximal = true;
+            for (var neighbor : key.neighbors())
+            {
+                if (inlandness.containsKey(neighbor) && inlandness.get(neighbor) > value)
+                {
+                    isMaximal = false;
+                    break;
+                }
+            }
+
+            if (isMaximal)
+            {
+                maxima.add(key);
+            }
+        }
+
+        /* Initialize the regions. */
+        List<Region> regions = new ArrayList<>();
+        while (!maxima.isEmpty())
+        {
+            /* Find a whole connected group with DFS */
+            HashSet<Hex> group = new HashSet<>();
+            Stack<Hex> stack = new Stack<>();
+
+            Hex origin = maxima.pop();
+            group.add(origin);
+            stack.push(origin);
+
+            while (!stack.isEmpty())
+            {
+                Hex peek = stack.peek();
+
+                Hex next = null;
+                for (var neighbor : peek.neighbors())
+                {
+                    if (maxima.contains(neighbor))
+                    {
+                        next = neighbor;
+                        break;
+                    }
+                }
+                if (next != null)
+                {
+                    maxima.remove(next);
+                    group.add(next);
+                    stack.push(next);
+                }
+                else
+                {
+                    stack.pop();
+                }
+            }
+            Region region = new Region();
+            group.forEach((Hex element) -> region.addOrigin(element));
+            regions.add(region);
+        }
         
-        /* Find local maxima. Initialize the regions. */
-        
-        
+//        AbstractPlayer owner = new UserPlayer();
+//        owner.setColor(PlayerColor.RED);
+//        for (var region : regions)
+//        {
+//            region.capture(owner);
+//        }
+
         /* Propagate seawards. */
-        
         
         /* Select the largest `number` regions
            and spawn the capitals in their focal points. */
-        
         
         /* temp */
 //        AbstractPlayer[] owners = new AbstractPlayer[7];
@@ -422,7 +522,6 @@ public class World
 //                field.capture(owners[6]);
 //            }
 //        }
-        
         return capitalHexes;
     }
 }
