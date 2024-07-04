@@ -265,29 +265,34 @@ public class World
     {
         private HashSet<Hex> surface;
         private HashSet<Hex> origins;
+        private HashSet<Hex> periphery;
 
-        public Region()
+        public Region(HashSet<Hex> root)
         {
             surface = new HashSet<>();
             origins = new HashSet<>();
-        }
+            periphery = new HashSet<>();
 
-        public void addOrigin(Hex hex)
-        {
-            origins.add(hex);
-            surface.add(hex);
+            surface.addAll(root);
+            origins.addAll(root);
+            periphery.addAll(root);
         }
 
         public void addTerritory(Hex hex)
         {
             surface.add(hex);
         }
-        
+
         public int size()
         {
             return surface.size();
         }
-        
+
+        public void propagate(Map<Hex, Integer> map)
+        {
+
+        }
+
         /* -- DEBUG -- */
         public void capture(AbstractPlayer newOwner)
         {
@@ -416,8 +421,9 @@ public class World
                 inlandness.put(hex, maximum + 1);
             }
         }
+        /* ^^^ That above is good ^^^ */
 
-        /* Find local maxima. */
+        /* Find candidates for local maxima. */
         LinkedList<Hex> maxima = new LinkedList<>();
 
         for (var entry : inlandness.entrySet())
@@ -441,87 +447,144 @@ public class World
             }
         }
 
-        /* Initialize the regions. */
-        List<Region> regions = new ArrayList<>();
-        while (!maxima.isEmpty())
+        /* Filter the apparent maxima out. */
+        HashSet<Hex> apparentMaxima = new HashSet<>();
+        for (var candidate : maxima)
         {
-            /* Find a whole connected group with DFS */
-            HashSet<Hex> group = new HashSet<>();
-            Stack<Hex> stack = new Stack<>();
-
-            Hex origin = maxima.pop();
-            group.add(origin);
-            stack.push(origin);
-
-            while (!stack.isEmpty())
+            if (apparentMaxima.contains(candidate))
             {
-                Hex peek = stack.peek();
-
-                Hex next = null;
-                for (var neighbor : peek.neighbors())
+                continue;
+            }
+            
+            int candidateValue = inlandness.get(candidate);
+            for (var neighbor : candidate.neighbors())
+            {
+                if (inlandness.containsKey(neighbor))
                 {
-                    if (maxima.contains(neighbor))
+                    int neighborValue = inlandness.get(neighbor);
+                    if (neighborValue == candidateValue && !maxima.contains(neighbor))
                     {
-                        next = neighbor;
-                        break;
+                        // This candidate and all candidates joint to it must be removed
+                        Stack<Hex> stack = new Stack<>();
+                        
+                        apparentMaxima.add(candidate);
+                        stack.push(candidate);
+                        while (!stack.isEmpty())
+                        {
+                            Hex peek = stack.peek();
+                            
+                            Hex next = null;
+                            for (var further : peek.neighbors())
+                            {
+                                if (maxima.contains(further) && !apparentMaxima.contains(further))
+                                {
+                                    next = further;
+                                    break;
+                                }
+                            }
+                            if (next != null)
+                            {
+                                apparentMaxima.add(next);
+                                stack.push(next);
+                            }
+                            else
+                            {
+                                stack.pop();
+                            }
+                        }
                     }
                 }
-                if (next != null)
-                {
-                    maxima.remove(next);
-                    group.add(next);
-                    stack.push(next);
-                }
-                else
-                {
-                    stack.pop();
-                }
             }
-            Region region = new Region();
-            group.forEach((Hex element) -> region.addOrigin(element));
-            regions.add(region);
         }
         
+        maxima.removeAll(apparentMaxima);
+        
+        /* temp { */
+        
+        for (var maximum : maxima)
+        {
+            fields.put(maximum, new Field(FieldType.CAPITAL));
+        }
+        
+        AbstractPlayer[] owners = new AbstractPlayer[7];
+        for (int i = 0; i < 7; ++i)
+        {
+            owners[i] = new UserPlayer();
+            owners[i].setColor(PlayerColor.values()[i + 1]);
+        }
+        
+        for (var entry : inlandness.entrySet())
+        {
+            var key = entry.getKey();
+            var value = entry.getValue();
+            
+            var field = fields.get(key);
+            
+            if (value <= 3)
+            {
+                field.capture(owners[0]);
+            }
+            else if (value > 3 && value < 9)
+            {
+                field.capture(owners[value - 3]);
+            }
+            else
+            {
+                field.capture(owners[6]);
+            }
+        }
+        /* } */
+
+
+        /* Initialize the regions. */
+//        List<Region> regions = new ArrayList<>();
+//        while (!maxima.isEmpty())
+//        {
+//            /* Find a whole connected group with DFS */
+//            HashSet<Hex> group = new HashSet<>();
+//            Stack<Hex> stack = new Stack<>();
+//
+//            Hex origin = maxima.pop();
+//            group.add(origin);
+//            stack.push(origin);
+//
+//            while (!stack.isEmpty())
+//            {
+//                Hex peek = stack.peek();
+//
+//                Hex next = null;
+//                for (var neighbor : peek.neighbors())
+//                {
+//                    if (maxima.contains(neighbor))
+//                    {
+//                        next = neighbor;
+//                        break;
+//                    }
+//                }
+//                if (next != null)
+//                {
+//                    maxima.remove(next);
+//                    group.add(next);
+//                    stack.push(next);
+//                }
+//                else
+//                {
+//                    stack.pop();
+//                }
+//            }
+//            Region region = new Region(group);
+//            regions.add(region);
+//        }
+        /* Propagate seawards. */
+        /* Select the largest `number` regions
+           and spawn the capitals in their focal points. */
+        return capitalHexes;
+    }
+}
+
 //        AbstractPlayer owner = new UserPlayer();
 //        owner.setColor(PlayerColor.RED);
 //        for (var region : regions)
 //        {
 //            region.capture(owner);
 //        }
-
-        /* Propagate seawards. */
-        
-        /* Select the largest `number` regions
-           and spawn the capitals in their focal points. */
-        
-        /* temp */
-//        AbstractPlayer[] owners = new AbstractPlayer[7];
-//        for (int i = 0; i < 7; ++i)
-//        {
-//            owners[i] = new UserPlayer();
-//            owners[i].setColor(PlayerColor.values()[i + 1]);
-//        }
-//        
-//        for (var entry : inlandness.entrySet())
-//        {
-//            var key = entry.getKey();
-//            var value = entry.getValue();
-//            
-//            var field = fields.get(key);
-//            
-//            if (value < 6)
-//            {
-//                field.capture(owners[0]);
-//            }
-//            else if (value >= 6 && value <= 10)
-//            {
-//                field.capture(owners[value - 5]);
-//            }
-//            else
-//            {
-//                field.capture(owners[6]);
-//            }
-//        }
-        return capitalHexes;
-    }
-}
