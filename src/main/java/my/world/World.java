@@ -3,12 +3,12 @@ package my.world;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import my.player.*;
@@ -263,42 +263,64 @@ public class World
 
     private class Region
     {
-        private HashSet<Hex> surface;
-        private HashSet<Hex> origins;
+        private final HashSet<Hex> territory;
+        private final HashSet<Hex> origins;
         private HashSet<Hex> periphery;
 
         public Region(HashSet<Hex> root)
         {
-            surface = new HashSet<>();
+            territory = new HashSet<>();
             origins = new HashSet<>();
             periphery = new HashSet<>();
 
-            surface.addAll(root);
+            territory.addAll(root);
             origins.addAll(root);
             periphery.addAll(root);
         }
 
-        public void addTerritory(Hex hex)
-        {
-            surface.add(hex);
-        }
-
         public int size()
         {
-            return surface.size();
+            return territory.size();
         }
 
-        public void propagate(Map<Hex, Integer> map)
+        public void propagate(Map<Hex, Integer> map, Set<Hex> alreadyTaken)
         {
-
-        }
-
-        /* -- DEBUG -- */
-        public void capture(AbstractPlayer newOwner)
-        {
-            for (var origin : origins)
+            HashSet<Hex> acquisitions = new HashSet<>();
+            
+            for (var peripheral : periphery)
             {
-                fields.get(origin).capture(newOwner);
+                int value = map.get(peripheral);
+                
+                for (var neighbor : peripheral.neighbors())
+                {
+                    if (territory.contains(neighbor) || alreadyTaken.contains(neighbor) // One is unnecessary...
+                        || !map.containsKey(neighbor))
+                    {
+                        continue;
+                    }
+                    
+                    if (map.get(neighbor) <= value)
+                    {
+                        territory.add(neighbor);
+                        acquisitions.add(neighbor);
+                        
+                        alreadyTaken.add(neighbor);
+                    }
+                }
+            }
+            
+            periphery = acquisitions;
+        }
+        
+        public void capture(AbstractPlayer owner)
+        {
+            for (var hex : territory)
+            {
+                if (origins.contains(hex))
+                {
+                    fields.put(hex, new Field(FieldType.CAPITAL));
+                }
+                fields.get(hex).capture(owner);
             }
         }
     }
@@ -421,7 +443,6 @@ public class World
                 inlandness.put(hex, maximum + 1);
             }
         }
-        /* ^^^ That above is good ^^^ */
 
         /* Find candidates for local maxima. */
         LinkedList<Hex> maxima = new LinkedList<>();
@@ -496,95 +517,96 @@ public class World
                 }
             }
         }
-        
         maxima.removeAll(apparentMaxima);
-        
-        /* temp { */
-        
-        for (var maximum : maxima)
-        {
-            fields.put(maximum, new Field(FieldType.CAPITAL));
-        }
-        
-        AbstractPlayer[] owners = new AbstractPlayer[7];
-        for (int i = 0; i < 7; ++i)
-        {
-            owners[i] = new UserPlayer();
-            owners[i].setColor(PlayerColor.values()[i + 1]);
-        }
-        
-        for (var entry : inlandness.entrySet())
-        {
-            var key = entry.getKey();
-            var value = entry.getValue();
-            
-            var field = fields.get(key);
-            
-            if (value <= 3)
-            {
-                field.capture(owners[0]);
-            }
-            else if (value > 3 && value < 9)
-            {
-                field.capture(owners[value - 3]);
-            }
-            else
-            {
-                field.capture(owners[6]);
-            }
-        }
-        /* } */
-
 
         /* Initialize the regions. */
-//        List<Region> regions = new ArrayList<>();
-//        while (!maxima.isEmpty())
-//        {
-//            /* Find a whole connected group with DFS */
-//            HashSet<Hex> group = new HashSet<>();
-//            Stack<Hex> stack = new Stack<>();
-//
-//            Hex origin = maxima.pop();
-//            group.add(origin);
-//            stack.push(origin);
-//
-//            while (!stack.isEmpty())
-//            {
-//                Hex peek = stack.peek();
-//
-//                Hex next = null;
-//                for (var neighbor : peek.neighbors())
-//                {
-//                    if (maxima.contains(neighbor))
-//                    {
-//                        next = neighbor;
-//                        break;
-//                    }
-//                }
-//                if (next != null)
-//                {
-//                    maxima.remove(next);
-//                    group.add(next);
-//                    stack.push(next);
-//                }
-//                else
-//                {
-//                    stack.pop();
-//                }
-//            }
-//            Region region = new Region(group);
-//            regions.add(region);
-//        }
+        List<Region> regions = new ArrayList<>();
+        HashSet<Hex> takenArea = new HashSet<>();
+        while (!maxima.isEmpty())
+        {
+            /* Find a whole connected group using DFS */
+            HashSet<Hex> group = new HashSet<>();
+            Stack<Hex> stack = new Stack<>();
+
+            Hex origin = maxima.pop();
+            group.add(origin);
+            stack.push(origin);
+
+            while (!stack.isEmpty())
+            {
+                Hex peek = stack.peek();
+
+                Hex next = null;
+                for (var neighbor : peek.neighbors())
+                {
+                    if (maxima.contains(neighbor))
+                    {
+                        next = neighbor;
+                        break;
+                    }
+                }
+                if (next != null)
+                {
+                    maxima.remove(next);
+                    group.add(next);
+                    stack.push(next);
+                }
+                else
+                {
+                    stack.pop();
+                }
+            }
+            Region region = new Region(group);
+            regions.add(region);
+            
+            takenArea.addAll(group);
+        }
+        
         /* Propagate seawards. */
+        
+        while (takenArea.size() < inlandness.size())
+        {
+            for (var region : regions)
+            {
+                region.propagate(inlandness, takenArea);
+            }
+        }
+        
+                AbstractPlayer[] owners = new AbstractPlayer[7];
+                for (int i = 0; i < 7; ++i)
+                {
+                    owners[i] = new UserPlayer();
+                    owners[i].setColor(PlayerColor.values()[i + 1]);
+                }
+
+                Random random = new Random();
+                for (var region : regions)
+                {
+                    region.capture(owners[random.nextInt(0, 7)]);
+                }
+        
         /* Select the largest `number` regions
            and spawn the capitals in their focal points. */
+        
         return capitalHexes;
     }
 }
 
-//        AbstractPlayer owner = new UserPlayer();
-//        owner.setColor(PlayerColor.RED);
-//        for (var region : regions)
-//        {
-//            region.capture(owner);
-//        }
+//for (var entry : inlandness.entrySet())
+//{
+//    var key = entry.getKey();
+//    var value = entry.getValue();
+//
+//    if (value <= 3)
+//    {
+//        fields.get(key).capture(owners[0]);
+//    }
+//    else if (value > 3 && value < 9)
+//    {
+//        fields.get(key).capture(owners[value - 3]);
+//    }
+//    else
+//    {
+//        fields.get(key).capture(owners[6]);
+//    }
+//}
