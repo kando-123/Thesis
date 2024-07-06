@@ -3,13 +3,11 @@ package my.world;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import my.player.*;
@@ -323,19 +321,27 @@ public class World
             }
         }
 
-        private static Random random = null;
-
         public Hex locateCapital()
         {
-            if (random == null)
+            int p = 0;
+            int q = 0;
+            
+            for (var hex : origins)
             {
-                random = new Random();
+                p += hex.getP();
+                q += hex.getQ();
             }
-            return origins.get(random.nextInt(0, origins.size()));
+            
+            p = (int) ((double) p / (double) origins.size());
+            q = (int) ((double) q / (double) origins.size());
+            
+            Hex average = Hex.newInstance(p, q, -(p + q));
+            
+            return average;
         }
     }
 
-    private final static int MANIPULATION_MARGIN = 3;
+    private final static int MANIPULATION_MARGIN = 1;
 
     public Hex[] locateCapitals(int number)
     {
@@ -372,22 +378,25 @@ public class World
         /* Find the max-weight combination */
         Hex[] capitals = findMaxWeightCombination(capitalCandidates, number);
         
+//        Hex[] capitals = getCapitalCandidates(number, regions);
+
+        /* Create the capital fields. */
         for (var capital : capitals)
         {
             fields.put(capital, new Field(FieldType.CAPITAL));
         }
         
-        AbstractPlayer[] owners = new AbstractPlayer[7];
-        for (int i = 0; i < 7; ++i)
-        {
-            owners[i] = new UserPlayer();
-            owners[i].setColor(PlayerColor.values()[i + 1]);
-        }
-        
-        for (int i = 0; i < regions.size(); ++i)
-        {
-            regions.get(i).capture(owners[Math.min(i, 6)]);
-        }
+                AbstractPlayer[] owners = new AbstractPlayer[7];
+                for (int i = 0; i < 7; ++i)
+                {
+                    owners[i] = new UserPlayer();
+                    owners[i].setColor(PlayerColor.values()[i + 1]);
+                }
+
+                for (int i = 0; i < regions.size(); ++i)
+                {
+                    regions.get(i).capture(owners[Math.min(i, 6)]);
+                }
 
         return capitals;
     }

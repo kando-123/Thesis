@@ -28,19 +28,18 @@ public class GameplayContentPane extends JPanel
         int screenHeight = screenSize.height;
         
         Dimension panelSize = new Dimension(screenWidth, (int) (0.9 * screenHeight));
+        
         worldPanel = new WorldPanel();
         worldPanel.setWorld(world);
         worldPanel.setPreferredSize(panelSize);
         add(worldPanel, BorderLayout.CENTER);
         
-        ThreadPool pool = ThreadPool.getInstance();
-        pool.fork(worldPanel);
+        Thread thread = new Thread(worldPanel);
+        thread.setDaemon(true);
+        thread.start();
         
         JPanel panel = new JPanel();
         panel.add(new JLabel("This will be the player's panel."));
-        JButton end = new JButton("END");
-        end.addActionListener(Master.getInstance());
-        panel.add(end);
         panel.setPreferredSize(new Dimension(screenWidth, (int) (0.1 * screenHeight)));
         add(panel, BorderLayout.SOUTH);
     }
