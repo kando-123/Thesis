@@ -3,6 +3,7 @@ package my.world;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -264,13 +265,15 @@ public class World
     private class Region
     {
         private final HashSet<Hex> territory;
-        private final HashSet<Hex> origins;
+        private final ArrayList<Hex> origins;
         private HashSet<Hex> periphery;
 
         public Region(HashSet<Hex> root)
         {
+            assert (!root.isEmpty());
+            
             territory = new HashSet<>();
-            origins = new HashSet<>();
+            origins = new ArrayList<>();
             periphery = new HashSet<>();
 
             territory.addAll(root);
@@ -316,18 +319,27 @@ public class World
         {
             for (var hex : territory)
             {
-                if (origins.contains(hex))
-                {
-                    fields.put(hex, new Field(FieldType.CAPITAL));
-                }
                 fields.get(hex).capture(owner);
             }
         }
+        
+        private static Random random = null;
+        
+        public Hex locateCapital()
+        {
+            if (random == null)
+            {
+                random = new Random();
+            }
+            return origins.get(random.nextInt(0, origins.size()));
+        }
     }
+    
+    private final static int MANIPULATION_MARGIN = 1;
 
-    public List<Hex> locateCapitals(int number)
+    public Hex[] locateCapitals(int number)
     {
-        List<Hex> capitalHexes = new ArrayList<>(number);
+        Hex[] capitals = new Hex[number];
 
         /* Discard the seas and the mounts. Divide the lands and woods into the periphery
            and the pool. */
@@ -572,23 +584,39 @@ public class World
             }
         }
         
-                AbstractPlayer[] owners = new AbstractPlayer[7];
-                for (int i = 0; i < 7; ++i)
-                {
-                    owners[i] = new UserPlayer();
-                    owners[i].setColor(PlayerColor.values()[i + 1]);
-                }
+        /* Sort decreasingly */
+        
+        Collections.sort(regions, (reg1, reg2) -> { return reg2.size() - reg1.size(); });
+        
+        /* Find the capital candidates */
+        
+        Hex[] capitalCandidates = new Hex[number + MANIPULATION_MARGIN];
+        
+        for (int i = 0; i < number + MANIPULATION_MARGIN; ++i)
+        {
+            Hex capital = regions.get(i).locateCapital();
+            capitalCandidates[i] = capital;
+        }
+        
+        /* Find the max-weight combination */
+        
+        
+        
+        /* Debugue */
+        
+        AbstractPlayer[] owners = new AbstractPlayer[7];
+        for (int i = 0; i < 7; ++i)
+        {
+            owners[i] = new UserPlayer();
+            owners[i].setColor(PlayerColor.values()[i + 1]);
+        }
 
-                Random random = new Random();
-                for (var region : regions)
-                {
-                    region.capture(owners[random.nextInt(0, 7)]);
-                }
+        for (int i = 0; i < regions.size(); ++i)
+        {
+            regions.get(i).capture(owners[Math.min(i, 6)]);
+        }
         
-        /* Select the largest `number` regions
-           and spawn the capitals in their focal points. */
-        
-        return capitalHexes;
+        return capitals;
     }
 }
 

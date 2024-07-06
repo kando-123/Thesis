@@ -110,7 +110,9 @@ public class Master extends JFrame implements ActionListener
             WorldConfiguration configuration = worldContentPane.getConfiguration();
             world = new World(configuration);
             
-            world.locateCapitals(AbstractPlayer.PLAYERS_COUNT);
+            List<PlayerParameters> playersData = playerContentPane.getPlayerParameters();
+            int playersNumber = playersData.size();
+            world.locateCapitals(playersNumber);
             
             gameplayContentPane = new GameplayContentPane(world);
             setContentPane(gameplayContentPane);
