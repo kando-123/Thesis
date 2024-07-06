@@ -271,7 +271,7 @@ public class World
         public Region(HashSet<Hex> root)
         {
             assert (!root.isEmpty());
-            
+
             territory = new HashSet<>();
             origins = new ArrayList<>();
             periphery = new HashSet<>();
@@ -289,11 +289,11 @@ public class World
         public void propagate(Map<Hex, Integer> map, Set<Hex> alreadyTaken)
         {
             HashSet<Hex> acquisitions = new HashSet<>();
-            
+
             for (var peripheral : periphery)
             {
                 int value = map.get(peripheral);
-                
+
                 for (var neighbor : peripheral.neighbors())
                 {
                     if (territory.contains(neighbor) || alreadyTaken.contains(neighbor) // One is unnecessary...
@@ -301,20 +301,20 @@ public class World
                     {
                         continue;
                     }
-                    
+
                     if (map.get(neighbor) <= value)
                     {
                         territory.add(neighbor);
                         acquisitions.add(neighbor);
-                        
+
                         alreadyTaken.add(neighbor);
                     }
                 }
             }
-            
+
             periphery = acquisitions;
         }
-        
+
         public void capture(AbstractPlayer owner)
         {
             for (var hex : territory)
@@ -322,9 +322,9 @@ public class World
                 fields.get(hex).capture(owner);
             }
         }
-        
+
         private static Random random = null;
-        
+
         public Hex locateCapital()
         {
             if (random == null)
@@ -334,18 +334,67 @@ public class World
             return origins.get(random.nextInt(0, origins.size()));
         }
     }
-    
-    private final static int MANIPULATION_MARGIN = 1;
+
+    private final static int MANIPULATION_MARGIN = 3;
 
     public Hex[] locateCapitals(int number)
     {
-        Hex[] capitals = new Hex[number];
-
         /* Discard the seas and the mounts. Divide the lands and woods into the periphery
            and the pool. */
         HashSet<Hex> periphery = new HashSet<>();
         HashSet<Hex> pool = new HashSet<>();
+        splitHexes(periphery, pool);
 
+        /* Compute the inlandness for the periphery and prepare the next layer. */
+        HashMap<Hex, Integer> inlandness = new HashMap<>();
+        HashSet<Hex> landwardLayer = new HashSet<>();
+        processShore(periphery, pool, landwardLayer, inlandness);
+
+        /* Propagate landwards. */
+        processLand(periphery, pool, landwardLayer, inlandness);
+
+        /* Find candidates for local maxima. */
+        LinkedList<Hex> maxima = findMaximumCandidates(inlandness);
+
+        /* Filter the apparent maxima out. */
+        removeApparentMaxima(maxima, inlandness);
+
+        /* Initialize the regions. */
+        HashSet<Hex> takenArea = new HashSet<>();
+        List<Region> regions = initRegions(maxima, takenArea);
+
+        /* Propagate seawards. */
+        propagateRegions(regions, inlandness, takenArea);
+
+        /* Find the capital candidates */
+        Hex[] capitalCandidates = getCapitalCandidates(number + MANIPULATION_MARGIN, regions);
+
+        /* Find the max-weight combination */
+        Hex[] capitals = findMaxWeightCombination(capitalCandidates, number);
+        
+        for (var capital : capitals)
+        {
+            fields.put(capital, new Field(FieldType.CAPITAL));
+        }
+        
+        AbstractPlayer[] owners = new AbstractPlayer[7];
+        for (int i = 0; i < 7; ++i)
+        {
+            owners[i] = new UserPlayer();
+            owners[i].setColor(PlayerColor.values()[i + 1]);
+        }
+        
+        for (int i = 0; i < regions.size(); ++i)
+        {
+            regions.get(i).capture(owners[Math.min(i, 6)]);
+        }
+
+        return capitals;
+    }
+
+    private void splitHexes(HashSet<Hex> periphery,
+                            HashSet<Hex> pool)
+    {
         Set<Map.Entry<Hex, Field>> entries = fields.entrySet();
         for (var entry : entries)
         {
@@ -384,10 +433,13 @@ public class World
                 }
             }
         }
+    }
 
-        /* Compute the inlandness for the periphery and prepare the next layer. */
-        HashMap<Hex, Integer> inlandness = new HashMap<>();
-        HashSet<Hex> landwardLayer = new HashSet<>();
+    private void processShore(HashSet<Hex> periphery,
+                              HashSet<Hex> pool,
+                              HashSet<Hex> landwardLayer,
+                              HashMap<Hex, Integer> inlandness)
+    {
         for (var hex : periphery)
         {
             int mountNeighbors = 0;
@@ -429,8 +481,13 @@ public class World
                 inlandness.put(hex, value);
             }
         }
+    }
 
-        /* Propagate landwards. */
+    private void processLand(HashSet<Hex> periphery,
+                             HashSet<Hex> pool,
+                             HashSet<Hex> landwardLayer,
+                             HashMap<Hex, Integer> inlandness)
+    {
         while (!landwardLayer.isEmpty())
         {
             HashSet<Hex> previousLayer = periphery;
@@ -455,9 +512,11 @@ public class World
                 inlandness.put(hex, maximum + 1);
             }
         }
+    }
 
-        /* Find candidates for local maxima. */
-        LinkedList<Hex> maxima = new LinkedList<>();
+    private LinkedList<Hex> findMaximumCandidates(HashMap<Hex, Integer> inlandness)
+    {
+        LinkedList<Hex> candidates = new LinkedList<>();
 
         for (var entry : inlandness.entrySet())
         {
@@ -476,11 +535,16 @@ public class World
 
             if (isMaximal)
             {
-                maxima.add(key);
+                candidates.add(key);
             }
         }
 
-        /* Filter the apparent maxima out. */
+        return candidates;
+    }
+
+    private void removeApparentMaxima(LinkedList<Hex> maxima,
+                                      HashMap<Hex, Integer> inlandness)
+    {
         HashSet<Hex> apparentMaxima = new HashSet<>();
         for (var candidate : maxima)
         {
@@ -488,7 +552,7 @@ public class World
             {
                 continue;
             }
-            
+
             int candidateValue = inlandness.get(candidate);
             for (var neighbor : candidate.neighbors())
             {
@@ -499,13 +563,13 @@ public class World
                     {
                         // This candidate and all candidates joint to it must be removed
                         Stack<Hex> stack = new Stack<>();
-                        
+
                         apparentMaxima.add(candidate);
                         stack.push(candidate);
                         while (!stack.isEmpty())
                         {
                             Hex peek = stack.peek();
-                            
+
                             Hex next = null;
                             for (var further : peek.neighbors())
                             {
@@ -530,10 +594,12 @@ public class World
             }
         }
         maxima.removeAll(apparentMaxima);
+    }
 
-        /* Initialize the regions. */
+    private List<Region> initRegions(LinkedList<Hex> maxima,
+                                     HashSet<Hex> takenArea)
+    {
         List<Region> regions = new ArrayList<>();
-        HashSet<Hex> takenArea = new HashSet<>();
         while (!maxima.isEmpty())
         {
             /* Find a whole connected group using DFS */
@@ -570,71 +636,168 @@ public class World
             }
             Region region = new Region(group);
             regions.add(region);
-            
+
             takenArea.addAll(group);
         }
-        
-        /* Propagate seawards. */
-        
+        return regions;
+    }
+
+    private void propagateRegions(List<Region> regions,
+                                  HashMap<Hex, Integer> inlandness,
+                                  HashSet<Hex> takenArea)
+    {
         while (takenArea.size() < inlandness.size())
         {
+            /* While propagation, give priority to the smaller ones. */
+            regions.sort((reg1, reg2) ->
+            {
+                return reg1.size() - reg2.size();
+            });
+
             for (var region : regions)
             {
                 region.propagate(inlandness, takenArea);
             }
         }
+    }
+    
+    private Hex[] getCapitalCandidates(int count,
+                                       List<Region> regions)
+    {
+        /* Prefer larger regions. */
+        regions.sort((reg1, reg2) ->
+        {
+            return reg2.size() - reg1.size();
+        });
         
-        /* Sort decreasingly */
-        
-        Collections.sort(regions, (reg1, reg2) -> { return reg2.size() - reg1.size(); });
-        
-        /* Find the capital candidates */
-        
-        Hex[] capitalCandidates = new Hex[number + MANIPULATION_MARGIN];
-        
-        for (int i = 0; i < number + MANIPULATION_MARGIN; ++i)
+        Hex[] capitalCandidates = new Hex[count];
+
+        for (int i = 0; i < count; ++i)
         {
             Hex capital = regions.get(i).locateCapital();
             capitalCandidates[i] = capital;
         }
         
-        /* Find the max-weight combination */
+        return capitalCandidates;
+    }
+    
+    private Hex[] findMaxWeightCombination(Hex[] candidates,
+                                           int combinationSize)
+    {
+        int poolSize = candidates.length;
         
+        boolean[][] masks = generateAllCombinationMasks(poolSize, combinationSize);
         
+        int maximumIndex = 0;
+        int maximumValue = computeAggregateMaskedDistance(candidates, masks[0]);
         
-        /* Debugue */
-        
-        AbstractPlayer[] owners = new AbstractPlayer[7];
-        for (int i = 0; i < 7; ++i)
+        for (int i = 1; i < masks.length; ++i)
         {
-            owners[i] = new UserPlayer();
-            owners[i].setColor(PlayerColor.values()[i + 1]);
-        }
-
-        for (int i = 0; i < regions.size(); ++i)
-        {
-            regions.get(i).capture(owners[Math.min(i, 6)]);
+            int value = computeAggregateMaskedDistance(candidates, masks[i]);
+            if (value > maximumValue)
+            {
+                maximumIndex = i;
+                maximumValue = value;
+            }
         }
         
-        return capitals;
+        Hex[] combination = new Hex[combinationSize];
+        boolean[] mask = masks[maximumIndex];
+        for (int i = 0, j = 0; i < poolSize; ++i)
+        {
+            if (mask[i])
+            {
+                combination[j++] = candidates[i];
+            }
+        }
+        
+        return combination;
+    }
+    
+    private static boolean[][] generateAllCombinationMasks(int poolLength,
+                                                           int combinationLength)
+    {
+        int numberOfAllCombinations = binomialCoefficient(poolLength, combinationLength);
+        boolean[][] masks = new boolean[numberOfAllCombinations][poolLength];
+        
+        int[] indexes = new int[combinationLength];
+        
+        for (int i = 0; i < combinationLength; ++i)
+        {
+            indexes[i] = poolLength - combinationLength + i;
+        }
+        
+        for (int j = 0; j < combinationLength; ++j)
+        {
+            masks[0][indexes[j]] = true;
+        }
+        
+        for (int i = 1; i < numberOfAllCombinations; ++i)
+        {
+            if (indexes[0] > 0)
+            {
+                --indexes[0];
+            }
+            else
+            {
+                int j = 1;
+                while (indexes[j] == j)
+                {
+                    ++j;
+                }
+                
+                --indexes[j];
+                while (--j >= 0)
+                {
+                    indexes[j] = indexes[j + 1] - 1;
+                }
+            }
+            
+            for (int j = 0; j < combinationLength; ++j)
+            {
+                masks[i][indexes[j]] = true;
+            }
+        }
+        
+        return masks;
+    }
+    
+    private static int binomialCoefficient(int n, int k)
+    {
+        assert (n >= k);
+        
+        int product = 1;
+        for (int i = n; i > k; --i)
+        {
+            product *= i;
+        }
+        for (int i = n - k; i > 1; --i)
+        {
+            product /= i;
+        }
+        
+        return product;
+    }
+    
+    private int computeAggregateMaskedDistance(Hex[] hexes,
+                                               boolean[] mask)
+    {
+        int sum = 0;
+        
+        for (int i = 0; i < hexes.length; ++i)
+        {
+            if (mask[i])
+            {
+                for (int j = i + 1; j < hexes.length; ++j)
+                {
+                    if (mask[j])
+                    {
+                        sum += hexes[i].distance(hexes[j]);
+                    }
+                }
+            }
+        }
+        
+        return sum;
     }
 }
-
-//for (var entry : inlandness.entrySet())
-//{
-//    var key = entry.getKey();
-//    var value = entry.getValue();
-//
-//    if (value <= 3)
-//    {
-//        fields.get(key).capture(owners[0]);
-//    }
-//    else if (value > 3 && value < 9)
-//    {
-//        fields.get(key).capture(owners[value - 3]);
-//    }
-//    else
-//    {
-//        fields.get(key).capture(owners[6]);
-//    }
-//}
