@@ -1,5 +1,8 @@
 package my.game;
 
+import my.world.configuration.WorldConfiguration;
+import my.world.configuration.WorldConfigurationContentPane;
+import my.player.configuration.PlayerConfigurationContentPane;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import my.gameplay.*;
 import my.player.*;
-import my.player.selection.*;
 import my.world.*;
 
 /**

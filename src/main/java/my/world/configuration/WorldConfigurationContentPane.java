@@ -1,4 +1,4 @@
-package my.world;
+package my.world.configuration;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -144,11 +144,6 @@ public class WorldConfigurationContentPane extends JPanel
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(button, c);
-    }
-    
-    public int getWorldSide()
-    {
-        return worldSizeSlider.getValue();
     }
 
     private double getSeaPercentage()

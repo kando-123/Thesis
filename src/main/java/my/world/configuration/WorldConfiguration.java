@@ -1,4 +1,4 @@
-package my.world;
+package my.world.configuration;
 
 /**
  *

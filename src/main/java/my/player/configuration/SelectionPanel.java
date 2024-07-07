@@ -1,4 +1,4 @@
-package my.player.selection;
+package my.player.configuration;
 
 import my.player.PlayerColor;
 import java.awt.GridBagConstraints;

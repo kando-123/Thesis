@@ -1,5 +1,6 @@
 package my.world;
 
+import my.world.configuration.WorldConfiguration;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
