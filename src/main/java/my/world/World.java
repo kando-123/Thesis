@@ -386,6 +386,7 @@ public class World
             fields.put(capital, new Field(FieldType.CAPITAL));
         }
         
+        /* -- debug -- */
                 AbstractPlayer[] owners = new AbstractPlayer[7];
                 for (int i = 0; i < 7; ++i)
                 {
@@ -397,7 +398,8 @@ public class World
                 {
                     regions.get(i).capture(owners[Math.min(i, 6)]);
                 }
-
+        /* -- end-debug -- */
+        
         return capitals;
     }
 

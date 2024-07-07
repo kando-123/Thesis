@@ -79,18 +79,18 @@ public class WorldConfigurationContentPane extends JPanel
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(seaPercentageSliderPanel, c);
-        seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 20, 60, 30);
+        seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 4);
         seaPercentageSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
         Hashtable<Integer, JLabel> seaPercentageLabels = new Hashtable<>(3);
-        seaPercentageLabels.put(20, new JLabel("lakes"));
-        seaPercentageLabels.put(40, new JLabel("seas"));
-        seaPercentageLabels.put(60, new JLabel("oceans"));
+        seaPercentageLabels.put( 0, new JLabel("lakes"));
+        seaPercentageLabels.put( 5, new JLabel("seas"));
+        seaPercentageLabels.put(10, new JLabel("oceans"));
         seaPercentageSlider.setLabelTable(seaPercentageLabels);
         seaPercentageSlider.setPaintLabels(true);
-//        seaPercentageSlider.setMinorTickSpacing(2);
-//        seaPercentageSlider.setMajorTickSpacing(10);
-//        seaPercentageSlider.setPaintTicks(true);
-//        seaPercentageSlider.setSnapToTicks(true);
+        seaPercentageSlider.setMinorTickSpacing(1);
+        seaPercentageSlider.setMajorTickSpacing(5);
+        seaPercentageSlider.setPaintTicks(true);
+        seaPercentageSlider.setSnapToTicks(true);
         seaPercentageSliderPanel.add(seaPercentageSlider);
         
         /* Select mounts-on-land percentage. */
@@ -105,18 +105,18 @@ public class WorldConfigurationContentPane extends JPanel
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(mountsPercentageSliderPanel, c);
-        mountsPercentageSlider = new JSlider(JSlider.HORIZONTAL, 10, 40, 25);
+        mountsPercentageSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 5);
         mountsPercentageSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
         Hashtable<Integer, JLabel> mountsPercentageLabels = new Hashtable<>(3);
-        mountsPercentageLabels.put(10, new JLabel("few"));
-        mountsPercentageLabels.put(25, new JLabel("medium"));
-        mountsPercentageLabels.put(40, new JLabel("many"));
+        mountsPercentageLabels.put( 0, new JLabel("few"));
+        mountsPercentageLabels.put( 5, new JLabel("medium"));
+        mountsPercentageLabels.put(10, new JLabel("many"));
         mountsPercentageSlider.setLabelTable(mountsPercentageLabels);
         mountsPercentageSlider.setPaintLabels(true);
-//        mountsPercentageSlider.setMinorTickSpacing(2);
-//        mountsPercentageSlider.setMajorTickSpacing(10);
-//        mountsPercentageSlider.setPaintTicks(true);
-//        mountsPercentageSlider.setSnapToTicks(true);
+        mountsPercentageSlider.setMinorTickSpacing(1);
+        mountsPercentageSlider.setMajorTickSpacing(5);
+        mountsPercentageSlider.setPaintTicks(true);
+        mountsPercentageSlider.setSnapToTicks(true);
         mountsPercentageSliderPanel.add(mountsPercentageSlider);
         
         JButton back = new JButton("Back");
@@ -151,22 +151,38 @@ public class WorldConfigurationContentPane extends JPanel
         return worldSizeSlider.getValue();
     }
 
-    public double getSeaPercentage()
+    private double getSeaPercentage()
     {
-        return seaPercentageSlider.getValue();
+        /*  y = a * x + b,
+                a = (yMax - yMin) / (xMax - xMin) = 40 / 10 = 4
+                    xMin =  0
+                    xMax = 10
+                    yMin = 20
+                    yMax = 60
+                b = yMin - a * xMin = 20 - 0 = 20
+        */
+        return 4 * seaPercentageSlider.getValue() + 20;
     }
 
-    public double getMountsPercentage()
+    private double getMountsPercentage()
     {
-        return mountsPercentageSlider.getValue();
+        /*  y = a * x + b,
+                a = (yMax - yMin) / (xMax - xMin) = 30 / 10 = 3
+                    xMin =  0
+                    xMax = 10
+                    yMin = 10
+                    yMax = 40
+                b = yMin - a * xMin = 10 - 0 = 10
+        */
+        return 3 * mountsPercentageSlider.getValue() + 10;
     }
 
     public WorldConfiguration getConfiguration()
     {
         WorldConfiguration configuration = new WorldConfiguration();
         configuration.worldSide = worldSizeSlider.getValue();
-        configuration.seaPercentage = 0.01 * (double) seaPercentageSlider.getValue();
-        configuration.mountsPercentage = 0.01 * (double) mountsPercentageSlider.getValue();
+        configuration.seaPercentage = 0.01 * (double) getSeaPercentage();
+        configuration.mountsPercentage = 0.01 * (double) getMountsPercentage();
         return configuration;
     }
 }

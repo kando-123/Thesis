@@ -92,8 +92,11 @@ public class Master extends JFrame implements ActionListener
             }
             else
             {
-                worldContentPane = new WorldConfigurationContentPane();
-                worldContentPane.setPreferredSize(getSize());
+                if (worldContentPane == null)
+                {
+                    worldContentPane = new WorldConfigurationContentPane();
+                    worldContentPane.setPreferredSize(getSize());
+                }
                 setContentPane(worldContentPane);
                 pack();
                 setLocationRelativeTo(null);
