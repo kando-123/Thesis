@@ -10,4 +10,11 @@ public class PlayerParameters
     public PlayerType type;
     public PlayerColor color;
     public String name;
+    
+    @Override
+    public String toString()
+    {
+        return String.format("PlayerParameters@[type=%s, color=%s, name=%s]",
+                type, color, name);
+    }
 }

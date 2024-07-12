@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import my.player.AbstractPlayer;
 import my.player.PlayerColor;
+import my.world.Hex;
 import my.world.Pixel;
 
 /**
@@ -13,14 +14,16 @@ import my.world.Pixel;
  */
 public class Field
 {
+    private final Hex coords;
+    
     private final FieldType type;
     private final BufferedImage image;
     private BufferedImage contour;
-    private AbstractPlayer owner;
     
-    public Field(FieldType type)
+    public Field(FieldType type, Hex coords)
     {
         this.type = type;
+        this.coords = coords;
         
         FieldManager fieldManager = FieldManager.getInstance();
         image = fieldManager.getImage(type);
@@ -45,12 +48,11 @@ public class Field
     
     public boolean isOwned()
     {
-        return (owner == null);
+        return (contour != null);
     }
     
-    public void capture(AbstractPlayer newOwner)
+    public void setOwnership(AbstractPlayer newOwner)
     {
-        owner = newOwner;
         if (newOwner != null)
         {
             FieldManager fieldManager = FieldManager.getInstance();

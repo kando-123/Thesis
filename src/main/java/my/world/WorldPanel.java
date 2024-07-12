@@ -13,8 +13,6 @@ import my.input.*;
  */
 public class WorldPanel extends JPanel implements Runnable
 {
-    private Dimension panelSize;
-
     private Point screenCenter;
     private Point worldCenter;
     private static final double UNIT_STEP = 5;
@@ -45,10 +43,9 @@ public class WorldPanel extends JPanel implements Runnable
     public void setPreferredSize(Dimension newSize)
     {
         super.setPreferredSize(newSize);
-
-        panelSize = newSize;
-        screenCenter = new Point(panelSize.width / 2, panelSize.height / 2);
-        worldCenter = new Point(panelSize.width / 2, panelSize.height / 2);
+        
+        screenCenter = new Point(newSize.width / 2, newSize.height / 2);
+        worldCenter = new Point(newSize.width / 2, newSize.height / 2);
     }
 
     @Override
@@ -58,9 +55,11 @@ public class WorldPanel extends JPanel implements Runnable
 
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setBackground(Color.black);
-        graphics2D.clearRect(0, 0, panelSize.width, panelSize.height);
+        
+        Dimension size = getSize();
+        graphics2D.clearRect(0, 0, size.width, size.height);
 
-        world.draw(graphics2D, worldCenter, scale, panelSize);
+        world.draw(graphics2D, worldCenter, scale, size);
     }
 
     void update()
@@ -126,15 +125,14 @@ public class WorldPanel extends JPanel implements Runnable
             worldCenter.add(offset);
         }
 
-        /* This works well if the world is not smaller than the screen. With this issue solved,
-           this code will run perfectly well. */
         int side = world.getSide();
         
         double worldWidth = Hex.computeSurfaceWidth(side, scale * World.HEX_OUTER_RADIUS);
         double worldHeight = Hex.computeSurfaceHeight(side, scale * World.HEX_INNER_RADIUS);
         
-        int panelWidth = getSize().width;
-        int panelHeight = getSize().height;
+        Dimension size = getSize();
+        int panelWidth = size.width;
+        int panelHeight = size.height;
         
         double maxXCoord;
         double minXCoord;

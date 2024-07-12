@@ -35,7 +35,7 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
         
         panels = new ArrayList<>(2);
         
-        final int players = AbstractPlayer.PLAYERS_COUNT;
+        final int players = AbstractPlayer.MAX_PLAYERS_COUNT;
         
         SelectionPanel usersSelection = new SelectionPanel(1, players, players - 1, 1);
         usersSelection.setPlayerType(PlayerType.USER);

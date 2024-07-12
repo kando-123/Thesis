@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import my.player.*;
 import my.world.field.*;
 
 /**
@@ -150,8 +149,7 @@ public class World
             double noise = entry.getValue();
             if (noise < seaThreshold)
             {
-                Field field = new Field(FieldType.SEA);
-                fields.put(hex, field);
+                fields.put(hex, new Field(FieldType.SEA, hex));
                 keysForRemoval.add(hex);
             }
         }
@@ -188,8 +186,7 @@ public class World
             double noise = entry.getValue();
             if (noise < mountainsThreshold)
             {
-                Field field = new Field(FieldType.MOUNTS);
-                fields.put(hex, field);
+                fields.put(hex, new Field(FieldType.MOUNTS, hex));
                 keysForRemoval.add(hex);
             }
         }
@@ -225,13 +222,11 @@ public class World
             double noise = entry.getValue();
             if (noise < woodsThreshold)
             {
-                Field field = new Field(FieldType.WOOD);
-                fields.put(hex, field);
+                fields.put(hex, new Field(FieldType.WOOD, hex));
             }
             else
             {
-                Field field = new Field(FieldType.LAND);
-                fields.put(hex, field);
+                fields.put(hex, new Field(FieldType.LAND, hex));
             }
         }
     }
@@ -314,14 +309,6 @@ public class World
             periphery = acquisitions;
         }
 
-        public void capture(AbstractPlayer owner)
-        {
-            for (var hex : territory)
-            {
-                fields.get(hex).capture(owner);
-            }
-        }
-
         public Hex locateCapital()
         {
             int p = 0;
@@ -342,7 +329,7 @@ public class World
         }
     }
 
-    private final static int MANIPULATION_MARGIN = 1;
+    private final static int MANIPULATION_MARGIN = 2;
 
     public Hex[] locateCapitals(int number)
     {
@@ -378,28 +365,12 @@ public class World
 
         /* Find the max-weight combination */
         Hex[] capitals = findMaxWeightCombination(capitalCandidates, number);
-        
-//        Hex[] capitals = getCapitalCandidates(number, regions);
 
         /* Create the capital fields. */
         for (var capital : capitals)
         {
-            fields.put(capital, new Field(FieldType.CAPITAL));
+            fields.put(capital, new Field(FieldType.CAPITAL, capital));
         }
-        
-        /* -- debug -- */
-                AbstractPlayer[] owners = new AbstractPlayer[7];
-                for (int i = 0; i < 7; ++i)
-                {
-                    owners[i] = new UserPlayer();
-                    owners[i].setColor(PlayerColor.values()[i + 1]);
-                }
-
-                for (int i = 0; i < regions.size(); ++i)
-                {
-                    regions.get(i).capture(owners[Math.min(i, 6)]);
-                }
-        /* -- end-debug -- */
         
         return capitals;
     }
@@ -660,7 +631,7 @@ public class World
     {
         while (takenArea.size() < inlandness.size())
         {
-            /* While propagation, give priority to the smaller ones. */
+            /* During propagation, give priority to the smaller ones. */
             regions.sort((reg1, reg2) ->
             {
                 return reg1.size() - reg2.size();
@@ -811,5 +782,10 @@ public class World
         }
         
         return sum;
+    }
+    
+    public Field getFieldAt(Hex hex)
+    {
+        return fields.get(hex);
     }
 }

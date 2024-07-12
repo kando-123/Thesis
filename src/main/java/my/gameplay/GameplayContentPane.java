@@ -4,10 +4,7 @@ import my.world.WorldPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import my.game.Master;
 import my.world.*;
 
 /**
@@ -17,30 +14,40 @@ import my.world.*;
 public class GameplayContentPane extends JPanel
 {
     private final WorldPanel worldPanel;
-    
+    private JPanel userPanel;
+
     public GameplayContentPane(World world)
     {
         super(new BorderLayout());
-        
+
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
-        int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
-        
-        Dimension panelSize = new Dimension(screenWidth, (int) (0.9 * screenHeight));
-        
+        Dimension contentPaneSize = new Dimension();
+        contentPaneSize.width = (int) (screenSize.width * (0.75));
+        contentPaneSize.height = (int) (screenSize.height * (0.75));
+
         worldPanel = new WorldPanel();
         worldPanel.setWorld(world);
-        worldPanel.setPreferredSize(panelSize);
+        worldPanel.setPreferredSize(contentPaneSize);
         add(worldPanel, BorderLayout.CENTER);
-        
+    }
+
+    public void start()
+    {
         Thread thread = new Thread(worldPanel);
         thread.setDaemon(true);
         thread.start();
-        
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("This will be the player's panel."));
-        panel.setPreferredSize(new Dimension(screenWidth, (int) (0.1 * screenHeight)));
-        add(panel, BorderLayout.SOUTH);
+    }
+
+    public void setUserPanel(JPanel panel)
+    {
+        userPanel = panel;
+
+        Dimension size = getPreferredSize();
+
+        worldPanel.setPreferredSize(new Dimension((int) (0.9 * size.width), size.height));
+        userPanel.setPreferredSize(new Dimension((int) (0.1 * size.width), size.height));
+
+        add(userPanel, BorderLayout.WEST);
     }
 }

@@ -6,22 +6,30 @@ import my.player.configuration.PlayerConfigurationContentPane;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import my.gameplay.*;
+import my.gameplay.activity.*;
 import my.player.*;
 import my.world.*;
+import my.world.field.FieldType;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class Master extends JFrame implements ActionListener
+public class Master extends JFrame implements ActionListener, ActivityListener
 {
     private State state;
 
@@ -31,9 +39,13 @@ public class Master extends JFrame implements ActionListener
 
     private World world;
 
+    private LinkedList<AbstractPlayer> players;
+
     private Master()
     {
         state = State.INITIAL;
+        players = new LinkedList<>();
+
         try
         {
             InputStream stream = getClass().getResourceAsStream("/Logo/Icon.png");
@@ -42,7 +54,7 @@ public class Master extends JFrame implements ActionListener
         }
         catch (IOException io)
         {
-            
+
         }
     }
 
@@ -114,12 +126,19 @@ public class Master extends JFrame implements ActionListener
         {
             WorldConfiguration configuration = worldContentPane.getConfiguration();
             world = new World(configuration);
-            
+
             List<PlayerParameters> playersData = playerContentPane.getPlayerParameters();
             int playersNumber = playersData.size();
-            world.locateCapitals(playersNumber);
-            
+            createPlayers(playersData);
+
+            Hex[] capitals = world.locateCapitals(playersNumber);
+            initCountries(capitals);
+
             gameplayContentPane = new GameplayContentPane(world);
+            gameplayContentPane.start();
+            
+            nextUser();
+            
             setContentPane(gameplayContentPane);
             setResizable(true);
             pack();
@@ -127,6 +146,81 @@ public class Master extends JFrame implements ActionListener
 
             state = State.GAMEPLAY;
         }
+    }
+
+    private void createPlayers(List<PlayerParameters> parametersList)
+    {
+        LinkedList<PlayerColor> availableColors = new LinkedList<>();
+        for (int i = 1; i < PlayerColor.values().length; ++i)
+        {
+            availableColors.add(PlayerColor.values()[i]);
+        }
+
+        for (var parameters : parametersList)
+        {
+            AbstractPlayer player = (parameters.type == PlayerType.USER)
+                    ? new UserPlayer()
+                    : new BotPlayer();
+
+            if (parameters.color != PlayerColor.RANDOM)
+            {
+                player.setColor(parameters.color);
+                availableColors.remove(parameters.color);
+            }
+
+            player.setName(parameters.name.isBlank() ? "Anonymous the Conqueror" : parameters.name);
+
+            players.add(player);
+        }
+
+        if (!availableColors.isEmpty())
+        {
+            Random random = new Random();
+            for (var player : players)
+            {
+                if (player.getColor() == null)
+                {
+                    int randomIndex = random.nextInt(availableColors.size());
+                    PlayerColor color = availableColors.remove(randomIndex);
+                    player.setColor(color);
+                }
+            }
+        }
+    }
+
+    private void initCountries(Hex[] capitals)
+    {
+        assert (capitals.length == players.size());
+
+        for (int i = 0; i < capitals.length; ++i)
+        {
+            players.get(i).capture(world.getFieldAt(capitals[i]));
+
+            for (var neighbor : capitals[i].neighbors())
+            {
+                var field = world.getFieldAt(neighbor);
+                if (field != null && field.getType() != FieldType.SEA)
+                {
+                    players.get(i).capture(field);
+                }
+            }
+        }
+    }
+    
+    private void nextUser()
+    /* Will fall into an infinite loop when the last user dies!
+       To be fixed before the bots learn how to kill... */
+    {
+        while (players.peek().getType() == PlayerType.BOT)
+        {
+            BotPlayer bot = (BotPlayer) players.pop();
+            bot.play();
+            players.push(bot);
+        }
+        
+        UserPlayer user = (UserPlayer) players.pop();
+        gameplayContentPane.setUserPanel(user.getUserPanel());
+        players.push(user);
     }
 
     @Override
@@ -146,7 +240,16 @@ public class Master extends JFrame implements ActionListener
             {
                 beginGameplay();
             }
+            case "done" ->
+            {
+                
+            }
         }
     }
 
+    @Override
+    public void performActivity(Activity a)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

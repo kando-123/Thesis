@@ -28,6 +28,11 @@ public class Hex
     {
         return new Hex(pCoord, qCoord, rCoord);
     }
+    
+    public static Hex newInstance(int p, int q)
+    {
+        return new Hex(p, q, -(p + q));
+    }
 
     public static Hex newInstance(int p, int q, int r)
     {

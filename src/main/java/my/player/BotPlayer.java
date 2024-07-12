@@ -10,4 +10,9 @@ public class BotPlayer extends AbstractPlayer
     {
         super(PlayerType.BOT);
     }
+    
+    public void play()
+    {
+        
+    }
 }

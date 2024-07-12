@@ -1,6 +1,8 @@
 package my.player;
 
-import javax.swing.JPanel;
+import java.util.HashSet;
+import java.util.Set;
+import my.world.field.*;
 
 /**
  *
@@ -8,15 +10,19 @@ import javax.swing.JPanel;
  */
 public abstract class AbstractPlayer
 {
-    public static final int PLAYERS_COUNT = PlayerColor.values().length - 1;
+    public static final int MAX_PLAYERS_COUNT = PlayerColor.values().length - 1;
     
     private final PlayerType type;
     private PlayerColor color;
     private String name;
     
+    private final Set<Field> territory;
+    
     protected AbstractPlayer(PlayerType type)
     {
         this.type = type;
+        
+        territory = new HashSet<>();
     }
     
     public PlayerType getType()
@@ -42,5 +48,23 @@ public abstract class AbstractPlayer
     public String getName()
     {
         return name;
+    }
+    
+    public void capture(Field field)
+    {
+        territory.add(field);
+        field.setOwnership(this);
+    }
+    
+    public void release(Field field)
+    {
+        territory.remove(field);
+        field.setOwnership(null);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return String.format("AbstractPlayer@[type=%s, color=%s, name=%s]", type, color, name);
     }
 }
