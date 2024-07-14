@@ -6,19 +6,16 @@ import my.player.configuration.PlayerConfigurationContentPane;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import my.gameplay.*;
 import my.gameplay.activity.*;
 import my.player.*;
@@ -186,6 +183,8 @@ public class Master extends JFrame implements ActionListener, ActivityListener
                 }
             }
         }
+        
+        Collections.shuffle(players);
     }
 
     private void initCountries(Hex[] capitals)
@@ -211,16 +210,19 @@ public class Master extends JFrame implements ActionListener, ActivityListener
     /* Will fall into an infinite loop when the last user dies!
        To be fixed before the bots learn how to kill... */
     {
-        while (players.peek().getType() == PlayerType.BOT)
+        while (players.getFirst().getType() == PlayerType.BOT)
         {
-            BotPlayer bot = (BotPlayer) players.pop();
+            BotPlayer bot = (BotPlayer) players.removeFirst();
             bot.play();
-            players.push(bot);
+            players.addLast(bot);
         }
         
-        UserPlayer user = (UserPlayer) players.pop();
-        gameplayContentPane.setUserPanel(user.getUserPanel());
-        players.push(user);
+        UserPlayer user = (UserPlayer) players.removeFirst();
+        gameplayContentPane.setCurrentUser(user);
+        System.out.println(String.format("User '%s' is playing.", user.getName()));
+        players.addLast(user);
+        
+        pack();
     }
 
     @Override
@@ -242,7 +244,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
             }
             case "done" ->
             {
-                
+                nextUser();
             }
         }
     }

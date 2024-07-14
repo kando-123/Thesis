@@ -11,7 +11,7 @@ public enum PlayerColor
     RANDOM(null),
     
     RED(new Color(214, 56, 56)),
-    ORANGE(new Color(216, 217, 54)),
+    ORANGE(new Color(216, 127, 54)),
     YELLOW(new Color(214, 214, 56)),
     GREEN(new Color(56, 214, 56)),
     CYAN(new Color(56, 214, 214)),

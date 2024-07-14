@@ -2,10 +2,43 @@ package my.gameplay;
 
 import my.world.WorldPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import my.game.Master;
+import my.player.UserPlayer;
 import my.world.*;
+
+class UserPanel extends JPanel    
+{
+    private final JLabel nameLabel;
+    private final JButton button;
+    
+    public UserPanel()
+    {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        
+        nameLabel = new JLabel("Unnamed Player");
+        add(nameLabel);
+        
+        button = new JButton("Done!");
+        button.setActionCommand("done");
+        button.addActionListener(Master.getInstance());
+        add(button);
+        
+        setBackground(Color.white);
+    }
+    
+    public void setUser(UserPlayer user)
+    {
+        nameLabel.setText(user.getName());
+        setBackground(user.getColor().colorValue);
+    }
+}
 
 /**
  *
@@ -14,7 +47,8 @@ import my.world.*;
 public class GameplayContentPane extends JPanel
 {
     private final WorldPanel worldPanel;
-    private JPanel userPanel;
+    
+    private final UserPanel userPanel;
 
     public GameplayContentPane(World world)
     {
@@ -30,6 +64,9 @@ public class GameplayContentPane extends JPanel
         worldPanel.setWorld(world);
         worldPanel.setPreferredSize(contentPaneSize);
         add(worldPanel, BorderLayout.CENTER);
+        
+        userPanel = new UserPanel();
+        add(userPanel, BorderLayout.WEST);
     }
 
     public void start()
@@ -39,15 +76,8 @@ public class GameplayContentPane extends JPanel
         thread.start();
     }
 
-    public void setUserPanel(JPanel panel)
+    public void setCurrentUser(UserPlayer user)
     {
-        userPanel = panel;
-
-        Dimension size = getPreferredSize();
-
-        worldPanel.setPreferredSize(new Dimension((int) (0.9 * size.width), size.height));
-        userPanel.setPreferredSize(new Dimension((int) (0.1 * size.width), size.height));
-
-        add(userPanel, BorderLayout.WEST);
+        userPanel.setUser(user);
     }
 }
