@@ -52,13 +52,13 @@ public class WorldPanel extends JPanel implements Runnable
     public void paintComponent(Graphics graphics)
     {
         super.paintComponent(graphics);
-
+        
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setBackground(Color.black);
         
         Dimension size = getSize();
         graphics2D.clearRect(0, 0, size.width, size.height);
-
+        
         world.draw(graphics2D, worldCenter, scale, size);
     }
 

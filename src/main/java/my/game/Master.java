@@ -1,8 +1,5 @@
 package my.game;
 
-import my.world.configuration.WorldConfiguration;
-import my.world.configuration.WorldConfigurationContentPane;
-import my.player.configuration.PlayerConfigurationContentPane;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,8 +16,10 @@ import javax.swing.JOptionPane;
 import my.gameplay.*;
 import my.gameplay.activity.*;
 import my.player.*;
+import my.player.configuration.*;
 import my.world.*;
-import my.world.field.FieldType;
+import my.world.configuration.*;
+import my.world.field.*;
 
 /**
  *
@@ -36,7 +35,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
 
     private World world;
 
-    private LinkedList<AbstractPlayer> players;
+    private LinkedList<Player> players;
 
     private Master()
     {
@@ -155,9 +154,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
 
         for (var parameters : parametersList)
         {
-            AbstractPlayer player = (parameters.type == PlayerType.USER)
-                    ? new UserPlayer()
-                    : new BotPlayer();
+            Player player = new Player(parameters.type);
 
             if (parameters.color != PlayerColor.RANDOM)
             {
@@ -212,17 +209,14 @@ public class Master extends JFrame implements ActionListener, ActivityListener
     {
         while (players.getFirst().getType() == PlayerType.BOT)
         {
-            BotPlayer bot = (BotPlayer) players.removeFirst();
+            Player bot = players.removeFirst();
             bot.play();
             players.addLast(bot);
         }
         
-        UserPlayer user = (UserPlayer) players.removeFirst();
+        Player user = players.removeFirst();
         gameplayContentPane.setCurrentUser(user);
-        System.out.println(String.format("User '%s' is playing.", user.getName()));
         players.addLast(user);
-        
-        pack();
     }
 
     @Override

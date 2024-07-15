@@ -3,7 +3,7 @@ package my.world.field;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import my.player.AbstractPlayer;
+import my.player.Player;
 import my.player.PlayerColor;
 import my.world.Hex;
 import my.world.Pixel;
@@ -51,7 +51,7 @@ public class Field
         return (contour != null);
     }
     
-    public void setOwnership(AbstractPlayer newOwner)
+    public void setOwnership(Player newOwner)
     {
         if (newOwner != null)
         {

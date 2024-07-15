@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import my.game.Master;
-import my.player.AbstractPlayer;
+import my.player.Player;
 import my.player.PlayerParameters;
 import my.player.PlayerType;
 
@@ -35,7 +35,7 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
         
         panels = new ArrayList<>(2);
         
-        final int players = AbstractPlayer.MAX_PLAYERS_COUNT;
+        final int players = Player.MAX_PLAYERS_COUNT;
         
         SelectionPanel usersSelection = new SelectionPanel(1, players, players - 1, 1);
         usersSelection.setPlayerType(PlayerType.USER);

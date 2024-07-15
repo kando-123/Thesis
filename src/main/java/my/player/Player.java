@@ -8,7 +8,7 @@ import my.world.field.*;
  *
  * @author Kay Jay O'Nail
  */
-public abstract class AbstractPlayer
+public class Player
 {
     public static final int MAX_PLAYERS_COUNT = PlayerColor.values().length - 1;
     
@@ -18,7 +18,7 @@ public abstract class AbstractPlayer
     
     private final Set<Field> territory;
     
-    protected AbstractPlayer(PlayerType type)
+    public Player(PlayerType type)
     {
         this.type = type;
         
@@ -62,9 +62,14 @@ public abstract class AbstractPlayer
         field.setOwnership(null);
     }
     
+    public void play()
+    {
+        System.out.println(String.format("Bot '%s' is playing.", getName()));
+    }
+    
     @Override
     public String toString()
     {
-        return String.format("AbstractPlayer@[type=%s, color=%s, name=%s]", type, color, name);
+        return String.format("Player@[type=%s, color=%s, name=%s]", type, color, name);
     }
 }

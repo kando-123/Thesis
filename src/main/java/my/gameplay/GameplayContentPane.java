@@ -9,8 +9,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import my.game.Master;
-import my.player.UserPlayer;
+import my.game.*;
+import my.player.*;
 import my.world.*;
 
 class UserPanel extends JPanel    
@@ -33,7 +33,7 @@ class UserPanel extends JPanel
         setBackground(Color.white);
     }
     
-    public void setUser(UserPlayer user)
+    public void setUser(Player user)
     {
         nameLabel.setText(user.getName());
         setBackground(user.getColor().colorValue);
@@ -76,7 +76,7 @@ public class GameplayContentPane extends JPanel
         thread.start();
     }
 
-    public void setCurrentUser(UserPlayer user)
+    public void setCurrentUser(Player user)
     {
         userPanel.setUser(user);
     }
