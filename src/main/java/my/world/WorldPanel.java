@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
-import my.input.*;
+
 
 /**
  *
@@ -24,19 +24,23 @@ public class WorldPanel extends JPanel implements Runnable
     private static final double MAX_SCALE = 2.5;
     private static final double MIN_SCALE = 0.25;
 
-    private final InputHandler inputHandler;
+    private InputHandler inputHandler;
 
     private World world;
 
     public WorldPanel()
     {
         scale = 1.0;
-        inputHandler = InputHandler.getInstance();
     }
 
     public void setWorld(World newWorld)
     {
         world = newWorld;
+    }
+    
+    public void setInputHandler(InputHandler newInputHandler)
+    {
+        inputHandler = newInputHandler;
     }
 
     @Override
@@ -186,7 +190,7 @@ public class WorldPanel extends JPanel implements Runnable
         final long framesPerSecond = 60;
         final long period = (int) ((double) 1_000_000_000 / (double) framesPerSecond);
         long recentInstant = System.nanoTime();
-        while (!Thread.currentThread().isInterrupted())
+        while (true)
         {
             long currentInstant = System.nanoTime();
             if (currentInstant - recentInstant >= period)

@@ -1,4 +1,4 @@
-package my.input;
+package my.world;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -22,20 +22,9 @@ public class InputHandler implements KeyListener
     private boolean zoomIn;
     private boolean zoomOut;
     
-    private InputHandler()
+    public InputHandler()
     {
         movementMode = MovementMode.MOVE_CAMERA;
-    }
-    
-    private static InputHandler instance = null;
-    
-    public static InputHandler getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new InputHandler();
-        }
-        return instance;
     }
 
     @Override
@@ -53,7 +42,7 @@ public class InputHandler implements KeyListener
             case KeyEvent.VK_RIGHT ->
             {
                 if (!east)
-                {
+                { 
                     ++directions;
                 }
                 east = true;

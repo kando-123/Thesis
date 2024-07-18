@@ -1,7 +1,5 @@
 package my.world;
 
-import java.util.*;
-
 /**
  *
  * @author Kay Jay O'Nail
@@ -42,6 +40,14 @@ public class Hex
     public static Hex getOrigin()
     {
         return new Hex(0, 0, 0);
+    }
+    
+    public static Hex getHexAt(int x, int y, int outerRadius)
+    {
+        int p = (int) ((2. / 3.) * x / outerRadius);
+        int q = (int) ((-x + Math.sqrt(3.) * y) / (3. * outerRadius));
+        
+        return new Hex(p, q, -(p + q));
     }
 
     /* Property accessors */
@@ -365,11 +371,6 @@ public class Hex
     {
         return 4 * (side - 1) * innerRadius + 2 * innerRadius;
     }
-    
-//    public static Hex getHexAt(int x, int y)
-//    {
-//        
-//    }
 
     /* Other */
     

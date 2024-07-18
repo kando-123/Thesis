@@ -1,5 +1,6 @@
 package my.game;
 
+import my.world.InputHandler;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
 import my.gameplay.*;
 import my.gameplay.activity.*;
 import my.player.*;
@@ -37,7 +39,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
 
     private LinkedList<Player> players;
 
-    private Master()
+    public Master()
     {
         state = State.INITIAL;
         players = new LinkedList<>();
@@ -54,17 +56,6 @@ public class Master extends JFrame implements ActionListener, ActivityListener
         }
     }
 
-    private static Master instance = null;
-
-    public static Master getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new Master();
-        }
-        return instance;
-    }
-
     private void beginPlayerSelection()
     {
         if (state == State.INITIAL || state == State.WORLD_CONFIGURATION)
@@ -75,7 +66,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
 
             if (state == State.INITIAL)
             {
-                playerContentPane = new PlayerConfigurationContentPane();
+                playerContentPane = new PlayerConfigurationContentPane(this);
                 playerContentPane.setPreferredSize(newDimension);
             }
             setContentPane(playerContentPane);
@@ -104,7 +95,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
             {
                 if (worldContentPane == null)
                 {
-                    worldContentPane = new WorldConfigurationContentPane();
+                    worldContentPane = new WorldConfigurationContentPane(this);
                     worldContentPane.setPreferredSize(getSize());
                 }
                 setContentPane(worldContentPane);
@@ -129,8 +120,13 @@ public class Master extends JFrame implements ActionListener, ActivityListener
 
             Hex[] capitals = world.locateCapitals(playersNumber);
             initCountries(capitals);
+            
+            InputHandler inputHandler = new InputHandler();
+            addKeyListener(inputHandler);
+            setFocusable(true);
+            requestFocus();
 
-            gameplayContentPane = new GameplayContentPane(world);
+            gameplayContentPane = new GameplayContentPane(this, world, inputHandler);
             gameplayContentPane.start();
             
             nextUser();
@@ -239,6 +235,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
             case "done" ->
             {
                 nextUser();
+                requestFocus();
             }
         }
     }

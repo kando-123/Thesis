@@ -64,7 +64,7 @@ public class Player
     
     public void play()
     {
-        System.out.println(String.format("Bot '%s' is playing.", getName()));
+        
     }
     
     @Override

@@ -13,11 +13,11 @@ public class InvitationContentPane extends JPanel
 {
     private final Master master;
     
-    public InvitationContentPane()
+    public InvitationContentPane(Master master)
     {
         super(new GridBagLayout());
         
-        master = Master.getInstance();
+        this.master = master;
         
         /* Logo. */
         GridBagConstraints c = new GridBagConstraints();

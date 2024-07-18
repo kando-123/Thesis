@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -256,7 +257,7 @@ public class World
         }
     }
 
-    private class Region
+    private static class Region
     {
         private final HashSet<Hex> territory;
         private final ArrayList<Hex> origins;
@@ -325,7 +326,21 @@ public class World
             
             Hex average = Hex.newInstance(p, q, -(p + q));
             
-            return average;
+            Hex capital = origins.get(0);
+            int minimalDistance = average.distance(capital);
+            
+            for (int i = 0; i < origins.size(); ++i)
+            {
+                Hex origin = origins.get(i);
+                int distance = average.distance(origin);
+                if (distance < minimalDistance)
+                {
+                    capital = origin;
+                    minimalDistance = distance;
+                }
+            }
+            
+            return capital;
         }
     }
 

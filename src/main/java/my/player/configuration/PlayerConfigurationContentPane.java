@@ -22,7 +22,7 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
 {
     private final List<SelectionPanel> panels;
     
-    public PlayerConfigurationContentPane()
+    public PlayerConfigurationContentPane(Master master)
     {
         super(new GridBagLayout());
         
@@ -51,7 +51,6 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
         tabbedPane.add("Bots", botsSelection);
         panels.add(botsSelection);
         
-        Master master = Master.getInstance();
         JButton button = new JButton("Ready");
         button.setActionCommand("->world");
         button.addActionListener(master);

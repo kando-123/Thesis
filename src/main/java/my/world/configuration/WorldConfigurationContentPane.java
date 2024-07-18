@@ -24,7 +24,7 @@ public class WorldConfigurationContentPane extends JPanel
     private static final int SLIDER_WIDTH = 400;
     private static final int SLIDER_HEIGHT = 50;
     
-    public WorldConfigurationContentPane()
+    public WorldConfigurationContentPane(Master master)
     {
         super(new GridBagLayout());
         
@@ -121,7 +121,7 @@ public class WorldConfigurationContentPane extends JPanel
         
         JButton back = new JButton("Back");
         back.setActionCommand("->players");
-        back.addActionListener(Master.getInstance());
+        back.addActionListener(master);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 4;
@@ -134,7 +134,7 @@ public class WorldConfigurationContentPane extends JPanel
         
         JButton button = new JButton("Ready");
         button.setActionCommand("->gameplay");
-        button.addActionListener(Master.getInstance());
+        button.addActionListener(master);
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 4;
