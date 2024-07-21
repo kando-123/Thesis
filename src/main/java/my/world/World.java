@@ -6,12 +6,12 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
 import my.world.field.*;
 
 /**
@@ -150,7 +150,7 @@ public class World
             double noise = entry.getValue();
             if (noise < seaThreshold)
             {
-                fields.put(hex, new Field(FieldType.SEA, hex));
+                fields.put(hex, new Field(FieldType.SEA));
                 keysForRemoval.add(hex);
             }
         }
@@ -187,7 +187,7 @@ public class World
             double noise = entry.getValue();
             if (noise < mountainsThreshold)
             {
-                fields.put(hex, new Field(FieldType.MOUNTS, hex));
+                fields.put(hex, new Field(FieldType.MOUNTS));
                 keysForRemoval.add(hex);
             }
         }
@@ -223,11 +223,11 @@ public class World
             double noise = entry.getValue();
             if (noise < woodsThreshold)
             {
-                fields.put(hex, new Field(FieldType.WOOD, hex));
+                fields.put(hex, new Field(FieldType.WOOD));
             }
             else
             {
-                fields.put(hex, new Field(FieldType.LAND, hex));
+                fields.put(hex, new Field(FieldType.LAND));
             }
         }
     }
@@ -384,7 +384,7 @@ public class World
         /* Create the capital fields. */
         for (var capital : capitals)
         {
-            fields.put(capital, new Field(FieldType.CAPITAL, capital));
+            fields.put(capital, new Field(FieldType.CAPITAL));
         }
         
         return capitals;
@@ -646,7 +646,7 @@ public class World
     {
         while (takenArea.size() < inlandness.size())
         {
-            /* During propagation, give priority to the smaller ones. */
+            /* During propagation, give priority to the smaller regions. */
             regions.sort((reg1, reg2) ->
             {
                 return reg1.size() - reg2.size();

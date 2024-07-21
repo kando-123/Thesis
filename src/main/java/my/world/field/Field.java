@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import my.player.Player;
 import my.player.PlayerColor;
-import my.world.Hex;
 import my.world.Pixel;
 
 /**
@@ -14,16 +13,13 @@ import my.world.Pixel;
  */
 public class Field
 {
-    private final Hex coords;
-    
     private final FieldType type;
     private final BufferedImage image;
     private BufferedImage contour;
     
-    public Field(FieldType type, Hex coords)
+    public Field(FieldType type)
     {
         this.type = type;
-        this.coords = coords;
         
         FieldManager fieldManager = FieldManager.getInstance();
         image = fieldManager.getImage(type);

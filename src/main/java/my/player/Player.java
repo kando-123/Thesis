@@ -1,7 +1,9 @@
 package my.player;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+
+import my.world.*;
 import my.world.field.*;
 
 /**
@@ -16,13 +18,17 @@ public class Player
     private PlayerColor color;
     private String name;
     
-    private final Set<Field> territory;
+    private final Map<Hex, Field> territory;
+    
+    private int money;
+    private static final int INITIAL_MONEY = 500;
     
     public Player(PlayerType type)
     {
         this.type = type;
         
-        territory = new HashSet<>();
+        territory = new HashMap<>();
+        money = INITIAL_MONEY;
     }
     
     public PlayerType getType()
@@ -50,21 +56,33 @@ public class Player
         return name;
     }
     
-    public void capture(Field field)
+    public int getMoney()
     {
-        territory.add(field);
+        return money;
+    }
+    
+    public void capture(Hex hex, Field field)
+    {
+        territory.put(hex, field);
         field.setOwnership(this);
     }
     
-    public void release(Field field)
+    public void release(Hex hex)
     {
-        territory.remove(field);
-        field.setOwnership(null);
+        territory.get(hex).setOwnership(null);
+        territory.remove(hex);
     }
     
     public void play()
     {
         
+    }
+    
+    private static final int INCOME_PER_FIELD = 1;
+    
+    public void endRound()
+    {
+        money += territory.size() * INCOME_PER_FIELD;
     }
     
     @Override

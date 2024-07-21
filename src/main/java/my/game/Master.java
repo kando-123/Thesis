@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -43,7 +44,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
     {
         state = State.INITIAL;
         players = new LinkedList<>();
-
+        
         try
         {
             InputStream stream = getClass().getResourceAsStream("/Logo/Icon.png");
@@ -129,7 +130,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
             gameplayContentPane = new GameplayContentPane(this, world, inputHandler);
             gameplayContentPane.start();
             
-            nextUser();
+            firstUser();
             
             setContentPane(gameplayContentPane);
             setResizable(true);
@@ -186,22 +187,20 @@ public class Master extends JFrame implements ActionListener, ActivityListener
 
         for (int i = 0; i < capitals.length; ++i)
         {
-            players.get(i).capture(world.getFieldAt(capitals[i]));
+            players.get(i).capture(capitals[i], world.getFieldAt(capitals[i]));
 
             for (var neighbor : capitals[i].neighbors())
             {
                 var field = world.getFieldAt(neighbor);
                 if (field != null && field.getType() != FieldType.SEA)
                 {
-                    players.get(i).capture(field);
+                    players.get(i).capture(neighbor, field);
                 }
             }
         }
     }
     
-    private void nextUser()
-    /* Will fall into an infinite loop when the last user dies!
-       To be fixed before the bots learn how to kill... */
+    private void firstUser()
     {
         while (players.getFirst().getType() == PlayerType.BOT)
         {
@@ -213,6 +212,14 @@ public class Master extends JFrame implements ActionListener, ActivityListener
         Player user = players.removeFirst();
         gameplayContentPane.setCurrentUser(user);
         players.addLast(user);
+    }
+    
+    private void nextUser()
+    /* Will fall into an infinite loop when the last user dies!
+       To be fixed before the bots learn how to kill... */
+    {   
+        players.getLast().endRound();
+        firstUser();
     }
 
     @Override

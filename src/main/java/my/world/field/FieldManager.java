@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import my.player.PlayerColor;
 
 /**
@@ -71,7 +73,7 @@ public class FieldManager
         return instance;
     }
     
-    private static Random random = new Random();
+    private static final Random random = new Random();
     
     public BufferedImage getImage(FieldType type)
     {
@@ -82,5 +84,10 @@ public class FieldManager
     public BufferedImage getContour(PlayerColor color)
     {
         return contours.get(color);
+    }
+    
+    public Icon getIcon(FieldType type)
+    {
+        return new ImageIcon(getImage(type));
     }
 }
