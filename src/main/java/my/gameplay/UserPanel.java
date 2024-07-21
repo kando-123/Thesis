@@ -2,7 +2,6 @@ package my.gameplay;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -90,12 +89,13 @@ public class UserPanel extends JPanel
         shopPanel.setOpaque(false);
         
         JComboBox buildings = new JComboBox();
-        buildings.addItem(FieldType.BARRACKS);
-        buildings.addItem(FieldType.FARMFIELD);
-        buildings.addItem(FieldType.MINE);
-        buildings.addItem(FieldType.SHIPYARD);
+        buildings.addItem("New Building");
         buildings.addItem(FieldType.TOWN);
         buildings.addItem(FieldType.VILLAGE);
+        buildings.addItem(FieldType.FARMFIELD);
+        buildings.addItem(FieldType.MINE);
+        buildings.addItem(FieldType.BARRACKS);
+        buildings.addItem(FieldType.SHIPYARD);
         buildings.setRenderer(new Renderer());
         shopPanel.add(buildings);
         
@@ -143,19 +143,22 @@ public class UserPanel extends JPanel
         public Renderer()
         {
             fieldManager = FieldManager.getInstance();
-            
-            setPreferredSize(new Dimension(50, 50));
-            setText("--- Test ---");
         }
         
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
         {
-            assert (value.getClass() == FieldType.class);
-            
-            FieldType field = (FieldType) value;
-            setText(field.toString());
-            setIcon(fieldManager.getIcon(field));
+            if (value.getClass() == FieldType.class) 
+            {
+                FieldType field = (FieldType) value;
+                setText(field.toString());
+                setIcon(fieldManager.getIcon(field));
+            }
+            else
+            {
+                setText(String.valueOf(value));
+                setIcon(null);
+            }
             
             return this;
         }
