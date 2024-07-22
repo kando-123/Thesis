@@ -13,8 +13,8 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import my.player.PlayerParameters;
-import my.player.PlayerType;
+
+import my.player.*;
 
 public class SelectionPanel extends JPanel implements ActionListener
 {
@@ -211,16 +211,16 @@ public class SelectionPanel extends JPanel implements ActionListener
         return selected;
     }
     
-    public List<PlayerParameters> getPlayerParameters()
+    public List<PlayerConfiguration> getPlayerParameters()
     {
-        List<PlayerParameters> list = new ArrayList<>();
+        List<PlayerConfiguration> list = new ArrayList<>();
         for (int i = Math.max(minimum, 1); i <= selected; ++i)
         {
-            PlayerParameters parameters = new PlayerParameters();
-            parameters.type = type;
-            parameters.name = textFields.get(i).getText();
-            parameters.color = (PlayerColor) colorModels.get(i).getSelectedItem();
-            list.add(parameters);
+            PlayerConfiguration configuration = new PlayerConfiguration();
+            configuration.type = type;
+            configuration.name = textFields.get(i).getText();
+            configuration.color = (PlayerColor) colorModels.get(i).getSelectedItem();
+            list.add(configuration);
         }
         return list;
     }

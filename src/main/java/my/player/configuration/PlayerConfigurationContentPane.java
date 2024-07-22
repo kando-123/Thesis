@@ -9,10 +9,9 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import my.game.Master;
-import my.player.Player;
-import my.player.PlayerParameters;
-import my.player.PlayerType;
+
+import my.game.*;
+import my.player.*;
 
 /**
  *
@@ -104,9 +103,9 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
         return sum;
     }
     
-    public List<PlayerParameters> getPlayerParameters()
+    public List<PlayerConfiguration> getPlayerParameters()
     {
-        List<PlayerParameters> list = new ArrayList<>();
+        List<PlayerConfiguration> list = new ArrayList<>();
         for (var panel : panels)
         {
             list.addAll(panel.getPlayerParameters());

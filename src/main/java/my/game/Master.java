@@ -29,6 +29,22 @@ import my.world.field.*;
  */
 public class Master extends JFrame implements ActionListener, ActivityListener
 {
+    public static void main(String[] args)
+    {
+        Master master = new Master();
+        
+        master.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        master.setTitle("The Global Empire");
+        master.setResizable(false);
+
+        InvitationContentPane invitationPanel = new InvitationContentPane(master);
+        master.setContentPane(invitationPanel);
+        master.pack();
+        
+        master.setVisible(true);
+        master.setLocationRelativeTo(null);
+    }
+    
     private State state;
 
     private PlayerConfigurationContentPane playerContentPane;
@@ -81,7 +97,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
     {
         if (state == State.PLAYERS_SELECTION)
         {
-            List<PlayerParameters> playersData = playerContentPane.getPlayerParameters();
+            List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
             int playersNumber = playersData.size();
             if (playersNumber < 2)
             {
@@ -114,7 +130,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
             WorldConfiguration configuration = worldContentPane.getConfiguration();
             world = new World(configuration);
 
-            List<PlayerParameters> playersData = playerContentPane.getPlayerParameters();
+            List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
             int playersNumber = playersData.size();
             createPlayers(playersData);
 
@@ -140,7 +156,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
         }
     }
 
-    private void createPlayers(List<PlayerParameters> parametersList)
+    private void createPlayers(List<PlayerConfiguration> configurationList)
     {
         LinkedList<PlayerColor> availableColors = new LinkedList<>();
         for (int i = 1; i < PlayerColor.values().length; ++i)
@@ -148,7 +164,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
             availableColors.add(PlayerColor.values()[i]);
         }
 
-        for (var parameters : parametersList)
+        for (var parameters : configurationList)
         {
             Player player = new Player(parameters.type);
 

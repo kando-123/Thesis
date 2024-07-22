@@ -5,7 +5,7 @@ package my.player;
  *
  * @author Kay Jay O'Nail
  */
-public class PlayerParameters
+public class PlayerConfiguration
 {
     public PlayerType type;
     public PlayerColor color;
