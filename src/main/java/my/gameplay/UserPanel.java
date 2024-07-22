@@ -1,5 +1,7 @@
 package my.gameplay;
 
+import my.units.FieldType;
+import my.units.ImageManager;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import javax.swing.*;
@@ -7,7 +9,8 @@ import javax.swing.event.PopupMenuListener;
 
 import my.game.*;
 import my.player.*;
-import my.world.field.*;
+import my.units.Entity;
+import my.units.EntityType;
 
 /**
  *
@@ -77,18 +80,19 @@ public class UserPanel extends JPanel
     private JPanel makeShopPanel()
     {
         JPanel shopPanel = new JPanel();
+        shopPanel.setLayout(new BoxLayout(shopPanel, BoxLayout.Y_AXIS));
         shopPanel.setOpaque(false);
 
         JComboBox buildings = new JComboBox();
-        buildings.addItem("New Building");
+        buildings.addItem("Build New Property");
         buildings.addItem(FieldType.TOWN);
         buildings.addItem(FieldType.VILLAGE);
         buildings.addItem(FieldType.FARMFIELD);
         buildings.addItem(FieldType.MINE);
         buildings.addItem(FieldType.BARRACKS);
         buildings.addItem(FieldType.SHIPYARD);
+        buildings.addItem(FieldType.FORTRESS);
         buildings.setRenderer(new Renderer());
-
         buildings.addActionListener(
                 (ae) ->
                 {
@@ -99,34 +103,17 @@ public class UserPanel extends JPanel
                 (ie) ->
                 {
                     System.out.println(ie.paramString());
-//                    if (ie.getItem().getClass() == JLabel.class)
-//                    {
-//                        JLabel label = (JLabel) ie.getItem();
-//                        System.out.print(label.getText());
-//                        System.out.println((String) switch (ie.getStateChange())
-//                        {
-//                            case ItemEvent.SELECTED ->
-//                            {
-//                                yield " SELECTED";
-//                            }
-//                            case ItemEvent.DESELECTED ->
-//                            {
-//                                yield " DESELECTED";
-//                            }
-//                            default ->
-//                            {
-//                                yield " ?";
-//                            }
-//                        });
-//                    }
-//                    else
-//                    {
-//                        System.out.println(ie.getItem());
-//                    }
                 }
         );
-
         shopPanel.add(buildings);
+        
+        JComboBox entities = new JComboBox();
+        entities.addItem("Hire New Entity");
+        entities.addItem(EntityType.INFANTRY);
+        entities.addItem(EntityType.CAVALRY);
+        entities.addItem(EntityType.NAVY);
+        entities.setRenderer(new Renderer());
+        shopPanel.add(entities);
 
         return shopPanel;
     }
@@ -167,11 +154,11 @@ public class UserPanel extends JPanel
 
     private class Renderer extends JLabel implements ListCellRenderer<Object>
     {
-        private final FieldManager fieldManager;
+        private final ImageManager imageManager;
 
         public Renderer()
         {
-            fieldManager = FieldManager.getInstance();
+            imageManager = ImageManager.getInstance();
         }
 
         @Override
@@ -180,8 +167,14 @@ public class UserPanel extends JPanel
             if (value.getClass() == FieldType.class)
             {
                 FieldType field = (FieldType) value;
-                setText(field.toString());
-                setIcon(fieldManager.getIcon(field));
+                setText(field.name());
+                setIcon(imageManager.getFieldAsIcon(field));
+            }
+            else if (value.getClass() == EntityType.class)
+            {
+                EntityType entity = (EntityType) value;
+                setText(entity.name());
+                setIcon(imageManager.getEntityAsIcon(entity));
             }
             else
             {

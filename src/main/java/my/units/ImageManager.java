@@ -1,26 +1,25 @@
-package my.world.field;
+package my.units;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.image.*;
+import java.io.*;
 import java.util.*;
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import my.player.PlayerColor;
+import javax.imageio.*;
+import javax.swing.*;
+import my.player.*;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class FieldManager
+public class ImageManager
 {
-    private Map<FieldType, List<BufferedImage>> images;
+    private Map<FieldType, List<BufferedImage>> fields;
     private Map<PlayerColor, BufferedImage> contours;
+    private Map<EntityType, BufferedImage> entities;
     
-    private FieldManager()
+    private ImageManager()
     {
-        images = new HashMap<>(FieldType.values().length);
+        fields = new HashMap<>(FieldType.values().length);
         for (var type : FieldType.values())
         {
             List<BufferedImage> imagesList = new ArrayList<>(type.paths.size());
@@ -37,7 +36,7 @@ public class FieldManager
                     System.err.println(io.getMessage());
                 }                
             }
-            images.put(type, imagesList);
+            fields.put(type, imagesList);
         }
         
         contours = new HashMap<>(PlayerColor.values().length);
@@ -60,24 +59,39 @@ public class FieldManager
                 System.err.println(io.getMessage());
             }
         }
+        
+        entities = new HashMap<>(EntityType.values().length);
+        for (var entity : EntityType.values())
+        {
+            InputStream stream = getClass().getResourceAsStream(entity.file);
+            try
+            {
+                BufferedImage image = ImageIO.read(stream);
+                entities.put(entity, image);
+            }
+            catch (IOException io)
+            {
+                System.err.println(io.getMessage());
+            }
+        }
     }
     
-    private static FieldManager instance = null;
+    private static ImageManager instance = null;
     
-    public static FieldManager getInstance()
+    public static ImageManager getInstance()
     {
         if (instance == null)
         {
-            instance = new FieldManager();
+            instance = new ImageManager();
         }
         return instance;
     }
     
     private static final Random random = new Random();
     
-    public BufferedImage getImage(FieldType type)
+    public BufferedImage getField(FieldType type)
     {
-        List<BufferedImage> list = images.get(type);
+        List<BufferedImage> list = fields.get(type);
         return list.get(random.nextInt(0, list.size()));
     }
     
@@ -86,8 +100,18 @@ public class FieldManager
         return contours.get(color);
     }
     
-    public Icon getIcon(FieldType type)
+    public Icon getFieldAsIcon(FieldType type)
     {
-        return new ImageIcon(getImage(type));
+        return new ImageIcon(getField(type));
+    }
+    
+    public BufferedImage getEntity(EntityType type)
+    {
+        return entities.get(type);
+    }
+    
+    public Icon getEntityAsIcon(EntityType type)
+    {
+        return new ImageIcon(getEntity(type));
     }
 }

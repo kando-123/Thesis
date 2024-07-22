@@ -1,4 +1,4 @@
-package my.world.field;
+package my.units;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +13,7 @@ public enum FieldType
     BARRACKS("/Fields/Barracks.png"),
     CAPITAL("/Fields/Capital.png"),
     FARMFIELD("/Fields/Farmfield.png"),
+    FORTRESS("/Fields/Fortress.png"),
     LAND("/Fields/Land1.png", "/Fields/Land2.png"),
     MINE("/Fields/Mine.png"),
     MOUNTS("/Fields/Mounts.png"),

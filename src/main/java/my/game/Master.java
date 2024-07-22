@@ -1,5 +1,6 @@
 package my.game;
 
+import my.units.FieldType;
 import my.world.InputHandler;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -21,7 +22,6 @@ import my.player.*;
 import my.player.configuration.*;
 import my.world.*;
 import my.world.configuration.*;
-import my.world.field.*;
 
 /**
  *

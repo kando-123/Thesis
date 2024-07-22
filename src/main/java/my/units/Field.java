@@ -1,4 +1,4 @@
-package my.world.field;
+package my.units;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -17,12 +17,17 @@ public class Field
     private final BufferedImage image;
     private BufferedImage contour;
     
+    private static ImageManager imageManager = null;
+    
     public Field(FieldType type)
     {
         this.type = type;
         
-        FieldManager fieldManager = FieldManager.getInstance();
-        image = fieldManager.getImage(type);
+        if (imageManager == null)
+        {
+            imageManager = ImageManager.getInstance();
+        }
+        image = imageManager.getField(type);
         
         contour = null;
     }
@@ -51,9 +56,9 @@ public class Field
     {
         if (newOwner != null)
         {
-            FieldManager fieldManager = FieldManager.getInstance();
+            ImageManager imageManager = ImageManager.getInstance();
             PlayerColor color = newOwner.getColor();
-            contour = fieldManager.getContour(color);
+            contour = imageManager.getContour(color);
         }
         else
         {

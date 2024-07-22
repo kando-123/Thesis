@@ -1,10 +1,10 @@
 package my.player;
 
+import my.units.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 import my.world.*;
-import my.world.field.*;
 
 /**
  *
