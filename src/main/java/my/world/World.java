@@ -1,5 +1,7 @@
 package my.world;
 
+import my.utils.Pixel;
+import my.utils.Point;
 import my.units.FieldType;
 import my.units.Field;
 import my.world.configuration.WorldConfiguration;
@@ -65,6 +67,11 @@ public class World
     public int getSide()
     {
         return side;
+    }
+    
+    public Field getFieldAt(Hex hex)
+    {
+        return fields.get(hex);
     }
 
     private Map<Object, Pixel> generateCenters(int side, Pixel offset)
@@ -800,8 +807,27 @@ public class World
         return sum;
     }
     
-    public Field getFieldAt(Hex hex)
+    public interface Predicate<E>
     {
-        return fields.get(hex);
+        public boolean test(E obj);
+    }
+    
+    public void mark(Predicate<Field> condition)
+    {
+        for (Field value : fields.values())
+        {
+            if (condition.test(value))
+            {
+                value.mark();
+            }
+        }
+    }
+    
+    public void unmarkAll()
+    {
+        for (Field value : fields.values())
+        {
+            value.unmark();
+        }
     }
 }

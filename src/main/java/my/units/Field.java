@@ -1,11 +1,9 @@
 package my.units;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import my.player.Player;
-import my.player.PlayerColor;
-import my.world.Pixel;
+import my.utils.Pixel;
+import java.awt.*;
+import java.awt.image.*;
+import my.player.*;
 
 /**
  *
@@ -14,7 +12,11 @@ import my.world.Pixel;
 public class Field
 {
     private final FieldType type;
+    
+    private boolean isMarked;
     private final BufferedImage image;
+    private final BufferedImage markedImage;
+    
     private BufferedImage contour;
     
     private static ImageManager imageManager = null;
@@ -23,11 +25,13 @@ public class Field
     {
         this.type = type;
         
+        isMarked = false;
         if (imageManager == null)
         {
             imageManager = ImageManager.getInstance();
         }
         image = imageManager.getField(type);
+        markedImage = imageManager.getMarkedField(type);
         
         contour = null;
     }
@@ -56,7 +60,10 @@ public class Field
     {
         if (newOwner != null)
         {
-            ImageManager imageManager = ImageManager.getInstance();
+            if (imageManager == null)
+            {
+                imageManager = ImageManager.getInstance();
+            }
             PlayerColor color = newOwner.getColor();
             contour = imageManager.getContour(color);
         }
@@ -66,9 +73,19 @@ public class Field
         }
     }
     
+    public void mark()
+    {
+        isMarked = true;
+    }
+    
+    public void unmark()
+    {
+        isMarked = false;
+    }
+    
     public void draw(Graphics2D graphics, Pixel position, Dimension size)
     {
-        graphics.drawImage(image,
+        graphics.drawImage(isMarked ? markedImage : image,
                 position.xCoord, position.yCoord,
                 size.width, size.height,
                 null);
@@ -81,7 +98,6 @@ public class Field
                 null);
         }
         
-
         // draw entity, if any
         
     }

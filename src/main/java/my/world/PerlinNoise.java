@@ -1,5 +1,7 @@
 package my.world;
 
+import my.utils.Pixel;
+import my.utils.Point;
 import java.util.*;
 
 class Scaler

@@ -1,5 +1,8 @@
 package my.world;
 
+import my.utils.Pixel;
+import my.utils.Point;
+
 /**
  *
  * @author Kay Jay O'Nail

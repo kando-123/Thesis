@@ -1,33 +1,24 @@
 package my.game;
 
-import my.units.FieldType;
-import my.world.InputHandler;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
+import my.units.*;
+import my.world.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
+import javax.imageio.*;
+import javax.swing.*;
 import my.gameplay.*;
-import my.gameplay.activity.*;
 import my.player.*;
 import my.player.configuration.*;
-import my.world.*;
 import my.world.configuration.*;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class Master extends JFrame implements ActionListener, ActivityListener
+public class Master extends JFrame implements ActionListener
 {
     public static void main(String[] args)
     {
@@ -97,7 +88,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
     {
         if (state == State.PLAYERS_SELECTION)
         {
-            List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
+            java.util.List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
             int playersNumber = playersData.size();
             if (playersNumber < 2)
             {
@@ -130,7 +121,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
             WorldConfiguration configuration = worldContentPane.getConfiguration();
             world = new World(configuration);
 
-            List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
+            java.util.List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
             int playersNumber = playersData.size();
             createPlayers(playersData);
 
@@ -156,7 +147,7 @@ public class Master extends JFrame implements ActionListener, ActivityListener
         }
     }
 
-    private void createPlayers(List<PlayerConfiguration> configurationList)
+    private void createPlayers(java.util.List<PlayerConfiguration> configurationList)
     {
         LinkedList<PlayerColor> availableColors = new LinkedList<>();
         for (int i = 1; i < PlayerColor.values().length; ++i)
@@ -259,12 +250,10 @@ public class Master extends JFrame implements ActionListener, ActivityListener
                 nextUser();
                 requestFocus();
             }
+            case "temporary" ->
+            {
+                requestFocus();
+            }
         }
-    }
-
-    @Override
-    public void performActivity(Activity a)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -1,4 +1,4 @@
-package my.world;
+package my.utils;
 
 import java.util.Objects;
 

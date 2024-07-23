@@ -1,29 +1,27 @@
 package my.gameplay;
 
-import my.units.FieldType;
-import my.units.ImageManager;
+import my.units.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
+import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.PopupMenuListener;
-
 import my.game.*;
 import my.player.*;
-import my.units.Entity;
-import my.units.EntityType;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class UserPanel extends JPanel
+public class UserPanel extends JPanel implements ActionListener, ItemListener
 {
     private JLabel nameLabel;
     private JLabel moneyLabel;
+    private final ActionListener master;
 
     public UserPanel(Master master)
     {
         super(new GridBagLayout());
+        
+        this.master = master;
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -37,7 +35,7 @@ public class UserPanel extends JPanel
         add(makeShopPanel(), c);
 
         ++c.gridy;
-        add(makeButtonsPanel(master), c);
+        add(makeButtonsPanel(), c);
 
         setBackground(Color.white);
     }
@@ -93,18 +91,8 @@ public class UserPanel extends JPanel
         buildings.addItem(FieldType.SHIPYARD);
         buildings.addItem(FieldType.FORTRESS);
         buildings.setRenderer(new Renderer());
-        buildings.addActionListener(
-                (ae) ->
-                {
-                    System.out.println(ae.getActionCommand());
-                }
-        );
-        buildings.addItemListener(
-                (ie) ->
-                {
-                    System.out.println(ie.paramString());
-                }
-        );
+        buildings.addActionListener(this);
+        buildings.addItemListener(this);
         shopPanel.add(buildings);
         
         JComboBox entities = new JComboBox();
@@ -113,12 +101,14 @@ public class UserPanel extends JPanel
         entities.addItem(EntityType.CAVALRY);
         entities.addItem(EntityType.NAVY);
         entities.setRenderer(new Renderer());
+        entities.addActionListener(this);
+        entities.addItemListener(this);
         shopPanel.add(entities);
 
         return shopPanel;
     }
 
-    private JPanel makeButtonsPanel(Master master)
+    private JPanel makeButtonsPanel()
     {
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
         buttonsPanel.setOpaque(false);
@@ -150,6 +140,22 @@ public class UserPanel extends JPanel
         buttonsPanel.add(doneButton, c);
 
         return buttonsPanel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        // process the action event and inform the master
+        master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "temporary"));
+        System.out.println(e.paramString());
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e)
+    {
+        // process the action event and inform the master
+        master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "temporary"));
+        System.out.println(e.paramString());
     }
 
     private class Renderer extends JLabel implements ListCellRenderer<Object>
