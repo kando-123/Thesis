@@ -1,20 +1,10 @@
 package my.world;
 
-import my.utils.Pixel;
-import my.utils.Point;
-import my.units.FieldType;
-import my.units.Field;
-import my.world.configuration.WorldConfiguration;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import my.utils.*;
+import my.units.*;
+import my.world.configuration.*;
+import java.awt.*;
+import java.util.*;
 
 
 /**
@@ -69,6 +59,11 @@ public class World
         return side;
     }
     
+    private void createFieldAt(FieldType type, Hex hex)
+    {
+        fields.put(hex, new Field(type, hex));
+    }
+    
     public Field getFieldAt(Hex hex)
     {
         return fields.get(hex);
@@ -105,7 +100,7 @@ public class World
     {
         /* The i-th interval will store the number of entries whose value falls
            within the range from i*accuracy (incl.) to (i+1)*accuracy (excl.). */
-        List<Integer> noiseIntervals = new ArrayList(TIERS_COUNT);
+        java.util.List<Integer> noiseIntervals = new ArrayList(TIERS_COUNT);
         for (int i = 0; i < TIERS_COUNT; ++i)
         {
             noiseIntervals.add(0);
@@ -150,7 +145,7 @@ public class World
         double seaThreshold = calculateThreshold(shorelineNoise, seaPercentage);
 
         var iterator = shorelineNoise.entrySet().iterator();
-        List<Hex> keysForRemoval = new ArrayList<>();
+        java.util.List<Hex> keysForRemoval = new ArrayList<>();
         while (iterator.hasNext())
         {
             var entry = iterator.next();
@@ -158,7 +153,7 @@ public class World
             double noise = entry.getValue();
             if (noise < seaThreshold)
             {
-                fields.put(hex, new Field(FieldType.SEA));
+                createFieldAt(FieldType.SEA, hex);
                 keysForRemoval.add(hex);
             }
         }
@@ -187,7 +182,7 @@ public class World
         double mountainsThreshold = calculateThreshold(mountainsNoise, mountsPercentage);
 
         var iterator = mountainsNoise.entrySet().iterator();
-        List<Hex> keysForRemoval = new ArrayList<>();
+        java.util.List<Hex> keysForRemoval = new ArrayList<>();
         while (iterator.hasNext())
         {
             var entry = iterator.next();
@@ -195,7 +190,7 @@ public class World
             double noise = entry.getValue();
             if (noise < mountainsThreshold)
             {
-                fields.put(hex, new Field(FieldType.MOUNTS));
+                createFieldAt(FieldType.MOUNTAINS, hex);
                 keysForRemoval.add(hex);
             }
         }
@@ -229,18 +224,11 @@ public class World
             var entry = iterator.next();
             Hex hex = (Hex) entry.getKey();
             double noise = entry.getValue();
-            if (noise < woodsThreshold)
-            {
-                fields.put(hex, new Field(FieldType.WOOD));
-            }
-            else
-            {
-                fields.put(hex, new Field(FieldType.LAND));
-            }
+            createFieldAt(noise < woodsThreshold ? FieldType.WOOD : FieldType.LAND, hex);
         }
     }
 
-    public void draw(Graphics2D graphics, Point offset, double scale, Dimension panelSize)
+    public void draw(Graphics2D graphics, my.utils.Point offset, double scale, Dimension panelSize)
     {
         var iterator = fields.entrySet().iterator();
         while (iterator.hasNext())
@@ -378,7 +366,7 @@ public class World
 
         /* Initialize the regions. */
         HashSet<Hex> takenArea = new HashSet<>();
-        List<Region> regions = initRegions(maxima, takenArea);
+        java.util.List<Region> regions = initRegions(maxima, takenArea);
 
         /* Propagate seawards. */
         propagateRegions(regions, inlandness, takenArea);
@@ -392,7 +380,7 @@ public class World
         /* Create the capital fields. */
         for (var capital : capitals)
         {
-            fields.put(capital, new Field(FieldType.CAPITAL));
+            createFieldAt(FieldType.CAPITAL, capital);
         }
         
         return capitals;
@@ -421,7 +409,7 @@ public class World
                     else
                     {
                         FieldType type = fields.get(neighbor).getType();
-                        if (type == FieldType.SEA || type == FieldType.MOUNTS)
+                        if (type == FieldType.SEA || type == FieldType.MOUNTAINS)
                         {
                             isPeripheral = true;
                             break;
@@ -466,7 +454,7 @@ public class World
                         {
                             ++seaNeighbors;
                         }
-                        case MOUNTS ->
+                        case MOUNTAINS ->
                         {
                             ++mountNeighbors;
                         }
@@ -602,10 +590,10 @@ public class World
         maxima.removeAll(apparentMaxima);
     }
 
-    private List<Region> initRegions(LinkedList<Hex> maxima,
+    private java.util.List<Region> initRegions(LinkedList<Hex> maxima,
                                      HashSet<Hex> takenArea)
     {
-        List<Region> regions = new ArrayList<>();
+        java.util.List<Region> regions = new ArrayList<>();
         while (!maxima.isEmpty())
         {
             /* Find a whole connected group using DFS */
@@ -648,17 +636,14 @@ public class World
         return regions;
     }
 
-    private void propagateRegions(List<Region> regions,
+    private void propagateRegions(java.util.List<Region> regions,
                                   HashMap<Hex, Integer> inlandness,
                                   HashSet<Hex> takenArea)
     {
         while (takenArea.size() < inlandness.size())
         {
             /* During propagation, give priority to the smaller regions. */
-            regions.sort((reg1, reg2) ->
-            {
-                return reg1.size() - reg2.size();
-            });
+            regions.sort((reg1, reg2) -> reg1.size() - reg2.size());
 
             for (var region : regions)
             {
@@ -668,13 +653,10 @@ public class World
     }
     
     private Hex[] getCapitalCandidates(int count,
-                                       List<Region> regions)
+                                       java.util.List<Region> regions)
     {
         /* Prefer larger regions. */
-        regions.sort((reg1, reg2) ->
-        {
-            return reg2.size() - reg1.size();
-        });
+        regions.sort((reg1, reg2) -> reg2.size() - reg1.size());
         
         Hex[] capitalCandidates = new Hex[count];
 
@@ -807,20 +789,23 @@ public class World
         return sum;
     }
     
-    public interface Predicate<E>
+    public static interface Predicate<E>
     {
         public boolean test(E obj);
     }
     
-    public void mark(Predicate<Field> condition)
+    public int mark(Predicate<Field> condition)
     {
+        int counter = 0;
         for (Field value : fields.values())
         {
             if (condition.test(value))
             {
                 value.mark();
+                ++counter;
             }
         }
+        return counter;
     }
     
     public void unmarkAll()

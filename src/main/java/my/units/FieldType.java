@@ -16,7 +16,7 @@ public enum FieldType
     FORTRESS("/Fields/Fortress.png"),
     LAND("/Fields/Land1.png", "/Fields/Land2.png"),
     MINE("/Fields/Mine.png"),
-    MOUNTS("/Fields/Mounts.png"),
+    MOUNTAINS("/Fields/Mountains.png"),
     SEA("/Fields/Sea1.png", "/Fields/Sea2.png"),
     SHIPYARD("/Fields/Shipyard.png"),
     TOWN("/Fields/Town.png"),

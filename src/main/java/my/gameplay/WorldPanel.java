@@ -1,21 +1,20 @@
-package my.world;
+package my.gameplay;
 
-import my.utils.Point;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import javax.swing.JPanel;
+import my.utils.Hex;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import my.world.*;
 
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class WorldPanel extends JPanel implements Runnable
+public class WorldPanel extends JPanel implements Runnable, MouseListener
 {
-    private Point screenCenter;
-    private Point worldCenter;
+    private my.utils.Point screenCenter;
+    private my.utils.Point worldCenter;
     private static final double UNIT_STEP = 5;
     private static final double SIN_30DEG = Math.sin(Math.toRadians(30));
     private static final double COS_30DEG = Math.cos(Math.toRadians(30));
@@ -32,6 +31,7 @@ public class WorldPanel extends JPanel implements Runnable
     public WorldPanel()
     {
         scale = 1.0;
+        addMouseListener(this);
     }
 
     public void setWorld(World newWorld)
@@ -49,8 +49,8 @@ public class WorldPanel extends JPanel implements Runnable
     {
         super.setPreferredSize(newSize);
         
-        screenCenter = new Point(newSize.width / 2, newSize.height / 2);
-        worldCenter = new Point(newSize.width / 2, newSize.height / 2);
+        screenCenter = new my.utils.Point(newSize.width / 2, newSize.height / 2);
+        worldCenter = new my.utils.Point(newSize.width / 2, newSize.height / 2);
     }
 
     @Override
@@ -117,16 +117,16 @@ public class WorldPanel extends JPanel implements Runnable
         {
             scale = Math.min(scale * SCALE_FACTOR, MAX_SCALE);
 
-            Point relative = screenCenter.minus(worldCenter);
-            Point offset = relative.times(SCALE_FACTOR - 1);
+            my.utils.Point relative = screenCenter.minus(worldCenter);
+            my.utils.Point offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.subtract(offset);
         }
         else if (inputHandler.zoomOut() && scale > MIN_SCALE)
         {
             scale = Math.max(scale / SCALE_FACTOR, MIN_SCALE);
 
-            Point relative = screenCenter.minus(worldCenter);
-            Point offset = relative.times(SCALE_FACTOR - 1);
+            my.utils.Point relative = screenCenter.minus(worldCenter);
+            my.utils.Point offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.add(offset);
         }
 
@@ -201,5 +201,36 @@ public class WorldPanel extends JPanel implements Runnable
                 recentInstant = currentInstant;
             }
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {
+        java.awt.Point point = e.getPoint();
+        System.out.println("Mouse click: (x=" + point.x + ", y=" + point.y + ")");
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e)
+    {
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e)
+    {
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e)
+    {
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e)
+    {
+        
     }
 }

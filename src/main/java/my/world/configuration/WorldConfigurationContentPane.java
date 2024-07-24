@@ -95,7 +95,7 @@ public class WorldConfigurationContentPane extends JPanel
         
         /* Select mounts-on-land percentage. */
         JPanel mountsPercentageSliderPanel = new JPanel();
-        mountsPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Mounts"));
+        mountsPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Mountains"));
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 3;

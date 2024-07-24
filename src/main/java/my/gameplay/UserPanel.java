@@ -146,16 +146,19 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
     public void actionPerformed(ActionEvent e)
     {
         // process the action event and inform the master
-        master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "temporary"));
-        System.out.println(e.paramString());
+        // master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "temporary"));
+        // System.out.println(e.paramString());
     }
 
     @Override
     public void itemStateChanged(ItemEvent e)
     {
         // process the action event and inform the master
-        master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "temporary"));
-        System.out.println(e.paramString());
+        if (e.getStateChange() == ItemEvent.SELECTED)
+        {
+            String actionCommand = String.format("to-build;%s", String.valueOf(e.getItem()));
+            master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, actionCommand));
+        }
     }
 
     private class Renderer extends JLabel implements ListCellRenderer<Object>

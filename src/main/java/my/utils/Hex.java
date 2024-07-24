@@ -1,4 +1,4 @@
-package my.world;
+package my.utils;
 
 import my.utils.Pixel;
 import my.utils.Point;
@@ -267,7 +267,7 @@ public class Hex
         return pCoord == 0 || qCoord == 0 || rCoord == 0;
     }
 
-    public int ring()
+    public int getRing()
     {
         return (Math.abs(pCoord) + Math.abs(qCoord) + Math.abs(rCoord)) / 2;
     }

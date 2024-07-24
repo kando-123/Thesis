@@ -1,5 +1,6 @@
 package my.player;
 
+import my.utils.Hex;
 import my.units.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,12 +65,12 @@ public class Player
     public void capture(Hex hex, Field field)
     {
         territory.put(hex, field);
-        field.setOwnership(this);
+        field.setOwner(this);
     }
     
     public void release(Hex hex)
     {
-        territory.get(hex).setOwnership(null);
+        territory.get(hex).setOwner(null);
         territory.remove(hex);
     }
     

@@ -1,9 +1,9 @@
 package my.units;
 
-import my.utils.Pixel;
 import java.awt.*;
 import java.awt.image.*;
 import my.player.*;
+import my.utils.*;
 
 /**
  *
@@ -12,18 +12,21 @@ import my.player.*;
 public class Field
 {
     private final FieldType type;
+    private final Hex hex;
     
     private boolean isMarked;
     private final BufferedImage image;
     private final BufferedImage markedImage;
     
+    private Player owner;
     private BufferedImage contour;
     
     private static ImageManager imageManager = null;
     
-    public Field(FieldType type)
+    public Field(FieldType type, Hex hex)
     {
         this.type = type;
+        this.hex = hex;
         
         isMarked = false;
         if (imageManager == null)
@@ -33,12 +36,18 @@ public class Field
         image = imageManager.getField(type);
         markedImage = imageManager.getMarkedField(type);
         
+        owner = null;
         contour = null;
     }
     
     public FieldType getType()
     {
         return type;
+    }
+    
+    public Hex getHex()
+    {
+        return hex;
     }
     
     public int getWidth()
@@ -56,21 +65,27 @@ public class Field
         return (contour != null);
     }
     
-    public void setOwnership(Player newOwner)
+    public void setOwner(Player newOwner)
     {
-        if (newOwner != null)
+        owner = newOwner;
+        if (owner != null)
         {
             if (imageManager == null)
             {
                 imageManager = ImageManager.getInstance();
             }
-            PlayerColor color = newOwner.getColor();
+            PlayerColor color = owner.getColor();
             contour = imageManager.getContour(color);
         }
         else
         {
             contour = null;
         }
+    }
+    
+    public Player getOwner()
+    {
+        return owner;
     }
     
     public void mark()

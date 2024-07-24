@@ -1,7 +1,5 @@
 package my.game;
 
-import my.units.*;
-import my.world.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -12,6 +10,9 @@ import javax.swing.*;
 import my.gameplay.*;
 import my.player.*;
 import my.player.configuration.*;
+import my.utils.*;
+import my.units.*;
+import my.world.*;
 import my.world.configuration.*;
 
 /**
@@ -23,7 +24,7 @@ public class Master extends JFrame implements ActionListener
     public static void main(String[] args)
     {
         Master master = new Master();
-        
+
         master.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         master.setTitle("The Global Empire");
         master.setResizable(false);
@@ -31,11 +32,11 @@ public class Master extends JFrame implements ActionListener
         InvitationContentPane invitationPanel = new InvitationContentPane(master);
         master.setContentPane(invitationPanel);
         master.pack();
-        
+
         master.setVisible(true);
         master.setLocationRelativeTo(null);
     }
-    
+
     private State state;
 
     private PlayerConfigurationContentPane playerContentPane;
@@ -50,7 +51,7 @@ public class Master extends JFrame implements ActionListener
     {
         state = State.INITIAL;
         players = new LinkedList<>();
-        
+
         try
         {
             InputStream stream = getClass().getResourceAsStream("/Logo/Icon.png");
@@ -127,7 +128,7 @@ public class Master extends JFrame implements ActionListener
 
             Hex[] capitals = world.locateCapitals(playersNumber);
             initCountries(capitals);
-            
+
             InputHandler inputHandler = new InputHandler();
             addKeyListener(inputHandler);
             setFocusable(true);
@@ -135,9 +136,9 @@ public class Master extends JFrame implements ActionListener
 
             gameplayContentPane = new GameplayContentPane(this, world, inputHandler);
             gameplayContentPane.start();
-            
+
             firstUser();
-            
+
             setContentPane(gameplayContentPane);
             setResizable(true);
             pack();
@@ -183,7 +184,7 @@ public class Master extends JFrame implements ActionListener
                 }
             }
         }
-        
+
         Collections.shuffle(players);
     }
 
@@ -205,7 +206,7 @@ public class Master extends JFrame implements ActionListener
             }
         }
     }
-    
+
     private void firstUser()
     {
         while (players.getFirst().getType() == PlayerType.BOT)
@@ -214,24 +215,32 @@ public class Master extends JFrame implements ActionListener
             bot.play();
             players.addLast(bot);
         }
-        
+
         Player user = players.removeFirst();
         gameplayContentPane.setCurrentUser(user);
         players.addLast(user);
     }
-    
+
+    private Player currentUser()
+    {
+        return players.getLast();
+    }
+
     private void nextUser()
     /* Will fall into an infinite loop when the last user dies!
        To be fixed before the bots learn how to kill... */
-    {   
-        players.getLast().endRound();
+    {
+        currentUser().endRound();
         firstUser();
     }
+
+    private final static Random temporary = new Random();
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        switch (e.getActionCommand())
+        String[] commandlets = e.getActionCommand().split(";");
+        switch (commandlets[0])
         {
             case "->players" ->
             {
@@ -252,8 +261,135 @@ public class Master extends JFrame implements ActionListener
             }
             case "temporary" ->
             {
+                world.mark((obj) -> temporary.nextBoolean()); // if 0, nothing was marked
+                requestFocus();
+            }
+            case "to-build" ->
+            {
+                world.unmarkAll();
+                final Player current = currentUser();
+                world.mark(switch (commandlets[1].toLowerCase())
+                {
+                    case "town", "village", "barracks" ->
+                    {
+                        yield (Field field) ->
+                        {
+                            boolean isMine = field.getOwner() == current;
+                            boolean isLand = field.getType() == FieldType.LAND;
+                            boolean isWood = field.getType() == FieldType.WOOD;
+                            return isMine && (isLand || isWood);
+                        };
+                    }
+                    case "farmfield" ->
+                    {
+                        yield (Field field) ->
+                        {
+                            if (field.getOwner() != current)
+                            {
+                                return false;
+                            }
+                            
+                            boolean isLand = field.getType() == FieldType.LAND;
+                            boolean isWood = field.getType() == FieldType.WOOD;
+                            if (!isLand && !isWood)
+                            {
+                                return false;
+                            }
+                            
+                            Field[] neighbors = getNeighboringFields(field);
+                            for (var neighbor : neighbors)
+                            {
+                                if (neighbor.getType() == FieldType.VILLAGE)
+                                {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        };
+                    }
+                    case "mine" ->
+                    {
+                        yield (Field field) ->
+                        {
+                            return field.getOwner() == current &&
+                                   field.getType() == FieldType.MOUNTAINS;
+                        };
+                    }
+                    case "shipyard" ->
+                    {
+                        yield (Field field) ->
+                        {
+                            if (field.getOwner() != current)
+                            {
+                                return false;
+                            }
+                            
+                            boolean isLand = field.getType() == FieldType.LAND;
+                            boolean isWood = field.getType() == FieldType.WOOD;
+                            if (!isLand && !isWood)
+                            {
+                                return false;
+                            }
+                            
+                            Field[] neighbors = getNeighboringFields(field);
+                            for (var neighbor : neighbors)
+                            {
+                                if (neighbor.getType() == FieldType.SEA)
+                                {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        };
+                    }
+                    case "fortress" ->
+                    {
+                        yield (Field field) ->
+                        {
+                            boolean isMine = field.getOwner() == current;
+                            boolean isLand = field.getType() == FieldType.LAND;
+                            boolean isWood = field.getType() == FieldType.WOOD;
+                            boolean isMountain = field.getType() == FieldType.MOUNTAINS;
+                            return isMine && (isLand || isWood || isMountain);
+                        };
+                    }
+                    default ->
+                    {
+                        yield (obj) -> false;
+                    }
+                });
+                requestFocus();
+            }
+            case "do-build" ->
+            {
+                requestFocus();
+            }
+            case "to-hire" ->
+            {
+                requestFocus();
+            }
+            case "do-hire" ->
+            {
                 requestFocus();
             }
         }
+    }
+    
+    private Field[] getNeighboringFields(Field field)
+    {
+        Hex hex = field.getHex();
+        int side = world.getSide();
+        int neighborsCount = (hex.getRing() < side - 1) ? 6 : (hex.isRadial()) ? 3 : 4;
+        Field[] neighboringFields = new Field[neighborsCount];
+        int i = 0;
+        for (var neighbor : hex.neighbors())
+        {
+            Field neighboringField = world.getFieldAt(neighbor);
+            if (neighboringField != null)
+            {
+                neighboringFields[i++] = neighboringField;
+            }
+        }        
+        return neighboringFields;
     }
 }
