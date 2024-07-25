@@ -1,6 +1,6 @@
 package my.gameplay;
 
-import my.utils.Hex;
+import my.utils.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -13,7 +13,7 @@ import my.world.*;
  */
 public class WorldPanel extends JPanel implements Runnable, MouseListener
 {
-    private my.utils.Point screenCenter;
+    private my.utils.Point panelCenter;
     private my.utils.Point worldCenter;
     private static final double UNIT_STEP = 5;
     private static final double SIN_30DEG = Math.sin(Math.toRadians(30));
@@ -49,7 +49,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     {
         super.setPreferredSize(newSize);
         
-        screenCenter = new my.utils.Point(newSize.width / 2, newSize.height / 2);
+        panelCenter = new my.utils.Point(newSize.width / 2, newSize.height / 2);
         worldCenter = new my.utils.Point(newSize.width / 2, newSize.height / 2);
     }
 
@@ -112,12 +112,16 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
                 }
             }
         }
-
+        
+        Dimension size = getSize();
+        panelCenter.xCoord = (double) size.width / 2.0;
+        panelCenter.yCoord = (double) size.height / 2.0;
+        
         if (inputHandler.zoomIn() && scale < MAX_SCALE)
         {
             scale = Math.min(scale * SCALE_FACTOR, MAX_SCALE);
 
-            my.utils.Point relative = screenCenter.minus(worldCenter);
+            my.utils.Point relative = panelCenter.minus(worldCenter);
             my.utils.Point offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.subtract(offset);
         }
@@ -125,7 +129,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         {
             scale = Math.max(scale / SCALE_FACTOR, MIN_SCALE);
 
-            my.utils.Point relative = screenCenter.minus(worldCenter);
+            my.utils.Point relative = panelCenter.minus(worldCenter);
             my.utils.Point offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.add(offset);
         }
@@ -135,7 +139,6 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         double worldWidth = Hex.computeSurfaceWidth(side, scale * World.HEX_OUTER_RADIUS);
         double worldHeight = Hex.computeSurfaceHeight(side, scale * World.HEX_INNER_RADIUS);
         
-        Dimension size = getSize();
         int panelWidth = size.width;
         int panelHeight = size.height;
         
@@ -207,30 +210,35 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     public void mouseClicked(MouseEvent e)
     {
         java.awt.Point point = e.getPoint();
-        System.out.println("Mouse click: (x=" + point.x + ", y=" + point.y + ")");
+        double globalX = point.x;
+        double globalY = point.y;
+        double relativeX = globalX - worldCenter.xCoord;
+        double relativeY = globalY - worldCenter.yCoord;
+        Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
+        world.mark((field) -> field.getHex().equals(hex));
     }
 
     @Override
     public void mousePressed(MouseEvent e)
     {
-        
+        return;
     }
 
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        
+        return;
     }
 
     @Override
     public void mouseEntered(MouseEvent e)
     {
-        
+        return;
     }
 
     @Override
     public void mouseExited(MouseEvent e)
     {
-        
+        return;
     }
 }

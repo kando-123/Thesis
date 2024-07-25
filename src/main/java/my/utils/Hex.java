@@ -1,8 +1,5 @@
 package my.utils;
 
-import my.utils.Pixel;
-import my.utils.Point;
-
 /**
  *
  * @author Kay Jay O'Nail
@@ -405,5 +402,37 @@ public class Hex
     public String toString()
     {
         return String.format("Hex@[p=%d, q=%d, r=%d]", pCoord, qCoord, rCoord);
+    }
+    
+    private static final double SQRT_3 = Math.sqrt(3.0);
+    
+    public static Hex getHexAt(double x, double y, double outerRadius, double innerRadius)
+    {
+        double fractionalP = (2./3. * x) / outerRadius;
+        double fractionalQ = (-1./3. * x + SQRT_3/3. * y) / outerRadius;
+        double fractionalR = -(fractionalP + fractionalQ);
+        
+        long p = Math.round(fractionalP);
+        long q = Math.round(fractionalQ);
+        long r = Math.round(fractionalR);
+        
+        double Δp = Math.abs(p - fractionalP);
+        double Δq = Math.abs(q - fractionalQ);
+        double Δr = Math.abs(r - fractionalR);
+        
+        if (Δp > Δq && Δp > Δr)
+        {
+            p = -(q + r);
+        }
+        else if (Δq > Δr && Δq > Δp)
+        {
+            q = -(r + p);
+        }
+        else // if (Δr > Δp && Δr > Δq)
+        {
+            r = -(p + q);
+        }
+        
+        return new Hex((int) p, (int) q, (int) r);
     }
 }

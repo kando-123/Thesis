@@ -1,13 +1,9 @@
 package my.player.configuration;
 
-import my.player.PlayerColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.AbstractListModel;
-import javax.swing.MutableComboBoxModel;
+import my.player.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
 
 /**
  *

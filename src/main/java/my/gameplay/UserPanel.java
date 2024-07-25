@@ -153,7 +153,6 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
     @Override
     public void itemStateChanged(ItemEvent e)
     {
-        // process the action event and inform the master
         if (e.getStateChange() == ItemEvent.SELECTED)
         {
             String actionCommand = String.format("to-build;%s", String.valueOf(e.getItem()));

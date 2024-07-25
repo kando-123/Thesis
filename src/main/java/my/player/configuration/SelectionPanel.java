@@ -1,20 +1,10 @@
 package my.player.configuration;
 
-import my.player.PlayerColor;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-
 import my.player.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
 
 public class SelectionPanel extends JPanel implements ActionListener
 {
@@ -211,9 +201,9 @@ public class SelectionPanel extends JPanel implements ActionListener
         return selected;
     }
     
-    public List<PlayerConfiguration> getPlayerParameters()
+    public java.util.List<PlayerConfiguration> getPlayerParameters()
     {
-        List<PlayerConfiguration> list = new ArrayList<>();
+        java.util.List<PlayerConfiguration> list = new ArrayList<>();
         for (int i = Math.max(minimum, 1); i <= selected; ++i)
         {
             PlayerConfiguration configuration = new PlayerConfiguration();

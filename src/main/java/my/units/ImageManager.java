@@ -38,8 +38,8 @@ public class ImageManager
                 try
                 {
                     BufferedImage image = ImageIO.read(stream);
-                    BufferedImage markedImage = brightenImage(image);
-                    imagesList.add(new Doublet<>(image, markedImage));
+                    BufferedImage brightImage = brightenImage(image);
+                    imagesList.add(new Doublet<>(image, brightImage));
                 }
                 catch (IOException io)
                 {
@@ -50,7 +50,7 @@ public class ImageManager
         }
     }
     
-    private final static float RESCALING_FACTOR = 1.5f;
+    private final static float RESCALING_FACTOR = 1.25f;
     private final static float RESCALING_OFFSET = 0.0f;
     private static RescaleOp rescaler = null;
     

@@ -1,11 +1,8 @@
 package my.player.configuration;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -19,7 +16,7 @@ import my.player.*;
  */
 public class PlayerConfigurationContentPane extends JPanel implements ActionListener
 {
-    private final List<SelectionPanel> panels;
+    private final java.util.List<SelectionPanel> panels;
     
     public PlayerConfigurationContentPane(Master master)
     {
@@ -103,9 +100,9 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
         return sum;
     }
     
-    public List<PlayerConfiguration> getPlayerParameters()
+    public java.util.List<PlayerConfiguration> getPlayerParameters()
     {
-        List<PlayerConfiguration> list = new ArrayList<>();
+        java.util.List<PlayerConfiguration> list = new ArrayList<>();
         for (var panel : panels)
         {
             list.addAll(panel.getPlayerParameters());

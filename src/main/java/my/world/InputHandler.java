@@ -1,8 +1,6 @@
 package my.world;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import my.world.OrthogonalDirection;
+import java.awt.event.*;
 
 /**
  *

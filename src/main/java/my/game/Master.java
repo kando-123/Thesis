@@ -45,7 +45,7 @@ public class Master extends JFrame implements ActionListener
 
     private World world;
 
-    private LinkedList<Player> players;
+    private java.util.List<Player> players;
 
     public Master()
     {
@@ -234,8 +234,6 @@ public class Master extends JFrame implements ActionListener
         firstUser();
     }
 
-    private final static Random temporary = new Random();
-
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -259,105 +257,9 @@ public class Master extends JFrame implements ActionListener
                 nextUser();
                 requestFocus();
             }
-            case "temporary" ->
-            {
-                world.mark((obj) -> temporary.nextBoolean()); // if 0, nothing was marked
-                requestFocus();
-            }
             case "to-build" ->
             {
-                world.unmarkAll();
-                final Player current = currentUser();
-                world.mark(switch (commandlets[1].toLowerCase())
-                {
-                    case "town", "village", "barracks" ->
-                    {
-                        yield (Field field) ->
-                        {
-                            boolean isMine = field.getOwner() == current;
-                            boolean isLand = field.getType() == FieldType.LAND;
-                            boolean isWood = field.getType() == FieldType.WOOD;
-                            return isMine && (isLand || isWood);
-                        };
-                    }
-                    case "farmfield" ->
-                    {
-                        yield (Field field) ->
-                        {
-                            if (field.getOwner() != current)
-                            {
-                                return false;
-                            }
-                            
-                            boolean isLand = field.getType() == FieldType.LAND;
-                            boolean isWood = field.getType() == FieldType.WOOD;
-                            if (!isLand && !isWood)
-                            {
-                                return false;
-                            }
-                            
-                            Field[] neighbors = getNeighboringFields(field);
-                            for (var neighbor : neighbors)
-                            {
-                                if (neighbor.getType() == FieldType.VILLAGE)
-                                {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        };
-                    }
-                    case "mine" ->
-                    {
-                        yield (Field field) ->
-                        {
-                            return field.getOwner() == current &&
-                                   field.getType() == FieldType.MOUNTAINS;
-                        };
-                    }
-                    case "shipyard" ->
-                    {
-                        yield (Field field) ->
-                        {
-                            if (field.getOwner() != current)
-                            {
-                                return false;
-                            }
-                            
-                            boolean isLand = field.getType() == FieldType.LAND;
-                            boolean isWood = field.getType() == FieldType.WOOD;
-                            if (!isLand && !isWood)
-                            {
-                                return false;
-                            }
-                            
-                            Field[] neighbors = getNeighboringFields(field);
-                            for (var neighbor : neighbors)
-                            {
-                                if (neighbor.getType() == FieldType.SEA)
-                                {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        };
-                    }
-                    case "fortress" ->
-                    {
-                        yield (Field field) ->
-                        {
-                            boolean isMine = field.getOwner() == current;
-                            boolean isLand = field.getType() == FieldType.LAND;
-                            boolean isWood = field.getType() == FieldType.WOOD;
-                            boolean isMountain = field.getType() == FieldType.MOUNTAINS;
-                            return isMine && (isLand || isWood || isMountain);
-                        };
-                    }
-                    default ->
-                    {
-                        yield (obj) -> false;
-                    }
-                });
+                haveFieldsMarked(commandlets[1].toLowerCase());
                 requestFocus();
             }
             case "do-build" ->
@@ -374,7 +276,157 @@ public class Master extends JFrame implements ActionListener
             }
         }
     }
-    
+
+    private void haveFieldsMarked(String propertyType)
+    {
+        world.unmarkAll();
+        Player current = currentUser();
+        int marked = world.mark(switch (propertyType)
+        {
+            case "town", "village", "barracks" ->
+            {
+                yield (Field field) ->
+                {
+                    boolean isMine = field.getOwner() == current;
+                    boolean isLand = field.getType() == FieldType.LAND;
+                    boolean isWood = field.getType() == FieldType.WOOD;
+                    return isMine && (isLand || isWood);
+                };
+            }
+            case "farmfield" ->
+            {
+                yield (Field field) ->
+                {
+                    if (field.getOwner() != current)
+                    {
+                        return false;
+                    }
+
+                    boolean isLand = field.getType() == FieldType.LAND;
+                    boolean isWood = field.getType() == FieldType.WOOD;
+                    if (!isLand && !isWood)
+                    {
+                        return false;
+                    }
+
+                    Field[] neighbors = getNeighboringFields(field);
+                    for (var neighbor : neighbors)
+                    {
+                        if (neighbor.getType() == FieldType.VILLAGE)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+            }
+            case "mine" ->
+            {
+                yield (Field field) ->
+                {
+                    return field.getOwner() == current
+                           && field.getType() == FieldType.MOUNTAINS;
+                };
+            }
+            case "shipyard" ->
+            {
+                yield (Field field) ->
+                {
+                    if (field.getOwner() != current)
+                    {
+                        return false;
+                    }
+
+                    boolean isLand = field.getType() == FieldType.LAND;
+                    boolean isWood = field.getType() == FieldType.WOOD;
+                    if (!isLand && !isWood)
+                    {
+                        return false;
+                    }
+
+                    Field[] neighbors = getNeighboringFields(field);
+                    for (var neighbor : neighbors)
+                    {
+                        if (neighbor.getType() == FieldType.SEA)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+            }
+            case "fortress" ->
+            {
+                yield (Field field) ->
+                {
+                    boolean isMine = field.getOwner() == current;
+                    boolean isLand = field.getType() == FieldType.LAND;
+                    boolean isWood = field.getType() == FieldType.WOOD;
+                    boolean isMountain = field.getType() == FieldType.MOUNTAINS;
+                    return isMine && (isLand || isWood || isMountain);
+                };
+            }
+            default ->
+            {
+                yield (obj) -> false;
+            }
+        });
+        if (marked == 0)
+        {
+            inform(propertyType);
+        }
+    }
+
+    private void inform(String propertyType)
+    {
+        String message = switch (propertyType)
+        {
+            case "town", "village", "barracks" ->
+            {
+                yield """
+                      To build a town, a village or barracks,
+                      you need a land or wood field.
+                      """;
+            }
+            case "farmfield" ->
+            {
+                yield """
+                      To build a farmfield, you need a land or
+                      wood field that is adjacent to a village.
+                      """;
+            }
+            case "mine" ->
+            {
+                yield """
+                      To build a mine, you need a mountain field.
+                      """;
+            }
+            case "shipyard" ->
+            {
+                yield """
+                      To build a farmfield, you need a land or
+                      wood field that is adjacent to a see field.
+                      """;
+            }
+            case "fortress" ->
+            {
+                yield """
+                      To build a fortress, you need a land or wood,
+                      or mountain field.
+                      """;
+            }
+            default ->
+            {
+                yield "";
+            }
+        };
+        if (!message.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this, message, "Information",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     private Field[] getNeighboringFields(Field field)
     {
         Hex hex = field.getHex();
@@ -389,7 +441,7 @@ public class Master extends JFrame implements ActionListener
             {
                 neighboringFields[i++] = neighboringField;
             }
-        }        
+        }
         return neighboringFields;
     }
 }
