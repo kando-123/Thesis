@@ -4,10 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
-import java.util.*;
 import javax.imageio.*;
 import javax.swing.*;
-import my.gameplay.*;
 import my.player.*;
 import my.player.configuration.*;
 import my.utils.*;
@@ -45,12 +43,11 @@ public class Master extends JFrame implements ActionListener
 
     private World world;
 
-    private java.util.List<Player> players;
+    private PlayersQueue players;
 
     public Master()
     {
         state = State.INITIAL;
-        players = new LinkedList<>();
 
         try
         {
@@ -119,15 +116,13 @@ public class Master extends JFrame implements ActionListener
     {
         if (state == State.WORLD_CONFIGURATION)
         {
-            WorldConfiguration configuration = worldContentPane.getConfiguration();
-            world = new World(configuration);
+            world = new World(worldContentPane.getConfiguration());
 
-            java.util.List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
-            int playersNumber = playersData.size();
-            createPlayers(playersData);
+            java.util.List<PlayerConfiguration> configurations = playerContentPane.getPlayerParameters();
+            players = new PlayersQueue(configurations);
 
-            Hex[] capitals = world.locateCapitals(playersNumber);
-            initCountries(capitals);
+            Hex[] capitals = world.locateCapitals(configurations.size());
+            players.initCountries(capitals, world);
 
             InputHandler inputHandler = new InputHandler();
             addKeyListener(inputHandler);
@@ -137,7 +132,8 @@ public class Master extends JFrame implements ActionListener
             gameplayContentPane = new GameplayContentPane(this, world, inputHandler);
             gameplayContentPane.start();
 
-            firstUser();
+            Player firstUser = players.first();
+            gameplayContentPane.setCurrentUser(firstUser);
 
             setContentPane(gameplayContentPane);
             setResizable(true);
@@ -148,90 +144,11 @@ public class Master extends JFrame implements ActionListener
         }
     }
 
-    private void createPlayers(java.util.List<PlayerConfiguration> configurationList)
-    {
-        LinkedList<PlayerColor> availableColors = new LinkedList<>();
-        for (int i = 1; i < PlayerColor.values().length; ++i)
-        {
-            availableColors.add(PlayerColor.values()[i]);
-        }
-
-        for (var parameters : configurationList)
-        {
-            Player player = new Player(parameters.type);
-
-            if (parameters.color != PlayerColor.RANDOM)
-            {
-                player.setColor(parameters.color);
-                availableColors.remove(parameters.color);
-            }
-
-            player.setName(parameters.name.isBlank() ? "Anonymous the Conqueror" : parameters.name);
-
-            players.add(player);
-        }
-
-        if (!availableColors.isEmpty())
-        {
-            Random random = new Random();
-            for (var player : players)
-            {
-                if (player.getColor() == null)
-                {
-                    int randomIndex = random.nextInt(availableColors.size());
-                    PlayerColor color = availableColors.remove(randomIndex);
-                    player.setColor(color);
-                }
-            }
-        }
-
-        Collections.shuffle(players);
-    }
-
-    private void initCountries(Hex[] capitals)
-    {
-        assert (capitals.length == players.size());
-
-        for (int i = 0; i < capitals.length; ++i)
-        {
-            players.get(i).capture(capitals[i], world.getFieldAt(capitals[i]));
-
-            for (var neighbor : capitals[i].neighbors())
-            {
-                var field = world.getFieldAt(neighbor);
-                if (field != null && field.getType() != FieldType.SEA)
-                {
-                    players.get(i).capture(neighbor, field);
-                }
-            }
-        }
-    }
-
-    private void firstUser()
-    {
-        while (players.getFirst().getType() == PlayerType.BOT)
-        {
-            Player bot = players.removeFirst();
-            bot.play();
-            players.addLast(bot);
-        }
-
-        Player user = players.removeFirst();
-        gameplayContentPane.setCurrentUser(user);
-        players.addLast(user);
-    }
-
-    private Player currentUser()
-    {
-        return players.getLast();
-    }
-
     private void nextUser()
-    /* Will fall into an infinite loop when the last user dies!
-       To be fixed before the bots learn how to kill... */
     {
-        currentUser().endRound();
-        firstUser();
+        players.current().endRound();
+        Player user = players.next();
+        gameplayContentPane.setCurrentUser(user);
     }
 
     @Override
@@ -259,6 +176,7 @@ public class Master extends JFrame implements ActionListener
             }
             case "to-build" ->
             {
+                System.out.println(commandlets[1]);
                 haveFieldsMarked(commandlets[1].toLowerCase());
                 requestFocus();
             }
@@ -280,35 +198,25 @@ public class Master extends JFrame implements ActionListener
     private void haveFieldsMarked(String propertyType)
     {
         world.unmarkAll();
-        Player current = currentUser();
+        Player current = players.current();
         int marked = world.mark(switch (propertyType)
         {
             case "town", "village", "barracks" ->
             {
                 yield (Field field) ->
                 {
-                    boolean isMine = field.getOwner() == current;
-                    boolean isLand = field.getType() == FieldType.LAND;
-                    boolean isWood = field.getType() == FieldType.WOOD;
-                    return isMine && (isLand || isWood);
+                    return field.getOwner() == current && field.getType().isPlains();
                 };
             }
             case "farmfield" ->
             {
                 yield (Field field) ->
                 {
-                    if (field.getOwner() != current)
+                    if (field.getOwner() != current || !field.getType().isPlains())
                     {
                         return false;
                     }
-
-                    boolean isLand = field.getType() == FieldType.LAND;
-                    boolean isWood = field.getType() == FieldType.WOOD;
-                    if (!isLand && !isWood)
-                    {
-                        return false;
-                    }
-
+                    
                     Field[] neighbors = getNeighboringFields(field);
                     for (var neighbor : neighbors)
                     {
@@ -324,22 +232,14 @@ public class Master extends JFrame implements ActionListener
             {
                 yield (Field field) ->
                 {
-                    return field.getOwner() == current
-                           && field.getType() == FieldType.MOUNTAINS;
+                    return field.getOwner() == current && field.getType().isMountainous();
                 };
             }
             case "shipyard" ->
             {
                 yield (Field field) ->
                 {
-                    if (field.getOwner() != current)
-                    {
-                        return false;
-                    }
-
-                    boolean isLand = field.getType() == FieldType.LAND;
-                    boolean isWood = field.getType() == FieldType.WOOD;
-                    if (!isLand && !isWood)
+                    if (field.getOwner() != current || ! field.getType().isPlains())
                     {
                         return false;
                     }
@@ -347,7 +247,7 @@ public class Master extends JFrame implements ActionListener
                     Field[] neighbors = getNeighboringFields(field);
                     for (var neighbor : neighbors)
                     {
-                        if (neighbor.getType() == FieldType.SEA)
+                        if (neighbor.getType().isMarine())
                         {
                             return true;
                         }
@@ -359,16 +259,12 @@ public class Master extends JFrame implements ActionListener
             {
                 yield (Field field) ->
                 {
-                    boolean isMine = field.getOwner() == current;
-                    boolean isLand = field.getType() == FieldType.LAND;
-                    boolean isWood = field.getType() == FieldType.WOOD;
-                    boolean isMountain = field.getType() == FieldType.MOUNTAINS;
-                    return isMine && (isLand || isWood || isMountain);
+                    return field.getOwner() == current && field.getType().isContinental();
                 };
             }
             default ->
             {
-                yield (obj) -> false;
+                yield (whatever) -> false;
             }
         });
         if (marked == 0)
@@ -385,14 +281,14 @@ public class Master extends JFrame implements ActionListener
             {
                 yield """
                       To build a town, a village or barracks,
-                      you need a land or wood field.
+                      you need a land field.
                       """;
             }
             case "farmfield" ->
             {
                 yield """
-                      To build a farmfield, you need a land or
-                      wood field that is adjacent to a village.
+                      To build a farmfield, you need a land field
+                      that is adjacent to a village.
                       """;
             }
             case "mine" ->
@@ -404,15 +300,15 @@ public class Master extends JFrame implements ActionListener
             case "shipyard" ->
             {
                 yield """
-                      To build a farmfield, you need a land or
-                      wood field that is adjacent to a see field.
+                      To build a shipyard, you need a land field
+                      that is adjacent to a see field.
                       """;
             }
             case "fortress" ->
             {
                 yield """
-                      To build a fortress, you need a land or wood,
-                      or mountain field.
+                      To build a fortress, you need a land field or
+                      a mountain field.
                       """;
             }
             default ->

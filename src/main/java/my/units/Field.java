@@ -21,7 +21,8 @@ public class Field
     private Player owner;
     private BufferedImage contour;
     
-    private static ImageManager imageManager = null;
+    private static final FieldsManager fieldsManager = FieldsManager.getInstance();
+    private static final ContoursManager contoursManager = ContoursManager.getInstance();
     
     public Field(FieldType type, Hex hex)
     {
@@ -29,12 +30,8 @@ public class Field
         this.hex = hex;
         
         isMarked = false;
-        if (imageManager == null)
-        {
-            imageManager = ImageManager.getInstance();
-        }
-        image = imageManager.getField(type);
-        markedImage = imageManager.getMarkedField(type);
+        image = fieldsManager.getField(type);
+        markedImage = fieldsManager.getMarkedField(type);
         
         owner = null;
         contour = null;
@@ -70,12 +67,8 @@ public class Field
         owner = newOwner;
         if (owner != null)
         {
-            if (imageManager == null)
-            {
-                imageManager = ImageManager.getInstance();
-            }
             PlayerColor color = owner.getColor();
-            contour = imageManager.getContour(color);
+            contour = contoursManager.getContour(color);
         }
         else
         {

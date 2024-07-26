@@ -1,4 +1,4 @@
-package my.gameplay;
+package my.game;
 
 import my.units.*;
 import java.awt.*;
@@ -15,6 +15,8 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
 {
     private JLabel nameLabel;
     private JLabel moneyLabel;
+    private JComboBox buildings;
+    private JComboBox entities;
     private final ActionListener master;
 
     public UserPanel(Master master)
@@ -81,7 +83,7 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
         shopPanel.setLayout(new BoxLayout(shopPanel, BoxLayout.Y_AXIS));
         shopPanel.setOpaque(false);
 
-        JComboBox buildings = new JComboBox();
+        buildings = new JComboBox();
         buildings.addItem("Build New Property");
         buildings.addItem(FieldType.TOWN);
         buildings.addItem(FieldType.VILLAGE);
@@ -95,7 +97,7 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
         buildings.addItemListener(this);
         shopPanel.add(buildings);
         
-        JComboBox entities = new JComboBox();
+        entities = new JComboBox();
         entities.addItem("Hire New Entity");
         entities.addItem(EntityType.INFANTRY);
         entities.addItem(EntityType.CAVALRY);
@@ -145,9 +147,7 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        // process the action event and inform the master
-        // master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "temporary"));
-        // System.out.println(e.paramString());
+        /* Is this necessary? */
     }
 
     @Override
@@ -155,18 +155,20 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
     {
         if (e.getStateChange() == ItemEvent.SELECTED)
         {
-            String actionCommand = String.format("to-build;%s", String.valueOf(e.getItem()));
+            String actionCommand = (e.getSource() == buildings) ? "to-build;%s" : "to-hire;%s";
+            actionCommand = actionCommand.formatted(String.valueOf(e.getItem()));
             master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, actionCommand));
         }
     }
 
     private class Renderer extends JLabel implements ListCellRenderer<Object>
     {
-        private final ImageManager imageManager;
+        private static final FieldsManager fieldsManager = FieldsManager.getInstance();
+        private static final EntitiesManager entitiesManager = EntitiesManager.getInstance();
 
         public Renderer()
         {
-            imageManager = ImageManager.getInstance();
+            
         }
 
         @Override
@@ -176,13 +178,13 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
             {
                 FieldType field = (FieldType) value;
                 setText(field.name());
-                setIcon(imageManager.getFieldAsIcon(field));
+                setIcon(fieldsManager.getFieldAsIcon(field));
             }
             else if (value.getClass() == EntityType.class)
             {
                 EntityType entity = (EntityType) value;
                 setText(entity.name());
-                setIcon(imageManager.getEntityAsIcon(entity));
+                setIcon(entitiesManager.getEntityAsIcon(entity));
             }
             else
             {

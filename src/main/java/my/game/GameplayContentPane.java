@@ -1,4 +1,4 @@
-package my.gameplay;
+package my.game;
 
 import my.world.InputHandler;
 import java.awt.BorderLayout;

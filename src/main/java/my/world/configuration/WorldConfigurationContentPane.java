@@ -196,7 +196,7 @@ public class WorldConfigurationContentPane extends JPanel
         WorldConfiguration configuration = new WorldConfiguration();
         configuration.worldSide = worldSizeSlider.getValue();
         configuration.seaPercentage = 0.01 * (double) getSeaPercentage();
-        configuration.mountsPercentage = 0.01 * (double) getMountsPercentage();
+        configuration.mountainsPercentage = 0.01 * (double) getMountsPercentage();
         return configuration;
     }
 }

@@ -8,7 +8,7 @@ public class WorldConfiguration
 {
     public int worldSide;
     public double seaPercentage;
-    public double mountsPercentage;
+    public double mountainsPercentage;
     
     public WorldConfiguration()
     {

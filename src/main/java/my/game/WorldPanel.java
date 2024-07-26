@@ -1,4 +1,4 @@
-package my.gameplay;
+package my.game;
 
 import my.utils.*;
 import java.awt.*;

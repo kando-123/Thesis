@@ -6,7 +6,6 @@ import my.world.configuration.*;
 import java.awt.*;
 import java.util.*;
 
-
 /**
  *
  * @author Kay Jay O'Nail
@@ -18,52 +17,44 @@ public class World
     public static final int HEX_WIDTH = 2 * HEX_OUTER_RADIUS;
     public static final int HEX_HEIGHT = (int) (2 * HEX_OUTER_RADIUS * Math.sin(Math.PI / 3.0));
 
-    private static final double WOODS_PERCENTAGE = 0.10;
-
     private final int side;
     private final Map<Hex, Field> fields;
 
-    public World(WorldConfiguration parameters)
+    public World(WorldConfiguration configuration)
     {
-        /* Extract the fields of `parameters`. */
-        side = parameters.worldSide;
-        double seaPercentage = parameters.seaPercentage;
-        double mountsPercentage = parameters.mountsPercentage;
-
-        /* Assert they fall within correct ranges. */
+        side = configuration.worldSide;
+        double seaPercentage = configuration.seaPercentage;
+        double mountainsPercentage = configuration.mountainsPercentage;
+        
         assert (side > 0 && side <= 100);
         assert (seaPercentage >= 0.00 && seaPercentage <= 1.00);
-        assert (mountsPercentage >= 0.00 && mountsPercentage <= 1.00);
-
-        /* Initialize `fields`. */
+        assert (mountainsPercentage >= 0.00 && mountainsPercentage <= 1.00);
+        
         int surface = Hex.getHexSurfaceSize(side);
         fields = new HashMap<>(surface);
-
-        /* Compute dimensions of the map. */
+        
         int westmostX = Hex.computeCornerPixelAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
         int northmostY = Hex.computeCornerPixelAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
 
         Pixel offset = new Pixel(-westmostX, -northmostY);
 
-        /* Generate the centers of all the fields (themselves not yet created). */
         Map<Object, Pixel> centers = generateCenters(side, offset);
-
-        /* Generate the fields. */
+        
         generateSeaFields(seaPercentage, centers);
-        generateMountsFields(mountsPercentage, centers);
-        generateWoodAndLandFields(centers);
+        generateMountsFields(mountainsPercentage, centers);
+        generateLandFields(centers);
     }
 
     public int getSide()
     {
         return side;
     }
-    
+
     private void createFieldAt(FieldType type, Hex hex)
     {
         fields.put(hex, new Field(type, hex));
     }
-    
+
     public Field getFieldAt(Hex hex)
     {
         return fields.get(hex);
@@ -200,31 +191,28 @@ public class World
         }
     }
 
-    private void generateWoodAndLandFields(Map<Object, Pixel> centers)
+    private void generateLandFields(Map<Object, Pixel> centers)
     {
-        int westmostX = Hex.computeCornerPixelAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
-        int eastmostX = Hex.computeCornerPixelAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
-        int northmostY = Hex.computeCornerPixelAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
-        int southmostY = Hex.computeCornerPixelAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord + HEX_HEIGHT;
-        int areaWidth = eastmostX - westmostX;
-        int areaHeight = southmostY - northmostY;
-
-        int hexDimension = (int) (Math.hypot(HEX_WIDTH, HEX_HEIGHT) / Math.sqrt(2.0));
-
-        int woodsChunkSide = hexDimension * side / 7;
-        PerlinNoise woodsPerlin = new PerlinNoise(areaWidth, areaHeight, woodsChunkSide);
-        woodsPerlin.setOctaves(5);
-
-        Map<Object, Double> woodsNoise = woodsPerlin.makeNoise(centers);
-        double woodsThreshold = calculateThreshold(woodsNoise, WOODS_PERCENTAGE);
-
-        var iterator = woodsNoise.entrySet().iterator();
-        while (iterator.hasNext())
+        WeightedGenerator<FieldType> generator = new WeightedGenerator<>();
+        try
         {
-            var entry = iterator.next();
-            Hex hex = (Hex) entry.getKey();
-            double noise = entry.getValue();
-            createFieldAt(noise < woodsThreshold ? FieldType.WOOD : FieldType.LAND, hex);
+            generator.add(FieldType.GRASS, 2);
+            generator.add(FieldType.MEADOW, 2);
+            generator.add(FieldType.WOOD, 1);
+
+            var iterator = centers.entrySet().iterator();
+            while (iterator.hasNext())
+            {
+                var entry = iterator.next();
+                Hex hex = (Hex) entry.getKey();
+                createFieldAt(generator.get(), hex);
+            }
+        }
+        catch (WeightedGenerator.NonpositiveWeightException
+                | WeightedGenerator.RepeatedElementException
+                | WeightedGenerator.EmptyPoolException exc)
+        {
+            /* In practice, no exception will be thrown. */
         }
     }
 
@@ -310,21 +298,21 @@ public class World
         {
             int p = 0;
             int q = 0;
-            
+
             for (var hex : origins)
             {
                 p += hex.getP();
                 q += hex.getQ();
             }
-            
+
             p = (int) ((double) p / (double) origins.size());
             q = (int) ((double) q / (double) origins.size());
-            
+
             Hex average = Hex.newInstance(p, q, -(p + q));
-            
+
             Hex capital = origins.get(0);
             int minimalDistance = average.distance(capital);
-            
+
             for (int i = 0; i < origins.size(); ++i)
             {
                 Hex origin = origins.get(i);
@@ -335,7 +323,7 @@ public class World
                     minimalDistance = distance;
                 }
             }
-            
+
             return capital;
         }
     }
@@ -382,7 +370,7 @@ public class World
         {
             createFieldAt(FieldType.CAPITAL, capital);
         }
-        
+
         return capitals;
     }
 
@@ -395,7 +383,7 @@ public class World
             var key = entry.getKey();
             var value = entry.getValue();
 
-            if (value.getType() == FieldType.LAND || value.getType() == FieldType.WOOD)
+            if (value.getType().isPlains())
             {
                 boolean isPeripheral = false;
 
@@ -458,7 +446,7 @@ public class World
                         {
                             ++mountNeighbors;
                         }
-                        case LAND, WOOD ->
+                        case GRASS, MEADOW, WOOD ->
                         {
                             if (pool.contains(neighbor))
                             {
@@ -591,7 +579,7 @@ public class World
     }
 
     private java.util.List<Region> initRegions(LinkedList<Hex> maxima,
-                                     HashSet<Hex> takenArea)
+                                               HashSet<Hex> takenArea)
     {
         java.util.List<Region> regions = new ArrayList<>();
         while (!maxima.isEmpty())
@@ -651,13 +639,13 @@ public class World
             }
         }
     }
-    
+
     private Hex[] getCapitalCandidates(int count,
                                        java.util.List<Region> regions)
     {
         /* Prefer larger regions. */
         regions.sort((reg1, reg2) -> reg2.size() - reg1.size());
-        
+
         Hex[] capitalCandidates = new Hex[count];
 
         for (int i = 0; i < count; ++i)
@@ -665,20 +653,20 @@ public class World
             Hex capital = regions.get(i).locateCapital();
             capitalCandidates[i] = capital;
         }
-        
+
         return capitalCandidates;
     }
-    
+
     private Hex[] findMaxWeightCombination(Hex[] candidates,
                                            int combinationSize)
     {
         int poolSize = candidates.length;
-        
+
         boolean[][] masks = generateAllCombinationMasks(poolSize, combinationSize);
-        
+
         int maximumIndex = 0;
         int maximumValue = computeAggregateMaskedDistance(candidates, masks[0]);
-        
+
         for (int i = 1; i < masks.length; ++i)
         {
             int value = computeAggregateMaskedDistance(candidates, masks[i]);
@@ -688,7 +676,7 @@ public class World
                 maximumValue = value;
             }
         }
-        
+
         Hex[] combination = new Hex[combinationSize];
         boolean[] mask = masks[maximumIndex];
         for (int i = 0, j = 0; i < poolSize; ++i)
@@ -698,28 +686,28 @@ public class World
                 combination[j++] = candidates[i];
             }
         }
-        
+
         return combination;
     }
-    
+
     private static boolean[][] generateAllCombinationMasks(int poolLength,
                                                            int combinationLength)
     {
         int numberOfAllCombinations = binomialCoefficient(poolLength, combinationLength);
         boolean[][] masks = new boolean[numberOfAllCombinations][poolLength];
-        
+
         int[] indexes = new int[combinationLength];
-        
+
         for (int i = 0; i < combinationLength; ++i)
         {
             indexes[i] = poolLength - combinationLength + i;
         }
-        
+
         for (int j = 0; j < combinationLength; ++j)
         {
             masks[0][indexes[j]] = true;
         }
-        
+
         for (int i = 1; i < numberOfAllCombinations; ++i)
         {
             if (indexes[0] > 0)
@@ -733,27 +721,27 @@ public class World
                 {
                     ++j;
                 }
-                
+
                 --indexes[j];
                 while (--j >= 0)
                 {
                     indexes[j] = indexes[j + 1] - 1;
                 }
             }
-            
+
             for (int j = 0; j < combinationLength; ++j)
             {
                 masks[i][indexes[j]] = true;
             }
         }
-        
+
         return masks;
     }
-    
+
     private static int binomialCoefficient(int n, int k)
     {
         assert (n >= k);
-        
+
         int product = 1;
         for (int i = n; i > k; --i)
         {
@@ -763,15 +751,15 @@ public class World
         {
             product /= i;
         }
-        
+
         return product;
     }
-    
+
     private int computeAggregateMaskedDistance(Hex[] hexes,
                                                boolean[] mask)
     {
         int sum = 0;
-        
+
         for (int i = 0; i < hexes.length; ++i)
         {
             if (mask[i])
@@ -785,15 +773,15 @@ public class World
                 }
             }
         }
-        
+
         return sum;
     }
-    
+
     public static interface Predicate<E>
     {
         public boolean test(E obj);
     }
-    
+
     public int mark(Predicate<Field> condition)
     {
         int counter = 0;
@@ -807,7 +795,7 @@ public class World
         }
         return counter;
     }
-    
+
     public void unmarkAll()
     {
         for (Field value : fields.values())
