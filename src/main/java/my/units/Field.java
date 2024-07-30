@@ -1,9 +1,12 @@
 package my.units;
 
-import java.awt.*;
-import java.awt.image.*;
-import my.player.*;
-import my.utils.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import my.player.Player;
+import my.player.PlayerColor;
+import my.utils.Hex;
+import my.utils.IntegerDoublet;
 
 /**
  *
@@ -91,7 +94,7 @@ public class Field
         isMarked = false;
     }
     
-    public void draw(Graphics2D graphics, Pixel position, Dimension size)
+    public void draw(Graphics2D graphics, IntegerDoublet position, Dimension size)
     {
         graphics.drawImage(isMarked ? markedImage : image,
                 position.xCoord, position.yCoord,

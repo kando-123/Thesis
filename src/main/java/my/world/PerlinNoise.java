@@ -1,7 +1,12 @@
 package my.world;
 
-import my.utils.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import my.utils.DoubleDoublet;
+import my.utils.IntegerDoublet;
 
 class Scaler
 {
@@ -58,7 +63,7 @@ public class PerlinNoise
      * The grid of the gradients. The gradients are stored as pairs of <i>x</i>
      * and <i>y</i> coordinates.
      */
-    private final Map<Pixel, Point> gradientVectors;
+    private final Map<IntegerDoublet, DoubleDoublet> gradientVectors;
 
     /**
      * Number of octaves in noise generation. The default value is
@@ -157,7 +162,7 @@ public class PerlinNoise
                 double angle = random.nextDouble(0.0d, Math.TAU);
                 double xCoord = Math.cos(angle);
                 double yCoord = Math.sin(angle);
-                gradientVectors.put(new Pixel(i, j), new Point(xCoord, yCoord));
+                gradientVectors.put(new IntegerDoublet(i, j), new DoubleDoublet(xCoord, yCoord));
             }
         }
         octavesCount = 1;
@@ -207,7 +212,7 @@ public class PerlinNoise
         upperBound = upper;
     }
 
-    private double getRawNoise(Pixel pixel)
+    private double getRawNoise(IntegerDoublet pixel)
     {
         /* Naming */
         // x, y - refer to global position within the area, counted in pixels
@@ -239,10 +244,10 @@ public class PerlinNoise
         double pixelBottomQ = (double) (pixel.yCoord - chunkBottomY) / (double) chunkSize;
 
         /* Find the gradients. */
-        var gradientA = gradientVectors.get(new Pixel(chunkCol, chunkRow));
-        var gradientB = gradientVectors.get(new Pixel(chunkCol + 1, chunkRow));
-        var gradientC = gradientVectors.get(new Pixel(chunkCol, chunkRow + 1));
-        var gradientD = gradientVectors.get(new Pixel(chunkCol + 1, chunkRow + 1));
+        var gradientA = gradientVectors.get(new IntegerDoublet(chunkCol, chunkRow));
+        var gradientB = gradientVectors.get(new IntegerDoublet(chunkCol + 1, chunkRow));
+        var gradientC = gradientVectors.get(new IntegerDoublet(chunkCol, chunkRow + 1));
+        var gradientD = gradientVectors.get(new IntegerDoublet(chunkCol + 1, chunkRow + 1));
 
         /* Calculate the products. */
         double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.xCoord, gradientA.yCoord);
@@ -257,7 +262,7 @@ public class PerlinNoise
         return lerp(horizontalTop, horizontalBottom, pixelTopQ);
     }
 
-    public List<Double> makeNoise(List<Pixel> pixels)
+    public List<Double> makeNoise(List<IntegerDoublet> pixels)
     {
         List<Double> result = new ArrayList<>(pixels.size());
         double minimum = +Double.MAX_VALUE;
@@ -272,7 +277,7 @@ public class PerlinNoise
             double amplitude = persistence;
             for (int i = 1; i < octavesCount; ++i)
             {
-                Pixel newPixel = new Pixel(0, 0);
+                IntegerDoublet newPixel = new IntegerDoublet(0, 0);
                 newPixel.xCoord = (int) (frequency * (double) pixel.xCoord);
                 newPixel.yCoord = (int) (frequency * (double) pixel.yCoord);
                 noise += amplitude * getRawNoise(newPixel);
@@ -310,7 +315,7 @@ public class PerlinNoise
         return result;
     }
 
-    public Map<Object, Double> makeNoise(Map<Object, Pixel> pixels)
+    public Map<Object, Double> makeNoise(Map<Object, IntegerDoublet> pixels)
     {
         Map<Object, Double> result = new HashMap<>(pixels.size());
         double minimum = +Double.MAX_VALUE;
@@ -320,7 +325,7 @@ public class PerlinNoise
         {
             var entry = pixelsIterator.next();
             Object key = entry.getKey();
-            Pixel pixel = entry.getValue();
+            IntegerDoublet pixel = entry.getValue();
 
             assert (pixel.xCoord >= 0 && pixel.xCoord < areaWidth);
             assert (pixel.yCoord >= 0 && pixel.yCoord < areaHeight);
@@ -330,7 +335,7 @@ public class PerlinNoise
             double amplitude = persistence;
             for (int i = 1; i < octavesCount; ++i)
             {
-                Pixel newPixel = new Pixel(0, 0);
+                IntegerDoublet newPixel = new IntegerDoublet(0, 0);
                 newPixel.xCoord = (int) (frequency * (double) pixel.xCoord);
                 newPixel.yCoord = (int) (frequency * (double) pixel.yCoord);
                 noise += amplitude * getRawNoise(newPixel);

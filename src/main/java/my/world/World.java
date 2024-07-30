@@ -1,10 +1,23 @@
 package my.world;
 
-import my.utils.*;
-import my.units.*;
-import my.world.configuration.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import my.player.Player;
+import my.units.Field;
+import my.units.FieldType;
+import my.utils.DoubleDoublet;
+import my.utils.Hex;
+import my.utils.HexagonalDirection;
+import my.utils.IntegerDoublet;
+import my.utils.WeightedGenerator;
 
 /**
  *
@@ -25,24 +38,26 @@ public class World
         side = configuration.worldSide;
         double seaPercentage = configuration.seaPercentage;
         double mountainsPercentage = configuration.mountainsPercentage;
-        
+
         assert (side > 0 && side <= 100);
         assert (seaPercentage >= 0.00 && seaPercentage <= 1.00);
         assert (mountainsPercentage >= 0.00 && mountainsPercentage <= 1.00);
-        
+
         int surface = Hex.getHexSurfaceSize(side);
         fields = new HashMap<>(surface);
-        
-        int westmostX = Hex.computeCornerPixelAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
-        int northmostY = Hex.computeCornerPixelAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
 
-        Pixel offset = new Pixel(-westmostX, -northmostY);
+        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
+        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
 
-        Map<Object, Pixel> centers = generateCenters(side, offset);
-        
+        IntegerDoublet offset = new IntegerDoublet(-westmostX, -northmostY);
+
+        Map<Object, IntegerDoublet> centers = generateCenters(side, offset);
+
         generateSeaFields(seaPercentage, centers);
         generateMountsFields(mountainsPercentage, centers);
         generateLandFields(centers);
+
+        predicates = makePredicatesMap();
     }
 
     public int getSide()
@@ -60,11 +75,11 @@ public class World
         return fields.get(hex);
     }
 
-    private Map<Object, Pixel> generateCenters(int side, Pixel offset)
+    private Map<Object, IntegerDoublet> generateCenters(int side, IntegerDoublet offset)
     {
-        Map<Object, Pixel> centers = new HashMap<>(Hex.getHexSurfaceSize(side));
+        Map<Object, IntegerDoublet> centers = new HashMap<>(Hex.getHexSurfaceSize(side));
         Hex hex = Hex.getOrigin();
-        centers.put(hex.clone(), hex.getCentralPixel(HEX_OUTER_RADIUS, HEX_INNER_RADIUS).plus(offset));
+        centers.put(hex.clone(), hex.getCentralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS).plus(offset));
         for (int ring = 1; ring < side; ++ring)
         {
             hex.shift(HexagonalDirection.UP);
@@ -72,7 +87,7 @@ public class World
             HexagonalDirection direction = HexagonalDirection.RIGHT_DOWN;
             do
             {
-                centers.put(hex.clone(), hex.getCentralPixel(HEX_OUTER_RADIUS, HEX_INNER_RADIUS).plus(offset));
+                centers.put(hex.clone(), hex.getCentralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS).plus(offset));
                 hex.shift(direction);
                 if (hex.isRadial())
                 {
@@ -91,7 +106,7 @@ public class World
     {
         /* The i-th interval will store the number of entries whose value falls
            within the range from i*accuracy (incl.) to (i+1)*accuracy (excl.). */
-        java.util.List<Integer> noiseIntervals = new ArrayList(TIERS_COUNT);
+        List<Integer> noiseIntervals = new ArrayList<>(TIERS_COUNT);
         for (int i = 0; i < TIERS_COUNT; ++i)
         {
             noiseIntervals.add(0);
@@ -117,12 +132,12 @@ public class World
         return threshold;
     }
 
-    private void generateSeaFields(double seaPercentage, Map<Object, Pixel> centers)
+    private void generateSeaFields(double seaPercentage, Map<Object, IntegerDoublet> centers)
     {
-        int westmostX = Hex.computeCornerPixelAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
-        int eastmostX = Hex.computeCornerPixelAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
-        int northmostY = Hex.computeCornerPixelAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
-        int southmostY = Hex.computeCornerPixelAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord + HEX_HEIGHT;
+        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
+        int eastmostX = Hex.computeCornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
+        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
+        int southmostY = Hex.computeCornerPointAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord + HEX_HEIGHT;
         int areaWidth = eastmostX - westmostX;
         int areaHeight = southmostY - northmostY;
 
@@ -136,7 +151,7 @@ public class World
         double seaThreshold = calculateThreshold(shorelineNoise, seaPercentage);
 
         var iterator = shorelineNoise.entrySet().iterator();
-        java.util.List<Hex> keysForRemoval = new ArrayList<>();
+        List<Hex> keysForRemoval = new ArrayList<>();
         while (iterator.hasNext())
         {
             var entry = iterator.next();
@@ -154,12 +169,12 @@ public class World
         }
     }
 
-    private void generateMountsFields(double mountsPercentage, Map<Object, Pixel> centers)
+    private void generateMountsFields(double mountsPercentage, Map<Object, IntegerDoublet> centers)
     {
-        int westmostX = Hex.computeCornerPixelAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
-        int eastmostX = Hex.computeCornerPixelAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
-        int northmostY = Hex.computeCornerPixelAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
-        int southmostY = Hex.computeCornerPixelAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord + HEX_HEIGHT;
+        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
+        int eastmostX = Hex.computeCornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
+        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
+        int southmostY = Hex.computeCornerPointAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord + HEX_HEIGHT;
         int areaWidth = eastmostX - westmostX;
         int areaHeight = southmostY - northmostY;
 
@@ -173,7 +188,7 @@ public class World
         double mountainsThreshold = calculateThreshold(mountainsNoise, mountsPercentage);
 
         var iterator = mountainsNoise.entrySet().iterator();
-        java.util.List<Hex> keysForRemoval = new ArrayList<>();
+        List<Hex> keysForRemoval = new ArrayList<>();
         while (iterator.hasNext())
         {
             var entry = iterator.next();
@@ -191,7 +206,7 @@ public class World
         }
     }
 
-    private void generateLandFields(Map<Object, Pixel> centers)
+    private void generateLandFields(Map<Object, IntegerDoublet> centers)
     {
         WeightedGenerator<FieldType> generator = new WeightedGenerator<>();
         try
@@ -209,14 +224,14 @@ public class World
             }
         }
         catch (WeightedGenerator.NonpositiveWeightException
-                | WeightedGenerator.RepeatedElementException
-                | WeightedGenerator.EmptyPoolException exc)
+               | WeightedGenerator.RepeatedElementException
+               | WeightedGenerator.EmptyPoolException exc)
         {
             /* In practice, no exception will be thrown. */
         }
     }
 
-    public void draw(Graphics2D graphics, my.utils.Point centerOffset, double scale, Dimension panelSize)
+    public void draw(Graphics2D graphics, DoubleDoublet centerOffset, double scale, Dimension panelSize)
     {
         var iterator = fields.entrySet().iterator();
         while (iterator.hasNext())
@@ -224,7 +239,7 @@ public class World
             Map.Entry<Hex, Field> entry = iterator.next();
 
             Hex hex = entry.getKey();
-            Pixel pixel = hex.getCornerPixel(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
+            IntegerDoublet pixel = hex.getCornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
 
             int x = (int) centerOffset.xCoord + (int) (pixel.xCoord * scale);
             int y = (int) centerOffset.yCoord + (int) (pixel.yCoord * scale);
@@ -236,7 +251,7 @@ public class World
 
             if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
             {
-                field.draw(graphics, new Pixel(x, y), new Dimension(w, h));
+                field.draw(graphics, new IntegerDoublet(x, y), new Dimension(w, h));
             }
         }
     }
@@ -275,7 +290,7 @@ public class World
 
                 for (var neighbor : peripheral.neighbors())
                 {
-                    if (territory.contains(neighbor) || alreadyTaken.contains(neighbor) // One is unnecessary...
+                    if (territory.contains(neighbor) || alreadyTaken.contains(neighbor) // One is unnecessary. (?)
                         || !map.containsKey(neighbor))
                     {
                         continue;
@@ -354,7 +369,7 @@ public class World
 
         /* Initialize the regions. */
         HashSet<Hex> takenArea = new HashSet<>();
-        java.util.List<Region> regions = initRegions(maxima, takenArea);
+        List<Region> regions = initRegions(maxima, takenArea);
 
         /* Propagate seawards. */
         propagateRegions(regions, inlandness, takenArea);
@@ -524,7 +539,7 @@ public class World
         return candidates;
     }
 
-    private void removeApparentMaxima(LinkedList<Hex> maxima,
+    private void removeApparentMaxima(List<Hex> maxima,
                                       HashMap<Hex, Integer> inlandness)
     {
         HashSet<Hex> apparentMaxima = new HashSet<>();
@@ -578,10 +593,10 @@ public class World
         maxima.removeAll(apparentMaxima);
     }
 
-    private java.util.List<Region> initRegions(LinkedList<Hex> maxima,
-                                               HashSet<Hex> takenArea)
+    private List<Region> initRegions(LinkedList<Hex> maxima,
+                                     HashSet<Hex> takenArea)
     {
-        java.util.List<Region> regions = new ArrayList<>();
+        List<Region> regions = new ArrayList<>();
         while (!maxima.isEmpty())
         {
             /* Find a whole connected group using DFS */
@@ -777,30 +792,149 @@ public class World
         return sum;
     }
 
-    public static interface Predicate<E>
+//    public static interface UnaryPredicate<E>
+//    {
+//        public boolean test(E obj);
+//    }
+//    public int mark(UnaryPredicate<Field> condition)
+//    {
+//        int counter = 0;
+//        for (Field value : fields.values())
+//        {
+//            if (condition.test(value))
+//            {
+//                value.mark();
+//                ++counter;
+//            }
+//        }
+//        return counter;
+//    }
+//    public void unmarkAll()
+//    {
+//        for (Field value : fields.values())
+//        {
+//            value.unmark();
+//        }
+//    }
+//    
+//    private Map<FieldType, BinaryPredicate<Player, Field>> makePredicates()
+//    {
+//        Map<FieldType, BinaryPredicate<Player, Field>> map = new HashMap<>(FieldType.PURCHASABLES_COUNT);
+//        
+//        
+//        
+//        return map;
+//    }
+    private Field[] getNeighboringFields(Field field)
     {
-        public boolean test(E obj);
-    }
-
-    public int mark(Predicate<Field> condition)
-    {
-        int counter = 0;
-        for (Field value : fields.values())
+        Hex hex = field.getHex();
+        int neighborsCount = (hex.getRing() < side - 1) ? 6 : (hex.isRadial()) ? 3 : 4;
+        Field[] neighboringFields = new Field[neighborsCount];
+        int i = 0;
+        for (var neighbor : hex.neighbors())
         {
-            if (condition.test(value))
+            Field neighboringField = getFieldAt(neighbor);
+            if (neighboringField != null)
             {
-                value.mark();
-                ++counter;
+                neighboringFields[i++] = neighboringField;
             }
         }
-        return counter;
+        return neighboringFields;
     }
 
-    public void unmarkAll()
+    private static interface BinaryPredicate<L, R>
     {
-        for (Field value : fields.values())
+        public boolean test(L left, R right);
+    }
+
+    private final Map<FieldType, BinaryPredicate<Player, Field>> predicates;
+
+    private Map<FieldType, BinaryPredicate<Player, Field>> makePredicatesMap()
+    {
+        Map<FieldType, BinaryPredicate<Player, Field>> map = new HashMap<>(FieldType.PURCHASABLES_COUNT);
+
+        map.put(FieldType.BARRACKS, (Player player, Field field) ->
         {
-            value.unmark();
+            return field.getOwner() == player && field.getType().isPlains();
+        });
+
+        map.put(FieldType.TOWN, (Player player, Field field) ->
+        {
+            return field.getOwner() == player && field.getType().isPlains();
+        });
+
+        map.put(FieldType.VILLAGE, (Player player, Field field) ->
+        {
+            return field.getOwner() == player && field.getType().isPlains();
+        });
+        
+        map.put(FieldType.FARMFIELD, (Player player, Field field) ->
+        {
+            if (field.getOwner() != player || !field.getType().isPlains())
+            {
+                return false;
+            }
+
+            Field[] neighbors = getNeighboringFields(field);
+            for (var neighbor : neighbors)
+            {
+                if (neighbor.getType() == FieldType.VILLAGE)
+                {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        map.put(FieldType.FORTRESS, (Player player, Field field) ->
+        {
+            return field.getOwner() == player && field.getType().isContinental();
+        });
+
+        map.put(FieldType.MINE, (Player player, Field field) ->
+        {
+            return field.getOwner() == player && field.getType().isMountainous();
+        });
+
+        map.put(FieldType.SHIPYARD, (Player player, Field field) ->
+        {
+            if (field.getOwner() != player || !field.getType().isPlains())
+            {
+                return false;
+            }
+
+            Field[] neighbors = getNeighboringFields(field);
+            for (var neighbor : neighbors)
+            {
+                if (neighbor.getType().isMarine())
+                {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        return map;
+    }
+
+    public Set<FieldType> getBuildablePurchasables(Player player)
+    {
+        Set<FieldType> buildables = new HashSet<>();
+        for (var value : FieldType.values())
+        {
+            if (value.isPurchasable())
+            {
+                var predicate = predicates.get(value);
+                for (var field : player.getTerritory())
+                {
+                    if (predicate.test(player, field))
+                    {
+                        buildables.add(value);
+                        break;
+                    }
+                }
+            }
         }
+        return buildables;
     }
 }

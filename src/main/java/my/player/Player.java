@@ -1,11 +1,11 @@
 package my.player;
 
+import java.util.Collection;
 import my.utils.Hex;
 import my.units.Field;
 import java.util.HashMap;
 import java.util.Map;
-
-import my.world.*;
+import java.util.Set;
 
 /**
  *
@@ -72,6 +72,11 @@ public class Player
     {
         territory.get(hex).setOwner(null);
         territory.remove(hex);
+    }
+    
+    public Collection<Field> getTerritory()
+    {
+        return territory.values();
     }
     
     public void play()

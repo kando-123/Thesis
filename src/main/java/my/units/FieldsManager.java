@@ -1,12 +1,15 @@
 package my.units;
 
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
-import javax.imageio.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import my.utils.*;
+import my.utils.Doublet;
 
 /**
  *
@@ -42,7 +45,7 @@ public class FieldsManager
         return instance;
     }
     
-    private final static float RESCALING_FACTOR = 1.5f;
+    private final static float RESCALING_FACTOR = 1.33f;
     private final static float RESCALING_OFFSET = 0.0f;
     private static RescaleOp rescaler = null;
 

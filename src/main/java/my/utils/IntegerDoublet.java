@@ -6,50 +6,50 @@ import java.util.Objects;
  *
  * @author Kay Jay O'Nail
  */
-public class Pixel
+public class IntegerDoublet
 {
     public int xCoord;
     public int yCoord;
     
-    public Pixel(int x, int y)
+    public IntegerDoublet(int x, int y)
     {
         this.xCoord = x;
         this.yCoord = y;
     }
     
-    public Pixel clone()
+    public IntegerDoublet clone()
     {
-        return new Pixel(xCoord, yCoord);
+        return new IntegerDoublet(xCoord, yCoord);
     }
     
-    public Pixel plus(Pixel other)
+    public IntegerDoublet plus(IntegerDoublet other)
     {
         int x = xCoord + other.xCoord;
         int y = yCoord + other.yCoord;
-        return new Pixel(x, y);
+        return new IntegerDoublet(x, y);
     }
     
-    public Pixel minus(Pixel other)
+    public IntegerDoublet minus(IntegerDoublet other)
     {
         int x = xCoord - other.xCoord;
         int y = yCoord - other.yCoord;
-        return new Pixel(x, y);
+        return new IntegerDoublet(x, y);
     }
     
-    public Pixel times(int factor)
+    public IntegerDoublet times(int factor)
     {
         int x = factor * xCoord;
         int y = factor * yCoord;
-        return new Pixel(x, y);
+        return new IntegerDoublet(x, y);
     }
     
-    public void add(Pixel other)
+    public void add(IntegerDoublet other)
     {
         xCoord += other.xCoord;
         yCoord += other.yCoord;
     }
     
-    public void subtract(Pixel other)
+    public void subtract(IntegerDoublet other)
     {
         xCoord -= other.xCoord;
         yCoord -= other.yCoord;
@@ -64,9 +64,9 @@ public class Pixel
     @Override
     public boolean equals(Object other)
     {
-        if (other.getClass() == Pixel.class)
+        if (other.getClass() == IntegerDoublet.class)
         {
-            Pixel that = (Pixel) other;
+            IntegerDoublet that = (IntegerDoublet) other;
             return this.xCoord == that.xCoord && this.yCoord == that.yCoord;
         }
         else

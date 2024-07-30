@@ -1,17 +1,23 @@
 package my.game;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.*;
-import javax.swing.*;
-import my.player.*;
-import my.player.configuration.*;
-import my.utils.*;
-import my.units.*;
-import my.world.*;
-import my.world.configuration.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import my.player.Player;
+import my.player.PlayerConfiguration;
+import my.player.PlayerConfigurationContentPane;
+import my.player.PlayersQueue;
+import my.utils.Hex;
+import my.world.InputHandler;
+import my.world.World;
+import my.world.WorldConfigurationContentPane;
 
 /**
  *
@@ -34,21 +40,22 @@ public class Master extends JFrame implements ActionListener
         master.setVisible(true);
         master.setLocationRelativeTo(null);
     }
-
+    
     private State state;
 
     private PlayerConfigurationContentPane playerContentPane;
     private WorldConfigurationContentPane worldContentPane;
     private GameplayContentPane gameplayContentPane;
 
+    private Manager manager;
     private World world;
-
     private PlayersQueue players;
 
     public Master()
     {
         state = State.INITIAL;
-
+        manager = new Manager();
+        
         try
         {
             InputStream stream = getClass().getResourceAsStream("/Logo/Icon.png");
@@ -59,6 +66,11 @@ public class Master extends JFrame implements ActionListener
         {
 
         }
+    }
+    
+    public Manager getManager()
+    {
+        return manager;
     }
 
     private void beginPlayerSelection()
@@ -86,7 +98,7 @@ public class Master extends JFrame implements ActionListener
     {
         if (state == State.PLAYERS_SELECTION)
         {
-            java.util.List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
+            List<PlayerConfiguration> playersData = playerContentPane.getPlayerParameters();
             int playersNumber = playersData.size();
             if (playersNumber < 2)
             {
@@ -176,8 +188,15 @@ public class Master extends JFrame implements ActionListener
             }
             case "to-build" ->
             {
-                System.out.println(commandlets[1]);
-                haveFieldsMarked(commandlets[1].toLowerCase());
+                System.out.println("Master: I received information that a building shall be erected...");
+                Player current = players.current();
+                var set = world.getBuildablePurchasables(current);
+                System.out.print("The current player, '" + current.getName() + "', can build: ");
+                set.forEach((obj) ->
+                {
+                    System.out.print(obj + " ");
+                });
+                System.out.println();
                 requestFocus();
             }
             case "do-build" ->
@@ -186,6 +205,7 @@ public class Master extends JFrame implements ActionListener
             }
             case "to-hire" ->
             {
+                System.out.println("Master: I received information that an entity shall be hired.");
                 requestFocus();
             }
             case "do-hire" ->
@@ -193,151 +213,5 @@ public class Master extends JFrame implements ActionListener
                 requestFocus();
             }
         }
-    }
-
-    private void haveFieldsMarked(String propertyType)
-    {
-        world.unmarkAll();
-        Player current = players.current();
-        int marked = world.mark(switch (propertyType)
-        {
-            case "town", "village", "barracks" ->
-            {
-                yield (Field field) ->
-                {
-                    return field.getOwner() == current && field.getType().isPlains();
-                };
-            }
-            case "farmfield" ->
-            {
-                yield (Field field) ->
-                {
-                    if (field.getOwner() != current || !field.getType().isPlains())
-                    {
-                        return false;
-                    }
-                    
-                    Field[] neighbors = getNeighboringFields(field);
-                    for (var neighbor : neighbors)
-                    {
-                        if (neighbor.getType() == FieldType.VILLAGE)
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                };
-            }
-            case "mine" ->
-            {
-                yield (Field field) ->
-                {
-                    return field.getOwner() == current && field.getType().isMountainous();
-                };
-            }
-            case "shipyard" ->
-            {
-                yield (Field field) ->
-                {
-                    if (field.getOwner() != current || ! field.getType().isPlains())
-                    {
-                        return false;
-                    }
-
-                    Field[] neighbors = getNeighboringFields(field);
-                    for (var neighbor : neighbors)
-                    {
-                        if (neighbor.getType().isMarine())
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                };
-            }
-            case "fortress" ->
-            {
-                yield (Field field) ->
-                {
-                    return field.getOwner() == current && field.getType().isContinental();
-                };
-            }
-            default ->
-            {
-                yield (whatever) -> false;
-            }
-        });
-        if (marked == 0)
-        {
-            inform(propertyType);
-        }
-    }
-
-    private void inform(String propertyType)
-    {
-        String message = switch (propertyType)
-        {
-            case "town", "village", "barracks" ->
-            {
-                yield """
-                      To build a town, a village or barracks,
-                      you need a land field.
-                      """;
-            }
-            case "farmfield" ->
-            {
-                yield """
-                      To build a farmfield, you need a land field
-                      that is adjacent to a village.
-                      """;
-            }
-            case "mine" ->
-            {
-                yield """
-                      To build a mine, you need a mountain field.
-                      """;
-            }
-            case "shipyard" ->
-            {
-                yield """
-                      To build a shipyard, you need a land field
-                      that is adjacent to a see field.
-                      """;
-            }
-            case "fortress" ->
-            {
-                yield """
-                      To build a fortress, you need a land field or
-                      a mountain field.
-                      """;
-            }
-            default ->
-            {
-                yield "";
-            }
-        };
-        if (!message.isEmpty())
-        {
-            JOptionPane.showMessageDialog(this, message, "Information",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    private Field[] getNeighboringFields(Field field)
-    {
-        Hex hex = field.getHex();
-        int side = world.getSide();
-        int neighborsCount = (hex.getRing() < side - 1) ? 6 : (hex.isRadial()) ? 3 : 4;
-        Field[] neighboringFields = new Field[neighborsCount];
-        int i = 0;
-        for (var neighbor : hex.neighbors())
-        {
-            Field neighboringField = world.getFieldAt(neighbor);
-            if (neighboringField != null)
-            {
-                neighboringFields[i++] = neighboringField;
-            }
-        }
-        return neighboringFields;
     }
 }

@@ -276,78 +276,78 @@ public class Hex
         return 3 * side * (side - 1) + 1;
     }
     
-    public Pixel getCentralPixel(int outerRadius, int innerRadius)
+    public IntegerDoublet getCentralPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2;
         int y = (qCoord - rCoord) * innerRadius;
-        return new Pixel(x, y);
+        return new IntegerDoublet(x, y);
     }
 
-    public Pixel getCornerPixel(int outerRadius, int innerRadius)
+    public IntegerDoublet getCornerPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2 - outerRadius;
         int y = (qCoord - rCoord) * innerRadius - innerRadius;
-        return new Pixel(x, y);
+        return new IntegerDoublet(x, y);
     }
 
-    public Point getCentralPoint(double outerRadius, double innerRadius)
+    public DoubleDoublet getCentralPoint(double outerRadius, double innerRadius)
     {
         double x = (double) (pCoord) * outerRadius * 1.5;
         double y = (double) (qCoord - rCoord) * innerRadius;
-        return new Point(x, y);
+        return new DoubleDoublet(x, y);
     }
 
-    public Point getCornerPoint(double outerRadius, double innerRadius)
+    public DoubleDoublet getCornerPoint(double outerRadius, double innerRadius)
     {
         double x = (double) (pCoord) * outerRadius * 1.5 - outerRadius;
         double y = (double) (qCoord - rCoord) * innerRadius - innerRadius;
-        return new Point(x, y);
+        return new DoubleDoublet(x, y);
     }
 
-    public static Pixel computeCentralPixelAt(int p, int q, int r, int outerRadius, int innerRadius)
+    public static IntegerDoublet computeCentralPointAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
-        Pixel pixel = null;
+        IntegerDoublet point = null;
         if (p + q + r == 0)
         {
             int x = p * outerRadius * 3 / 2;
             int y = (q - r) * innerRadius;
-            pixel = new Pixel(x, y);
-        }
-        return pixel;
-    }
-
-    public static Pixel computeCornerPixelAt(int p, int q, int r, int outerRadius, int innerRadius)
-    {
-        Pixel pixel = null;
-        if (p + q + r == 0)
-        {
-            int x = p * outerRadius * 3 / 2 - outerRadius;
-            int y = (q - r) * innerRadius - innerRadius;
-            pixel = new Pixel(x, y);
-        }
-        return pixel;
-    }
-
-    public static Point computeCentralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
-    {
-        Point point = null;
-        if (p + q + r == 0)
-        {
-            double x = (double) (p) * outerRadius * 1.5;
-            double y = (double) (q - r) * innerRadius;
-            point = new Point(x, y);
+            point = new IntegerDoublet(x, y);
         }
         return point;
     }
 
-    public static Point computeCornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    public static IntegerDoublet computeCornerPointAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
-        Point point = null;
+        IntegerDoublet point = null;
+        if (p + q + r == 0)
+        {
+            int x = p * outerRadius * 3 / 2 - outerRadius;
+            int y = (q - r) * innerRadius - innerRadius;
+            point = new IntegerDoublet(x, y);
+        }
+        return point;
+    }
+
+    public static DoubleDoublet computeCentralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    {
+        DoubleDoublet point = null;
+        if (p + q + r == 0)
+        {
+            double x = (double) (p) * outerRadius * 1.5;
+            double y = (double) (q - r) * innerRadius;
+            point = new DoubleDoublet(x, y);
+        }
+        return point;
+    }
+
+    public static DoubleDoublet computeCornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    {
+        DoubleDoublet point = null;
         if (p + q + r == 0)
         {
             double x = (double) (p) * outerRadius * 1.5 - outerRadius;
             double y = (double) (q - r) * innerRadius - innerRadius;
-            point = new Point(x, y);
+            point = new DoubleDoublet(x, y);
         }
         return point;
     }

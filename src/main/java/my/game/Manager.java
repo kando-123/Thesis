@@ -1,47 +1,10 @@
 package my.game;
 
-import java.util.*;
-import javax.swing.*;
-import my.units.*;
+//import javax.swing.*;
 
-class PropertiesFrame extends JFrame
-{
-    private final List<FieldType> properties;
-    
-    private JLabel nameLabel;
-    private JLabel descriptionLabel;
-    private JLabel conditionsLabel;
-    private JLabel priceLabel;
-    
-    public PropertiesFrame()
-    {
-        properties = new ArrayList<>();
-        for (var fieldType : FieldType.values())
-        {
-            if (fieldType.isPurchasable())
-            {
-                properties.add(fieldType);
-            }
-        }
-        
-        setContentPane(makeContentPane());
-    }
-    
-    private JPanel makeContentPane()
-    {
-        JPanel contentPane = new JPanel();
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-        
-        
-        
-        FieldsManager fieldsManager = FieldsManager.getInstance();
-        
-        
-        
-        return contentPane;
-    }
-}
-
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 /**
  *
@@ -49,5 +12,21 @@ class PropertiesFrame extends JFrame
  */
 public class Manager
 {
+    public static void main(String[] args)
+    {
+        JFrame frame = new JFrame("Dialog Example");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
 
+        JButton showDialogButton = new JButton("Show Dialog");
+        showDialogButton.addActionListener(e ->
+        {
+            JDialog dialog = new PropertiesDialog(frame);
+            dialog.setLocationRelativeTo(frame);
+            dialog.setVisible(true);
+        });
+
+        frame.add(showDialogButton);
+        frame.setVisible(true);
+    }
 }

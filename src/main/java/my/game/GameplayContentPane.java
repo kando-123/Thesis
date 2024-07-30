@@ -5,10 +5,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JPanel;
-
-import my.game.*;
-import my.player.*;
-import my.world.*;
+import my.player.Player;
+import my.world.World;
 
 /**
  *

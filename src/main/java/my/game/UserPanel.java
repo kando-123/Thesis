@@ -1,11 +1,18 @@
 package my.game;
 
-import my.units.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import my.game.*;
-import my.player.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import my.player.Player;
 
 /**
  *
@@ -15,14 +22,13 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
 {
     private JLabel nameLabel;
     private JLabel moneyLabel;
-    private JComboBox buildings;
-    private JComboBox entities;
+    private JButton buildings;
+    private JButton entities;
     private final ActionListener master;
 
     public UserPanel(Master master)
     {
         super(new GridBagLayout());
-        
         this.master = master;
 
         GridBagConstraints c = new GridBagConstraints();
@@ -79,33 +85,27 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
 
     private JPanel makeShopPanel()
     {
-        JPanel shopPanel = new JPanel();
-        shopPanel.setLayout(new BoxLayout(shopPanel, BoxLayout.Y_AXIS));
+        JPanel shopPanel = new JPanel(new GridBagLayout());
         shopPanel.setOpaque(false);
-
-        buildings = new JComboBox();
-        buildings.addItem("Build New Property");
-        buildings.addItem(FieldType.TOWN);
-        buildings.addItem(FieldType.VILLAGE);
-        buildings.addItem(FieldType.FARMFIELD);
-        buildings.addItem(FieldType.MINE);
-        buildings.addItem(FieldType.BARRACKS);
-        buildings.addItem(FieldType.SHIPYARD);
-        buildings.addItem(FieldType.FORTRESS);
-        buildings.setRenderer(new Renderer());
-        buildings.addActionListener(this);
-        buildings.addItemListener(this);
-        shopPanel.add(buildings);
         
-        entities = new JComboBox();
-        entities.addItem("Hire New Entity");
-        entities.addItem(EntityType.INFANTRY);
-        entities.addItem(EntityType.CAVALRY);
-        entities.addItem(EntityType.NAVY);
-        entities.setRenderer(new Renderer());
-        entities.addActionListener(this);
-        entities.addItemListener(this);
-        shopPanel.add(entities);
+        GridBagConstraints c = new GridBagConstraints();
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.BOTH;
+        
+        buildings = new JButton("Build a New Property");
+        buildings.setActionCommand("to-build");
+        buildings.addActionListener(master);
+        shopPanel.add(buildings, c);
+        
+        c.gridx = 0;
+        c.gridy = 1;
+        entities = new JButton("Hire a New Entity");
+        entities.setActionCommand("to-hire");
+        entities.addActionListener(master);
+        shopPanel.add(entities, c);
 
         return shopPanel;
     }
@@ -158,41 +158,6 @@ public class UserPanel extends JPanel implements ActionListener, ItemListener
             String actionCommand = (e.getSource() == buildings) ? "to-build;%s" : "to-hire;%s";
             actionCommand = actionCommand.formatted(String.valueOf(e.getItem()));
             master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, actionCommand));
-        }
-    }
-
-    private class Renderer extends JLabel implements ListCellRenderer<Object>
-    {
-        private static final FieldsManager fieldsManager = FieldsManager.getInstance();
-        private static final EntitiesManager entitiesManager = EntitiesManager.getInstance();
-
-        public Renderer()
-        {
-            
-        }
-
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
-        {
-            if (value.getClass() == FieldType.class)
-            {
-                FieldType field = (FieldType) value;
-                setText(field.name());
-                setIcon(fieldsManager.getFieldAsIcon(field));
-            }
-            else if (value.getClass() == EntityType.class)
-            {
-                EntityType entity = (EntityType) value;
-                setText(entity.name());
-                setIcon(entitiesManager.getEntityAsIcon(entity));
-            }
-            else
-            {
-                setText(String.valueOf(value));
-                setIcon(null);
-            }
-
-            return this;
         }
     }
 

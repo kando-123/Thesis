@@ -1,10 +1,13 @@
 package my.units;
 
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
-import javax.imageio.*;
-import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  *

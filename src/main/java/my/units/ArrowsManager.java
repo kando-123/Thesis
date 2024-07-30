@@ -1,8 +1,11 @@
 package my.units;
 
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -22,8 +25,8 @@ public class ArrowsManager
     
     private ArrowsManager()
     {
-        InputStream leftStream = getClass().getResourceAsStream("Left Arrow.png");
-        InputStream rightStream = getClass().getResourceAsStream("Right Arrow.png");
+        InputStream leftStream = getClass().getResourceAsStream("/Arrows/Left Arrow.png");
+        InputStream rightStream = getClass().getResourceAsStream("/Arrows/Right Arrow.png");
         try
         {
             leftArrow = ImageIO.read(leftStream);
@@ -43,5 +46,15 @@ public class ArrowsManager
     public BufferedImage getRightArrow()
     {
         return rightArrow;
+    }
+    
+    public Icon getLeftArrowAsIcon()
+    {
+        return new ImageIcon(leftArrow);
+    }
+    
+    public Icon getRightArrowAsIcon()
+    {
+        return new ImageIcon(rightArrow);
     }
 }

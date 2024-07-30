@@ -4,50 +4,50 @@ package my.utils;
  *
  * @author Kay Jay O'Nail
  */
-public class Point
+public class DoubleDoublet
 {
     public double xCoord;
     public double yCoord;
     
-    public Point(double x, double y)
+    public DoubleDoublet(double x, double y)
     {
         this.xCoord = x;
         this.yCoord = y;
     }
     
-    public Point clone()
+    public DoubleDoublet clone()
     {
-        return new Point(xCoord, yCoord);
+        return new DoubleDoublet(xCoord, yCoord);
     }
     
-    public Point plus(Point other)
+    public DoubleDoublet plus(DoubleDoublet other)
     {
         double x = xCoord + other.xCoord;
         double y = yCoord + other.yCoord;
-        return new Point(x, y);
+        return new DoubleDoublet(x, y);
     }
     
-    public Point minus(Point other)
+    public DoubleDoublet minus(DoubleDoublet other)
     {
         double x = xCoord - other.xCoord;
         double y = yCoord - other.yCoord;
-        return new Point(x, y);
+        return new DoubleDoublet(x, y);
     }
     
-    public Point times(double factor)
+    public DoubleDoublet times(double factor)
     {
         double x = factor * xCoord;
         double y = factor * yCoord;
-        return new Point(x, y);
+        return new DoubleDoublet(x, y);
     }
     
-    public void add(Point other)
+    public void add(DoubleDoublet other)
     {
         xCoord += other.xCoord;
         yCoord += other.yCoord;
     }
     
-    public void subtract(Point other)
+    public void subtract(DoubleDoublet other)
     {
         xCoord -= other.xCoord;
         yCoord -= other.yCoord;
@@ -62,9 +62,9 @@ public class Point
     @Override
     public boolean equals(Object other)
     {
-        if (other.getClass() == Point.class)
+        if (other.getClass() == DoubleDoublet.class)
         {
-            Point that = (Point) other;
+            DoubleDoublet that = (DoubleDoublet) other;
             return this.xCoord == that.xCoord && this.yCoord == that.yCoord;
         }
         else

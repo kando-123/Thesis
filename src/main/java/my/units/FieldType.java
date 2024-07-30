@@ -146,23 +146,23 @@ public enum FieldType
         {
             case TOWN, VILLAGE, BARRACKS ->
             {
-                yield "Land field";
+                yield "A land field is needed.";
             }
             case FARMFIELD ->
             {
-                yield "Land field adjacent to a village";
+                yield "A land field adjacent to a village is needed.";
             }
             case MINE ->
             {
-                yield "Mountain field";
+                yield "A mountain field is needed.";
             }
             case SHIPYARD ->
             {
-                yield "Land field adjacent to a see field";
+                yield "A land field adjacent to a see field is needed.";
             }
             case FORTRESS ->
             {
-                yield "Land field or mountains field.";
+                yield "A land field or a mountains field is needed.";
             }
             default ->
             {
@@ -170,4 +170,19 @@ public enum FieldType
             }
         };
     }
+    
+    private static int countPurchasables()
+    {
+        int count = 0;
+        for (var value : FieldType.values())
+        {
+            if (value.isPurchasable())
+            {
+                ++count;
+            }
+        }
+        return count;
+    }
+    
+    public static final int PURCHASABLES_COUNT = countPurchasables();
 }
