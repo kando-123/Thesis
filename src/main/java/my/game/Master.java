@@ -41,7 +41,7 @@ public class Master extends JFrame implements ActionListener
         master.setVisible(true);
         master.setLocationRelativeTo(null);
     }
-    
+
     private State state;
 
     private PlayerConfigurationContentPane playerContentPane;
@@ -56,7 +56,7 @@ public class Master extends JFrame implements ActionListener
     {
         state = State.INITIAL;
         manager = new Manager();
-        
+
         try
         {
             InputStream stream = getClass().getResourceAsStream("/Logo/Icon.png");
@@ -68,7 +68,7 @@ public class Master extends JFrame implements ActionListener
 
         }
     }
-    
+
     public Manager getManager()
     {
         return manager;
@@ -103,11 +103,8 @@ public class Master extends JFrame implements ActionListener
             int playersNumber = playersData.size();
             if (playersNumber < 2)
             {
-                JOptionPane.showMessageDialog(this,
-                        "Select at least 2 players.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                JOptionPane.showMessageDialog(this, "Select at least 2 players.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
             else
             {
@@ -131,7 +128,7 @@ public class Master extends JFrame implements ActionListener
         {
             world = new World(worldContentPane.getConfiguration());
 
-            java.util.List<PlayerConfiguration> configurations = playerContentPane.getPlayerParameters();
+            List<PlayerConfiguration> configurations = playerContentPane.getPlayerParameters();
             players = new PlayersQueue(configurations);
 
             Hex[] capitals = world.locateCapitals(configurations.size());

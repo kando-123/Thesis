@@ -21,11 +21,13 @@ public enum FieldType
     WOOD;
 
     public final String path;
+    public final String iPath;
 
     private FieldType()
     {
         String filename = name().substring(0, 1).concat(name().substring(1).toLowerCase());
         path = String.format("/Fields/%s.png", filename);
+        iPath = String.format("/iFields/i%s.png", filename);
     }
 
     public boolean isPurchasable()

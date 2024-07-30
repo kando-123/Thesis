@@ -18,24 +18,31 @@ import my.utils.Doublet;
 public class FieldsManager
 {
     private Map<FieldType, Doublet<BufferedImage>> fields;
+    private Map<FieldType, Icon> iFields;
     
     private FieldsManager()
     {
         fields = new HashMap<>(FieldType.values().length);
+        iFields = new HashMap<>(FieldType.values().length);
         for (var type : FieldType.values())
         {
             InputStream stream = getClass().getResourceAsStream(type.path);
+            InputStream iStream = getClass().getResourceAsStream(type.iPath);
             try
             {
-                BufferedImage image = ImageIO.read(stream);
-                BufferedImage brightImage = brightenImage(image);
-                fields.put(type, new Doublet<>(image, brightImage));
+                BufferedImage field = ImageIO.read(stream);
+                BufferedImage brightField = brightenImage(field);
+                fields.put(type, new Doublet<>(field, brightField));
+                
+                BufferedImage iField = ImageIO.read(iStream);
+                iFields.put(type, new ImageIcon(iField));
             }
             catch (IOException io)
             {
                 System.err.println(io.getMessage());
             }
         }
+        
     }
     
     private static final FieldsManager instance = new FieldsManager();
@@ -70,6 +77,6 @@ public class FieldsManager
 
     public Icon getFieldAsIcon(FieldType type)
     {
-        return new ImageIcon(getField(type));
+        return iFields.get(type);
     }
 }
