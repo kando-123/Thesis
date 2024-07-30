@@ -48,14 +48,12 @@ public class Master extends JFrame implements ActionListener
     private WorldConfigurationContentPane worldContentPane;
     private GameplayContentPane gameplayContentPane;
 
-    private Manager manager;
     private World world;
     private PlayersQueue players;
 
     public Master()
     {
         state = State.INITIAL;
-        manager = new Manager();
 
         try
         {
@@ -65,13 +63,8 @@ public class Master extends JFrame implements ActionListener
         }
         catch (IOException io)
         {
-
+            /* Never thrown. */
         }
-    }
-
-    public Manager getManager()
-    {
-        return manager;
     }
 
     private void beginPlayerSelection()

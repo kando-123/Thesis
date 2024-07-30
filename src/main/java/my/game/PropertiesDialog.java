@@ -64,7 +64,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
         setResizable(false);
     }
 
-    private final static Dimension PREFERRED_SIZE = new Dimension(350, 200);
+    private final static Dimension PREFERRED_SIZE = new Dimension(350, 210);
 
     private JPanel makeContentPane()
     {
@@ -87,7 +87,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
     {
         JPanel iconPanel = new JPanel();
         iconPanel.setLayout(new BoxLayout(iconPanel, BoxLayout.X_AXIS));
-        iconPanel.setPreferredSize(new Dimension(350, 100));
+        iconPanel.setPreferredSize(new Dimension(350, 90));
 
         Insets zeroInsets = new Insets(0, 0, 0, 0);
         ArrowsManager arrowsManager = ArrowsManager.getInstance();
@@ -120,7 +120,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
         descriptionTextArea.setLineWrap(true);
         descriptionTextArea.setWrapStyleWord(true);
         descriptionTextArea.setEditable(false);
-        descriptionTextArea.setPreferredSize(new Dimension(350, 50));
+        descriptionTextArea.setPreferredSize(new Dimension(350, 60));
         
         return descriptionTextArea;
     }
@@ -128,7 +128,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
     private JPanel makePurchasePanel()
     {
         JPanel purchasePanel = new JPanel(new GridBagLayout());
-        purchasePanel.setPreferredSize(new Dimension(350, 50));
+        purchasePanel.setPreferredSize(new Dimension(350, 60));
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -144,18 +144,18 @@ public class PropertiesDialog extends JDialog implements ActionListener
         conditionsTextArea.setWrapStyleWord(true);
         conditionsTextArea.setEditable(false);
         conditionsTextArea.setOpaque(false);
-        conditionsTextArea.setPreferredSize(new Dimension(210, 50));
+        conditionsTextArea.setPreferredSize(new Dimension(210, 60));
         purchasePanel.add(conditionsTextArea, c);
 
         c.gridx = 1;
         c.weightx = 1;
-        priceTextArea = new JTextArea("Ħ");
+        priceTextArea = new JTextArea("X Ħ");
         priceTextArea.setBorder(BorderFactory.createTitledBorder("Price"));
         priceTextArea.setEditable(false);
         priceTextArea.setLineWrap(true);
         priceTextArea.setWrapStyleWord(true);
         priceTextArea.setOpaque(false);
-        priceTextArea.setPreferredSize(new Dimension(70, 50));
+        priceTextArea.setPreferredSize(new Dimension(70, 60));
         purchasePanel.add(priceTextArea);
 
         c.gridx = 2;
@@ -163,7 +163,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
         buyButton = new JButton("Buy!");
         buyButton.setActionCommand("buy");
         buyButton.addActionListener(this);
-        buyButton.setPreferredSize(new Dimension(70, 50));
+        buyButton.setPreferredSize(new Dimension(70, 60));
         purchasePanel.add(buyButton);
 
         return purchasePanel;

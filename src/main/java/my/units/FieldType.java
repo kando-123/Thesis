@@ -146,25 +146,33 @@ public enum FieldType
     {
         return switch (this)
         {
-            case TOWN, VILLAGE, BARRACKS ->
+            case BARRACKS ->
             {
-                yield "A land field is needed.";
+                yield "You need a land field to build barracks.";
             }
             case FARMFIELD ->
             {
-                yield "A land field adjacent to a village is needed.";
-            }
-            case MINE ->
-            {
-                yield "A mountain field is needed.";
-            }
-            case SHIPYARD ->
-            {
-                yield "A land field adjacent to a see field is needed.";
+                yield "You need a land field adjacent to a village to build a farmfield.";
             }
             case FORTRESS ->
             {
-                yield "A land field or a mountains field is needed.";
+                yield "You need a land field or a mountain field to build a fortress.";
+            }
+            case MINE ->
+            {
+                yield "You need a mountain field to build a mine.";
+            }
+            case SHIPYARD ->
+            {
+                yield "You need a land field that is adjacent to a see field to build a shipyard.";
+            }
+            case TOWN ->
+            {
+                yield "You need a land field to build a town.";
+            }
+            case VILLAGE ->
+            {
+                yield "You need a land field to build a village.";
             }
             default ->
             {
