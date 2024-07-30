@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -29,17 +30,21 @@ import my.units.FieldsManager;
 public class PropertiesDialog extends JDialog implements ActionListener
 {
     private final List<FieldType> properties;
+    private final Set<FieldType> affordable;
 
     private JLabel nameLabel;
     private JLabel propertyLabel;
     private JTextArea descriptionTextArea;
     private JTextArea conditionsTextArea;
     private JTextArea priceTextArea;
+    private JButton buyButton;
+    
     private final FieldsManager fieldsManager;
 
-    public PropertiesDialog(JFrame parent)
+    public PropertiesDialog(JFrame parent, Set<FieldType> affordable)
     {
         super(parent, "Purchase a Property", true);
+        this.affordable = affordable;
 
         fieldsManager = FieldsManager.getInstance();
 
@@ -53,6 +58,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
         }
 
         setContentPane(makeContentPane());
+        reassignValues();
         pack();
 
         setResizable(false);
@@ -66,9 +72,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         contentPane.setPreferredSize(PREFERRED_SIZE);
 
-        FieldType firstProperty = properties.getFirst();
-
-        nameLabel = new JLabel(firstProperty.name());
+        nameLabel = new JLabel();
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPane.add(nameLabel);
         
@@ -95,8 +99,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
         leftArrow.addActionListener(this);
         iconPanel.add(leftArrow);
 
-        FieldType firstProperty = properties.getFirst();
-        propertyLabel = new JLabel(fieldsManager.getFieldAsIcon(firstProperty));
+        propertyLabel = new JLabel();
         iconPanel.add(propertyLabel);
 
         Icon rightIcon = arrowsManager.getRightArrowAsIcon();
@@ -111,9 +114,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
     
     private JTextArea makeDescriptionTextArea()
     {
-        FieldType firstProperty = properties.getFirst();
-        
-        descriptionTextArea = new JTextArea(firstProperty.getDescription());
+        descriptionTextArea = new JTextArea();
         descriptionTextArea.setBorder(BorderFactory.createTitledBorder("Description"));
         descriptionTextArea.setOpaque(false);
         descriptionTextArea.setLineWrap(true);
@@ -126,8 +127,6 @@ public class PropertiesDialog extends JDialog implements ActionListener
     
     private JPanel makePurchasePanel()
     {
-        FieldType firstProperty = properties.getFirst();
-        
         JPanel purchasePanel = new JPanel(new GridBagLayout());
         purchasePanel.setPreferredSize(new Dimension(350, 50));
         
@@ -139,7 +138,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
 
-        conditionsTextArea = new JTextArea(firstProperty.getConditions());
+        conditionsTextArea = new JTextArea();
         conditionsTextArea.setBorder(BorderFactory.createTitledBorder("Conditions"));
         conditionsTextArea.setLineWrap(true);
         conditionsTextArea.setWrapStyleWord(true);
@@ -161,7 +160,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
 
         c.gridx = 2;
         c.weightx = 1;
-        JButton buyButton = new JButton("Buy!");
+        buyButton = new JButton("Buy!");
         buyButton.setActionCommand("buy");
         buyButton.addActionListener(this);
         buyButton.setPreferredSize(new Dimension(70, 50));
@@ -177,6 +176,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
         propertyLabel.setIcon(fieldsManager.getFieldAsIcon(current));
         descriptionTextArea.setText(current.getDescription());
         conditionsTextArea.setText(current.getConditions());
+        buyButton.setEnabled(affordable.contains(current));
         repaint();
     }
 

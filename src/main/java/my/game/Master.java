@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import my.player.Player;
@@ -188,15 +189,12 @@ public class Master extends JFrame implements ActionListener
             }
             case "to-build" ->
             {
-                System.out.println("Master: I received information that a building shall be erected...");
                 Player current = players.current();
-                var set = world.getBuildablePurchasables(current);
-                System.out.print("The current player, '" + current.getName() + "', can build: ");
-                set.forEach((obj) ->
-                {
-                    System.out.print(obj + " ");
-                });
-                System.out.println();
+                var set = world.getBuildableProperties(current);
+                JDialog buyDialog = new PropertiesDialog(this, set);
+                buyDialog.setLocationRelativeTo(this);
+                buyDialog.setVisible(true);
+                buyDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                 requestFocus();
             }
             case "do-build" ->

@@ -917,7 +917,7 @@ public class World
         return map;
     }
 
-    public Set<FieldType> getBuildablePurchasables(Player player)
+    public Set<FieldType> getBuildableProperties(Player player)
     {
         Set<FieldType> buildables = new HashSet<>();
         for (var value : FieldType.values())
