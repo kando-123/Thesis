@@ -792,39 +792,40 @@ public class World
         return sum;
     }
 
-//    public static interface UnaryPredicate<E>
-//    {
-//        public boolean test(E obj);
-//    }
-//    public int mark(UnaryPredicate<Field> condition)
-//    {
-//        int counter = 0;
-//        for (Field value : fields.values())
-//        {
-//            if (condition.test(value))
-//            {
-//                value.mark();
-//                ++counter;
-//            }
-//        }
-//        return counter;
-//    }
-//    public void unmarkAll()
-//    {
-//        for (Field value : fields.values())
-//        {
-//            value.unmark();
-//        }
-//    }
-//    
-//    private Map<FieldType, BinaryPredicate<Player, Field>> makePredicates()
-//    {
-//        Map<FieldType, BinaryPredicate<Player, Field>> map = new HashMap<>(FieldType.PURCHASABLES_COUNT);
-//        
-//        
-//        
-//        return map;
-//    }
+   public Set<Field> markForPurchase(Player player, FieldType type)
+    {
+        Set<Field> markedFields = new HashSet<>();
+        BinaryPredicate<Player, Field> predicate = predicates.get(type);
+        if (predicate != null)
+        {
+            for (Field value : fields.values())
+            {
+                if (predicate.test(player, value))
+                {
+                    value.mark();
+                    markedFields.add(value);
+                }
+            }
+        }
+        return markedFields;
+    }
+   
+    public void unmarkAll()
+    {
+        for (Field value : fields.values())
+        {
+            value.unmark();
+        }
+    }
+    
+    private Map<FieldType, BinaryPredicate<Player, Field>> makePredicates()
+    {
+        Map<FieldType, BinaryPredicate<Player, Field>> map = new HashMap<>(FieldType.PURCHASABLES_COUNT);
+        
+        
+        
+        return map;
+    }
     private Field[] getNeighboringFields(Field field)
     {
         Hex hex = field.getHex();

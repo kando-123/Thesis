@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
@@ -56,8 +57,8 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     {
         super.setPreferredSize(newSize);
         
-        panelCenter = new my.utils.DoubleDoublet(newSize.width / 2, newSize.height / 2);
-        worldCenter = new my.utils.DoubleDoublet(newSize.width / 2, newSize.height / 2);
+        panelCenter = new DoubleDoublet(newSize.width / 2, newSize.height / 2);
+        worldCenter = new DoubleDoublet(newSize.width / 2, newSize.height / 2);
     }
 
     @Override
@@ -128,16 +129,16 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         {
             scale = Math.min(scale * SCALE_FACTOR, MAX_SCALE);
 
-            my.utils.DoubleDoublet relative = panelCenter.minus(worldCenter);
-            my.utils.DoubleDoublet offset = relative.times(SCALE_FACTOR - 1);
+            DoubleDoublet relative = panelCenter.minus(worldCenter);
+            DoubleDoublet offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.subtract(offset);
         }
         else if (inputHandler.zoomOut() && scale > MIN_SCALE)
         {
             scale = Math.max(scale / SCALE_FACTOR, MIN_SCALE);
 
-            my.utils.DoubleDoublet relative = panelCenter.minus(worldCenter);
-            my.utils.DoubleDoublet offset = relative.times(SCALE_FACTOR - 1);
+            DoubleDoublet relative = panelCenter.minus(worldCenter);
+            DoubleDoublet offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.add(offset);
         }
 
@@ -212,17 +213,30 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
             }
         }
     }
+    
+    private boolean awaitClick = false;
+    
+    public void beginAwaitingClick()
+    {
+        awaitClick = true;
+    }
 
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        //Point point = e.getPoint();
-        //double globalX = point.x;
-        //double globalY = point.y;
-        //double relativeX = globalX - worldCenter.xCoord;
-        //double relativeY = globalY - worldCenter.yCoord;
-        //Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
-        //world.mark((field) -> field.getHex().equals(hex));
+        if (awaitClick)
+        {
+            Point point = e.getPoint();
+            double globalX = point.x;
+            double globalY = point.y;
+            double relativeX = globalX - worldCenter.xCoord;
+            double relativeY = globalY - worldCenter.yCoord;
+            Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
+            
+            System.out.println(hex);
+            
+            awaitClick = false;
+        }
     }
 
     @Override

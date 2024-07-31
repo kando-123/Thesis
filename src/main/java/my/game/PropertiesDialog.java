@@ -29,6 +29,8 @@ import my.units.FieldsManager;
  */
 public class PropertiesDialog extends JDialog implements ActionListener
 {
+    private final Master master;
+    
     private final List<FieldType> properties;
     private final Set<FieldType> affordable;
 
@@ -41,9 +43,10 @@ public class PropertiesDialog extends JDialog implements ActionListener
     
     private final FieldsManager fieldsManager;
 
-    public PropertiesDialog(JFrame parent, Set<FieldType> affordable)
+    public PropertiesDialog(Master master, Set<FieldType> affordable)
     {
-        super(parent, "Purchase a Property", true);
+        super(master, "Purchase a Property", true);
+        this.master = master;
         this.affordable = affordable;
 
         fieldsManager = FieldsManager.getInstance();
@@ -201,7 +204,8 @@ public class PropertiesDialog extends JDialog implements ActionListener
             }
             case "buy" ->
             {
-                System.out.println("Buy");
+                master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+                        String.format("do-build;%s", properties.getFirst().name())));
             }
         }
     }

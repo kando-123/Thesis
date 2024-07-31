@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -15,6 +16,8 @@ import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayerConfigurationContentPane;
 import my.player.PlayersQueue;
+import my.units.Field;
+import my.units.FieldType;
 import my.utils.Hex;
 import my.world.InputHandler;
 import my.world.World;
@@ -154,6 +157,9 @@ public class Master extends JFrame implements ActionListener
         gameplayContentPane.setCurrentUser(user);
     }
 
+    private JDialog purchaseDialog;
+    private Set<Field> markedFields;
+
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -181,14 +187,21 @@ public class Master extends JFrame implements ActionListener
             {
                 Player current = players.current();
                 var set = world.getBuildableProperties(current);
-                JDialog buyDialog = new PropertiesDialog(this, set);
-                buyDialog.setLocationRelativeTo(this);
-                buyDialog.setVisible(true);
-                buyDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                if (purchaseDialog == null)
+                {
+                    purchaseDialog = new PropertiesDialog(this, set);
+                    purchaseDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+                }
+                purchaseDialog.setLocationRelativeTo(this);
+                purchaseDialog.setVisible(true);                
                 requestFocus();
             }
             case "do-build" ->
             {
+                purchaseDialog.setVisible(false);
+                FieldType newField = FieldType.valueOf(commandlets[1]);
+                markedFields = world.markForPurchase(players.current(), newField);
+                gameplayContentPane.beginAwaitingClick();
                 requestFocus();
             }
             case "to-hire" ->
