@@ -51,9 +51,4 @@ public class GameplayContentPane extends JPanel
     {
         userPanel.setUser(user);
     }
-    
-    public void beginAwaitingClick()
-    {
-        worldPanel.beginAwaitingClick();
-    }
 }
