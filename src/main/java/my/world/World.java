@@ -938,4 +938,16 @@ public class World
         }
         return buildables;
     }
+    
+    public void substitute(Field oldField, FieldType newType)
+    {
+        Hex hex = oldField.getHex();
+        if (fields.get(hex) == oldField)
+        {
+            Field newField = new Field(newType, hex);
+            newField.setOwner(oldField.getOwner());
+            fields.put(hex, newField);
+        }
+        
+    }
 }

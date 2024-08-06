@@ -28,7 +28,6 @@ import my.units.FieldsManager;
  */
 public class PropertiesDialog extends JDialog implements ActionListener
 {
-    private final Master master;
     private final Manager manager;
     
     private final List<FieldType> properties;
@@ -46,7 +45,6 @@ public class PropertiesDialog extends JDialog implements ActionListener
     public PropertiesDialog(Master master, Set<FieldType> affordable)
     {
         super(master, "Purchase a Property", true);
-        this.master = master;
         this.manager = master.getManager();
         this.affordable = affordable;
 

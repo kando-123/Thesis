@@ -41,50 +41,57 @@ public class Manager
         this.world = world;
     }
 
-    public void setWorldPanel(WorldPanel worldPanel)
-    {
-        this.worldPanel = worldPanel;
-    }
-
     private Master master;
     private World world;
-    private WorldPanel worldPanel;
 
     private JDialog purchaseDialog;
     private Set<Field> markedFields;
 
     public void beginBuilding()
     {
-        state = State.BUILDING_BEGUN;
-        
-        Player current = master.getCurrentPlayer();
-        var set = world.getBuildableProperties(current);
-        if (purchaseDialog == null)
+        if (state == State.IDLE)
         {
-            purchaseDialog = new PropertiesDialog(master, set);
-            purchaseDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        }
-        purchaseDialog.setLocationRelativeTo(master);
-        purchaseDialog.setVisible(true);
+            state = State.BUILDING_BEGUN;
 
-        master.requestFocus();
+            Player current = master.getCurrentPlayer();
+            var set = world.getBuildableProperties(current);
+            if (purchaseDialog == null)
+            {
+                purchaseDialog = new PropertiesDialog(master, set);
+                purchaseDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            }
+            purchaseDialog.setLocationRelativeTo(master);
+            purchaseDialog.setVisible(true);
+
+            master.requestFocus();
+        }
     }
     
-    public void buildingSelected(FieldType field)
+    private FieldType selectedType = null;
+    
+    public void buildingSelected(FieldType type)
     {
-        state = State.BUILDING_IN_PROGRESS;
-        
-        purchaseDialog.setVisible(false);
-        markedFields = world.markForPurchase(master.getCurrentPlayer(), field);
+        if (state == State.BUILDING_BEGUN)
+        {
+            selectedType = type;
+            
+            purchaseDialog.setVisible(false);
+            markedFields = world.markForPurchase(master.getCurrentPlayer(), type);
 
-        master.requestFocus();
+            master.requestFocus();
+            
+            state = State.BUILDING_IN_PROGRESS;
+        }
     }
     
     public void fieldSelected(Field field)
     {
         if (state == State.BUILDING_IN_PROGRESS)
         {
-            
+            if (markedFields.contains(field))
+            {
+                world.substitute(field, selectedType);
+            }
             
             state = State.IDLE;
         }

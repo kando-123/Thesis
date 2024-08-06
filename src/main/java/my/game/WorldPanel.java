@@ -36,7 +36,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
 
     private World world;
     
-    private Manager manager;
+    private final Manager manager;
 
     public WorldPanel(Manager manager)
     {
@@ -221,14 +221,16 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     @Override
     public void mouseClicked(MouseEvent e)
     {
+        world.unmarkAll();
+        
         Point point = e.getPoint();
         double globalX = point.x;
         double globalY = point.y;
         double relativeX = globalX - worldCenter.xCoord;
         double relativeY = globalY - worldCenter.yCoord;
         Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
-
-        System.out.println(hex);
+        
+        manager.fieldSelected(world.getFieldAt(hex));
     }
 
     @Override
