@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JPanel;
 import my.player.Player;
-import my.world.World;
 
 /**
  *
@@ -17,7 +16,7 @@ public class GameplayContentPane extends JPanel
     private final WorldPanel worldPanel;
     private final UserPanel userPanel;
 
-    public GameplayContentPane(Master master, World world, InputHandler inputHandler)
+    public GameplayContentPane(Master master, InputHandler inputHandler)
     {
         super(new BorderLayout());
 
@@ -27,8 +26,8 @@ public class GameplayContentPane extends JPanel
         int height = (int) (screenSize.height * (0.75));
 
         Dimension worldPanelSize = new Dimension((int) (0.85 * width), height);
-        worldPanel = new WorldPanel();
-        worldPanel.setWorld(world);
+        worldPanel = new WorldPanel(master.getManager());
+        worldPanel.setWorld(master.getWorld());
         worldPanel.setInputHandler(inputHandler);
         worldPanel.setPreferredSize(worldPanelSize);
         add(worldPanel, BorderLayout.CENTER);

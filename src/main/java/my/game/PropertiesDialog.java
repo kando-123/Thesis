@@ -15,7 +15,6 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -30,6 +29,7 @@ import my.units.FieldsManager;
 public class PropertiesDialog extends JDialog implements ActionListener
 {
     private final Master master;
+    private final Manager manager;
     
     private final List<FieldType> properties;
     private final Set<FieldType> affordable;
@@ -47,6 +47,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
     {
         super(master, "Purchase a Property", true);
         this.master = master;
+        this.manager = master.getManager();
         this.affordable = affordable;
 
         fieldsManager = FieldsManager.getInstance();
@@ -204,8 +205,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
             }
             case "buy" ->
             {
-                master.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-                        String.format("do-build;%s", properties.getFirst().name())));
+                manager.buildingSelected(properties.getFirst());
             }
         }
     }

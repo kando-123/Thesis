@@ -35,9 +35,13 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     private InputHandler inputHandler;
 
     private World world;
+    
+    private Manager manager;
 
-    public WorldPanel()
+    public WorldPanel(Manager manager)
     {
+        this.manager = manager;
+        
         scale = 1.0;
         addMouseListener(this);
     }
@@ -214,29 +218,17 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         }
     }
     
-    private boolean awaitClick = false;
-    
-    public void beginAwaitingClick()
-    {
-        awaitClick = true;
-    }
-
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        if (awaitClick)
-        {
-            Point point = e.getPoint();
-            double globalX = point.x;
-            double globalY = point.y;
-            double relativeX = globalX - worldCenter.xCoord;
-            double relativeY = globalY - worldCenter.yCoord;
-            Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
-            
-            System.out.println(hex);
-            
-            awaitClick = false;
-        }
+        Point point = e.getPoint();
+        double globalX = point.x;
+        double globalY = point.y;
+        double relativeX = globalX - worldCenter.xCoord;
+        double relativeY = globalY - worldCenter.yCoord;
+        Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
+
+        System.out.println(hex);
     }
 
     @Override

@@ -101,7 +101,7 @@ public class PlayerConfigurationContentPane extends JPanel implements ActionList
         return sum;
     }
     
-    public List<PlayerConfiguration> getPlayerParameters()
+    public List<PlayerConfiguration> getPlayerConfigurations()
     {
         List<PlayerConfiguration> list = new ArrayList<>();
         for (var panel : panels)
