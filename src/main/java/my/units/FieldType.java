@@ -181,6 +181,84 @@ public enum FieldType
         };
     }
     
+    public int getInitialPrice()
+    {
+        return switch (this)
+        {
+            case BARRACKS ->
+            {
+                yield 250;
+            }
+            case FARMFIELD ->
+            {
+                yield 100;
+            }
+            case FORTRESS ->
+            {
+                yield 400;
+            }
+            case MINE ->
+            {
+                yield 200;
+            }
+            case SHIPYARD ->
+            {
+                yield 600;
+            }
+            case TOWN ->
+            {
+                yield 300;
+            }
+            case VILLAGE ->
+            {
+                yield 200;
+            }
+            default ->
+            {
+                yield 0;
+            }
+        };
+    }
+    
+    public int getPriceIncrement()
+    {
+        return switch (this)
+        {
+            case BARRACKS ->
+            {
+                yield 50;
+            }
+            case FARMFIELD ->
+            {
+                yield 10;
+            }
+            case FORTRESS ->
+            {
+                yield 100;
+            }
+            case MINE ->
+            {
+                yield 50;
+            }
+            case SHIPYARD ->
+            {
+                yield 75;
+            }
+            case TOWN ->
+            {
+                yield 50;
+            }
+            case VILLAGE ->
+            {
+                yield 25;
+            }
+            default ->
+            {
+                yield 0;
+            }
+        };
+    }
+    
     private static int countPurchasables()
     {
         int count = 0;

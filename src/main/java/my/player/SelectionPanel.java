@@ -1,5 +1,6 @@
 package my.player;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -65,6 +66,7 @@ public class SelectionPanel extends JPanel implements ActionListener
             {
                 c.gridx = 1;
                 JTextField field = new JTextField(12);
+                field.setMinimumSize(new Dimension(60, 20));
                 field.setEnabled(i <= selected);
                 textFields.put(i, field);
                 add(field, c);
