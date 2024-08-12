@@ -4,8 +4,10 @@ import java.util.Collection;
 import my.utils.Hex;
 import my.units.Field;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import my.units.FieldType;
 
 /**
  *
@@ -24,12 +26,16 @@ public class Player
     private int money;
     private static final int INITIAL_MONEY = 500;
     
+    private final PriceManager priceManager;
+    
     public Player(PlayerType type)
     {
         this.type = type;
         
         territory = new HashMap<>();
         money = INITIAL_MONEY;
+        
+        priceManager = new PriceManager();
     }
     
     public PlayerType getType()
@@ -77,6 +83,23 @@ public class Player
     public Collection<Field> getTerritory()
     {
         return territory.values();
+    }
+    
+    public Map<FieldType, Integer> getPricesMap()
+    {
+        Map<FieldType, Integer> fields = new HashMap<>();
+        for (var value : FieldType.values())
+        {
+            if (value.isPurchasable())
+            {
+                int price = priceManager.getPriceForNext(value);
+                if (price <= money)
+                {
+                    fields.put(value, price);
+                }
+            }
+        }
+        return fields;
     }
     
     public void play()

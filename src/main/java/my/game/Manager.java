@@ -60,6 +60,10 @@ public class Manager
                 purchaseDialog = new PropertiesDialog(master, set);
                 purchaseDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
             }
+            else
+            {
+                // reset the dialog
+            }
             purchaseDialog.setLocationRelativeTo(master);
             purchaseDialog.setVisible(true);
 

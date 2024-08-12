@@ -53,7 +53,7 @@ public class PriceManager
         }
     }
     
-    public int getPrice(FieldType field)
+    public int getPriceForNext(FieldType field)
     {
         if (field.isPurchasable())
         {
