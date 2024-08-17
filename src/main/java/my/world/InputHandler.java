@@ -38,7 +38,7 @@ public class InputHandler implements KeyListener
         int code = e.getKeyCode();
         switch (code)
         {
-            case KeyEvent.VK_RIGHT ->
+            case KeyEvent.VK_RIGHT, KeyEvent.VK_D ->
             {
                 if (!east)
                 { 
@@ -46,7 +46,7 @@ public class InputHandler implements KeyListener
                 }
                 east = true;
             }
-            case KeyEvent.VK_DOWN ->
+            case KeyEvent.VK_DOWN, KeyEvent.VK_S ->
             {
                 if (!south)
                 {
@@ -54,7 +54,7 @@ public class InputHandler implements KeyListener
                 }
                 south = true;
             }
-            case KeyEvent.VK_LEFT ->
+            case KeyEvent.VK_LEFT, KeyEvent.VK_A ->
             {
                 if (!west)
                 {
@@ -62,7 +62,7 @@ public class InputHandler implements KeyListener
                 }
                 west = true;
             }
-            case KeyEvent.VK_UP ->
+            case KeyEvent.VK_UP, KeyEvent.VK_W ->
             {
                 if (!north)
                 {
@@ -71,11 +71,11 @@ public class InputHandler implements KeyListener
                 north = true;
             }
             
-            case KeyEvent.VK_CLOSE_BRACKET ->
+            case KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_Q ->
             {
                 zoomIn = true;
             }
-            case KeyEvent.VK_OPEN_BRACKET ->
+            case KeyEvent.VK_CLOSE_BRACKET, KeyEvent.VK_E ->
             {
                 zoomOut = true;
             }
@@ -108,31 +108,31 @@ public class InputHandler implements KeyListener
         int code = e.getKeyCode();
         switch (code)
         {
-            case KeyEvent.VK_RIGHT ->
+            case KeyEvent.VK_RIGHT, KeyEvent.VK_D ->
             {
                 east = false;
                 --directions;
             }
-            case KeyEvent.VK_DOWN ->
+            case KeyEvent.VK_DOWN, KeyEvent.VK_S ->
             {
                 south = false;
                 --directions;
             }
-            case KeyEvent.VK_LEFT ->
+            case KeyEvent.VK_LEFT, KeyEvent.VK_A ->
             {
                 west = false;
                 --directions;
             }
-            case KeyEvent.VK_UP ->
+            case KeyEvent.VK_UP, KeyEvent.VK_W ->
             {
                 north = false;
                 --directions;
             }
-            case KeyEvent.VK_CLOSE_BRACKET ->
+            case KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_Q ->
             {
                 zoomIn = false;
             }
-            case KeyEvent.VK_OPEN_BRACKET ->
+            case KeyEvent.VK_CLOSE_BRACKET, KeyEvent.VK_E ->
             {
                 zoomOut = false;
             }
