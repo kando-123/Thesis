@@ -154,49 +154,49 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         int panelWidth = size.width;
         int panelHeight = size.height;
         
-        double maxXCoord;
-        double minXCoord;
-        double maxYCoord;
-        double minYCoord;
+        double xMax;
+        double xMin;
+        double yMax;
+        double yMin;
         
-        if (worldWidth > panelWidth)
+        if (worldWidth < panelWidth)
         {
-            maxXCoord = 0.5 * Hex.computeSurfaceWidth(side, scale * World.HEX_OUTER_RADIUS);
-            minXCoord = panelWidth - maxXCoord;
+            xMin = 0;
+            xMax = panelWidth;
         }
         else
         {
-            minXCoord = 0.5 * worldWidth;
-            maxXCoord = panelWidth - minXCoord;
+            xMin = 0.5 * (panelWidth - worldWidth);
+            xMax = 0.5 * (panelWidth + worldWidth);
         }
         
-        if (worldHeight > panelHeight)
+        if (worldHeight < panelHeight)
         {
-            maxYCoord = 0.5 * Hex.computeSurfaceHeight(side, scale * World.HEX_INNER_RADIUS);
-            minYCoord = panelHeight - maxYCoord;
+            yMin = 0;
+            yMax = panelHeight;
         }
         else
         {
-            minYCoord = 0.5 * worldHeight;
-            maxYCoord = panelHeight - minYCoord;
+            yMin = 0.5 * (panelHeight - worldHeight);
+            yMax = 0.5 * (panelHeight + worldHeight);
         }
 
-        if (worldCenter.xCoord > maxXCoord)
+        if (worldCenter.xCoord > xMax)
         {
-            worldCenter.xCoord = maxXCoord;
+            worldCenter.xCoord = xMax;
         }
-        else if (worldCenter.xCoord < minXCoord)
+        else if (worldCenter.xCoord < xMin)
         {
-            worldCenter.xCoord = minXCoord;
+            worldCenter.xCoord = xMin;
         }
 
-        if (worldCenter.yCoord > maxYCoord)
+        if (worldCenter.yCoord > yMax)
         {
-            worldCenter.yCoord = maxYCoord;
+            worldCenter.yCoord = yMax;
         }
-        else if (worldCenter.yCoord < minYCoord)
+        else if (worldCenter.yCoord < yMin)
         {
-            worldCenter.yCoord = minYCoord;
+            worldCenter.yCoord = yMin;
         }
     }
 
