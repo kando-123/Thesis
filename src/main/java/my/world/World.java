@@ -343,7 +343,7 @@ public class World
         }
     }
 
-    private final static int MANIPULATION_MARGIN = 2;
+    private final static int MANIPULATION_MARGIN = 4;
 
     public Hex[] locateCapitals(int number)
     {
@@ -365,7 +365,7 @@ public class World
         LinkedList<Hex> maxima = findMaximumCandidates(inlandness);
 
         /* Filter the apparent maxima out. */
-        removeApparentMaxima(maxima, inlandness);
+        removeApparentMaxima(maxima, inlandness); 
 
         /* Initialize the regions. */
         HashSet<Hex> takenArea = new HashSet<>();
@@ -639,7 +639,7 @@ public class World
         return regions;
     }
 
-    private void propagateRegions(java.util.List<Region> regions,
+    private void propagateRegions(List<Region> regions,
                                   HashMap<Hex, Integer> inlandness,
                                   HashSet<Hex> takenArea)
     {

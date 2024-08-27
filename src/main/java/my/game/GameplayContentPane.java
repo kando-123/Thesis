@@ -16,7 +16,7 @@ public class GameplayContentPane extends JPanel
     private final WorldPanel worldPanel;
     private final UserPanel userPanel;
 
-    public GameplayContentPane(Master master, InputHandler inputHandler)
+    public GameplayContentPane(Master master, Manager manager, InputHandler inputHandler)
     {
         super(new BorderLayout());
 
@@ -26,14 +26,14 @@ public class GameplayContentPane extends JPanel
         int height = (int) (screenSize.height * (0.75));
 
         Dimension worldPanelSize = new Dimension((int) (0.85 * width), height);
-        worldPanel = new WorldPanel(master.getManager());
-        worldPanel.setWorld(master.getWorld());
+        worldPanel = new WorldPanel(manager);
+        worldPanel.setWorld(manager.getWorld());
         worldPanel.setInputHandler(inputHandler);
         worldPanel.setPreferredSize(worldPanelSize);
         add(worldPanel, BorderLayout.CENTER);
 
         Dimension userPanelSize = new Dimension((int) (0.15 * width), height);
-        userPanel = new UserPanel(master);
+        userPanel = new UserPanel(manager);
         userPanel.setPreferredSize(userPanelSize);
         add(userPanel, BorderLayout.WEST);
     }

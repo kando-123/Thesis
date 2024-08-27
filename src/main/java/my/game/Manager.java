@@ -1,17 +1,24 @@
 package my.game;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Set;
 import javax.swing.JDialog;
 import my.player.Player;
+import my.player.PlayerConfiguration;
+import my.player.PlayersQueue;
 import my.units.Field;
 import my.units.FieldType;
+import my.utils.Hex;
 import my.world.World;
+import my.world.WorldConfiguration;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class Manager
+public class Manager implements ActionListener
 {
     private static enum State
     {
@@ -26,26 +33,37 @@ public class Manager
     
     private State state;
 
-    public Manager()
-    {
-        state = State.IDLE;
-    }
-
-    public void setMaster(Master master)
+    public Manager(Master master,
+                   WorldConfiguration worldConfiguration,
+                   List<PlayerConfiguration> playerConfigurations)
     {
         this.master = master;
+        
+        state = State.IDLE;
+        
+        world = new World(worldConfiguration);
+        players = new PlayersQueue(playerConfigurations);
+        
+        Hex[] capitals = world.locateCapitals(playerConfigurations.size());
+        players.initCountries(capitals, world);
     }
 
-    public void setWorld(World world)
-    {
-        this.world = world;
-    }
-
-    private Master master;
-    private World world;
+    private final Master master;
+    private final World world;
+    private final PlayersQueue players;
 
     private JDialog purchaseDialog;
     private Set<Field> markedFields;
+    
+    public World getWorld()
+    {
+        return world;
+    }
+    
+    public Player getFirstPlayer()
+    {
+        return players.first();
+    }
 
     public void beginBuilding()
     {
@@ -53,11 +71,11 @@ public class Manager
         {
             state = State.BUILDING_BEGUN;
 
-            Player current = master.getCurrentPlayer();
+            Player current = players.current();
             var set = world.getBuildableProperties(current);
             if (purchaseDialog == null)
             {
-                purchaseDialog = new PropertiesDialog(master, set);
+                purchaseDialog = new PropertiesDialog(master, this, set);
                 purchaseDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
             }
             else
@@ -80,7 +98,7 @@ public class Manager
             selectedType = type;
             
             purchaseDialog.setVisible(false);
-            markedFields = world.markForPurchase(master.getCurrentPlayer(), type);
+            markedFields = world.markForPurchase(players.current(), type);
 
             master.requestFocus();
             
@@ -92,10 +110,11 @@ public class Manager
     {
         if (state == State.BUILDING_IN_PROGRESS)
         {
-            if (markedFields.contains(field))
+            if (markedFields != null && markedFields.contains(field))
             {
                 world.substitute(field, selectedType);
             }
+            markedFields = null;
             
             state = State.IDLE;
         }
@@ -104,6 +123,34 @@ public class Manager
             
             
             state = State.IDLE;
+        }
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        switch (e.getActionCommand())
+        {
+            case "to-build" ->
+            {
+                System.out.println("Building begins...");
+            }
+            case "to-hire" ->
+            {
+                System.out.println("Hiring begins...");
+            }
+            case "undo" ->
+            {
+                System.out.println("Undoing...");
+            }
+            case "redo" ->
+            {
+                System.out.println("Redoing...");
+            }
+            case "done" ->
+            {
+                System.out.println("Next player...");
+            }
         }
     }
 }

@@ -43,10 +43,10 @@ public class PropertiesDialog extends JDialog implements ActionListener
     
     private final FieldsManager fieldsManager;
 
-    public PropertiesDialog(Master master, Set<FieldType> affordable)
+    public PropertiesDialog(Master master, Manager manager, Set<FieldType> affordable)
     {
         super(master, "Purchase a Property", true);
-        this.manager = master.getManager();
+        this.manager = manager;
         this.affordable = affordable;
 
         fieldsManager = FieldsManager.getInstance();

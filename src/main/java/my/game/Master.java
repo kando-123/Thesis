@@ -13,10 +13,7 @@ import javax.swing.JOptionPane;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayerConfigurationContentPane;
-import my.player.PlayersQueue;
-import my.utils.Hex;
 import my.world.InputHandler;
-import my.world.World;
 import my.world.WorldConfigurationContentPane;
 
 /**
@@ -47,14 +44,11 @@ public class Master extends JFrame implements ActionListener
     private WorldConfigurationContentPane worldContentPane;
     private GameplayContentPane gameplayContentPane;
 
-    private final Manager manager;
-    private World world;
-    private PlayersQueue players;
+    private Manager manager;
 
     public Master()
     {
         state = State.INITIAL;
-        manager = new Manager();
 
         try
         {
@@ -66,16 +60,6 @@ public class Master extends JFrame implements ActionListener
         {
             /* Never thrown. */
         }
-    }
-    
-    public Manager getManager()
-    {
-        return manager;
-    }
-    
-    public World getWorld()
-    {
-        return world;
     }
 
     private void beginPlayerSelection()
@@ -130,26 +114,20 @@ public class Master extends JFrame implements ActionListener
     {
         if (state == State.WORLD_CONFIGURATION)
         {
-            manager.setMaster(this);
+            manager = new Manager(this,
+                                  worldContentPane.getConfiguration(),
+                                  playerContentPane.getPlayerConfigurations());
             
-            world = new World(worldContentPane.getConfiguration());
-            manager.setWorld(world);
-
-            List<PlayerConfiguration> configurations = playerContentPane.getPlayerConfigurations();
-            players = new PlayersQueue(configurations);
-
-            Hex[] capitals = world.locateCapitals(configurations.size());
-            players.initCountries(capitals, world);
-
+            
             InputHandler inputHandler = new InputHandler();
             addKeyListener(inputHandler);
             setFocusable(true);
             requestFocus();
 
-            gameplayContentPane = new GameplayContentPane(this, inputHandler);
+            gameplayContentPane = new GameplayContentPane(this, manager, inputHandler);
             gameplayContentPane.start();
 
-            Player firstUser = players.first();
+            Player firstUser = manager.getFirstPlayer();
             gameplayContentPane.setCurrentUser(firstUser);
 
             setContentPane(gameplayContentPane);
@@ -160,14 +138,7 @@ public class Master extends JFrame implements ActionListener
             state = State.GAMEPLAY;
         }
     }
-
-    private void nextUser()
-    {
-        players.current().endRound();
-        Player user = players.next();
-        gameplayContentPane.setCurrentUser(user);
-    }
-
+    
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -186,16 +157,12 @@ public class Master extends JFrame implements ActionListener
             {
                 beginGameplay();
             }
-            case "done" ->
-            {
-                nextUser();
-                requestFocus();
-            }
         }
     }
     
-    public Player getCurrentPlayer()
+    public void resetUserPanel(Player nextPlayer)
     {
-        return players.current();
+        gameplayContentPane.setCurrentUser(nextPlayer);
+        requestFocus();
     }
 }

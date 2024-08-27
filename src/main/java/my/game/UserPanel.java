@@ -4,10 +4,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,20 +14,18 @@ import my.player.Player;
  *
  * @author Kay Jay O'Nail
  */
-public class UserPanel extends JPanel implements ActionListener
+public class UserPanel extends JPanel
 {
     private JLabel nameLabel;
     private JLabel moneyLabel;
     private JButton buildings;
     private JButton entities;
-    private final ActionListener listener;
     private final Manager manager;
 
-    public UserPanel(Master master)
+    public UserPanel(Manager manager)
     {
         super(new GridBagLayout());
-        listener = master;
-        manager = master.getManager();
+        this.manager = manager;
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -99,14 +93,14 @@ public class UserPanel extends JPanel implements ActionListener
         
         buildings = new JButton("Build a New Property");
         buildings.setActionCommand("to-build");
-        buildings.addActionListener(this);
+        buildings.addActionListener(manager);
         shopPanel.add(buildings, c);
         
         c.gridx = 0;
         c.gridy = 1;
         entities = new JButton("Hire a New Entity");
         entities.setActionCommand("to-hire");
-        entities.addActionListener(this);
+        entities.addActionListener(manager);
         shopPanel.add(entities, c);
 
         return shopPanel;
@@ -126,13 +120,13 @@ public class UserPanel extends JPanel implements ActionListener
 
         JButton undoButton = new JButton("Undo ↺");
         undoButton.setActionCommand("undo");
-        undoButton.addActionListener(listener);
+        undoButton.addActionListener(manager);
         buttonsPanel.add(undoButton, c);
 
         c.gridx = 1;
         JButton redoButton = new JButton("Redo ↻");
         redoButton.setActionCommand("redo");
-        redoButton.addActionListener(listener);
+        redoButton.addActionListener(manager);
         buttonsPanel.add(redoButton, c);
 
         c.gridx = 0;
@@ -140,26 +134,10 @@ public class UserPanel extends JPanel implements ActionListener
         c.gridwidth = 2;
         JButton doneButton = new JButton("Done!");
         doneButton.setActionCommand("done");
-        doneButton.addActionListener(listener);
+        doneButton.addActionListener(manager);
         buttonsPanel.add(doneButton, c);
 
         return buttonsPanel;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        switch (e.getActionCommand())
-        {
-            case "to-build" ->
-            {
-                manager.beginBuilding();
-            }
-            case "to-hire" ->
-            {
-                
-            }
-        }
     }
 
     public void setUser(Player user)
