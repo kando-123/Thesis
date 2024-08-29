@@ -71,14 +71,14 @@ public class PlayersQueue
 
         for (int i = 0; i < capitals.length; ++i)
         {
-            queue.get(i).capture(capitals[i], world.getFieldAt(capitals[i]));
+            queue.get(i).capture(world.getFieldAt(capitals[i]));
 
             for (var neighbor : capitals[i].neighbors())
             {
                 var field = world.getFieldAt(neighbor);
                 if (field != null && !field.getType().isMarine())
                 {
-                    queue.get(i).capture(neighbor, field);
+                    queue.get(i).capture(field);
                 }
             }
         }

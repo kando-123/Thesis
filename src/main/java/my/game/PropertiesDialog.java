@@ -207,7 +207,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
             }
             case "buy" ->
             {
-                manager.buildingSelected(properties.getFirst());
+//                manager.buildingSelected(properties.getFirst());
             }
         }
     }

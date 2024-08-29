@@ -1,10 +1,8 @@
 package my.player;
 
-import java.util.Collection;
 import my.utils.Hex;
 import my.units.Field;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import my.units.FieldType;
@@ -21,7 +19,7 @@ public class Player
     private PlayerColor color;
     private String name;
     
-    private final Map<Hex, Field> territory;
+    private final Country country;
     
     private int money;
     private static final int INITIAL_MONEY = 500;
@@ -32,7 +30,7 @@ public class Player
     {
         this.type = type;
         
-        territory = new HashMap<>();
+        country = new Country();
         money = INITIAL_MONEY;
         
         priceManager = new PriceManager();
@@ -68,22 +66,21 @@ public class Player
         return money;
     }
     
-    public void capture(Hex hex, Field field)
+    public void capture(Field field)
     {
-        territory.put(hex, field);
+        country.addField(field);
         field.setOwner(this);
     }
     
     public void release(Hex hex)
     {
-        territory.get(hex).setOwner(null);
-        territory.remove(hex);
+        country.removeField(hex);
     }
     
-    public Collection<Field> getTerritory()
-    {
-        return territory.values();
-    }
+//    public Collection<Field> getTerritory()
+//    {
+//        return territory.values();
+//    }
     
     public Map<FieldType, Integer> getPricesMap()
     {
@@ -102,16 +99,21 @@ public class Player
         return fields;
     }
     
+    public Set<Hex> getOwnedHexes()
+    {
+        return country.getFieldHexes();
+    }
+    
     public void play()
     {
         
     }
     
-    private static final int INCOME_PER_FIELD = 1;
+    //private static final int INCOME_PER_FIELD = 1;
     
     public void endRound()
     {
-        money += territory.size() * INCOME_PER_FIELD;
+        //money += territory.size() * INCOME_PER_FIELD;
     }
     
     @Override

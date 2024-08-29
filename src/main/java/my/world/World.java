@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import my.player.Player;
 import my.units.Field;
 import my.units.FieldType;
-import my.utils.DoubleDoublet;
+import my.utils.DoublesDoublet;
 import my.utils.Hex;
 import my.utils.HexagonalDirection;
-import my.utils.IntegerDoublet;
+import my.utils.IntegersDoublet;
 import my.utils.WeightedGenerator;
 
 /**
@@ -49,15 +48,15 @@ public class World
         int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
         int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
 
-        IntegerDoublet offset = new IntegerDoublet(-westmostX, -northmostY);
+        IntegersDoublet offset = new IntegersDoublet(-westmostX, -northmostY);
 
-        Map<Object, IntegerDoublet> centers = generateCenters(side, offset);
+        Map<Object, IntegersDoublet> centers = generateCenters(side, offset);
 
         generateSeaFields(seaPercentage, centers);
         generateMountsFields(mountainsPercentage, centers);
         generateLandFields(centers);
 
-        predicates = makePredicatesMap();
+//        predicates = makePredicatesMap();
     }
 
     public int getSide()
@@ -75,9 +74,9 @@ public class World
         return fields.get(hex);
     }
 
-    private Map<Object, IntegerDoublet> generateCenters(int side, IntegerDoublet offset)
+    private Map<Object, IntegersDoublet> generateCenters(int side, IntegersDoublet offset)
     {
-        Map<Object, IntegerDoublet> centers = new HashMap<>(Hex.getHexSurfaceSize(side));
+        Map<Object, IntegersDoublet> centers = new HashMap<>(Hex.getHexSurfaceSize(side));
         Hex hex = Hex.getOrigin();
         centers.put(hex.clone(), hex.getCentralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS).plus(offset));
         for (int ring = 1; ring < side; ++ring)
@@ -132,7 +131,7 @@ public class World
         return threshold;
     }
 
-    private void generateSeaFields(double seaPercentage, Map<Object, IntegerDoublet> centers)
+    private void generateSeaFields(double seaPercentage, Map<Object, IntegersDoublet> centers)
     {
         int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
         int eastmostX = Hex.computeCornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
@@ -169,7 +168,7 @@ public class World
         }
     }
 
-    private void generateMountsFields(double mountsPercentage, Map<Object, IntegerDoublet> centers)
+    private void generateMountsFields(double mountsPercentage, Map<Object, IntegersDoublet> centers)
     {
         int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
         int eastmostX = Hex.computeCornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
@@ -206,7 +205,7 @@ public class World
         }
     }
 
-    private void generateLandFields(Map<Object, IntegerDoublet> centers)
+    private void generateLandFields(Map<Object, IntegersDoublet> centers)
     {
         WeightedGenerator<FieldType> generator = new WeightedGenerator<>();
         try
@@ -231,7 +230,7 @@ public class World
         }
     }
 
-    public void draw(Graphics2D graphics, DoubleDoublet centerOffset, double scale, Dimension panelSize)
+    public void draw(Graphics2D graphics, DoublesDoublet centerOffset, double scale, Dimension panelSize)
     {
         var iterator = fields.entrySet().iterator();
         while (iterator.hasNext())
@@ -239,7 +238,7 @@ public class World
             Map.Entry<Hex, Field> entry = iterator.next();
 
             Hex hex = entry.getKey();
-            IntegerDoublet pixel = hex.getCornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
+            IntegersDoublet pixel = hex.getCornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
 
             int x = (int) centerOffset.xCoord + (int) (pixel.xCoord * scale);
             int y = (int) centerOffset.yCoord + (int) (pixel.yCoord * scale);
@@ -251,7 +250,7 @@ public class World
 
             if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
             {
-                field.draw(graphics, new IntegerDoublet(x, y), new Dimension(w, h));
+                field.draw(graphics, new IntegersDoublet(x, y), new Dimension(w, h));
             }
         }
     }
@@ -792,162 +791,155 @@ public class World
         return sum;
     }
 
-   public Set<Field> markForPurchase(Player player, FieldType type)
-    {
-        Set<Field> markedFields = new HashSet<>();
-        BinaryPredicate<Player, Field> predicate = predicates.get(type);
-        if (predicate != null)
-        {
-            for (Field value : fields.values())
-            {
-                if (predicate.test(player, value))
-                {
-                    value.mark();
-                    markedFields.add(value);
-                }
-            }
-        }
-        return markedFields;
-    }
+//    public Set<Field> markForPurchase(Player player, FieldType type)
+//    {
+//        Set<Field> markedFields = new HashSet<>();
+//        BinaryPredicate<Player, Field> predicate = predicates.get(type);
+//        if (predicate != null)
+//        {
+//            for (Field value : fields.values())
+//            {
+//                if (predicate.test(player, value))
+//                {
+//                    value.mark();
+//                    markedFields.add(value);
+//                }
+//            }
+//        }
+//        return markedFields;
+//    }
    
-    public void unmarkAll()
-    {
-        for (Field value : fields.values())
-        {
-            value.unmark();
-        }
-    }
+//    public void unmarkAll()
+//    {
+//        for (Field value : fields.values())
+//        {
+//            value.unmark();
+//        }
+//    }
     
-    private Map<FieldType, BinaryPredicate<Player, Field>> makePredicates()
-    {
-        Map<FieldType, BinaryPredicate<Player, Field>> map = new HashMap<>(FieldType.PURCHASABLES_COUNT);
-        
-        
-        
-        return map;
-    }
-    private Field[] getNeighboringFields(Field field)
-    {
-        Hex hex = field.getHex();
-        int neighborsCount = (hex.getRing() < side - 1) ? 6 : (hex.isRadial()) ? 3 : 4;
-        Field[] neighboringFields = new Field[neighborsCount];
-        int i = 0;
-        for (var neighbor : hex.neighbors())
-        {
-            Field neighboringField = getFieldAt(neighbor);
-            if (neighboringField != null)
-            {
-                neighboringFields[i++] = neighboringField;
-            }
-        }
-        return neighboringFields;
-    }
+//    private Field[] getNeighboringFields(Field field)
+//    {
+//        Hex hex = field.getHex();
+//        int neighborsCount = (hex.getRing() < side - 1) ? 6 : (hex.isRadial()) ? 3 : 4;
+//        Field[] neighboringFields = new Field[neighborsCount];
+//        int i = 0;
+//        for (var neighbor : hex.neighbors())
+//        {
+//            Field neighboringField = getFieldAt(neighbor);
+//            if (neighboringField != null)
+//            {
+//                neighboringFields[i++] = neighboringField;
+//            }
+//        }
+//        return neighboringFields;
+//    }
 
-    private static interface BinaryPredicate<L, R>
-    {
-        public boolean test(L left, R right);
-    }
+//    private static interface BinaryPredicate<L, R>
+//    {
+//        public boolean test(L left, R right);
+//    }
 
-    private final Map<FieldType, BinaryPredicate<Player, Field>> predicates;
+//    private final Map<FieldType, BinaryPredicate<Player, Field>> predicates;
 
-    private Map<FieldType, BinaryPredicate<Player, Field>> makePredicatesMap()
-    {
-        Map<FieldType, BinaryPredicate<Player, Field>> map = new HashMap<>(FieldType.PURCHASABLES_COUNT);
+//    private Map<FieldType, BinaryPredicate<Player, Field>> makePredicatesMap()
+//    {
+//        Map<FieldType, BinaryPredicate<Player, Field>> map = new HashMap<>(FieldType.PURCHASABLES_COUNT);
+//
+//        map.put(FieldType.BARRACKS, (Player player, Field field) ->
+//        {
+//            return field.getOwner() == player && field.getType().isPlains();
+//        });
+//
+//        map.put(FieldType.TOWN, (Player player, Field field) ->
+//        {
+//            return field.getOwner() == player && field.getType().isPlains();
+//        });
+//
+//        map.put(FieldType.VILLAGE, (Player player, Field field) ->
+//        {
+//            return field.getOwner() == player && field.getType().isPlains();
+//        });
+//        
+//        map.put(FieldType.FARMFIELD, (Player player, Field field) ->
+//        {
+//            if (field.getOwner() != player || !field.getType().isPlains())
+//            {
+//                return false;
+//            }
+//
+//            Field[] neighbors = getNeighboringFields(field);
+//            for (var neighbor : neighbors)
+//            {
+//                if (neighbor.getType() == FieldType.VILLAGE)
+//                {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        });
+//
+//        map.put(FieldType.FORTRESS, (Player player, Field field) ->
+//        {
+//            return field.getOwner() == player && field.getType().isContinental();
+//        });
+//
+//        map.put(FieldType.MINE, (Player player, Field field) ->
+//        {
+//            return field.getOwner() == player && field.getType().isMountainous();
+//        });
+//
+//        map.put(FieldType.SHIPYARD, (Player player, Field field) ->
+//        {
+//            if (field.getOwner() != player || !field.getType().isPlains())
+//            {
+//                return false;
+//            }
+//
+//            Field[] neighbors = getNeighboringFields(field);
+//            for (var neighbor : neighbors)
+//            {
+//                if (neighbor.getType().isMarine())
+//                {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        });
+//
+//        return map;
+//    }
 
-        map.put(FieldType.BARRACKS, (Player player, Field field) ->
-        {
-            return field.getOwner() == player && field.getType().isPlains();
-        });
-
-        map.put(FieldType.TOWN, (Player player, Field field) ->
-        {
-            return field.getOwner() == player && field.getType().isPlains();
-        });
-
-        map.put(FieldType.VILLAGE, (Player player, Field field) ->
-        {
-            return field.getOwner() == player && field.getType().isPlains();
-        });
-        
-        map.put(FieldType.FARMFIELD, (Player player, Field field) ->
-        {
-            if (field.getOwner() != player || !field.getType().isPlains())
-            {
-                return false;
-            }
-
-            Field[] neighbors = getNeighboringFields(field);
-            for (var neighbor : neighbors)
-            {
-                if (neighbor.getType() == FieldType.VILLAGE)
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-
-        map.put(FieldType.FORTRESS, (Player player, Field field) ->
-        {
-            return field.getOwner() == player && field.getType().isContinental();
-        });
-
-        map.put(FieldType.MINE, (Player player, Field field) ->
-        {
-            return field.getOwner() == player && field.getType().isMountainous();
-        });
-
-        map.put(FieldType.SHIPYARD, (Player player, Field field) ->
-        {
-            if (field.getOwner() != player || !field.getType().isPlains())
-            {
-                return false;
-            }
-
-            Field[] neighbors = getNeighboringFields(field);
-            for (var neighbor : neighbors)
-            {
-                if (neighbor.getType().isMarine())
-                {
-                    return true;
-                }
-            }
-            return false;
-        });
-
-        return map;
-    }
-
-    public Set<FieldType> getBuildableProperties(Player player)
-    {
-        Set<FieldType> buildables = new HashSet<>();
-        for (var value : FieldType.values())
-        {
-            if (value.isPurchasable())
-            {
-                var predicate = predicates.get(value);
-                for (var field : player.getTerritory())
-                {
-                    if (predicate.test(player, field))
-                    {
-                        buildables.add(value);
-                        break;
-                    }
-                }
-            }
-        }
-        return buildables;
-    }
+//    public Set<FieldType> getBuildableProperties(Player player)
+//    {
+//        Set<FieldType> buildables = new HashSet<>();
+//        for (var value : FieldType.values())
+//        {
+//            if (value.isPurchasable())
+//            {
+//                var predicate = predicates.get(value);
+//                for (var hex : player.getOwnedHexes())
+//                {
+//                    Field field = fields.get(hex);
+//                    if (predicate.test(player, field))
+//                    {
+//                        buildables.add(value);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//        return buildables;
+//    }
     
-    public void substitute(Field oldField, FieldType newType)
-    {
-        Hex hex = oldField.getHex();
-        if (fields.get(hex) == oldField)
-        {
-            Field newField = new Field(newType, hex);
-            newField.setOwner(oldField.getOwner());
-            fields.put(hex, newField);
-        }
-        
-    }
+//    public void substitute(Field oldField, FieldType newType)
+//    {
+//        Hex hex = oldField.getHex();
+//        if (fields.get(hex) == oldField)
+//        {
+//            Field newField = new Field(newType, hex);
+//            newField.setOwner(oldField.getOwner());
+//            fields.put(hex, newField);
+//        }
+//        
+//    }
 }

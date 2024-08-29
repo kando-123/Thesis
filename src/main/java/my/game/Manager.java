@@ -1,15 +1,12 @@
 package my.game;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Set;
-import javax.swing.JDialog;
+import java.util.Stack;
+import my.command.ManagerCommand;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
 import my.units.Field;
-import my.units.FieldType;
 import my.utils.Hex;
 import my.world.World;
 import my.world.WorldConfiguration;
@@ -18,7 +15,7 @@ import my.world.WorldConfiguration;
  *
  * @author Kay Jay O'Nail
  */
-public class Manager implements ActionListener
+public class Manager
 {
     private static enum State
     {
@@ -46,14 +43,19 @@ public class Manager implements ActionListener
         
         Hex[] capitals = world.locateCapitals(playerConfigurations.size());
         players.initCountries(capitals, world);
+        
+        executedCommands = new Stack();
+        undoneCommands = new Stack();
     }
 
     private final Master master;
     private final World world;
     private final PlayersQueue players;
+    private Stack<ManagerCommand> executedCommands;
+    private Stack<ManagerCommand> undoneCommands;
 
-    private JDialog purchaseDialog;
-    private Set<Field> markedFields;
+    //private JDialog purchaseDialog;
+    //private Set<Field> markedFields;
     
     public World getWorld()
     {
@@ -64,93 +66,110 @@ public class Manager implements ActionListener
     {
         return players.first();
     }
-
+    
     public void beginBuilding()
     {
-        if (state == State.IDLE)
-        {
-            state = State.BUILDING_BEGUN;
-
-            Player current = players.current();
-            var set = world.getBuildableProperties(current);
-            if (purchaseDialog == null)
-            {
-                purchaseDialog = new PropertiesDialog(master, this, set);
-                purchaseDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-            }
-            else
-            {
-                // reset the dialog
-            }
-            purchaseDialog.setLocationRelativeTo(master);
-            purchaseDialog.setVisible(true);
-
-            master.requestFocus();
-        }
+        
     }
     
-    private FieldType selectedType = null;
-    
-    public void buildingSelected(FieldType type)
+    public void beginHiring()
     {
-        if (state == State.BUILDING_BEGUN)
-        {
-            selectedType = type;
-            
-            purchaseDialog.setVisible(false);
-            markedFields = world.markForPurchase(players.current(), type);
+        
+    }
+    
+    public void pursueBuilding()
+    {
+        
+    }
+    
+    public void pursueHiring()
+    {
+        
+    }
+    
+    public void handleField(Field field)
+    {
+        
+    }
+    
+    public void undo()
+    {
+        
+    }
+    
+    public void redo()
+    {
+        
+    }
+    
+    public void nextPlayer()
+    {
+        
+    }
 
-            master.requestFocus();
-            
-            state = State.BUILDING_IN_PROGRESS;
-        }
-    }
+//    public void beginBuilding()
+//    {
+//        if (state == State.IDLE)
+//        {
+//            state = State.BUILDING_BEGUN;
+//
+//            Player current = players.current();
+//            var set = world.getBuildableProperties(current);
+//            if (purchaseDialog == null)
+//            {
+//                purchaseDialog = new PropertiesDialog(master, this, set);
+//                purchaseDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+//            }
+//            else
+//            {
+//                // reset the dialog
+//            }
+//            purchaseDialog.setLocationRelativeTo(master);
+//            purchaseDialog.setVisible(true);
+//
+//            master.requestFocus();
+//        }
+//    }
     
-    public void fieldSelected(Field field)
-    {
-        if (state == State.BUILDING_IN_PROGRESS)
-        {
-            if (markedFields != null && markedFields.contains(field))
-            {
-                world.substitute(field, selectedType);
-            }
-            markedFields = null;
-            
-            state = State.IDLE;
-        }
-        else if (state == State.HIRING_IN_PROGRESS)
-        {
-            
-            
-            state = State.IDLE;
-        }
-    }
+//    private FieldType selectedType = null;
     
-    @Override
-    public void actionPerformed(ActionEvent e)
+//    public void buildingSelected(FieldType type)
+//    {
+//        if (state == State.BUILDING_BEGUN)
+//        {
+//            selectedType = type;
+//            
+//            purchaseDialog.setVisible(false);
+//            markedFields = world.markForPurchase(players.current(), type);
+//
+//            master.requestFocus();
+//            
+//            state = State.BUILDING_IN_PROGRESS;
+//        }
+//    }
+    
+//    public void fieldSelected(Field field)
+//    {
+//        if (state == State.BUILDING_IN_PROGRESS)
+//        {
+//            if (markedFields != null && markedFields.contains(field))
+//            {
+//                world.substitute(field, selectedType);
+//            }
+//            markedFields = null;
+//            
+//            state = State.IDLE;
+//        }
+//        else if (state == State.HIRING_IN_PROGRESS)
+//        {
+//            
+//            
+//            state = State.IDLE;
+//        }
+//    }
+    
+    public void passCommand(ManagerCommand command)
     {
-        switch (e.getActionCommand())
-        {
-            case "to-build" ->
-            {
-                System.out.println("Building begins...");
-            }
-            case "to-hire" ->
-            {
-                System.out.println("Hiring begins...");
-            }
-            case "undo" ->
-            {
-                System.out.println("Undoing...");
-            }
-            case "redo" ->
-            {
-                System.out.println("Redoing...");
-            }
-            case "done" ->
-            {
-                System.out.println("Next player...");
-            }
-        }
+        System.out.println("Manager asserts receiving a command.");
     }
 }

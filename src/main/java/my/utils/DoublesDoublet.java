@@ -4,50 +4,50 @@ package my.utils;
  *
  * @author Kay Jay O'Nail
  */
-public class DoubleDoublet
+public class DoublesDoublet
 {
     public double xCoord;
     public double yCoord;
     
-    public DoubleDoublet(double x, double y)
+    public DoublesDoublet(double x, double y)
     {
         this.xCoord = x;
         this.yCoord = y;
     }
     
-    public DoubleDoublet clone()
+    public DoublesDoublet clone()
     {
-        return new DoubleDoublet(xCoord, yCoord);
+        return new DoublesDoublet(xCoord, yCoord);
     }
     
-    public DoubleDoublet plus(DoubleDoublet other)
+    public DoublesDoublet plus(DoublesDoublet other)
     {
         double x = xCoord + other.xCoord;
         double y = yCoord + other.yCoord;
-        return new DoubleDoublet(x, y);
+        return new DoublesDoublet(x, y);
     }
     
-    public DoubleDoublet minus(DoubleDoublet other)
+    public DoublesDoublet minus(DoublesDoublet other)
     {
         double x = xCoord - other.xCoord;
         double y = yCoord - other.yCoord;
-        return new DoubleDoublet(x, y);
+        return new DoublesDoublet(x, y);
     }
     
-    public DoubleDoublet times(double factor)
+    public DoublesDoublet times(double factor)
     {
         double x = factor * xCoord;
         double y = factor * yCoord;
-        return new DoubleDoublet(x, y);
+        return new DoublesDoublet(x, y);
     }
     
-    public void add(DoubleDoublet other)
+    public void add(DoublesDoublet other)
     {
         xCoord += other.xCoord;
         yCoord += other.yCoord;
     }
     
-    public void subtract(DoubleDoublet other)
+    public void subtract(DoublesDoublet other)
     {
         xCoord -= other.xCoord;
         yCoord -= other.yCoord;
@@ -62,9 +62,9 @@ public class DoubleDoublet
     @Override
     public boolean equals(Object other)
     {
-        if (other.getClass() == DoubleDoublet.class)
+        if (other.getClass() == DoublesDoublet.class)
         {
-            DoubleDoublet that = (DoubleDoublet) other;
+            DoublesDoublet that = (DoublesDoublet) other;
             return this.xCoord == that.xCoord && this.yCoord == that.yCoord;
         }
         else

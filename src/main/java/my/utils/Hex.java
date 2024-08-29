@@ -276,78 +276,78 @@ public class Hex
         return 3 * side * (side - 1) + 1;
     }
     
-    public IntegerDoublet getCentralPoint(int outerRadius, int innerRadius)
+    public IntegersDoublet getCentralPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2;
         int y = (qCoord - rCoord) * innerRadius;
-        return new IntegerDoublet(x, y);
+        return new IntegersDoublet(x, y);
     }
 
-    public IntegerDoublet getCornerPoint(int outerRadius, int innerRadius)
+    public IntegersDoublet getCornerPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2 - outerRadius;
         int y = (qCoord - rCoord) * innerRadius - innerRadius;
-        return new IntegerDoublet(x, y);
+        return new IntegersDoublet(x, y);
     }
 
-    public DoubleDoublet getCentralPoint(double outerRadius, double innerRadius)
+    public DoublesDoublet getCentralPoint(double outerRadius, double innerRadius)
     {
         double x = (double) (pCoord) * outerRadius * 1.5;
         double y = (double) (qCoord - rCoord) * innerRadius;
-        return new DoubleDoublet(x, y);
+        return new DoublesDoublet(x, y);
     }
 
-    public DoubleDoublet getCornerPoint(double outerRadius, double innerRadius)
+    public DoublesDoublet getCornerPoint(double outerRadius, double innerRadius)
     {
         double x = (double) (pCoord) * outerRadius * 1.5 - outerRadius;
         double y = (double) (qCoord - rCoord) * innerRadius - innerRadius;
-        return new DoubleDoublet(x, y);
+        return new DoublesDoublet(x, y);
     }
 
-    public static IntegerDoublet computeCentralPointAt(int p, int q, int r, int outerRadius, int innerRadius)
+    public static IntegersDoublet computeCentralPointAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
-        IntegerDoublet point = null;
+        IntegersDoublet point = null;
         if (p + q + r == 0)
         {
             int x = p * outerRadius * 3 / 2;
             int y = (q - r) * innerRadius;
-            point = new IntegerDoublet(x, y);
+            point = new IntegersDoublet(x, y);
         }
         return point;
     }
 
-    public static IntegerDoublet computeCornerPointAt(int p, int q, int r, int outerRadius, int innerRadius)
+    public static IntegersDoublet computeCornerPointAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
-        IntegerDoublet point = null;
+        IntegersDoublet point = null;
         if (p + q + r == 0)
         {
             int x = p * outerRadius * 3 / 2 - outerRadius;
             int y = (q - r) * innerRadius - innerRadius;
-            point = new IntegerDoublet(x, y);
+            point = new IntegersDoublet(x, y);
         }
         return point;
     }
 
-    public static DoubleDoublet computeCentralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    public static DoublesDoublet computeCentralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
     {
-        DoubleDoublet point = null;
+        DoublesDoublet point = null;
         if (p + q + r == 0)
         {
             double x = (double) (p) * outerRadius * 1.5;
             double y = (double) (q - r) * innerRadius;
-            point = new DoubleDoublet(x, y);
+            point = new DoublesDoublet(x, y);
         }
         return point;
     }
 
-    public static DoubleDoublet computeCornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    public static DoublesDoublet computeCornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
     {
-        DoubleDoublet point = null;
+        DoublesDoublet point = null;
         if (p + q + r == 0)
         {
             double x = (double) (p) * outerRadius * 1.5 - outerRadius;
             double y = (double) (q - r) * innerRadius - innerRadius;
-            point = new DoubleDoublet(x, y);
+            point = new DoublesDoublet(x, y);
         }
         return point;
     }

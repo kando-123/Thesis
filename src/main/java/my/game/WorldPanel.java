@@ -8,7 +8,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
-import my.utils.DoubleDoublet;
+import my.utils.DoublesDoublet;
 import my.utils.Hex;
 import my.world.InputHandler;
 import my.world.OrthogonalDirection;
@@ -21,8 +21,8 @@ import my.world.World;
  */
 public class WorldPanel extends JPanel implements Runnable, MouseListener
 {
-    private DoubleDoublet panelCenter;
-    private DoubleDoublet worldCenter;
+    private DoublesDoublet panelCenter;
+    private DoublesDoublet worldCenter;
     private static final double UNIT_STEP = 5;
     private static final double SIN_30DEG = Math.sin(Math.toRadians(30));
     private static final double COS_30DEG = Math.cos(Math.toRadians(30));
@@ -61,8 +61,8 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     {
         super.setPreferredSize(newSize);
         
-        panelCenter = new DoubleDoublet(newSize.width / 2, newSize.height / 2);
-        worldCenter = new DoubleDoublet(newSize.width / 2, newSize.height / 2);
+        panelCenter = new DoublesDoublet(newSize.width / 2, newSize.height / 2);
+        worldCenter = new DoublesDoublet(newSize.width / 2, newSize.height / 2);
     }
 
     @Override
@@ -133,16 +133,16 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         {
             scale = Math.min(scale * SCALE_FACTOR, MAX_SCALE);
 
-            DoubleDoublet relative = panelCenter.minus(worldCenter);
-            DoubleDoublet offset = relative.times(SCALE_FACTOR - 1);
+            DoublesDoublet relative = panelCenter.minus(worldCenter);
+            DoublesDoublet offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.subtract(offset);
         }
         else if (inputHandler.zoomOut() && scale > MIN_SCALE)
         {
             scale = Math.max(scale / SCALE_FACTOR, MIN_SCALE);
 
-            DoubleDoublet relative = panelCenter.minus(worldCenter);
-            DoubleDoublet offset = relative.times(SCALE_FACTOR - 1);
+            DoublesDoublet relative = panelCenter.minus(worldCenter);
+            DoublesDoublet offset = relative.times(SCALE_FACTOR - 1);
             worldCenter.add(offset);
         }
 
@@ -221,7 +221,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        world.unmarkAll();
+//        world.unmarkAll();
         
         Point point = e.getPoint();
         double globalX = point.x;
@@ -230,7 +230,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         double relativeY = globalY - worldCenter.yCoord;
         Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
         
-        manager.fieldSelected(world.getFieldAt(hex));
+//        manager.fieldSelected(world.getFieldAt(hex));
     }
 
     @Override

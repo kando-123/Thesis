@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import my.player.Player;
 import my.player.PlayerColor;
 import my.utils.Hex;
-import my.utils.IntegerDoublet;
+import my.utils.IntegersDoublet;
 
 /**
  *
@@ -94,7 +94,7 @@ public class Field
         isMarked = false;
     }
     
-    public void draw(Graphics2D graphics, IntegerDoublet position, Dimension size)
+    public void draw(Graphics2D graphics, IntegersDoublet position, Dimension size)
     {
         graphics.drawImage(isMarked ? markedImage : image,
                 position.xCoord, position.yCoord,
