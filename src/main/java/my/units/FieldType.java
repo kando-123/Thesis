@@ -30,7 +30,7 @@ public enum FieldType
         iPath = String.format("/iFields/i%s.png", filename);
     }
 
-    public boolean isPurchasable()
+    public boolean isBuilding()
     {
         return isProperty() && !isCapital();
     }
@@ -264,7 +264,7 @@ public enum FieldType
         int count = 0;
         for (var value : FieldType.values())
         {
-            if (value.isPurchasable())
+            if (value.isBuilding())
             {
                 ++count;
             }
@@ -272,5 +272,5 @@ public enum FieldType
         return count;
     }
     
-    public static final int PURCHASABLES_COUNT = countPurchasables();
+    public static final int BUILDINGS_COUNT = countPurchasables();
 }

@@ -27,12 +27,11 @@ import my.units.FieldsManager;
  *
  * @author Kay Jay O'Nail
  */
-public class PropertiesDialog extends JDialog implements ActionListener
+public class BuildingSelectionDialog extends JDialog implements ActionListener
 {
     private final Manager manager;
     
-    private final List<FieldType> properties;
-    private final Set<FieldType> affordable;
+    private final List<FieldType> allBuildings;
 
     private JLabel nameLabel;
     private JLabel propertyLabel;
@@ -41,22 +40,26 @@ public class PropertiesDialog extends JDialog implements ActionListener
     private JTextArea priceTextArea;
     private JButton buyButton;
     
+    private final Map<FieldType, Integer> prices;
+    private int playerMoney;
+    private Set<FieldType> erectableBuildings;
+    
     private final FieldsManager fieldsManager;
 
-    public PropertiesDialog(Master master, Manager manager, Set<FieldType> affordable)
+    public BuildingSelectionDialog(Master master, Manager manager, Map<FieldType, Integer> prices)
     {
-        super(master, "Purchase a Property", true);
+        super(master, "Select a Building", true);
         this.manager = manager;
-        this.affordable = affordable;
+        this.prices = prices;
 
         fieldsManager = FieldsManager.getInstance();
 
-        properties = new LinkedList<>();
+        allBuildings = new LinkedList<>();
         for (var fieldType : FieldType.values())
         {
-            if (fieldType.isPurchasable())
+            if (fieldType.isBuilding())
             {
-                properties.add(fieldType);
+                allBuildings.add(fieldType);
             }
         }
 
@@ -66,7 +69,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
 
         setResizable(false);
     }
-
+    
     private JPanel makeContentPane()
     {
         JPanel contentPane = new JPanel();
@@ -150,7 +153,7 @@ public class PropertiesDialog extends JDialog implements ActionListener
 
         c.gridx = 1;
         c.weightx = 1;
-        priceTextArea = new JTextArea("X Ħ");
+        priceTextArea = new JTextArea("? Ħ");
         priceTextArea.setBorder(BorderFactory.createTitledBorder("Price"));
         priceTextArea.setEditable(false);
         priceTextArea.setLineWrap(true);
@@ -161,8 +164,8 @@ public class PropertiesDialog extends JDialog implements ActionListener
 
         c.gridx = 2;
         c.weightx = 1;
-        buyButton = new JButton("Buy!");
-        buyButton.setActionCommand("buy");
+        buyButton = new JButton("Build");
+        buyButton.setActionCommand("build");
         buyButton.addActionListener(this);
         buyButton.setPreferredSize(new Dimension(50, 90));
         purchasePanel.add(buyButton);
@@ -172,18 +175,29 @@ public class PropertiesDialog extends JDialog implements ActionListener
 
     private void reassignValues()
     {
-        var current = properties.getFirst();
+        FieldType current = allBuildings.getFirst();
         nameLabel.setText(current.name());
         propertyLabel.setIcon(fieldsManager.getFieldAsIcon(current));
         descriptionTextArea.setText(current.getDescription());
         conditionsTextArea.setText(current.getConditions());
-        buyButton.setEnabled(affordable.contains(current));
+        priceTextArea.setText(String.format("%d Ħ", prices.get(current)));
+        
+        boolean isAffordable = prices != null && prices.containsKey(current) && prices.get(current) <= playerMoney;
+        boolean isErectable = erectableBuildings != null && erectableBuildings.contains(current);
+        buyButton.setEnabled(isAffordable && isErectable);
+        
         repaint();
     }
     
-    public void setPrices(Map<FieldType, Integer> prices)
+    public void setPlayerMoney(int money)
     {
-        
+        playerMoney = money;
+    }
+    
+    public void setErectableBuildings(Set<FieldType> buildings)
+    {
+        erectableBuildings = buildings;
+        reassignValues();
     }
 
     @Override
@@ -193,15 +207,15 @@ public class PropertiesDialog extends JDialog implements ActionListener
         {
             case "left" ->
             {
-                var previous = properties.removeLast();
-                properties.addFirst(previous);
+                var previous = allBuildings.removeLast();
+                allBuildings.addFirst(previous);
 
                 reassignValues();
             }
             case "right" ->
             {
-                var previous = properties.removeFirst();
-                properties.addLast(previous);
+                var previous = allBuildings.removeFirst();
+                allBuildings.addLast(previous);
 
                 reassignValues();
             }

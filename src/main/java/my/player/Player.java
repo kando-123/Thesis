@@ -1,9 +1,9 @@
 package my.player;
 
-import my.utils.Hex;
-import my.units.Field;
 import java.util.HashMap;
 import java.util.Map;
+import my.utils.Hex;
+import my.units.Field;
 import java.util.Set;
 import my.units.FieldType;
 
@@ -24,16 +24,16 @@ public class Player
     private int money;
     private static final int INITIAL_MONEY = 500;
     
-    private final PriceManager priceManager;
+    private final PriceCalculator priceCalculator;
     
     public Player(PlayerType type)
     {
         this.type = type;
         
-        country = new Country();
+        country = new Country(this);
         money = INITIAL_MONEY;
         
-        priceManager = new PriceManager();
+        priceCalculator = new PriceCalculator();
     }
     
     public PlayerType getType()
@@ -69,39 +69,32 @@ public class Player
     public void capture(Field field)
     {
         country.addField(field);
-        field.setOwner(this);
     }
     
-    public void release(Hex hex)
+    public void release(Field field)
     {
-        country.removeField(hex);
-    }
-    
-//    public Collection<Field> getTerritory()
-//    {
-//        return territory.values();
-//    }
-    
-    public Map<FieldType, Integer> getPricesMap()
-    {
-        Map<FieldType, Integer> fields = new HashMap<>();
-        for (var value : FieldType.values())
-        {
-            if (value.isPurchasable())
-            {
-                int price = priceManager.getPriceForNext(value);
-                if (price <= money)
-                {
-                    fields.put(value, price);
-                }
-            }
-        }
-        return fields;
+        country.removeField(field);
     }
     
     public Set<Hex> getOwnedHexes()
     {
         return country.getFieldHexes();
+    }
+    
+    public int getPriceFor(FieldType type)
+    {
+        int count = country.getCount(type);
+        return priceCalculator.calculatePrice(type, count);
+    }
+    
+    public Map<FieldType, Integer> getPrices()
+    {
+        Map<FieldType, Integer> prices = new HashMap<>();
+        for (var value : FieldType.values())
+        {
+            prices.put(value, getPriceFor(value));
+        }
+        return prices;
     }
     
     public void play()

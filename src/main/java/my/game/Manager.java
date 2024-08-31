@@ -1,5 +1,6 @@
 package my.game;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 import my.command.ManagerCommand;
@@ -53,6 +54,8 @@ public class Manager
     private final PlayersQueue players;
     private Stack<ManagerCommand> executedCommands;
     private Stack<ManagerCommand> undoneCommands;
+    
+    private BuildingSelectionDialog buildingDialog;
 
     //private JDialog purchaseDialog;
     //private Set<Field> markedFields;
@@ -69,7 +72,11 @@ public class Manager
     
     public void beginBuilding()
     {
-        
+        Player player = players.current();
+        buildingDialog = new BuildingSelectionDialog(master, this, player.getPrices());
+        buildingDialog.setPlayerMoney(player.getMoney());
+        buildingDialog.setErectableBuildings(world.getErectableBuildings(player));
+        buildingDialog.setVisible(true);
     }
     
     public void beginHiring()
@@ -171,5 +178,6 @@ public class Manager
     public void passCommand(ManagerCommand command)
     {
         System.out.println("Manager asserts receiving a command.");
+        command.execute(this);
     }
 }
