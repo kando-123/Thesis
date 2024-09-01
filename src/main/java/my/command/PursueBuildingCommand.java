@@ -1,6 +1,7 @@
 package my.command;
 
 import my.game.Manager;
+import my.units.FieldType;
 
 /**
  *
@@ -8,10 +9,17 @@ import my.game.Manager;
  */
 public class PursueBuildingCommand extends ManagerCommand
 {
+    private FieldType building;
+
+    public PursueBuildingCommand(FieldType building)
+    {
+        this.building = building;
+    }
+    
     @Override
     public void execute(Manager manager)
     {
-        manager.pursueBuilding();
+        manager.pursueBuilding(building);
     }
 
     @Override

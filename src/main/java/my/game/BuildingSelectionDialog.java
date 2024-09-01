@@ -16,9 +16,11 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import my.command.PursueBuildingCommand;
 import my.units.ArrowsManager;
 import my.units.FieldType;
 import my.units.FieldsManager;
@@ -29,9 +31,9 @@ import my.units.FieldsManager;
  */
 public class BuildingSelectionDialog extends JDialog implements ActionListener
 {
-    private final Manager manager;
-    
     private final List<FieldType> allBuildings;
+    
+    private Manager manager;
 
     private JLabel nameLabel;
     private JLabel propertyLabel;
@@ -40,17 +42,15 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
     private JTextArea priceTextArea;
     private JButton buyButton;
     
-    private final Map<FieldType, Integer> prices;
     private int playerMoney;
+    private Map<FieldType, Integer> prices;
     private Set<FieldType> erectableBuildings;
     
     private final FieldsManager fieldsManager;
-
-    public BuildingSelectionDialog(Master master, Manager manager, Map<FieldType, Integer> prices)
+    
+    private BuildingSelectionDialog(JFrame frame)
     {
-        super(master, "Select a Building", true);
-        this.manager = manager;
-        this.prices = prices;
+        super(frame, "Select a Building", true);
 
         fieldsManager = FieldsManager.getInstance();
 
@@ -64,7 +64,6 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         }
 
         setContentPane(makeContentPane());
-        reassignValues();
         pack();
 
         setResizable(false);
@@ -189,12 +188,22 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         repaint();
     }
     
-    public void setPlayerMoney(int money)
+    private void setManager(Manager manager)
+    {
+        this.manager = manager;
+    }
+    
+    private void setPlayerMoney(int money)
     {
         playerMoney = money;
     }
     
-    public void setErectableBuildings(Set<FieldType> buildings)
+    private void setPrices(Map<FieldType, Integer> prices)
+    {
+        this.prices = prices;
+    }
+    
+    private void setErectableBuildings(Set<FieldType> buildings)
     {
         erectableBuildings = buildings;
         reassignValues();
@@ -219,10 +228,62 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
                 reassignValues();
             }
-            case "buy" ->
+            case "build" ->
             {
-//                manager.buildingSelected(properties.getFirst());
+                manager.passCommand(new PursueBuildingCommand(allBuildings.getFirst()));
             }
+        }
+    }
+    
+    public static class Builder
+    {
+        private JFrame frame;
+        private Manager manager;
+        private Map<FieldType, Integer> prices;
+        private int playerMoney;
+        private Set<FieldType> erectableBuildings;
+        
+        public BuildingSelectionDialog get()
+        {
+            if (frame != null && manager != null && prices != null && erectableBuildings != null)
+            {
+                BuildingSelectionDialog dialog = new BuildingSelectionDialog(frame);
+                dialog.setManager(manager);
+                dialog.setPrices(prices);
+                dialog.setPlayerMoney(playerMoney);
+                dialog.setErectableBuildings(erectableBuildings);
+                dialog.reassignValues();
+                return dialog;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        
+        public void setFrame(JFrame frame)
+        {
+            this.frame = frame;
+        }
+        
+        public void setManager(Manager manager)
+        {
+            this.manager = manager;
+        }
+        
+        public void setPrices(Map<FieldType, Integer> prices)
+        {
+            this.prices = prices;
+        }
+        
+        public void setPlayerMoney(int playerMoney)
+        {
+            this.playerMoney = playerMoney;
+        }
+        
+        public void setErectableBuildings(Set<FieldType> buildings)
+        {
+            this.erectableBuildings = buildings;
         }
     }
 }

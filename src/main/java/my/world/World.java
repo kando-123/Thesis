@@ -58,6 +58,8 @@ public class World
         generateLandFields(centers);
 
         predicates = makePredicatesMap();
+        
+        markedFields = new HashSet<>();
     }
 
     public int getSide()
@@ -791,32 +793,38 @@ public class World
 
         return sum;
     }
-
-//    public Set<Field> markForPurchase(Player player, FieldType type)
-//    {
-//        Set<Field> markedFields = new HashSet<>();
-//        BinaryPredicate<Player, Field> predicate = predicates.get(type);
-//        if (predicate != null)
-//        {
-//            for (Field value : fields.values())
-//            {
-//                if (predicate.test(player, value))
-//                {
-//                    value.mark();
-//                    markedFields.add(value);
-//                }
-//            }
-//        }
-//        return markedFields;
-//    }
+    
+    private final Set<Field> markedFields;
+    
+    public void mark(Player player, FieldType type)
+    {
+        BinaryPredicate<Player, Field> predicate = predicates.get(type);
+        if (predicate != null)
+        {
+            for (Field value : fields.values())
+            {
+                if (predicate.test(player, value))
+                {
+                    value.mark();
+                    markedFields.add(value);
+                }
+            }
+        }
+    }
    
-//    public void unmarkAll()
-//    {
-//        for (Field value : fields.values())
-//        {
-//            value.unmark();
-//        }
-//    }
+    public void unmarkAll()
+    {
+        for (Field value : fields.values())
+        {
+            value.unmark();
+        }
+        markedFields.clear();
+    }
+    
+    public boolean isMarked(Field field)
+    {
+        return markedFields.contains(field);
+    }
     
     private Field[] getNeighboringFields(Field field)
     {
@@ -932,15 +940,15 @@ public class World
         return buildings;
     }
     
-//    public void substitute(Field oldField, FieldType newType)
-//    {
-//        Hex hex = oldField.getHex();
-//        if (fields.get(hex) == oldField)
-//        {
-//            Field newField = new Field(newType, hex);
-//            newField.setOwner(oldField.getOwner());
-//            fields.put(hex, newField);
-//        }
-//        
-//    }
+    public void substitute(Field oldField, FieldType newType)
+    {
+        Hex hex = oldField.getHex();
+        if (fields.get(hex) == oldField)
+        {
+            Field newField = new Field(newType, hex);
+            newField.setOwner(oldField.getOwner());
+            fields.put(hex, newField);
+        }
+        
+    }
 }

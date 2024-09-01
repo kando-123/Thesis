@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
+import my.command.HandleFieldCommand;
 import my.utils.DoublesDoublet;
 import my.utils.Hex;
 import my.world.InputHandler;
@@ -221,8 +222,6 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     @Override
     public void mouseClicked(MouseEvent e)
     {
-//        world.unmarkAll();
-        
         Point point = e.getPoint();
         double globalX = point.x;
         double globalY = point.y;
@@ -230,7 +229,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         double relativeY = globalY - worldCenter.yCoord;
         Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
         
-//        manager.fieldSelected(world.getFieldAt(hex));
+        manager.passCommand(new HandleFieldCommand(world.getFieldAt(hex)));
     }
 
     @Override

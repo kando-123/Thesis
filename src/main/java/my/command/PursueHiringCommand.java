@@ -1,6 +1,7 @@
 package my.command;
 
 import my.game.Manager;
+import my.units.EntityType;
 
 /**
  *
@@ -8,10 +9,17 @@ import my.game.Manager;
  */
 public class PursueHiringCommand extends ManagerCommand
 {
+    private final EntityType entity;
+    
+    public PursueHiringCommand(EntityType entity)
+    {
+        this.entity = entity;
+    }
+    
     @Override
     public void execute(Manager manager)
     {
-        manager.pursueHiring();
+        manager.pursueHiring(entity);
     }
 
     @Override

@@ -2,12 +2,15 @@ package my.game;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import my.command.ManagerCommand;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
+import my.units.EntityType;
 import my.units.Field;
+import my.units.FieldType;
 import my.utils.Hex;
 import my.world.World;
 import my.world.WorldConfiguration;
@@ -72,10 +75,16 @@ public class Manager
     
     public void beginBuilding()
     {
+        state = State.BUILDING_BEGUN;
+        
         Player player = players.current();
-        buildingDialog = new BuildingSelectionDialog(master, this, player.getPrices());
-        buildingDialog.setPlayerMoney(player.getMoney());
-        buildingDialog.setErectableBuildings(world.getErectableBuildings(player));
+        BuildingSelectionDialog.Builder builder = new BuildingSelectionDialog.Builder();
+        builder.setFrame(master);
+        builder.setManager(this);
+        builder.setPrices(player.getPrices());
+        builder.setPlayerMoney(player.getMoney());
+        builder.setErectableBuildings(world.getErectableBuildings(player));
+        buildingDialog = builder.get();
         buildingDialog.setVisible(true);
     }
     
@@ -84,12 +93,18 @@ public class Manager
         
     }
     
-    public void pursueBuilding()
+    private FieldType selectedBuilding;
+    
+    public void pursueBuilding(FieldType building)
     {
+        state = State.BUILDING_IN_PROGRESS;
         
+        buildingDialog.dispose();
+        selectedBuilding = building;
+        world.mark(players.current(), building);
     }
     
-    public void pursueHiring()
+    public void pursueHiring(EntityType entity)
     {
         
     }
@@ -97,6 +112,9 @@ public class Manager
     public void handleField(Field field)
     {
         
+        world.substitute(field, selectedBuilding);
+        world.unmarkAll();
+        selectedBuilding = null;
     }
     
     public void undo()
@@ -147,7 +165,7 @@ public class Manager
 //            selectedType = type;
 //            
 //            purchaseDialog.setVisible(false);
-//            markedFields = world.markForPurchase(players.current(), type);
+//            markedFields = world.mark(players.current(), type);
 //
 //            master.requestFocus();
 //            
