@@ -11,7 +11,7 @@ import my.utils.IntegerLinearFunction;
 public class EntityPriceCalculator
 {
     Map<EntityType, IntegerLinearFunction> functions;
-    
+
     private EntityPriceCalculator()
     {
         functions = new HashMap<>(3);
@@ -22,9 +22,9 @@ public class EntityPriceCalculator
         functions.put(EntityType.NAVY,
                 new IntegerLinearFunction(EntityType.INFANTRY.getPrice(), EntityType.NAVY.getPrice()));
     }
-    
+
     private static EntityPriceCalculator instance = null;
-    
+
     public static EntityPriceCalculator getInstance()
     {
         if (instance == null)
@@ -33,9 +33,10 @@ public class EntityPriceCalculator
         }
         return instance;
     }
-    
+
     public int getPriceFor(int number, EntityType type)
     {
+        assert (type != null);
         return functions.get(type).computeFor(number);
     }
 }

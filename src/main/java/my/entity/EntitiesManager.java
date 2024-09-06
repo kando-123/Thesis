@@ -16,17 +16,23 @@ import javax.swing.ImageIcon;
 public class EntitiesManager
 {
     private Map<EntityType, BufferedImage> entities;
+    private Map<EntityType, Icon> iEntities;
     
     private EntitiesManager()
     {
         entities = new HashMap<>(EntityType.values().length);
-        for (var entity : EntityType.values())
+        iEntities = new HashMap<>(EntityType.values().length);
+        for (var value : EntityType.values())
         {
-            InputStream stream = getClass().getResourceAsStream(entity.getFile());
+            InputStream stream = getClass().getResourceAsStream(value.getFile());
+            InputStream iStream = getClass().getResourceAsStream(value.getIconFile());
             try
             {
-                BufferedImage image = ImageIO.read(stream);
-                entities.put(entity, image);
+                BufferedImage entity = ImageIO.read(stream);
+                entities.put(value, entity);
+                
+                BufferedImage iEntity = ImageIO.read(iStream);
+                iEntities.put(value, new ImageIcon(iEntity));
             }
             catch (IOException io)
             {
@@ -49,6 +55,6 @@ public class EntitiesManager
 
     public Icon getEntityAsIcon(EntityType type)
     {
-        return new ImageIcon(getEntity(type));
+        return iEntities.get(type);
     }
 }

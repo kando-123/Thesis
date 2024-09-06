@@ -28,6 +28,10 @@ public class BuildingPriceCalculator
     
     public static BuildingPriceCalculator getInstance()
     {
+        if (instance == null)
+        {
+            instance = new BuildingPriceCalculator();
+        }
         return instance;
     }
     

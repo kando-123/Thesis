@@ -24,18 +24,18 @@ public class FieldsManager
     {
         fields = new HashMap<>(FieldType.values().length);
         iFields = new HashMap<>(FieldType.values().length);
-        for (var type : FieldType.values())
+        for (var value : FieldType.values())
         {
-            InputStream stream = getClass().getResourceAsStream(type.path);
-            InputStream iStream = getClass().getResourceAsStream(type.iPath);
+            InputStream stream = getClass().getResourceAsStream(value.path);
+            InputStream iStream = getClass().getResourceAsStream(value.iPath);
             try
             {
                 BufferedImage field = ImageIO.read(stream);
                 BufferedImage brightField = brightenImage(field);
-                fields.put(type, new Doublet<>(field, brightField));
+                fields.put(value, new Doublet<>(field, brightField));
                 
                 BufferedImage iField = ImageIO.read(iStream);
-                iFields.put(type, new ImageIcon(iField));
+                iFields.put(value, new ImageIcon(iField));
             }
             catch (IOException io)
             {

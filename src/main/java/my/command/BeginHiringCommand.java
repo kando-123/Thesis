@@ -11,13 +11,13 @@ public class BeginHiringCommand extends ManagerCommand
     @Override
     public void execute(Manager manager)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        manager.beginHiring();
     }
 
     @Override
     public void undo(Manager manager)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
     
 }

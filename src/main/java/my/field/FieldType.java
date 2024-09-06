@@ -110,16 +110,16 @@ public enum FieldType
             }
             case FARMFIELD ->
             {
-                yield "Farmfield gives you extra HexCoins after every round.";
+                yield "Farmfield brings extra HexCoins after every round.";
             }
             case FORTRESS ->
             {
-                yield "Fortress NEEDS SPECIFYING AFTER DEFINING MILITATION MECHANICS .";
+                yield "Fortress gives additional defence points.";
                 /* Maybe a fortress could be transformed into a capital? */
             }
             case MINE ->
             {
-                yield "Mine gives you extra HexCoins after every round.";
+                yield "Mine brings extra HexCoins after every round.";
             }
             case SHIPYARD ->
             {
@@ -127,13 +127,13 @@ public enum FieldType
             }
             case TOWN ->
             {
-                yield "Town gives you extra HexCoins after every round.";
+                yield "Town brings extra HexCoins after every round.";
                 /* Maybe a town could be transformed into a fortress? */
             }
             case VILLAGE ->
             {
-                yield "Village gives you extra HexCoin after every round."
-                      + " The income of a village is greater when it has farmfields adjacent to it.";
+                yield "Village brings extra HexCoin after every round."
+                      + " The income is greater when the village has farmfields.";
             }
             default ->
             {

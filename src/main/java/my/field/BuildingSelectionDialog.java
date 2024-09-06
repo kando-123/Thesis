@@ -1,4 +1,4 @@
-package my.game;
+package my.field;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -7,8 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.BorderFactory;
@@ -21,8 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import my.command.PursueBuildingCommand;
-import my.field.FieldType;
-import my.field.FieldsManager;
+import my.game.ArrowsManager;
+import my.game.Manager;
 
 /**
  *
@@ -30,13 +28,13 @@ import my.field.FieldsManager;
  */
 public class BuildingSelectionDialog extends JDialog implements ActionListener
 {
-    private final List<FieldType> allBuildings;
-    
+    private final FieldType[] allBuildings;
+    private int current;
     
     private Manager manager;
 
     private JLabel nameLabel;
-    private JLabel buildingLabel;
+    private JLabel iconLabel;
     private JTextArea descriptionTextArea;
     private JTextArea conditionsTextArea;
     private JTextArea priceTextArea;
@@ -54,12 +52,13 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
         fieldsManager = FieldsManager.getInstance();
 
-        allBuildings = new LinkedList<>();
-        for (var fieldType : FieldType.values())
+        allBuildings = new FieldType[FieldType.BUILDINGS_COUNT];
+        int i = 0;
+        for (var value : FieldType.values())
         {
-            if (fieldType.isBuilding())
+            if (value.isBuilding())
             {
-                allBuildings.add(fieldType);
+                allBuildings[i++] = value;
             }
         }
 
@@ -102,8 +101,8 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         leftArrow.addActionListener(this);
         iconPanel.add(leftArrow);
 
-        buildingLabel = new JLabel();
-        iconPanel.add(buildingLabel);
+        iconLabel = new JLabel();
+        iconPanel.add(iconLabel);
 
         Icon rightIcon = arrowsManager.getRightArrowAsIcon();
         JButton rightArrow = new JButton(rightIcon);
@@ -152,7 +151,7 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
         c.gridx = 1;
         c.weightx = 1;
-        priceTextArea = new JTextArea("? Ħ");
+        priceTextArea = new JTextArea();
         priceTextArea.setBorder(BorderFactory.createTitledBorder("Price"));
         priceTextArea.setEditable(false);
         priceTextArea.setLineWrap(true);
@@ -174,15 +173,15 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
     private void reassignValues()
     {
-        FieldType current = allBuildings.getFirst();
-        nameLabel.setText(current.name());
-        buildingLabel.setIcon(fieldsManager.getFieldAsIcon(current));
-        descriptionTextArea.setText(current.getDescription());
-        conditionsTextArea.setText(current.getConditions());
-        priceTextArea.setText(String.format("%d Ħ", prices.get(current)));
+        FieldType building = allBuildings[current];
+        nameLabel.setText(building.name());
+        iconLabel.setIcon(fieldsManager.getFieldAsIcon(building));
+        descriptionTextArea.setText(building.getDescription());
+        conditionsTextArea.setText(building.getConditions());
+        priceTextArea.setText(String.format("%d Ħ", prices.get(building)));
         
-        boolean isAffordable = prices != null && prices.containsKey(current) && prices.get(current) <= playerMoney;
-        boolean isErectable = erectableBuildings != null && erectableBuildings.contains(current);
+        boolean isAffordable = prices != null && prices.containsKey(building) && prices.get(building) <= playerMoney;
+        boolean isErectable = erectableBuildings != null && erectableBuildings.contains(building);
         buyButton.setEnabled(isAffordable && isErectable);
         
         repaint();
@@ -216,21 +215,17 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         {
             case "left" ->
             {
-                var previous = allBuildings.removeLast();
-                allBuildings.addFirst(previous);
-
+                current = (current > 0) ? current - 1 : allBuildings.length - 1;
                 reassignValues();
             }
             case "right" ->
             {
-                var previous = allBuildings.removeFirst();
-                allBuildings.addLast(previous);
-
+                current = (current < allBuildings.length - 1) ? current + 1 : 0;
                 reassignValues();
             }
             case "build" ->
             {
-                manager.passCommand(new PursueBuildingCommand(allBuildings.getFirst()));
+                manager.passCommand(new PursueBuildingCommand(allBuildings[current]));
             }
         }
     }

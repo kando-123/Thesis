@@ -1,8 +1,10 @@
 package my.game;
 
+import my.field.BuildingSelectionDialog;
 import java.util.List;
 import java.util.Stack;
 import my.command.ManagerCommand;
+import my.entity.EntitySelectionDialog;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
@@ -55,6 +57,7 @@ public class Manager
     private Stack<ManagerCommand> undoneCommands;
 
     private BuildingSelectionDialog buildingDialog;
+    private EntitySelectionDialog entityDialog;
 
     //private JDialog purchaseDialog;
     //private Set<Field> markedFields;
@@ -100,7 +103,14 @@ public class Manager
 
     public void beginHiring()
     {
+        state = State.HIRING_BEGUN;
 
+        Player player = players.current();
+        entityDialog = new EntitySelectionDialog(master);
+        entityDialog.setManager(this);
+        entityDialog.setPlayerMoney(player.getMoney());
+        entityDialog.setLocationRelativeTo(master);
+        entityDialog.setVisible(true);
     }
 
     public void pursueHiring(EntityType entity)

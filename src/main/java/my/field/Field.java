@@ -42,8 +42,7 @@ public class Field
         
         owner = null;
         contour = null;
-        
-        entity = Entity.newInstance(type.isMarine() ? EntityType.NAVY : type.isPlains() ? EntityType.CAVALRY : EntityType.INFANTRY);
+        entity = null;
     }
     
     public FieldType getType()
