@@ -1,4 +1,4 @@
-package my.units;
+package my.game;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

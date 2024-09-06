@@ -1,7 +1,7 @@
 package my.command;
 
 import my.game.Manager;
-import my.units.Field;
+import my.field.Field;
 
 /**
  *
@@ -25,6 +25,6 @@ public class HandleFieldCommand extends ManagerCommand
     @Override
     public void undo(Manager manager)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 }

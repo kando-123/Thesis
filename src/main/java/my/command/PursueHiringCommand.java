@@ -1,7 +1,7 @@
 package my.command;
 
 import my.game.Manager;
-import my.units.EntityType;
+import my.entity.EntityType;
 
 /**
  *

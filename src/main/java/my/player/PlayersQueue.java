@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import my.utils.Hex;
 import my.world.World;
+import my.world.WorldAccessor;
 
 /**
  *
@@ -17,7 +18,7 @@ public class PlayersQueue
     
     private int usersCount;
     
-    public PlayersQueue(List<PlayerConfiguration> configurations)
+    public PlayersQueue(List<PlayerConfiguration> configurations, WorldAccessor worldAccessor)
     {
         queue = new LinkedList<>();
         usersCount = 0;
@@ -30,7 +31,7 @@ public class PlayersQueue
 
         for (var parameters : configurations)
         {
-            Player player = new Player(parameters.type);
+            Player player = new Player(parameters.type, worldAccessor);
             
             if (parameters.type == PlayerType.USER)
             {
@@ -71,9 +72,12 @@ public class PlayersQueue
 
         for (int i = 0; i < capitals.length; ++i)
         {
-            queue.get(i).capture(world.getFieldAt(capitals[i]));
+            Player player = queue.get(i);
+            Hex capital = capitals[i];
+            player.setCapital(capital);
+            player.capture(world.getFieldAt(capital));
 
-            for (var neighbor : capitals[i].neighbors())
+            for (var neighbor : capital.neighbors())
             {
                 var field = world.getFieldAt(neighbor);
                 if (field != null && !field.getType().isMarine())

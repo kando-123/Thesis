@@ -1,11 +1,9 @@
 package my.game;
 
-import my.world.InputHandler;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JPanel;
-import my.player.Player;
 
 /**
  *
@@ -45,9 +43,14 @@ public class GameplayContentPane extends JPanel
         thread.setDaemon(true);
         thread.start();
     }
-
-    public void setCurrentUser(Player user)
+    
+    public UserPanel getUserPanel()
     {
-        userPanel.setUser(user);
+        return userPanel;
+    }
+    
+    public WorldPanel getWorldPanel()
+    {
+        return worldPanel;
     }
 }

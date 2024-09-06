@@ -1,7 +1,9 @@
-package my.world;
+package my.game;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import my.world.MovementMode;
+import my.world.OrthogonalDirection;
 
 /**
  *
@@ -71,11 +73,11 @@ public class InputHandler implements KeyListener
                 north = true;
             }
             
-            case KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_Q ->
+            case KeyEvent.VK_E ->
             {
                 zoomIn = true;
             }
-            case KeyEvent.VK_CLOSE_BRACKET, KeyEvent.VK_E ->
+            case KeyEvent.VK_Q ->
             {
                 zoomOut = true;
             }
@@ -128,11 +130,11 @@ public class InputHandler implements KeyListener
                 north = false;
                 --directions;
             }
-            case KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_Q ->
+            case KeyEvent.VK_E ->
             {
                 zoomIn = false;
             }
-            case KeyEvent.VK_CLOSE_BRACKET, KeyEvent.VK_E ->
+            case KeyEvent.VK_Q ->
             {
                 zoomOut = false;
             }

@@ -21,9 +21,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import my.command.PursueBuildingCommand;
-import my.units.ArrowsManager;
-import my.units.FieldType;
-import my.units.FieldsManager;
+import my.field.FieldType;
+import my.field.FieldsManager;
 
 /**
  *
@@ -33,10 +32,11 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 {
     private final List<FieldType> allBuildings;
     
+    
     private Manager manager;
 
     private JLabel nameLabel;
-    private JLabel propertyLabel;
+    private JLabel buildingLabel;
     private JTextArea descriptionTextArea;
     private JTextArea conditionsTextArea;
     private JTextArea priceTextArea;
@@ -102,8 +102,8 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         leftArrow.addActionListener(this);
         iconPanel.add(leftArrow);
 
-        propertyLabel = new JLabel();
-        iconPanel.add(propertyLabel);
+        buildingLabel = new JLabel();
+        iconPanel.add(buildingLabel);
 
         Icon rightIcon = arrowsManager.getRightArrowAsIcon();
         JButton rightArrow = new JButton(rightIcon);
@@ -176,7 +176,7 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
     {
         FieldType current = allBuildings.getFirst();
         nameLabel.setText(current.name());
-        propertyLabel.setIcon(fieldsManager.getFieldAsIcon(current));
+        buildingLabel.setIcon(fieldsManager.getFieldAsIcon(current));
         descriptionTextArea.setText(current.getDescription());
         conditionsTextArea.setText(current.getConditions());
         priceTextArea.setText(String.format("%d Ħ", prices.get(current)));

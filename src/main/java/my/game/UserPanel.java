@@ -156,6 +156,11 @@ public class UserPanel extends JPanel implements ActionListener
         Color userColor = user.getColor().colorValue;
         setBackground(userColor);
     }
+    
+    public void setMoney(int newMoney)
+    {
+        moneyLabel.setText(String.format("Money: %d Ħ", newMoney));
+    }
 
     @Override
     public void actionPerformed(ActionEvent e)

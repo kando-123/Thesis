@@ -1,10 +1,12 @@
-package my.units;
+package my.field;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import my.player.Player;
 import my.player.PlayerColor;
+import my.entity.Entity;
+import my.entity.EntityType;
 import my.utils.Hex;
 import my.utils.IntegersDoublet;
 
@@ -24,6 +26,8 @@ public class Field
     private Player owner;
     private BufferedImage contour;
     
+    private Entity entity;
+    
     private static final FieldsManager fieldsManager = FieldsManager.getInstance();
     private static final ContoursManager contoursManager = ContoursManager.getInstance();
     
@@ -38,6 +42,8 @@ public class Field
         
         owner = null;
         contour = null;
+        
+        entity = Entity.newInstance(type.isMarine() ? EntityType.NAVY : type.isPlains() ? EntityType.CAVALRY : EntityType.INFANTRY);
     }
     
     public FieldType getType()
@@ -109,7 +115,9 @@ public class Field
                 null);
         }
         
-        // draw entity, if any
-        
+        if (entity != null)
+        {
+            entity.draw(graphics, position, size);
+        }
     }
 }

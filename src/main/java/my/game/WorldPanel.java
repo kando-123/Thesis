@@ -9,9 +9,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import my.command.HandleFieldCommand;
+import my.field.Field;
 import my.utils.DoublesDoublet;
 import my.utils.Hex;
-import my.world.InputHandler;
 import my.world.OrthogonalDirection;
 import my.world.World;
 
@@ -50,6 +50,13 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     public void setWorld(World newWorld)
     {
         world = newWorld;
+    }
+    
+    public void setCenter(Hex hex)
+    {
+        double scaledOuterRadius = scale * World.HEX_OUTER_RADIUS;
+        double scaledInnerRadius = scale * World.HEX_INNER_RADIUS;
+        worldCenter = panelCenter.minus(hex.getCentralPoint(scaledOuterRadius, scaledInnerRadius));
     }
     
     public void setInputHandler(InputHandler newInputHandler)
@@ -229,7 +236,8 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         double relativeY = globalY - worldCenter.yCoord;
         Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
         
-        manager.passCommand(new HandleFieldCommand(world.getFieldAt(hex)));
+        Field field = world.getFieldAt(hex);
+        manager.passCommand(new HandleFieldCommand(field));
     }
 
     @Override

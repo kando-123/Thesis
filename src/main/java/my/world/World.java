@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import my.player.Player;
-import my.units.Field;
-import my.units.FieldType;
+import my.field.Field;
+import my.field.FieldType;
 import my.utils.DoublesDoublet;
 import my.utils.Hex;
 import my.utils.HexagonalDirection;
@@ -949,6 +949,10 @@ public class World
             newField.setOwner(oldField.getOwner());
             fields.put(hex, newField);
         }
-        
+    }
+    
+    public WorldAccessor createAccessor()
+    {
+        return new WorldAccessor(this);
     }
 }

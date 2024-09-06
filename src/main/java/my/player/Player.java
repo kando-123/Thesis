@@ -1,11 +1,13 @@
 package my.player;
 
+import my.field.BuildingPriceCalculator;
 import java.util.HashMap;
 import java.util.Map;
 import my.utils.Hex;
-import my.units.Field;
+import my.field.Field;
 import java.util.Set;
-import my.units.FieldType;
+import my.field.FieldType;
+import my.world.WorldAccessor;
 
 /**
  *
@@ -24,16 +26,16 @@ public class Player
     private int money;
     private static final int INITIAL_MONEY = 500;
     
-    private final PriceCalculator priceCalculator;
+    private final BuildingPriceCalculator priceCalculator;
     
-    public Player(PlayerType type)
+    public Player(PlayerType type, WorldAccessor worldAccessor)
     {
         this.type = type;
         
-        country = new Country(this);
+        country = new Country(this, worldAccessor);
         money = INITIAL_MONEY;
         
-        priceCalculator = new PriceCalculator();
+        priceCalculator = BuildingPriceCalculator.getInstance();
     }
     
     public PlayerType getType()
@@ -66,6 +68,11 @@ public class Player
         return money;
     }
     
+    public void takeMoney(int outcome)
+    {
+        money -= outcome;
+    }
+    
     public void capture(Field field)
     {
         country.addField(field);
@@ -78,13 +85,23 @@ public class Player
     
     public Set<Hex> getOwnedHexes()
     {
-        return country.getFieldHexes();
+        return country.getTerritory();
     }
     
     public int getPriceFor(FieldType type)
     {
         int count = country.getCount(type);
         return priceCalculator.calculatePrice(type, count);
+    }
+    
+    public Hex setCapital(Hex newCapital)
+    {
+        return country.setCapital(newCapital);
+    }
+    
+    public Hex getCapitalHex()
+    {
+        return country.getCapitalHex();
     }
     
     public Map<FieldType, Integer> getPrices()

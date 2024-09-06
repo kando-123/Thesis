@@ -1,11 +1,11 @@
 package my.player;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
-import my.units.Field;
-import my.units.FieldType;
+import my.field.Field;
+import my.field.FieldType;
 import my.utils.Hex;
+import my.world.WorldAccessor;
 
 /**
  *
@@ -15,57 +15,51 @@ public class Country
 {
     private final Player owner;
     
-    private final Map<Hex, Field> territory;
-    private final Map<FieldType, Integer> counters;
-    private Field capital;
+    private final WorldAccessor worldAccessor;
+    private final Set<Hex> territory;
+    private Hex capital;
     
-    public Country(Player owner)
+    public Country(Player owner, WorldAccessor worldAccessor)
     {
         this.owner = owner;
+        this.worldAccessor = worldAccessor;
         
-        territory = new HashMap<>();
-        counters = new HashMap<>();
-        for (var value : FieldType.values())
-        {
-            counters.put(value, 0);
-        }
+        territory = new HashSet<>();
     }
     
-    public void setCapital(Field newCapital)
+    public Hex setCapital(Hex newCapital)
     {
+        Hex oldCapital = capital;
         capital = newCapital;
+        return oldCapital;
     }
     
     public Hex getCapitalHex()
     {
-        return capital.getHex();
+        return capital;
     }
     
     public void addField(Field field)
     {
         field.setOwner(owner);
-        territory.put(field.getHex(), field);
-        
-        int count = counters.get(field.getType());
-        counters.put(field.getType(), count + 1);
+        territory.add(field.getHex());
     }
     
     public void removeField(Field field)
     {
         field.setOwner(null);
         territory.remove(field.getHex());
-        
-        int count = counters.get(field.getType());
-        counters.put(field.getType(), count - 1);
     }
     
     public int getCount(FieldType type)
     {
-        return counters.get(type);
+        return (int) territory.stream()
+                .filter((hex) -> worldAccessor.getFieldAt(hex).getType() == type)
+                .count();
     }
     
-    public Set<Hex> getFieldHexes()
+    public Set<Hex> getTerritory()
     {
-        return territory.keySet();
+        return territory;
     }
 }

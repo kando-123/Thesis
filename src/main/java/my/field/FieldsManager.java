@@ -1,4 +1,4 @@
-package my.units;
+package my.field;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;

@@ -13,7 +13,8 @@ import javax.swing.JOptionPane;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayerConfigurationContentPane;
-import my.world.InputHandler;
+import my.utils.DoublesDoublet;
+import my.utils.Hex;
 import my.world.WorldConfigurationContentPane;
 
 /**
@@ -36,6 +37,14 @@ public class Master extends JFrame implements ActionListener
 
         master.setVisible(true);
         master.setLocationRelativeTo(null);
+    }
+    
+    private enum State
+    {
+        INITIAL,
+        PLAYERS_SELECTION,
+        WORLD_CONFIGURATION,
+        GAMEPLAY;
     }
 
     private State state;
@@ -128,7 +137,7 @@ public class Master extends JFrame implements ActionListener
             gameplayContentPane.start();
 
             Player firstUser = manager.getFirstPlayer();
-            gameplayContentPane.setCurrentUser(firstUser);
+            gameplayContentPane.getUserPanel().setUser(firstUser);
 
             setContentPane(gameplayContentPane);
             setResizable(true);
@@ -160,9 +169,19 @@ public class Master extends JFrame implements ActionListener
         }
     }
     
-    public void resetUserPanel(Player nextPlayer)
+    public void setCenter(Hex newCenter)
     {
-        gameplayContentPane.setCurrentUser(nextPlayer);
+        gameplayContentPane.getWorldPanel().setCenter(newCenter);
+    }
+    
+    public void setMoney(int newMoney)
+    {
+        gameplayContentPane.getUserPanel().setMoney(newMoney);
+    }
+    
+    public void setUser(Player nextPlayer)
+    {
+        gameplayContentPane.getUserPanel().setUser(nextPlayer);
         requestFocus();
     }
 }

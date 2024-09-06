@@ -1,4 +1,4 @@
-package my.units;
+package my.entity;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class EntitiesManager
         entities = new HashMap<>(EntityType.values().length);
         for (var entity : EntityType.values())
         {
-            InputStream stream = getClass().getResourceAsStream(entity.file);
+            InputStream stream = getClass().getResourceAsStream(entity.getFile());
             try
             {
                 BufferedImage image = ImageIO.read(stream);
