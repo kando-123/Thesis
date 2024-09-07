@@ -16,9 +16,9 @@ public class EntityPriceCalculator
     {
         functions = new HashMap<>(3);
         functions.put(EntityType.INFANTRY,
-                new IntegerLinearFunction(0, EntityType.INFANTRY.getPrice()));
+                new IntegerLinearFunction(EntityType.INFANTRY.getPrice(), 0));
         functions.put(EntityType.CAVALRY,
-                new IntegerLinearFunction(0, EntityType.CAVALRY.getPrice()));
+                new IntegerLinearFunction(EntityType.CAVALRY.getPrice(), 0));
         functions.put(EntityType.NAVY,
                 new IntegerLinearFunction(EntityType.INFANTRY.getPrice(), EntityType.NAVY.getPrice()));
     }

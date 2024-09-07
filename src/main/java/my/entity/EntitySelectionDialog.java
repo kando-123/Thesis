@@ -15,13 +15,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTextArea;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import my.command.PursueBuildingCommand;
 import my.command.PursueHiringCommand;
 import my.game.ArrowsManager;
 import my.game.Manager;
@@ -30,7 +24,7 @@ import my.game.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class EntitySelectionDialog extends JDialog implements ActionListener, ChangeListener
+public class EntitySelectionDialog extends JDialog implements ActionListener, Spinner.ValueChangeListener
 {
     private final EntityType[] allEntities;
     private int current;
@@ -41,7 +35,7 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
     private JLabel iconLabel;
 
     private JTextArea descriptionTextArea;
-    private JSpinner numberSpinner;
+    private Spinner numberSpinner;
     private JTextArea priceTextArea;
     private JButton buyButton;
 
@@ -60,6 +54,9 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
         entitiesManager = EntitiesManager.getInstance();
 
         setContentPane(makeContentPane());
+        pack();
+        
+        setResizable(false);
     }
 
     private JPanel makeContentPane()
@@ -74,6 +71,12 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
 
         contentPane.add(makeIconPanel());
         contentPane.add(makeDescriptionTextArea());
+        
+        Spinner.Model model = new Spinner.Model(INITIAL_NUMBER, MINIMAL_NUMBER, MAXIMAL_NUMBER);
+        numberSpinner = new Spinner(model, new Dimension(400, 20));
+        numberSpinner.addValueChangeListener(this);
+        contentPane.add(numberSpinner);
+        
         contentPane.add(makePurchasePanel());
 
         return contentPane;
@@ -83,7 +86,7 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
     {
         JPanel iconPanel = new JPanel();
         iconPanel.setLayout(new BoxLayout(iconPanel, BoxLayout.X_AXIS));
-        iconPanel.setPreferredSize(new Dimension(400, 120));
+        iconPanel.setPreferredSize(new Dimension(400, 100));
 
         Insets zeroInsets = new Insets(0, 0, 0, 0);
         ArrowsManager arrowsManager = ArrowsManager.getInstance();
@@ -119,8 +122,11 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
         descriptionTextArea.setPreferredSize(new Dimension(400, 90));
 
         return descriptionTextArea;
-
     }
+    
+    private static final int INITIAL_NUMBER = 20;
+    private static final int MINIMAL_NUMBER =  1;
+    private static final int MAXIMAL_NUMBER = 99;
 
     private JPanel makePurchasePanel()
     {
@@ -135,13 +141,11 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
         
-        SpinnerModel model = new SpinnerNumberModel(10, 1, 99, 5);
-        numberSpinner = new JSpinner(model);
-        numberSpinner.addChangeListener(this);
-        purchasePanel.add(numberSpinner, c);
-        
-        c.gridx = 1;
-        c.weightx = 1;
+//        SpinnerModel model = new SpinnerNumberModel(10, 1, 99, 1);
+//        numberSpinner = new JSpinner(model);
+//        numberSpinner.addChangeListener(this);
+//        purchasePanel.add(numberSpinner, c);
+
         priceTextArea = new JTextArea();
         priceTextArea.setBorder(BorderFactory.createTitledBorder("Price"));
         priceTextArea.setEditable(false);
@@ -151,10 +155,9 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
         priceTextArea.setPreferredSize(new Dimension(50, 90));
         purchasePanel.add(priceTextArea);
         
-        c.gridx = 2;
-        c.weightx = 1;
-        buyButton = new JButton("Hire");
-        buyButton.setActionCommand("hire");
+        c.gridx = 1;
+        buyButton = new JButton("Buy");
+        buyButton.setActionCommand("buy");
         buyButton.addActionListener(this);
         buyButton.setPreferredSize(new Dimension(50, 90));
         purchasePanel.add(buyButton);
@@ -178,25 +181,17 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
         nameLabel.setText(entity.name());
         iconLabel.setIcon(entitiesManager.getEntityAsIcon(entity));
         descriptionTextArea.setText(entity.getDescription());
-        numberSpinner.setValue(10);
-        resetPrice();
+        numberSpinner.setValue(INITIAL_NUMBER);
+        resetPrice(numberSpinner.getValue());
         
         repaint();
     }
     
-    private void resetPrice()
+    private void resetPrice(int newPrice)
     {
-        SpinnerNumberModel model = (SpinnerNumberModel) numberSpinner.getModel();
-        int value = model.getNumber().intValue();
-        int price = priceCalculator.getPriceFor(value, allEntities[current]);
+        int price = priceCalculator.getPriceFor(newPrice, allEntities[current]);
         priceTextArea.setText(String.format("%d Ħ", price));
         buyButton.setEnabled(price <= playerMoney);
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent e)
-    {
-        resetPrice();
     }
 
     @Override
@@ -214,10 +209,16 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Ch
                 current = (current < allEntities.length - 1) ? current + 1 : 0;
                 reassignValues();
             }
-            case "build" ->
+            case "buy" ->
             {
                 manager.passCommand(new PursueHiringCommand(allEntities[current]));
             }
         }
+    }
+
+    @Override
+    public void valueChanged(Spinner.ValueChangeEvent e)
+    {
+        resetPrice(e.newValue);
     }
 }

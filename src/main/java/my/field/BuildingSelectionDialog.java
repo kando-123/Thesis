@@ -162,8 +162,8 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
         c.gridx = 2;
         c.weightx = 1;
-        buyButton = new JButton("Build");
-        buyButton.setActionCommand("build");
+        buyButton = new JButton("Buy");
+        buyButton.setActionCommand("buy");
         buyButton.addActionListener(this);
         buyButton.setPreferredSize(new Dimension(50, 90));
         purchasePanel.add(buyButton);
@@ -223,7 +223,7 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
                 current = (current < allBuildings.length - 1) ? current + 1 : 0;
                 reassignValues();
             }
-            case "build" ->
+            case "buy" ->
             {
                 manager.passCommand(new PursueBuildingCommand(allBuildings[current]));
             }

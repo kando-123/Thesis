@@ -109,6 +109,7 @@ public class Manager
         entityDialog = new EntitySelectionDialog(master);
         entityDialog.setManager(this);
         entityDialog.setPlayerMoney(player.getMoney());
+        entityDialog.reassignValues();
         entityDialog.setLocationRelativeTo(master);
         entityDialog.setVisible(true);
     }
