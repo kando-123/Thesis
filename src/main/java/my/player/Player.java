@@ -22,17 +22,21 @@ public class Player
     private String name;
     
     private final Country country;
+    private final World.Marker marker;
+    private final World.Accessor accessor;
     
     private int money;
     private static final int INITIAL_MONEY = 500;
     
     private final BuildingPriceCalculator priceCalculator;
     
-    public Player(PlayerType type, World.Accessor worldAccessor)
+    public Player(PlayerType type, World.Accessor accessor, World.Marker marker)
     {
         this.type = type;
+        this.marker = marker;
+        this.accessor = accessor;
         
-        country = new Country(this, worldAccessor);
+        country = new Country(this, accessor);
         money = INITIAL_MONEY;
         
         priceCalculator = BuildingPriceCalculator.getInstance();
@@ -112,6 +116,93 @@ public class Player
             prices.put(value, getPriceFor(value));
         }
         return prices;
+    }
+    
+    public void markFor(FieldType building)
+    {
+        switch (building)
+        {
+            case BARRACKS, TOWN, VILLAGE ->
+            {
+                for (var hex : country.getTerritory())
+                {
+                    Field field = accessor.getFieldAt(hex);
+                    if (field.getType().isPlains())
+                    {
+                        marker.mark(hex);
+                    }
+                }
+            }
+            case FORTRESS ->
+            {
+                for (var hex : country.getTerritory())
+                {
+                    Field field = accessor.getFieldAt(hex);
+                    if (field.getType().isContinental())
+                    {
+                        marker.mark(hex);
+                    }
+                }
+            }
+            case MINE ->
+            {
+                for (var hex : country.getTerritory())
+                {
+                    Field field = accessor.getFieldAt(hex);
+                    if (field.getType().isMountainous())
+                    {
+                        marker.mark(hex);
+                    }
+                } 
+            }
+            case FARMFIELD ->
+            {
+                for (var hex : country.getTerritory())
+                {
+                    Field field = accessor.getFieldAt(hex);
+                    if (!field.getType().isPlains())
+                    {
+                        continue;
+                    }
+                    for (var neighbor : hex.neighbors())
+                    {
+                        field = accessor.getFieldAt(neighbor);
+                        
+                        if (field != null && field.getType() == FieldType.VILLAGE)
+                        {
+                            marker.mark(hex);
+                            break;
+                        }
+                    }
+                }
+            }
+            case SHIPYARD ->
+            {
+                for (var hex : country.getTerritory())
+                {
+                    Field field = accessor.getFieldAt(hex);
+                    if (!field.getType().isPlains())
+                    {
+                        continue;
+                    }
+                    for (var neighbor : hex.neighbors())
+                    {
+                        field = accessor.getFieldAt(neighbor);
+                        
+                        if (field != null && field.getType().isMarine())
+                        {
+                            marker.mark(hex);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public Set<FieldType> getErectableBuildings()
+    {
+        
     }
     
     public void play()

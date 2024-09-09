@@ -17,7 +17,7 @@ public class PlayersQueue
     
     private int usersCount;
     
-    public PlayersQueue(List<PlayerConfiguration> configurations, World.Accessor worldAccessor)
+    public PlayersQueue(List<PlayerConfiguration> configurations, World.Accessor accessor, World.Marker marker)
     {
         queue = new LinkedList<>();
         usersCount = 0;
@@ -30,7 +30,7 @@ public class PlayersQueue
 
         for (var parameters : configurations)
         {
-            Player player = new Player(parameters.type, worldAccessor);
+            Player player = new Player(parameters.type, accessor, marker);
             
             if (parameters.type == PlayerType.USER)
             {

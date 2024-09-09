@@ -42,7 +42,7 @@ public class Manager
 
         world = new World(worldConfiguration);
         marker = world.createMarker();
-        players = new PlayersQueue(playerConfigurations, world.createAccessor());
+        players = new PlayersQueue(playerConfigurations, world.createAccessor(), world.createMarker());
 
         Hex[] capitals = world.locateCapitals(playerConfigurations.size());
         players.initCountries(capitals, world);
@@ -81,7 +81,7 @@ public class Manager
         builder.setManager(this);
         builder.setPrices(player.getPrices());
         builder.setPlayerMoney(player.getMoney());
-        builder.setErectableBuildings(world.getErectableBuildings(player));
+        builder.setErectableBuildings(player.getErectableBuildings());
         buildingDialog = builder.get();
         buildingDialog.setLocationRelativeTo(master);
         buildingDialog.setVisible(true);
@@ -97,7 +97,7 @@ public class Manager
 
             buildingDialog.dispose();
             selectedBuilding = building;
-            world.mark(players.current(), building);
+            players.current().markFor(building);
         }
     }
 
