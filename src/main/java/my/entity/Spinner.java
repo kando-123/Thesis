@@ -164,7 +164,6 @@ public class Spinner extends JPanel implements ActionListener
             valueLabel.setText(String.valueOf(value));
             informListeners(newValue);
         }
-        
     }
 
     public int getValue()

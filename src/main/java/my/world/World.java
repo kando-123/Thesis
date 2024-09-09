@@ -3,6 +3,7 @@ package my.world;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -58,7 +59,7 @@ public class World
         generateLandFields(centers);
 
         predicates = makePredicatesMap();
-        
+
         markedFields = new HashSet<>();
     }
 
@@ -367,7 +368,7 @@ public class World
         LinkedList<Hex> maxima = findMaximumCandidates(inlandness);
 
         /* Filter the apparent maxima out. */
-        removeApparentMaxima(maxima, inlandness); 
+        removeApparentMaxima(maxima, inlandness);
 
         /* Initialize the regions. */
         HashSet<Hex> takenArea = new HashSet<>();
@@ -793,9 +794,69 @@ public class World
 
         return sum;
     }
-    
-    private final Set<Field> markedFields;
-    
+
+    public void substitute(Field oldField, FieldType newType)
+    {
+        Hex hex = oldField.getHex();
+        if (fields.get(hex) == oldField)
+        {
+            Field newField = new Field(newType, hex);
+            newField.setOwner(oldField.getOwner());
+            fields.put(hex, newField);
+        }
+    }
+
+    private final HashSet<Field> markedFields;
+
+    public class Marker
+    {
+        private Marker()
+        {
+            return;
+        }
+        
+        public void mark(Hex hex)
+        {
+            Field field = fields.get(hex);
+            if (field != null)
+            {
+                field.mark();
+                markedFields.add(field);
+            }
+        }
+
+        public void unmark(Hex hex)
+        {
+            Field field = fields.get(hex);
+            if (field != null)
+            {
+                field.unmark();
+                markedFields.remove(field);
+            }
+        }
+
+        public void unmarkAll()
+        {
+            for (Field field : markedFields)
+            {
+                field.unmark();
+            }
+            markedFields.clear();
+        }
+
+        public boolean isMarked(Hex hex)
+        {
+            Field field = fields.get(hex);
+            return markedFields.contains(field);
+        }
+    }
+
+    public Marker createMarker()
+    {
+        return new Marker();
+    }
+
+    @Deprecated
     public void mark(Player player, FieldType type)
     {
         BinaryPredicate<Player, Field> predicate = predicates.get(type);
@@ -811,21 +872,7 @@ public class World
             }
         }
     }
-   
-    public void unmarkAll()
-    {
-        for (Field value : fields.values())
-        {
-            value.unmark();
-        }
-        markedFields.clear();
-    }
-    
-    public boolean isMarked(Field field)
-    {
-        return markedFields.contains(field);
-    }
-    
+
     private Field[] getNeighboringFields(Field field)
     {
         Hex hex = field.getHex();
@@ -868,7 +915,7 @@ public class World
         {
             return field.getOwner() == player && field.getType().isPlains();
         });
-        
+
         map.put(FieldType.FARMFIELD, (Player player, Field field) ->
         {
             if (field.getOwner() != player || !field.getType().isPlains())
@@ -939,20 +986,24 @@ public class World
         }
         return buildings;
     }
-    
-    public void substitute(Field oldField, FieldType newType)
+
+    public class Accessor
     {
-        Hex hex = oldField.getHex();
-        if (fields.get(hex) == oldField)
+        private final World world;
+
+        private Accessor(World world)
         {
-            Field newField = new Field(newType, hex);
-            newField.setOwner(oldField.getOwner());
-            fields.put(hex, newField);
+            this.world = world;
+        }
+
+        public Field getFieldAt(Hex hex)
+        {
+            return world.getFieldAt(hex);
         }
     }
-    
-    public WorldAccessor createAccessor()
+
+    public Accessor createAccessor()
     {
-        return new WorldAccessor(this);
+        return new Accessor(this);
     }
 }

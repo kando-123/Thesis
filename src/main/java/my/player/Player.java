@@ -7,7 +7,7 @@ import my.utils.Hex;
 import my.field.Field;
 import java.util.Set;
 import my.field.FieldType;
-import my.world.WorldAccessor;
+import my.world.World;
 
 /**
  *
@@ -28,7 +28,7 @@ public class Player
     
     private final BuildingPriceCalculator priceCalculator;
     
-    public Player(PlayerType type, WorldAccessor worldAccessor)
+    public Player(PlayerType type, World.Accessor worldAccessor)
     {
         this.type = type;
         

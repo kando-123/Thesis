@@ -5,7 +5,7 @@ import java.util.Set;
 import my.field.Field;
 import my.field.FieldType;
 import my.utils.Hex;
-import my.world.WorldAccessor;
+import my.world.World;
 
 /**
  *
@@ -15,11 +15,11 @@ public class Country
 {
     private final Player owner;
     
-    private final WorldAccessor worldAccessor;
+    private final World.Accessor worldAccessor;
     private final Set<Hex> territory;
     private Hex capital;
     
-    public Country(Player owner, WorldAccessor worldAccessor)
+    public Country(Player owner, World.Accessor worldAccessor)
     {
         this.owner = owner;
         this.worldAccessor = worldAccessor;

@@ -2,7 +2,7 @@ package my.game;
 
 import my.field.BuildingSelectionDialog;
 import java.util.List;
-import java.util.Stack;
+//import java.util.Stack;
 import my.command.ManagerCommand;
 import my.entity.EntitySelectionDialog;
 import my.player.Player;
@@ -41,26 +41,26 @@ public class Manager
         state = State.IDLE;
 
         world = new World(worldConfiguration);
+        marker = world.createMarker();
         players = new PlayersQueue(playerConfigurations, world.createAccessor());
 
         Hex[] capitals = world.locateCapitals(playerConfigurations.size());
         players.initCountries(capitals, world);
 
-        executedCommands = new Stack();
-        undoneCommands = new Stack();
+//        executedCommands = new Stack();
+//        undoneCommands = new Stack();
     }
 
     private final Master master;
     private final World world;
+    private final World.Marker marker;
     private final PlayersQueue players;
-    private Stack<ManagerCommand> executedCommands;
-    private Stack<ManagerCommand> undoneCommands;
+//    private Stack<ManagerCommand> executedCommands;
+//    private Stack<ManagerCommand> undoneCommands;
 
     private BuildingSelectionDialog buildingDialog;
     private EntitySelectionDialog entityDialog;
 
-    //private JDialog purchaseDialog;
-    //private Set<Field> markedFields;
     public World getWorld()
     {
         return world;
@@ -116,7 +116,7 @@ public class Manager
 
     public void pursueHiring(EntityType entity)
     {
-
+        state = State.HIRING_IN_PROGRESS;
     }
 
     public void handleField(Field field)
@@ -125,7 +125,7 @@ public class Manager
         {
             case BUILDING_IN_PROGRESS ->
             {
-                if (world.isMarked(field))
+                if (marker.isMarked(field.getHex()))
                 {
                     Player player = players.current();
                     int cost = player.getPriceFor(selectedBuilding);
@@ -134,7 +134,7 @@ public class Manager
 
                     world.substitute(field, selectedBuilding);
                 }
-                world.unmarkAll();
+                marker.unmarkAll();
                 selectedBuilding = null;
             }
         }
