@@ -14,7 +14,7 @@ public class BuildingPriceCalculator
     
     private BuildingPriceCalculator()
     {
-        functions = new HashMap<>(FieldType.BUILDINGS_COUNT);
+        functions = new HashMap<>();
         for (var value : FieldType.values())
         {
             if (value.isBuilding())

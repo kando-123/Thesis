@@ -1,10 +1,14 @@
 package my.entity;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -15,7 +19,7 @@ import javax.swing.JPanel;
  * @author Kay Jay O'Nail
  */
 public class Spinner extends JPanel implements ActionListener
-{
+{    
     public static class Model
     {
         private int value;
@@ -24,7 +28,6 @@ public class Spinner extends JPanel implements ActionListener
 
         public Model(int value, int minimum, int maximum)
         {
-            this.value = value;
             this.minimum = minimum;
             this.maximum = maximum;
 
@@ -36,6 +39,7 @@ public class Spinner extends JPanel implements ActionListener
             {
                 value = maximum;
             }
+            this.value = value;
         }
 
         public int getValue()
@@ -57,7 +61,7 @@ public class Spinner extends JPanel implements ActionListener
             {
                 return value = newValue;
             }
-            else // newValue == value
+            else // newValue == value, no change
             {
                 return null;
             }
@@ -90,9 +94,9 @@ public class Spinner extends JPanel implements ActionListener
 
     public Spinner(Model model, Dimension size)
     {
+        super(new GridBagLayout());
         this.model = model;
         
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setPreferredSize(size);
 
         int buttonWidth = size.width / 7;
@@ -100,39 +104,54 @@ public class Spinner extends JPanel implements ActionListener
         Dimension buttonSize = new Dimension(buttonWidth, size.height);
         Dimension labelSize = new Dimension(labelWidth, size.height);
         
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.CENTER;
         minus10Button = new JButton("-10");
         minus10Button.setPreferredSize(buttonSize);
         minus10Button.addActionListener(this);
-        add(minus10Button);
+        add(minus10Button, c.clone());
 
+        ++c.gridx;
         minus5Button = new JButton("-5");
         minus5Button.setPreferredSize(buttonSize);
         minus5Button.addActionListener(this);
-        add(minus5Button);
+        add(minus5Button, c.clone());
 
+        ++c.gridx;
         minus1Button = new JButton("-1");
         minus1Button.setPreferredSize(buttonSize);
         minus1Button.addActionListener(this);
-        add(minus1Button);
+        add(minus1Button, c.clone());
 
+        ++c.gridx;
         valueLabel = new JLabel(String.valueOf(model.getValue()));
         valueLabel.setPreferredSize(labelSize);
-        add(valueLabel);
+        valueLabel.setHorizontalAlignment(JLabel.CENTER);
+        valueLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        add(valueLabel, c.clone());
 
+        ++c.gridx;
         plus1Button = new JButton("+1");
         plus1Button.setPreferredSize(buttonSize);
         plus1Button.addActionListener(this);
-        add(plus1Button);
+        add(plus1Button, c.clone());
 
+        ++c.gridx;
         plus5Button = new JButton("+5");
         plus5Button.setPreferredSize(buttonSize);
         plus5Button.addActionListener(this);
-        add(plus5Button);
+        add(plus5Button, c.clone());
 
+        ++c.gridx;
         plus10Button = new JButton("+10");
         plus10Button.setPreferredSize(buttonSize);
         plus10Button.addActionListener(this);
-        add(plus10Button);
+        add(plus10Button, c.clone());
 
         listeners = new LinkedList<>();
     }

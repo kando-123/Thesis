@@ -276,78 +276,78 @@ public class Hex
         return 3 * side * (side - 1) + 1;
     }
     
-    public IntegersDoublet getCentralPoint(int outerRadius, int innerRadius)
+    public Doublet<Integer> getCentralPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2;
         int y = (qCoord - rCoord) * innerRadius;
-        return new IntegersDoublet(x, y);
+        return new Doublet<>(x, y);
     }
 
-    public IntegersDoublet getCornerPoint(int outerRadius, int innerRadius)
+    public Doublet<Integer> getCornerPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2 - outerRadius;
         int y = (qCoord - rCoord) * innerRadius - innerRadius;
-        return new IntegersDoublet(x, y);
+        return new Doublet<>(x, y);
     }
 
-    public DoublesDoublet getCentralPoint(double outerRadius, double innerRadius)
+    public Doublet<Double> getCentralPoint(double outerRadius, double innerRadius)
     {
         double x = (double) (pCoord) * outerRadius * 1.5;
         double y = (double) (qCoord - rCoord) * innerRadius;
-        return new DoublesDoublet(x, y);
+        return new Doublet<>(x, y);
     }
 
-    public DoublesDoublet getCornerPoint(double outerRadius, double innerRadius)
+    public Doublet<Double> getCornerPoint(double outerRadius, double innerRadius)
     {
         double x = (double) (pCoord) * outerRadius * 1.5 - outerRadius;
         double y = (double) (qCoord - rCoord) * innerRadius - innerRadius;
-        return new DoublesDoublet(x, y);
+        return new Doublet<>(x, y);
     }
 
-    public static IntegersDoublet computeCentralPointAt(int p, int q, int r, int outerRadius, int innerRadius)
+    public static Doublet<Integer> computeCentralPointAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
-        IntegersDoublet point = null;
+        Doublet<Integer> point = null;
         if (p + q + r == 0)
         {
             int x = p * outerRadius * 3 / 2;
             int y = (q - r) * innerRadius;
-            point = new IntegersDoublet(x, y);
+            point = new Doublet<>(x, y);
         }
         return point;
     }
 
-    public static IntegersDoublet computeCornerPointAt(int p, int q, int r, int outerRadius, int innerRadius)
+    public static Doublet<Integer> computeCornerPointAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
-        IntegersDoublet point = null;
+        Doublet<Integer> point = null;
         if (p + q + r == 0)
         {
             int x = p * outerRadius * 3 / 2 - outerRadius;
             int y = (q - r) * innerRadius - innerRadius;
-            point = new IntegersDoublet(x, y);
+            point = new Doublet<>(x, y);
         }
         return point;
     }
 
-    public static DoublesDoublet computeCentralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    public static Doublet<Double> computeCentralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
     {
-        DoublesDoublet point = null;
+        Doublet<Double> point = null;
         if (p + q + r == 0)
         {
             double x = (double) (p) * outerRadius * 1.5;
             double y = (double) (q - r) * innerRadius;
-            point = new DoublesDoublet(x, y);
+            point = new Doublet<>(x, y);
         }
         return point;
     }
 
-    public static DoublesDoublet computeCornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    public static Doublet<Double> computeCornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
     {
-        DoublesDoublet point = null;
+        Doublet<Double> point = null;
         if (p + q + r == 0)
         {
             double x = (double) (p) * outerRadius * 1.5 - outerRadius;
             double y = (double) (q - r) * innerRadius - innerRadius;
-            point = new DoublesDoublet(x, y);
+            point = new Doublet<>(x, y);
         }
         return point;
     }

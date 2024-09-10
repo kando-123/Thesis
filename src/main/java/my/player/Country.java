@@ -2,7 +2,7 @@ package my.player;
 
 import java.util.HashSet;
 import java.util.Set;
-import my.field.Field;
+import my.field.AbstractField;
 import my.field.FieldType;
 import my.utils.Hex;
 import my.world.World;
@@ -39,13 +39,13 @@ public class Country
         return capital;
     }
     
-    public void addField(Field field)
+    public void addField(AbstractField field)
     {
         field.setOwner(owner);
         territory.add(field.getHex());
     }
     
-    public void removeField(Field field)
+    public void removeField(AbstractField field)
     {
         field.setOwner(null);
         territory.remove(field.getHex());

@@ -9,8 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import my.command.HandleFieldCommand;
-import my.field.Field;
-import my.utils.DoublesDoublet;
+import my.field.AbstractField;
+import my.utils.Doublet;
 import my.utils.Hex;
 import my.world.OrthogonalDirection;
 import my.world.World;
@@ -22,8 +22,8 @@ import my.world.World;
  */
 public class WorldPanel extends JPanel implements Runnable, MouseListener
 {
-    private DoublesDoublet panelCenter;
-    private DoublesDoublet worldCenter;
+    private Doublet<Double> panelCenter;
+    private Doublet<Double> worldCenter;
     private static final double UNIT_STEP = 5;
     private static final double SIN_30DEG = Math.sin(Math.toRadians(30));
     private static final double COS_30DEG = Math.cos(Math.toRadians(30));
@@ -56,7 +56,9 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     {
         double scaledOuterRadius = scale * World.HEX_OUTER_RADIUS;
         double scaledInnerRadius = scale * World.HEX_INNER_RADIUS;
-        worldCenter = panelCenter.minus(hex.getCentralPoint(scaledOuterRadius, scaledInnerRadius));
+        Doublet<Double> center = hex.getCentralPoint(scaledOuterRadius, scaledInnerRadius);
+        worldCenter.left = panelCenter.left - center.left;
+        worldCenter.right = panelCenter.right - center.right;
     }
     
     public void setInputHandler(InputHandler newInputHandler)
@@ -69,8 +71,8 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     {
         super.setPreferredSize(newSize);
         
-        panelCenter = new DoublesDoublet(newSize.width / 2, newSize.height / 2);
-        worldCenter = new DoublesDoublet(newSize.width / 2, newSize.height / 2);
+        panelCenter = new Doublet<Double>((double) newSize.width / 2, (double) newSize.height / 2);
+        worldCenter = new Doublet<Double>((double) newSize.width / 2, (double) newSize.height / 2);
     }
 
     @Override
@@ -96,62 +98,76 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
             {
                 case EAST ->
                 {
-                    worldCenter.xCoord -= UNIT_STEP;
+                    worldCenter.left -= UNIT_STEP;
                 }
                 case SOUTH ->
                 {
-                    worldCenter.yCoord -= UNIT_STEP;
+                    worldCenter.right -= UNIT_STEP;
                 }
                 case WEST ->
                 {
-                    worldCenter.xCoord += UNIT_STEP;
+                    worldCenter.left += UNIT_STEP;
                 }
                 case NORTH ->
                 {
-                    worldCenter.yCoord += UNIT_STEP;
+                    worldCenter.right += UNIT_STEP;
                 }
                 case SOUTHEAST ->
                 {
-                    worldCenter.xCoord -= UNIT_STEP * COS_30DEG;
-                    worldCenter.yCoord -= UNIT_STEP * SIN_30DEG;
+                    worldCenter.left -= UNIT_STEP * COS_30DEG;
+                    worldCenter.right -= UNIT_STEP * SIN_30DEG;
                 }
                 case SOUTHWEST ->
                 {
-                    worldCenter.xCoord += UNIT_STEP * COS_30DEG;
-                    worldCenter.yCoord -= UNIT_STEP * SIN_30DEG;
+                    worldCenter.left += UNIT_STEP * COS_30DEG;
+                    worldCenter.right -= UNIT_STEP * SIN_30DEG;
                 }
                 case NORTHWEST ->
                 {
-                    worldCenter.xCoord += UNIT_STEP * COS_30DEG;
-                    worldCenter.yCoord += UNIT_STEP * SIN_30DEG;
+                    worldCenter.left += UNIT_STEP * COS_30DEG;
+                    worldCenter.right += UNIT_STEP * SIN_30DEG;
                 }
                 case NORTHEAST ->
                 {
-                    worldCenter.xCoord -= UNIT_STEP * COS_30DEG;
-                    worldCenter.yCoord += UNIT_STEP * SIN_30DEG;
+                    worldCenter.left -= UNIT_STEP * COS_30DEG;
+                    worldCenter.right += UNIT_STEP * SIN_30DEG;
                 }
             }
         }
         
         Dimension size = getSize();
-        panelCenter.xCoord = (double) size.width / 2.0;
-        panelCenter.yCoord = (double) size.height / 2.0;
+        panelCenter.left = (double) size.width / 2.0;
+        panelCenter.right = (double) size.height / 2.0;
         
         if (inputHandler.zoomIn() && scale < MAX_SCALE)
         {
             scale = Math.min(scale * SCALE_FACTOR, MAX_SCALE);
-
-            DoublesDoublet relative = panelCenter.minus(worldCenter);
-            DoublesDoublet offset = relative.times(SCALE_FACTOR - 1);
-            worldCenter.subtract(offset);
+            
+            Doublet<Double> relative = new Doublet<>();
+            relative.left = panelCenter.left - worldCenter.left;
+            relative.right = panelCenter.right - worldCenter.right;
+            
+            Doublet<Double> offset = new Doublet<>();
+            offset.left = relative.left * (SCALE_FACTOR - 1);
+            offset.right = relative.right * (SCALE_FACTOR - 1);
+            
+            worldCenter.left -= offset.left;
+            worldCenter.right -= offset.right;
         }
         else if (inputHandler.zoomOut() && scale > MIN_SCALE)
         {
             scale = Math.max(scale / SCALE_FACTOR, MIN_SCALE);
 
-            DoublesDoublet relative = panelCenter.minus(worldCenter);
-            DoublesDoublet offset = relative.times(SCALE_FACTOR - 1);
-            worldCenter.add(offset);
+            Doublet<Double> relative = new Doublet<>();
+            relative.left = panelCenter.left - worldCenter.left;
+            relative.right = panelCenter.right - worldCenter.right;
+            
+            Doublet<Double> offset = new Doublet<>();
+            offset.left = relative.left * (SCALE_FACTOR - 1);
+            offset.right = relative.right * (SCALE_FACTOR - 1);
+            
+            worldCenter.left += offset.left;
+            worldCenter.right += offset.right;
         }
 
         int side = world.getSide();
@@ -189,22 +205,22 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
             yMax = 0.5 * (panelHeight + worldHeight);
         }
 
-        if (worldCenter.xCoord > xMax)
+        if (worldCenter.left > xMax)
         {
-            worldCenter.xCoord = xMax;
+            worldCenter.left = xMax;
         }
-        else if (worldCenter.xCoord < xMin)
+        else if (worldCenter.left < xMin)
         {
-            worldCenter.xCoord = xMin;
+            worldCenter.left = xMin;
         }
 
-        if (worldCenter.yCoord > yMax)
+        if (worldCenter.right > yMax)
         {
-            worldCenter.yCoord = yMax;
+            worldCenter.right = yMax;
         }
-        else if (worldCenter.yCoord < yMin)
+        else if (worldCenter.right < yMin)
         {
-            worldCenter.yCoord = yMin;
+            worldCenter.right = yMin;
         }
     }
 
@@ -232,11 +248,11 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         Point point = e.getPoint();
         double globalX = point.x;
         double globalY = point.y;
-        double relativeX = globalX - worldCenter.xCoord;
-        double relativeY = globalY - worldCenter.yCoord;
+        double relativeX = globalX - worldCenter.left;
+        double relativeY = globalY - worldCenter.right;
         Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
         
-        Field field = world.getFieldAt(hex);
+        AbstractField field = world.getFieldAt(hex);
         manager.passCommand(new HandleFieldCommand(field));
     }
 

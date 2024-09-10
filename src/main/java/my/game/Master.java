@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayerConfigurationContentPane;
-import my.utils.DoublesDoublet;
 import my.utils.Hex;
 import my.world.WorldConfigurationContentPane;
 

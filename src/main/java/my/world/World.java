@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import my.field.Field;
+import my.field.AbstractField;
 import my.field.FieldType;
-import my.utils.DoublesDoublet;
+import my.utils.Doublet;
 import my.utils.Hex;
 import my.utils.HexagonalDirection;
-import my.utils.IntegersDoublet;
 import my.utils.WeightedGenerator;
 
 /**
@@ -30,7 +29,7 @@ public class World
     public static final int HEX_HEIGHT = (int) (2 * HEX_OUTER_RADIUS * Math.sin(Math.PI / 3.0));
 
     private final int side;
-    private final Map<Hex, Field> fields;
+    private final Map<Hex, AbstractField> fields;
 
     public World(WorldConfiguration configuration)
     {
@@ -45,12 +44,12 @@ public class World
         int surface = Hex.getHexSurfaceSize(side);
         fields = new HashMap<>(surface);
 
-        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
-        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
+        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left;
+        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right;
 
-        IntegersDoublet offset = new IntegersDoublet(-westmostX, -northmostY);
+        Doublet<Integer> offset = new Doublet<>(-westmostX, -northmostY);
 
-        Map<Object, IntegersDoublet> centers = generateCenters(side, offset);
+        Map<Object, Doublet<Integer>> centers = generateCenters(side, offset);
 
         generateSeaFields(seaPercentage, centers);
         generateMountsFields(mountainsPercentage, centers);
@@ -66,19 +65,22 @@ public class World
 
     private void createFieldAt(FieldType type, Hex hex)
     {
-        fields.put(hex, new Field(type, hex));
+        fields.put(hex, AbstractField.newInstance(type, hex));
     }
 
-    public Field getFieldAt(Hex hex)
+    public AbstractField getFieldAt(Hex hex)
     {
         return fields.get(hex);
     }
 
-    private Map<Object, IntegersDoublet> generateCenters(int side, IntegersDoublet offset)
+    private Map<Object, Doublet<Integer>> generateCenters(int side, Doublet<Integer> offset)
     {
-        Map<Object, IntegersDoublet> centers = new HashMap<>(Hex.getHexSurfaceSize(side));
+        Map<Object, Doublet<Integer>> centers = new HashMap<>(Hex.getHexSurfaceSize(side));
         Hex hex = Hex.getOrigin();
-        centers.put(hex.clone(), hex.getCentralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS).plus(offset));
+        Doublet<Integer> center = hex.getCentralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
+        center.left += offset.left;
+        center.right += offset.right;
+        centers.put(hex.clone(), center);
         for (int ring = 1; ring < side; ++ring)
         {
             hex.shift(HexagonalDirection.UP);
@@ -86,7 +88,10 @@ public class World
             HexagonalDirection direction = HexagonalDirection.RIGHT_DOWN;
             do
             {
-                centers.put(hex.clone(), hex.getCentralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS).plus(offset));
+                center = hex.getCentralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
+                center.left += offset.left;
+                center.right += offset.right;
+                centers.put(hex.clone(), center);
                 hex.shift(direction);
                 if (hex.isRadial())
                 {
@@ -131,12 +136,12 @@ public class World
         return threshold;
     }
 
-    private void generateSeaFields(double seaPercentage, Map<Object, IntegersDoublet> centers)
+    private void generateSeaFields(double seaPercentage, Map<Object, Doublet<Integer>> centers)
     {
-        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
-        int eastmostX = Hex.computeCornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
-        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
-        int southmostY = Hex.computeCornerPointAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord + HEX_HEIGHT;
+        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left;
+        int eastmostX = Hex.computeCornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left + HEX_WIDTH;
+        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right;
+        int southmostY = Hex.computeCornerPointAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right + HEX_HEIGHT;
         int areaWidth = eastmostX - westmostX;
         int areaHeight = southmostY - northmostY;
 
@@ -168,12 +173,12 @@ public class World
         }
     }
 
-    private void generateMountsFields(double mountsPercentage, Map<Object, IntegersDoublet> centers)
+    private void generateMountsFields(double mountsPercentage, Map<Object, Doublet<Integer>> centers)
     {
-        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord;
-        int eastmostX = Hex.computeCornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).xCoord + HEX_WIDTH;
-        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord;
-        int southmostY = Hex.computeCornerPointAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).yCoord + HEX_HEIGHT;
+        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left;
+        int eastmostX = Hex.computeCornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left + HEX_WIDTH;
+        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right;
+        int southmostY = Hex.computeCornerPointAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right + HEX_HEIGHT;
         int areaWidth = eastmostX - westmostX;
         int areaHeight = southmostY - northmostY;
 
@@ -205,7 +210,7 @@ public class World
         }
     }
 
-    private void generateLandFields(Map<Object, IntegersDoublet> centers)
+    private void generateLandFields(Map<Object, Doublet<Integer>> centers)
     {
         WeightedGenerator<FieldType> generator = new WeightedGenerator<>();
         try
@@ -230,27 +235,27 @@ public class World
         }
     }
 
-    public void draw(Graphics2D graphics, DoublesDoublet centerOffset, double scale, Dimension panelSize)
+    public void draw(Graphics2D graphics, Doublet<Double> centerOffset, double scale, Dimension panelSize)
     {
         var iterator = fields.entrySet().iterator();
         while (iterator.hasNext())
         {
-            Map.Entry<Hex, Field> entry = iterator.next();
+            Map.Entry<Hex, AbstractField> entry = iterator.next();
 
             Hex hex = entry.getKey();
-            IntegersDoublet pixel = hex.getCornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
+            Doublet<Integer> pixel = hex.getCornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
 
-            int x = (int) centerOffset.xCoord + (int) (pixel.xCoord * scale);
-            int y = (int) centerOffset.yCoord + (int) (pixel.yCoord * scale);
+            int x = centerOffset.left.intValue() + (int) (pixel.left * scale);
+            int y = centerOffset.right.intValue() + (int) (pixel.right * scale);
 
-            Field field = entry.getValue();
+            AbstractField field = entry.getValue();
 
             int w = (int) (HEX_WIDTH * scale);
             int h = (int) (HEX_HEIGHT * scale);
 
             if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
             {
-                field.draw(graphics, new IntegersDoublet(x, y), new Dimension(w, h));
+                field.draw(graphics, new Doublet<>(x, y), new Dimension(w, h));
             }
         }
     }
@@ -391,13 +396,13 @@ public class World
     private void splitHexes(HashSet<Hex> periphery,
                             HashSet<Hex> pool)
     {
-        Set<Map.Entry<Hex, Field>> entries = fields.entrySet();
+        Set<Map.Entry<Hex, AbstractField>> entries = fields.entrySet();
         for (var entry : entries)
         {
             var key = entry.getKey();
             var value = entry.getValue();
 
-            if (value.getType().isPlains())
+            if (value.isPlains())
             {
                 boolean isPeripheral = false;
 
@@ -449,7 +454,7 @@ public class World
                 }
                 else
                 {
-                    Field field = fields.get(neighbor);
+                    AbstractField field = fields.get(neighbor);
                     switch (field.getType())
                     {
                         case SEA ->
@@ -791,22 +796,22 @@ public class World
         return sum;
     }
 
-    public void substitute(Field oldField, FieldType newType)
+    public void substitute(AbstractField oldField, FieldType newType)
     {
         Hex hex = oldField.getHex();
         if (fields.get(hex) == oldField)
         {
-            Field newField = new Field(newType, hex);
+            AbstractField newField = AbstractField.newInstance(newType, hex);
             newField.setOwner(oldField.getOwner());
             fields.put(hex, newField);
         }
     }
 
-    private final HashSet<Field> markedFields;
+    private final HashSet<AbstractField> markedFields;
 
     public void mark(Hex hex)
     {
-        Field field = fields.get(hex);
+        AbstractField field = fields.get(hex);
         if (field != null)
         {
             field.mark();
@@ -816,7 +821,7 @@ public class World
 
     public void unmark(Hex hex)
     {
-        Field field = fields.get(hex);
+        AbstractField field = fields.get(hex);
         if (field != null)
         {
             field.unmark();
@@ -826,7 +831,7 @@ public class World
 
     public void unmarkAll()
     {
-        for (Field field : markedFields)
+        for (AbstractField field : markedFields)
         {
             field.unmark();
         }
@@ -835,14 +840,14 @@ public class World
 
     public boolean isMarked(Hex hex)
     {
-        Field field = fields.get(hex);
+        AbstractField field = fields.get(hex);
         return markedFields.contains(field);
     }
 
     public static class Marker
     {
         private final World world;
-        
+
         private Marker(World world)
         {
             this.world = world;
@@ -873,7 +878,7 @@ public class World
     {
         return new Marker(this);
     }
-    
+
     public static class Accessor
     {
         private final World world;
@@ -883,7 +888,7 @@ public class World
             this.world = world;
         }
 
-        public Field getFieldAt(Hex hex)
+        public AbstractField getFieldAt(Hex hex)
         {
             return world.getFieldAt(hex);
         }

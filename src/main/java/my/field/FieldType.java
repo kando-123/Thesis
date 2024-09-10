@@ -19,15 +19,17 @@ public enum FieldType
     TOWN,
     VILLAGE,
     WOOD;
-
-    public final String path;
-    public final String iPath;
-
-    private FieldType()
+    
+    public String getFile()
     {
         String filename = name().substring(0, 1).concat(name().substring(1).toLowerCase());
-        path = String.format("/Fields/%s.png", filename);
-        iPath = String.format("/iFields/i%s.png", filename);
+        return String.format("/Fields/%s.png", filename);
+    }
+    
+    public String getIconFile()
+    {
+        String filename = name().substring(0, 1).concat(name().substring(1).toLowerCase());
+        return String.format("/iFields/i%s.png", filename);
     }
 
     public boolean isBuilding()
@@ -58,46 +60,6 @@ public enum FieldType
                 yield false;
             }
         };
-    }
-
-    public boolean isMarine()
-    {
-        return this == SEA;
-    }
-
-    public boolean isContinental()
-    {
-        return switch (this)
-        {
-            case GRASS, MEADOW, MOUNTAINS, WOOD ->
-            {
-                yield true;
-            }
-            default ->
-            {
-                yield false;
-            }
-        };
-    }
-
-    public boolean isPlains()
-    {
-        return switch (this)
-        {
-            case GRASS, MEADOW, WOOD ->
-            {
-                yield true;
-            }
-            default ->
-            {
-                yield false;
-            }
-        };
-    }
-
-    public boolean isMountainous()
-    {
-        return this == MOUNTAINS;
     }
 
     public String getDescription()

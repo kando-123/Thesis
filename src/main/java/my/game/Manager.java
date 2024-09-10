@@ -9,7 +9,7 @@ import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
 import my.entity.EntityType;
-import my.field.Field;
+import my.field.AbstractField;
 import my.field.FieldType;
 import my.utils.Hex;
 import my.world.World;
@@ -119,7 +119,7 @@ public class Manager
         state = State.HIRING_IN_PROGRESS;
     }
 
-    public void handleField(Field field)
+    public void handleField(AbstractField field)
     {
         switch (state)
         {

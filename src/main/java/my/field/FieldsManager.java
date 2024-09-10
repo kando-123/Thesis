@@ -26,8 +26,8 @@ public class FieldsManager
         iFields = new HashMap<>(FieldType.values().length);
         for (var value : FieldType.values())
         {
-            InputStream stream = getClass().getResourceAsStream(value.path);
-            InputStream iStream = getClass().getResourceAsStream(value.iPath);
+            InputStream stream = getClass().getResourceAsStream(value.getFile());
+            InputStream iStream = getClass().getResourceAsStream(value.getIconFile());
             try
             {
                 BufferedImage field = ImageIO.read(stream);

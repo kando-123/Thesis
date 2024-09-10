@@ -1,7 +1,7 @@
 package my.command;
 
 import my.game.Manager;
-import my.field.Field;
+import my.field.AbstractField;
 
 /**
  *
@@ -9,9 +9,9 @@ import my.field.Field;
  */
 public class HandleFieldCommand extends ManagerCommand
 {
-    private final Field field;
+    private final AbstractField field;
     
-    public HandleFieldCommand(Field field)
+    public HandleFieldCommand(AbstractField field)
     {
         this.field = field;
     }

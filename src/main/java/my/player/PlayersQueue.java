@@ -79,7 +79,7 @@ public class PlayersQueue
             for (var neighbor : capital.neighbors())
             {
                 var field = world.getFieldAt(neighbor);
-                if (field != null && !field.getType().isMarine())
+                if (field != null && !field.isMarine())
                 {
                     queue.get(i).capture(field);
                 }

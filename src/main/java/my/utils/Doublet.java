@@ -1,5 +1,7 @@
 package my.utils;
 
+import java.util.Objects;
+
 /**
  *
  * @param <E>
@@ -15,6 +17,43 @@ public class Doublet<E>
     {
         this.left = left;
         this.right = right;
+    }
+    
+    public Doublet()
+    {
+        this(null, null);
+    }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other == null)
+        {
+            return false;
+        }
+        if (other.getClass() != Doublet.class)
+        {
+            return false;
+        }
+        try
+        {
+            Doublet that = (Doublet) other;
+            
+            return Objects.equals(this.left, that.left) && Objects.equals(this.right, that.right);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.left);
+        hash = 71 * hash + Objects.hashCode(this.right);
+        return hash;
     }
 
     @Override

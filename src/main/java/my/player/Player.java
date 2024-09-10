@@ -1,16 +1,15 @@
 package my.player;
 
+import java.awt.image.BufferedImage;
 import my.field.BuildingPriceCalculator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import my.utils.Hex;
-import my.field.Field;
+import my.field.AbstractField;
 import java.util.Set;
+import my.field.ContoursManager;
 import my.field.FieldType;
-import static my.field.FieldType.BARRACKS;
-import static my.field.FieldType.TOWN;
-import static my.field.FieldType.VILLAGE;
 import my.world.World;
 
 /**
@@ -22,8 +21,9 @@ public class Player
     public static final int MAX_PLAYERS_COUNT = PlayerColor.values().length - 1;
 
     private final PlayerType type;
-    private PlayerColor color;
     private String name;
+    private PlayerColor color;
+    private BufferedImage contour;
 
     private final Country country;
     private final World.Marker marker;
@@ -54,11 +54,17 @@ public class Player
     public void setColor(PlayerColor newColor)
     {
         color = newColor;
+        contour = ContoursManager.getInstance().getContour(color);
     }
 
     public PlayerColor getColor()
     {
         return color;
+    }
+    
+    public BufferedImage getContour()
+    {
+        return contour;
     }
 
     public void setName(String newName)
@@ -81,12 +87,12 @@ public class Player
         money -= outcome;
     }
 
-    public void capture(Field field)
+    public void capture(AbstractField field)
     {
         country.addField(field);
     }
 
-    public void release(Field field)
+    public void release(AbstractField field)
     {
         country.removeField(field);
     }
@@ -135,33 +141,33 @@ public class Player
 
         map.put(FieldType.BARRACKS, (Hex hex) ->
         {
-            Field field = accessor.getFieldAt(hex);
-            return field != null && field.getType().isPlains();
+            var field = accessor.getFieldAt(hex);
+            return field != null && field.isPlains();
         });
         map.put(FieldType.TOWN, (Hex hex) ->
         {
-            Field field = accessor.getFieldAt(hex);
-            return field != null && field.getType().isPlains();
+            var field = accessor.getFieldAt(hex);
+            return field != null && field.isPlains();
         });
         map.put(FieldType.VILLAGE, (Hex hex) ->
         {
-            Field field = accessor.getFieldAt(hex);
-            return field != null && field.getType().isPlains();
+            var field = accessor.getFieldAt(hex);
+            return field != null && field.isPlains();
         });
         map.put(FieldType.FORTRESS, (Hex hex) ->
         {
-            Field field = accessor.getFieldAt(hex);
-            return field != null && field.getType().isContinental();
+            var field = accessor.getFieldAt(hex);
+            return field != null && field.isContinental();
         });
         map.put(FieldType.MINE, (Hex hex) ->
         {
-            Field field = accessor.getFieldAt(hex);
-            return field != null && field.getType().isMountainous();
+            var field = accessor.getFieldAt(hex);
+            return field != null && field.isMountainous();
         });
         map.put(FieldType.FARMFIELD, (Hex hex) ->
         {
-            Field field = accessor.getFieldAt(hex);
-            if (field.getType().isPlains())
+            var field = accessor.getFieldAt(hex);
+            if (field.isPlains())
             {
                 for (var neighbor : hex.neighbors())
                 {
@@ -176,13 +182,13 @@ public class Player
         });
         map.put(FieldType.SHIPYARD, (Hex hex) ->
         {
-            Field field = accessor.getFieldAt(hex);
-            if (field.getType().isPlains())
+            var field = accessor.getFieldAt(hex);
+            if (field.isPlains())
             {
                 for (var neighbor : hex.neighbors())
                 {
                     field = accessor.getFieldAt(neighbor);
-                    if (field != null && field.getType().isMarine())
+                    if (field != null && field.isMarine())
                     {
                         return true;
                     }

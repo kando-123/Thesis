@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import my.utils.DoublesDoublet;
-import my.utils.IntegersDoublet;
+import my.utils.Doublet;
 
 class Scaler
 {
@@ -63,7 +62,7 @@ public class PerlinNoise
      * The grid of the gradients. The gradients are stored as pairs of <i>x</i>
      * and <i>y</i> coordinates.
      */
-    private final Map<IntegersDoublet, DoublesDoublet> gradientVectors;
+    private final Map<Doublet<Integer>, Doublet<Double>> gradientVectors;
 
     /**
      * Number of octaves in noise generation. The default value is
@@ -162,7 +161,7 @@ public class PerlinNoise
                 double angle = random.nextDouble(0.0d, Math.TAU);
                 double xCoord = Math.cos(angle);
                 double yCoord = Math.sin(angle);
-                gradientVectors.put(new IntegersDoublet(i, j), new DoublesDoublet(xCoord, yCoord));
+                gradientVectors.put(new Doublet<>(i, j), new Doublet<>(xCoord, yCoord));
             }
         }
         octavesCount = 1;
@@ -212,7 +211,7 @@ public class PerlinNoise
         upperBound = upper;
     }
 
-    private double getRawNoise(IntegersDoublet pixel)
+    private double getRawNoise(Doublet<Integer> pixel)
     {
         /* Naming */
         // x, y - refer to global position within the area, counted in pixels
@@ -221,15 +220,15 @@ public class PerlinNoise
         // a, b, c, d - refer to corners of the chunk, respectively:
         //  top left, top right, bottom left, bottom right.
 
-        assert (pixel.xCoord >= 0 && pixel.yCoord >= 0);
+        assert (pixel.left >= 0 && pixel.right >= 0);
 
         /* Adjust the coords. */
-        pixel.xCoord %= areaWidth;
-        pixel.yCoord %= areaHeight;
+        pixel.left %= areaWidth;
+        pixel.right %= areaHeight;
 
         /* Find the chunk's indices. */
-        int chunkCol = pixel.xCoord / chunkSize;
-        int chunkRow = pixel.yCoord / chunkSize;
+        int chunkCol = pixel.left / chunkSize;
+        int chunkRow = pixel.right / chunkSize;
 
         /* Find the coordinates of the corners. */
         int chunkLeftX = chunkCol * chunkSize;
@@ -238,22 +237,22 @@ public class PerlinNoise
         int chunkBottomY = chunkTopY + chunkSize;
 
         /* Find the local coordinates of the point. */
-        double pixelLeftP = (double) (pixel.xCoord - chunkLeftX) / (double) chunkSize;
-        double pixelTopQ = (double) (pixel.yCoord - chunkTopY) / (double) chunkSize;
-        double pixelRightP = (double) (pixel.xCoord - chunkRightX) / (double) chunkSize;
-        double pixelBottomQ = (double) (pixel.yCoord - chunkBottomY) / (double) chunkSize;
+        double pixelLeftP = (double) (pixel.left - chunkLeftX) / (double) chunkSize;
+        double pixelTopQ = (double) (pixel.right - chunkTopY) / (double) chunkSize;
+        double pixelRightP = (double) (pixel.left - chunkRightX) / (double) chunkSize;
+        double pixelBottomQ = (double) (pixel.right - chunkBottomY) / (double) chunkSize;
 
         /* Find the gradients. */
-        var gradientA = gradientVectors.get(new IntegersDoublet(chunkCol, chunkRow));
-        var gradientB = gradientVectors.get(new IntegersDoublet(chunkCol + 1, chunkRow));
-        var gradientC = gradientVectors.get(new IntegersDoublet(chunkCol, chunkRow + 1));
-        var gradientD = gradientVectors.get(new IntegersDoublet(chunkCol + 1, chunkRow + 1));
+        var gradientA = gradientVectors.get(new Doublet<Integer>(chunkCol, chunkRow));
+        var gradientB = gradientVectors.get(new Doublet<Integer>(chunkCol + 1, chunkRow));
+        var gradientC = gradientVectors.get(new Doublet<Integer>(chunkCol, chunkRow + 1));
+        var gradientD = gradientVectors.get(new Doublet<Integer>(chunkCol + 1, chunkRow + 1));
 
         /* Calculate the products. */
-        double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.xCoord, gradientA.yCoord);
-        double productB = dotProduct(pixelRightP, pixelTopQ, gradientB.xCoord, gradientB.yCoord);
-        double productC = dotProduct(pixelLeftP, pixelBottomQ, gradientC.xCoord, gradientC.yCoord);
-        double productD = dotProduct(pixelRightP, pixelBottomQ, gradientD.xCoord, gradientD.yCoord);
+        double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.left, gradientA.right);
+        double productB = dotProduct(pixelRightP, pixelTopQ, gradientB.left, gradientB.right);
+        double productC = dotProduct(pixelLeftP, pixelBottomQ, gradientC.left, gradientC.right);
+        double productD = dotProduct(pixelRightP, pixelBottomQ, gradientD.left, gradientD.right);
 
         /* Interpolate. */
         double horizontalTop = lerp(productA, productB, pixelLeftP);
@@ -262,24 +261,24 @@ public class PerlinNoise
         return lerp(horizontalTop, horizontalBottom, pixelTopQ);
     }
 
-    public List<Double> makeNoise(List<IntegersDoublet> pixels)
+    public List<Double> makeNoise(List<Doublet<Integer>> pixels)
     {
         List<Double> result = new ArrayList<>(pixels.size());
         double minimum = +Double.MAX_VALUE;
         double maximum = -Double.MAX_VALUE;
         for (var pixel : pixels)
         {
-            assert (pixel.xCoord >= 0 && pixel.xCoord < areaWidth);
-            assert (pixel.yCoord >= 0 && pixel.yCoord < areaHeight);
+            assert (pixel.left >= 0 && pixel.left < areaWidth);
+            assert (pixel.right >= 0 && pixel.right < areaHeight);
 
             double noise = getRawNoise(pixel);
             double frequency = lacunarity;
             double amplitude = persistence;
             for (int i = 1; i < octavesCount; ++i)
             {
-                IntegersDoublet newPixel = new IntegersDoublet(0, 0);
-                newPixel.xCoord = (int) (frequency * (double) pixel.xCoord);
-                newPixel.yCoord = (int) (frequency * (double) pixel.yCoord);
+                Doublet<Integer> newPixel = new Doublet<Integer>(0, 0);
+                newPixel.left = (int) (frequency * (double) pixel.left);
+                newPixel.right = (int) (frequency * (double) pixel.right);
                 noise += amplitude * getRawNoise(newPixel);
                 frequency *= lacunarity;
                 amplitude *= persistence;
@@ -315,7 +314,7 @@ public class PerlinNoise
         return result;
     }
 
-    public Map<Object, Double> makeNoise(Map<Object, IntegersDoublet> pixels)
+    public Map<Object, Double> makeNoise(Map<Object, Doublet<Integer>> pixels)
     {
         Map<Object, Double> result = new HashMap<>(pixels.size());
         double minimum = +Double.MAX_VALUE;
@@ -325,19 +324,19 @@ public class PerlinNoise
         {
             var entry = pixelsIterator.next();
             Object key = entry.getKey();
-            IntegersDoublet pixel = entry.getValue();
+            Doublet<Integer> pixel = entry.getValue();
 
-            assert (pixel.xCoord >= 0 && pixel.xCoord < areaWidth);
-            assert (pixel.yCoord >= 0 && pixel.yCoord < areaHeight);
+            assert (pixel.left >= 0 && pixel.left < areaWidth);
+            assert (pixel.right >= 0 && pixel.right < areaHeight);
 
             double noise = getRawNoise(pixel);
             double frequency = lacunarity;
             double amplitude = persistence;
             for (int i = 1; i < octavesCount; ++i)
             {
-                IntegersDoublet newPixel = new IntegersDoublet(0, 0);
-                newPixel.xCoord = (int) (frequency * (double) pixel.xCoord);
-                newPixel.yCoord = (int) (frequency * (double) pixel.yCoord);
+                Doublet<Integer> newPixel = new Doublet<>(0, 0);
+                newPixel.left = (int) (frequency * (double) pixel.left);
+                newPixel.right = (int) (frequency * (double) pixel.right);
                 noise += amplitude * getRawNoise(newPixel);
                 frequency *= lacunarity;
                 amplitude *= persistence;

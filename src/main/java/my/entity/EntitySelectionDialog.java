@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -64,54 +65,59 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Sp
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         contentPane.setPreferredSize(new Dimension(400, 300));
-
-        nameLabel = new JLabel();
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPane.add(nameLabel);
-
+        
+        contentPane.add(makeNameLabel());
         contentPane.add(makeIconPanel());
         contentPane.add(makeDescriptionTextArea());
-        
-        Spinner.Model model = new Spinner.Model(INITIAL_NUMBER, MINIMAL_NUMBER, MAXIMAL_NUMBER);
-        numberSpinner = new Spinner(model, new Dimension(400, 20));
-        numberSpinner.addValueChangeListener(this);
-        contentPane.add(numberSpinner);
-        
+        contentPane.add(makeSpinner());
         contentPane.add(makePurchasePanel());
 
         return contentPane;
     }
-
-    private JPanel makeIconPanel()
+    
+    private JComponent makeNameLabel()
     {
-        JPanel iconPanel = new JPanel();
-        iconPanel.setLayout(new BoxLayout(iconPanel, BoxLayout.X_AXIS));
+        nameLabel = new JLabel();
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return nameLabel;
+    }
+
+    private JComponent makeIconPanel()
+    {
+        JPanel iconPanel = new JPanel(new GridBagLayout());
         iconPanel.setPreferredSize(new Dimension(400, 100));
 
         Insets zeroInsets = new Insets(0, 0, 0, 0);
         ArrowsManager arrowsManager = ArrowsManager.getInstance();
 
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.weighty = 1;
         Icon leftIcon = arrowsManager.getLeftArrowAsIcon();
         JButton leftArrow = new JButton(leftIcon);
         leftArrow.setMargin(zeroInsets);
         leftArrow.setActionCommand("left");
         leftArrow.addActionListener(this);
-        iconPanel.add(leftArrow);
+        iconPanel.add(leftArrow, c.clone());
 
+        ++c.gridx;
         iconLabel = new JLabel();
-        iconPanel.add(iconLabel);
+        iconPanel.add(iconLabel, c.clone());
 
+        ++c.gridx;
         Icon rightIcon = arrowsManager.getRightArrowAsIcon();
         JButton rightArrow = new JButton(rightIcon);
         rightArrow.setMargin(zeroInsets);
         rightArrow.setActionCommand("right");
         rightArrow.addActionListener(this);
-        iconPanel.add(rightArrow);
+        iconPanel.add(rightArrow, c.clone());
 
         return iconPanel;
     }
 
-    private JTextArea makeDescriptionTextArea()
+    private JComponent makeDescriptionTextArea()
     {
         descriptionTextArea = new JTextArea();
         descriptionTextArea.setBorder(BorderFactory.createTitledBorder("Description"));
@@ -124,11 +130,19 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Sp
         return descriptionTextArea;
     }
     
+    private JComponent makeSpinner()
+    {
+        Spinner.Model model = new Spinner.Model(INITIAL_NUMBER, MINIMAL_NUMBER, MAXIMAL_NUMBER);
+        numberSpinner = new Spinner(model, new Dimension(400, 20));
+        numberSpinner.addValueChangeListener(this);
+        return numberSpinner;
+    }
+    
     private static final int INITIAL_NUMBER = 20;
     private static final int MINIMAL_NUMBER =  1;
     private static final int MAXIMAL_NUMBER = 99;
 
-    private JPanel makePurchasePanel()
+    private JComponent makePurchasePanel()
     {
         JPanel purchasePanel = new JPanel(new GridBagLayout());
         purchasePanel.setPreferredSize(new Dimension(400, 90));
@@ -138,13 +152,7 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Sp
         c.gridy = 0;
         c.weightx = 1;
         c.weighty = 1;
-        c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
-        
-//        SpinnerModel model = new SpinnerNumberModel(10, 1, 99, 1);
-//        numberSpinner = new JSpinner(model);
-//        numberSpinner.addChangeListener(this);
-//        purchasePanel.add(numberSpinner, c);
 
         priceTextArea = new JTextArea();
         priceTextArea.setBorder(BorderFactory.createTitledBorder("Price"));
@@ -152,15 +160,15 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Sp
         priceTextArea.setLineWrap(true);
         priceTextArea.setWrapStyleWord(true);
         priceTextArea.setOpaque(false);
-        priceTextArea.setPreferredSize(new Dimension(50, 90));
-        purchasePanel.add(priceTextArea);
+        priceTextArea.setPreferredSize(new Dimension(100, 45));
+        purchasePanel.add(priceTextArea, c.clone());
         
         c.gridx = 1;
         buyButton = new JButton("Buy");
         buyButton.setActionCommand("buy");
         buyButton.addActionListener(this);
-        buyButton.setPreferredSize(new Dimension(50, 90));
-        purchasePanel.add(buyButton);
+        buyButton.setPreferredSize(new Dimension(100, 45));
+        purchasePanel.add(buyButton, c.clone());
         
         return purchasePanel;
     }
