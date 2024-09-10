@@ -12,7 +12,7 @@ public abstract class CommercialField extends BuildingField
     }
     
     @Override
-    public boolean isCommercial()
+    final public boolean isCommercial()
     {
         return true;
     }

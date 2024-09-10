@@ -32,21 +32,25 @@ public enum FieldType
         return String.format("/iFields/i%s.png", filename);
     }
 
+    @Deprecated
     public boolean isBuilding()
     {
         return isProperty() && !isCapital();
     }
 
+    @Deprecated
     public boolean isCapital()
     {
         return this == CAPITAL;
     }
 
+    @Deprecated
     public boolean isProperty()
     {
         return !isNatural();
     }
 
+    @Deprecated
     public boolean isNatural()
     {
         return switch (this)
@@ -62,6 +66,7 @@ public enum FieldType
         };
     }
 
+    @Deprecated
     public String getDescription()
     {
         return switch (this)
@@ -104,6 +109,7 @@ public enum FieldType
         };
     }
 
+    @Deprecated
     public String getConditions()
     {
         return switch (this)
@@ -143,6 +149,7 @@ public enum FieldType
         };
     }
     
+    @Deprecated
     public int getInitialPrice()
     {
         return switch (this)
@@ -182,6 +189,7 @@ public enum FieldType
         };
     }
     
+    @Deprecated
     public int getPriceIncrement()
     {
         return switch (this)
@@ -221,6 +229,7 @@ public enum FieldType
         };
     }
     
+    @Deprecated
     private static int countPurchasables()
     {
         int count = 0;
@@ -234,5 +243,6 @@ public enum FieldType
         return count;
     }
     
+    @Deprecated
     public static final int BUILDINGS_COUNT = countPurchasables();
 }

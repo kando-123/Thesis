@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -74,22 +75,27 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         contentPane.setPreferredSize(new Dimension(400, 300));
 
-        nameLabel = new JLabel();
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPane.add(nameLabel);
-        
-        contentPane.add(makeIconPanel());
-        contentPane.add(makeDescriptionTextArea());
-        contentPane.add(makePurchasePanel());
+        contentPane.add(makeNameLabel());           // 15s
+        contentPane.add(makeIconPanel());           // 115
+        contentPane.add(makeDescriptionTextArea()); // 85
+        contentPane.add(makePurchasePanel());       // 85
 
         return contentPane;
     }
     
-    private JPanel makeIconPanel()
+    private JComponent makeNameLabel()
+    {
+        nameLabel = new JLabel();
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nameLabel.setPreferredSize(new Dimension(400, 15));
+        return nameLabel;
+    }
+    
+    private JComponent makeIconPanel()
     {
         JPanel iconPanel = new JPanel();
         iconPanel.setLayout(new BoxLayout(iconPanel, BoxLayout.X_AXIS));
-        iconPanel.setPreferredSize(new Dimension(400, 120));
+        iconPanel.setPreferredSize(new Dimension(400, 115));
 
         Insets zeroInsets = new Insets(0, 0, 0, 0);
         ArrowsManager arrowsManager = ArrowsManager.getInstance();
@@ -114,7 +120,7 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         return iconPanel;
     }
     
-    private JTextArea makeDescriptionTextArea()
+    private JComponent makeDescriptionTextArea()
     {
         descriptionTextArea = new JTextArea();
         descriptionTextArea.setBorder(BorderFactory.createTitledBorder("Description"));
@@ -122,15 +128,15 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         descriptionTextArea.setLineWrap(true);
         descriptionTextArea.setWrapStyleWord(true);
         descriptionTextArea.setEditable(false);
-        descriptionTextArea.setPreferredSize(new Dimension(400, 90));
+        descriptionTextArea.setPreferredSize(new Dimension(400, 85));
         
         return descriptionTextArea;
     }
     
-    private JPanel makePurchasePanel()
+    private JComponent makePurchasePanel()
     {
         JPanel purchasePanel = new JPanel(new GridBagLayout());
-        purchasePanel.setPreferredSize(new Dimension(400, 90));
+        purchasePanel.setPreferredSize(new Dimension(400, 85));
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -146,8 +152,8 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         conditionsTextArea.setWrapStyleWord(true);
         conditionsTextArea.setEditable(false);
         conditionsTextArea.setOpaque(false);
-        conditionsTextArea.setPreferredSize(new Dimension(300, 90));
-        purchasePanel.add(conditionsTextArea, c);
+        conditionsTextArea.setPreferredSize(new Dimension(250, 85));
+        purchasePanel.add(conditionsTextArea, c.clone());
 
         c.gridx = 1;
         c.weightx = 1;
@@ -157,16 +163,17 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         priceTextArea.setLineWrap(true);
         priceTextArea.setWrapStyleWord(true);
         priceTextArea.setOpaque(false);
-        priceTextArea.setPreferredSize(new Dimension(50, 90));
-        purchasePanel.add(priceTextArea);
+        priceTextArea.setPreferredSize(new Dimension(50, 85));
+        purchasePanel.add(priceTextArea, c.clone());
 
         c.gridx = 2;
         c.weightx = 1;
+        c.fill = GridBagConstraints.NONE;
         buyButton = new JButton("Buy");
         buyButton.setActionCommand("buy");
         buyButton.addActionListener(this);
-        buyButton.setPreferredSize(new Dimension(50, 90));
-        purchasePanel.add(buyButton);
+        buyButton.setPreferredSize(new Dimension(70, 40));
+        purchasePanel.add(buyButton, c.clone());
 
         return purchasePanel;
     }

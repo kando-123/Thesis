@@ -12,7 +12,7 @@ public class SeaField extends NaturalField
     }
     
     @Override
-    public boolean isMarine()
+    final public boolean isMarine()
     {
         return true;
     }

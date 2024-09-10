@@ -12,7 +12,7 @@ public abstract class PlainsField extends ContinentalField
     }
     
     @Override
-    public boolean isPlains()
+    final public boolean isPlains()
     {
         return true;
     }

@@ -9,7 +9,7 @@ import my.field.FieldType;
  */
 public class PursueBuildingCommand extends ManagerCommand
 {
-    private FieldType building;
+    private final FieldType building;
 
     public PursueBuildingCommand(FieldType building)
     {

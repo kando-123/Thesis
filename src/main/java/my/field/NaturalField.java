@@ -12,7 +12,7 @@ public abstract class NaturalField extends AbstractField
     }
     
     @Override
-    public boolean isNatural()
+    final public boolean isNatural()
     {
         return true;
     }

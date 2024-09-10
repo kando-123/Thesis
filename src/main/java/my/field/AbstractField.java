@@ -19,8 +19,7 @@ public abstract class AbstractField
     
     private Player owner;
     private boolean isMarked;
-    private final BufferedImage image;
-    private final BufferedImage markedImage;
+    private final Doublet<BufferedImage> images;
     
     private Entity entity;
     
@@ -29,13 +28,21 @@ public abstract class AbstractField
     protected AbstractField(FieldType type)
     {
         this.type = type;
-        image = fieldsManager.getField(type);
-        markedImage = fieldsManager.getMarkedField(type);
+        images = new Doublet<>();
+        images.left = fieldsManager.getField(type);
+        images.right = fieldsManager.getMarkedField(type);
     }
     
     public FieldType getType()
     {
         return type;
+    }
+    
+    public Hex setHex(Hex newHex)
+    {
+        Hex oldHex = hex;
+        hex = newHex;
+        return oldHex;
     }
     
     public Hex getHex()
@@ -45,12 +52,12 @@ public abstract class AbstractField
     
     public int getWidth()
     {
-        return image.getWidth();
+        return images.left.getWidth();
     }
     
     public int getHeight()
     {
-        return image.getHeight();
+        return images.left.getHeight();
     }
     
     public boolean isOwned()
@@ -80,7 +87,7 @@ public abstract class AbstractField
     
     public void draw(Graphics2D graphics, Doublet<Integer> position, Dimension size)
     {
-        graphics.drawImage(isMarked ? markedImage : image,
+        graphics.drawImage(!isMarked ? images.left : images.right,
                 position.left, position.right,
                 size.width, size.height,
                 null);
@@ -149,9 +156,9 @@ public abstract class AbstractField
         return false;
     }
     
-    public static AbstractField newInstance(FieldType type, Hex hex)
+    public static AbstractField newInstance(FieldType type)
     {
-        AbstractField field = switch (type)
+        return switch (type)
         {
             case SEA ->
             {
@@ -205,9 +212,13 @@ public abstract class AbstractField
             {
                 yield new CapitalField();
             }
-            
         };
-        field.hex = hex;
+    }
+    
+    public static AbstractField newInstanceAt(FieldType type, Hex hex)
+    {
+        AbstractField field = newInstance(type);
+        field.setHex(hex);
         return field;
     }
 }

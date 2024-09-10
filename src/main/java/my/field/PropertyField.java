@@ -12,7 +12,7 @@ public abstract class PropertyField extends AbstractField
     }
     
     @Override
-    public boolean isProperty()
+    final public boolean isProperty()
     {
         return true;
     }

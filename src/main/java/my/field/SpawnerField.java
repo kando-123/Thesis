@@ -12,7 +12,7 @@ public abstract class SpawnerField extends BuildingField
     }
     
     @Override
-    public boolean isSpawner()
+    final public boolean isSpawner()
     {
         return true;
     }

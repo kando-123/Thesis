@@ -1,10 +1,12 @@
 package my.field;
 
+import my.utils.IntegerLinearFunction;
+
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class BuildingField extends AbstractField
+public abstract class BuildingField extends AbstractField
 {
     protected BuildingField(FieldType type)
     {
@@ -12,8 +14,19 @@ public class BuildingField extends AbstractField
     }
     
     @Override
-    public boolean isBuilding()
+    final public boolean isBuilding()
     {
         return true;
+    }
+    
+    public abstract String getDescription();
+    public abstract String getCondition();
+    
+    protected int priceIntercept;
+    protected int priceSlope;
+    
+    public IntegerLinearFunction getPriceFunction()
+    {
+        return new IntegerLinearFunction(priceSlope, priceIntercept);
     }
 }

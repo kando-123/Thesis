@@ -12,7 +12,7 @@ public class CapitalField extends AbstractField
     }
     
     @Override
-    public boolean isCapital()
+    final public boolean isCapital()
     {
         return true;
     }

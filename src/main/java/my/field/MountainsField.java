@@ -12,7 +12,7 @@ public class MountainsField extends ContinentalField
     }
     
     @Override
-    public boolean isMountainous()
+    final public boolean isMountainous()
     {
         return true;
     }

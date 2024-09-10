@@ -65,7 +65,8 @@ public class World
 
     private void createFieldAt(FieldType type, Hex hex)
     {
-        fields.put(hex, AbstractField.newInstance(type, hex));
+        AbstractField field = AbstractField.newInstanceAt(type, hex);
+        fields.put(hex, field);
     }
 
     public AbstractField getFieldAt(Hex hex)
@@ -801,7 +802,7 @@ public class World
         Hex hex = oldField.getHex();
         if (fields.get(hex) == oldField)
         {
-            AbstractField newField = AbstractField.newInstance(newType, hex);
+            AbstractField newField = AbstractField.newInstanceAt(newType, hex);
             newField.setOwner(oldField.getOwner());
             fields.put(hex, newField);
         }

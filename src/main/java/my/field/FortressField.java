@@ -9,5 +9,20 @@ public class FortressField extends BuildingField
     protected FortressField()
     {
         super(FieldType.FORTRESS);
+        
+        priceIntercept = 400;
+        priceSlope = 100;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Fortress gives additional defence points.";
+    }
+
+    @Override
+    public String getCondition()
+    {
+        return "You need a continental field to build a fortress.";
     }
 }
