@@ -6,7 +6,7 @@ package my.field;
  */
 public class BarracksField extends SpawnerField
 {
-    protected BarracksField()
+    public BarracksField()
     {
         super(FieldType.BARRACKS);
         

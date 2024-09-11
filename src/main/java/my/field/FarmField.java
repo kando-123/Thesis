@@ -6,7 +6,7 @@ package my.field;
  */
 public class FarmField extends CommercialField
 {
-    protected FarmField()
+    public FarmField()
     {
         super(FieldType.FARMFIELD);
         

@@ -6,7 +6,7 @@ package my.field;
  */
 public class MeadowField extends PlainsField
 {
-    protected MeadowField()
+    public MeadowField()
     {
         super(FieldType.MEADOW);
     }

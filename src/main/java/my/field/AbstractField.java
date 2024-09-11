@@ -3,7 +3,7 @@ package my.field;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import my.entity.Entity;
+import my.entity.AbstractEntity;
 import my.player.Player;
 import my.utils.Doublet;
 import my.utils.Hex;
@@ -21,7 +21,7 @@ public abstract class AbstractField
     private boolean isMarked;
     private final Doublet<BufferedImage> images;
     
-    private Entity entity;
+    private AbstractEntity entity;
     
     private static final FieldsManager fieldsManager = FieldsManager.getInstance();
     
@@ -31,6 +31,14 @@ public abstract class AbstractField
         images = new Doublet<>();
         images.left = fieldsManager.getField(type);
         images.right = fieldsManager.getMarkedField(type);
+    }
+    
+    public void cloneProperties(AbstractField other)
+    {
+        hex = other.hex;
+        owner = other.owner;
+        entity = other.entity;
+        // other.entity = null; // ?
     }
     
     public FieldType getType()

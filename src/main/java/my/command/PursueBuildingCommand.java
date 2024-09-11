@@ -1,5 +1,6 @@
 package my.command;
 
+import my.field.BuildingField;
 import my.game.Manager;
 import my.field.FieldType;
 
@@ -9,9 +10,9 @@ import my.field.FieldType;
  */
 public class PursueBuildingCommand extends ManagerCommand
 {
-    private final FieldType building;
+    private final BuildingField building;
 
-    public PursueBuildingCommand(FieldType building)
+    public PursueBuildingCommand(BuildingField building)
     {
         this.building = building;
     }

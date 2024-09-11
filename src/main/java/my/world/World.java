@@ -797,13 +797,12 @@ public class World
         return sum;
     }
 
-    public void substitute(AbstractField oldField, FieldType newType)
+    public void substitute(AbstractField oldField, AbstractField newField)
     {
         Hex hex = oldField.getHex();
         if (fields.get(hex) == oldField)
         {
-            AbstractField newField = AbstractField.newInstanceAt(newType, hex);
-            newField.setOwner(oldField.getOwner());
+            newField.cloneProperties(oldField);
             fields.put(hex, newField);
         }
     }

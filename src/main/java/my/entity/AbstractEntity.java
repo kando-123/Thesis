@@ -10,7 +10,7 @@ import my.utils.Doublet;
  *
  * @author Kay Jay O'Nail
  */
-public class Entity
+public abstract class AbstractEntity
 {
     private final EntityType type;
     private final BufferedImage image;
@@ -19,23 +19,27 @@ public class Entity
     
     private static final EntitiesManager entitiesManager = EntitiesManager.getInstance();
     
-    protected Entity(EntityType type)
+    protected AbstractEntity(EntityType type)
     {
         this.type = type;
         this.image = entitiesManager.getEntity(type);
     }
     
-    public static Entity newInstance(EntityType type)
+    public static AbstractEntity newInstance(EntityType type)
     {
         return switch (type)
         {
-            case INFANTRY, CAVALRY ->
+            case INFANTRY ->
             {
-                yield new Entity(type);
+                yield new InfantryEntity();
+            }
+            case CAVALRY ->
+            {
+                yield new CavalryEntity();
             }
             case NAVY ->
             {
-                yield new ShipEntity();
+                yield new NavyEntity();
             }
         };
     }

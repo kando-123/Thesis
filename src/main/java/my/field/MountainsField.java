@@ -6,7 +6,7 @@ package my.field;
  */
 public class MountainsField extends ContinentalField
 {
-    protected MountainsField()
+    public MountainsField()
     {
         super(FieldType.MOUNTAINS);
     }

@@ -4,11 +4,11 @@ package my.entity;
  *
  * @author Kay Jay O'Nail
  */
-public class ShipEntity extends Entity
+public class NavyEntity extends AbstractEntity
 {
     private int sailors;
 
-    public ShipEntity()
+    public NavyEntity()
     {
         super(EntityType.NAVY);
     }

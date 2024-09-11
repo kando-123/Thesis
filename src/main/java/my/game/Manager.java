@@ -10,6 +10,7 @@ import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
 import my.entity.EntityType;
 import my.field.AbstractField;
+import my.field.BuildingField;
 import my.field.FieldType;
 import my.utils.Hex;
 import my.world.World;
@@ -87,9 +88,9 @@ public class Manager
         buildingDialog.setVisible(true);
     }
 
-    private FieldType selectedBuilding;
+    private BuildingField selectedBuilding;
 
-    public void pursueBuilding(FieldType building)
+    public void pursueBuilding(BuildingField building)
     {
         if (state == State.BUILDING_BEGUN)
         {
@@ -97,7 +98,7 @@ public class Manager
 
             buildingDialog.dispose();
             selectedBuilding = building;
-            players.current().markFor(building);
+            players.current().markFor(building.getType());
         }
     }
 

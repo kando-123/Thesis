@@ -6,7 +6,7 @@ package my.field;
  */
 public class CapitalField extends AbstractField
 {
-    protected CapitalField()
+    public CapitalField()
     {
         super(FieldType.CAPITAL);
     }

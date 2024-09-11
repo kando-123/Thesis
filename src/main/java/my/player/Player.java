@@ -8,6 +8,7 @@ import java.util.Map;
 import my.utils.Hex;
 import my.field.AbstractField;
 import java.util.Set;
+import my.field.BuildingField;
 import my.field.ContoursManager;
 import my.field.FieldType;
 import my.world.World;
@@ -101,11 +102,21 @@ public class Player
     {
         return country.getTerritory();
     }
-
-    public int getPriceFor(FieldType type)
+    
+    private int getPriceFor(FieldType buildingType)
     {
-        int count = country.getCount(type);
-        return priceCalculator.calculatePrice(type, count);
+        int count = country.getCount(buildingType);
+        return priceCalculator.calculatePrice(buildingType, count);
+    }
+
+    public int getPriceFor(BuildingField building)
+    {
+        return getPriceFor(building.getType());
+    }
+    
+    public int getCount(FieldType type)
+    {
+        return country.getCount(type);
     }
 
     public Hex setCapital(Hex newCapital)

@@ -6,7 +6,7 @@ package my.field;
  */
 public class TownField extends CommercialField
 {
-    protected TownField()
+    public TownField()
     {
         super(FieldType.TOWN);
         

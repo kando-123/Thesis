@@ -6,7 +6,7 @@ package my.field;
  */
 public class ShipyardField extends SpawnerField
 {
-    protected ShipyardField()
+    public ShipyardField()
     {
         super(FieldType.SHIPYARD);
         

@@ -6,7 +6,7 @@ package my.field;
  */
 public class GrassField extends PlainsField
 {
-    protected GrassField()
+    public GrassField()
     {
         super(FieldType.GRASS);
     }

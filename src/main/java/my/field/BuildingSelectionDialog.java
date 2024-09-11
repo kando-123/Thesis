@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.BorderFactory;
@@ -29,7 +31,7 @@ import my.game.Manager;
  */
 public class BuildingSelectionDialog extends JDialog implements ActionListener
 {
-    private final FieldType[] allBuildings;
+    private final List<BuildingField> allBuildings;
     private int current;
     
     private Manager manager;
@@ -53,15 +55,14 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
         fieldsManager = FieldsManager.getInstance();
 
-        allBuildings = new FieldType[FieldType.BUILDINGS_COUNT];
-        int i = 0;
-        for (var value : FieldType.values())
-        {
-            if (value.isBuilding())
-            {
-                allBuildings[i++] = value;
-            }
-        }
+        allBuildings = new ArrayList<>();
+        allBuildings.add(new VillageField());
+        allBuildings.add(new FarmField());
+        allBuildings.add(new TownField());
+        allBuildings.add(new MineField());
+        allBuildings.add(new FortressField());
+        allBuildings.add(new BarracksField());
+        allBuildings.add(new ShipyardField());
 
         setContentPane(makeContentPane());
         pack();
@@ -75,10 +76,10 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         contentPane.setPreferredSize(new Dimension(400, 300));
 
-        contentPane.add(makeNameLabel());           // 15s
+        contentPane.add(makeNameLabel());           //  15
         contentPane.add(makeIconPanel());           // 115
-        contentPane.add(makeDescriptionTextArea()); // 85
-        contentPane.add(makePurchasePanel());       // 85
+        contentPane.add(makeDescriptionTextArea()); //  85
+        contentPane.add(makePurchasePanel());       //  85
 
         return contentPane;
     }
@@ -180,15 +181,16 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
     private void reassignValues()
     {
-        FieldType building = allBuildings[current];
-        nameLabel.setText(building.name());
-        iconLabel.setIcon(fieldsManager.getFieldAsIcon(building));
+        BuildingField building = allBuildings.get(current);
+        FieldType type = building.getType();
+        nameLabel.setText(type.name());
+        iconLabel.setIcon(fieldsManager.getFieldAsIcon(type));
         descriptionTextArea.setText(building.getDescription());
-        conditionsTextArea.setText(building.getConditions());
-        priceTextArea.setText(String.format("%d Ħ", prices.get(building)));
+        conditionsTextArea.setText(building.getCondition());
+        priceTextArea.setText(String.format("%d Ħ", prices.get(type)));
         
-        boolean isAffordable = prices != null && prices.containsKey(building) && prices.get(building) <= playerMoney;
-        boolean isErectable = erectableBuildings != null && erectableBuildings.contains(building);
+        boolean isAffordable = prices != null && prices.containsKey(type) && prices.get(type) <= playerMoney;
+        boolean isErectable = erectableBuildings != null && erectableBuildings.contains(type);
         buyButton.setEnabled(isAffordable && isErectable);
         
         repaint();
@@ -222,17 +224,17 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         {
             case "left" ->
             {
-                current = (current > 0) ? current - 1 : allBuildings.length - 1;
+                current = (current > 0) ? current - 1 : allBuildings.size() - 1;
                 reassignValues();
             }
             case "right" ->
             {
-                current = (current < allBuildings.length - 1) ? current + 1 : 0;
+                current = (current < allBuildings.size() - 1) ? current + 1 : 0;
                 reassignValues();
             }
             case "buy" ->
             {
-                manager.passCommand(new PursueBuildingCommand(allBuildings[current]));
+                manager.passCommand(new PursueBuildingCommand(allBuildings.get(current)));
             }
         }
     }

@@ -6,7 +6,7 @@ package my.field;
  */
 public class FortressField extends BuildingField
 {
-    protected FortressField()
+    public FortressField()
     {
         super(FieldType.FORTRESS);
         

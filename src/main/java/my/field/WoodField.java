@@ -6,7 +6,7 @@ package my.field;
  */
 public class WoodField extends PlainsField
 {
-    protected WoodField()
+    public WoodField()
     {
         super(FieldType.WOOD);
     }

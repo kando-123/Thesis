@@ -6,7 +6,7 @@ package my.field;
  */
 public class MineField extends CommercialField
 {
-    protected MineField()
+    public MineField()
     {
         super(FieldType.MINE);
         
