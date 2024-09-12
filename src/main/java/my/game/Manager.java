@@ -4,14 +4,13 @@ import my.field.BuildingSelectionDialog;
 import java.util.List;
 //import java.util.Stack;
 import my.command.ManagerCommand;
+import my.entity.AbstractEntity;
 import my.entity.EntitySelectionDialog;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
-import my.entity.EntityType;
 import my.field.AbstractField;
 import my.field.BuildingField;
-import my.field.FieldType;
 import my.utils.Hex;
 import my.world.World;
 import my.world.WorldConfiguration;
@@ -80,9 +79,9 @@ public class Manager
         BuildingSelectionDialog.Builder builder = new BuildingSelectionDialog.Builder();
         builder.setFrame(master);
         builder.setManager(this);
-        builder.setPrices(player.getPrices());
+        builder.setCounts(player.getCounts());
         builder.setPlayerMoney(player.getMoney());
-        builder.setErectableBuildings(player.getErectableBuildings());
+        builder.setErectableBuildings(player.getAvailableBuildings());
         buildingDialog = builder.get();
         buildingDialog.setLocationRelativeTo(master);
         buildingDialog.setVisible(true);
@@ -115,7 +114,7 @@ public class Manager
         entityDialog.setVisible(true);
     }
 
-    public void pursueHiring(EntityType entity)
+    public void pursueHiring(AbstractEntity entity)
     {
         state = State.HIRING_IN_PROGRESS;
     }
@@ -129,7 +128,8 @@ public class Manager
                 if (marker.isMarked(field.getHex()))
                 {
                     Player player = players.current();
-                    int cost = player.getPriceFor(selectedBuilding);
+                    int count = player.getCount(selectedBuilding.getType());
+                    int cost = selectedBuilding.computePrice(count);
                     player.takeMoney(cost);
                     master.setMoney(player.getMoney());
 

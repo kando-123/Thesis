@@ -27,7 +27,7 @@ import my.game.Manager;
  */
 public class EntitySelectionDialog extends JDialog implements ActionListener, Spinner.ValueChangeListener
 {
-    private final EntityType[] allEntities;
+    private final AbstractEntity[] allEntities;
     private int current;
 
     private Manager manager;
@@ -41,18 +41,15 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Sp
     private JButton buyButton;
 
     private int playerMoney;
-    private final EntityPriceCalculator priceCalculator;
-
-    private final EntitiesManager entitiesManager;
 
     public EntitySelectionDialog(JFrame frame)
     {
         super(frame, "Select an entity", true);
 
-        allEntities = EntityType.values().clone();
-
-        priceCalculator = EntityPriceCalculator.getInstance();
-        entitiesManager = EntitiesManager.getInstance();
+        allEntities = new AbstractEntity[3];
+        allEntities[0] = new InfantryEntity();
+        allEntities[1] = new CavalryEntity();
+        allEntities[2] = new NavyEntity();
 
         setContentPane(makeContentPane());
         pack();
@@ -185,9 +182,9 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Sp
     
     public void reassignValues()
     {
-        EntityType entity = allEntities[current];
-        nameLabel.setText(entity.name());
-        iconLabel.setIcon(entitiesManager.getEntityAsIcon(entity));
+        AbstractEntity entity = allEntities[current];
+        nameLabel.setText(entity.getType().name());
+        iconLabel.setIcon(entity.getIcon());
         descriptionTextArea.setText(entity.getDescription());
         numberSpinner.setValue(INITIAL_NUMBER);
         resetPrice(numberSpinner.getValue());
@@ -195,9 +192,9 @@ public class EntitySelectionDialog extends JDialog implements ActionListener, Sp
         repaint();
     }
     
-    private void resetPrice(int newPrice)
+    private void resetPrice(int number)
     {
-        int price = priceCalculator.getPriceFor(newPrice, allEntities[current]);
+        int price = allEntities[current].computePriceFor(number);
         priceTextArea.setText(String.format("%d Ħ", price));
         buyButton.setEnabled(price <= playerMoney);
     }

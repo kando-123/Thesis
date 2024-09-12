@@ -9,7 +9,7 @@ public class ShipyardField extends SpawnerField
     public ShipyardField()
     {
         super(FieldType.SHIPYARD);
-        
+
         priceIntercept = 600;
         priceSlope = 75;
     }

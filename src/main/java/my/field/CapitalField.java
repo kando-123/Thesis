@@ -4,7 +4,7 @@ package my.field;
  *
  * @author Kay Jay O'Nail
  */
-public class CapitalField extends AbstractField
+public class CapitalField extends AbstractField implements Defense, Spawner
 {
     public CapitalField()
     {
@@ -13,6 +13,18 @@ public class CapitalField extends AbstractField
     
     @Override
     final public boolean isCapital()
+    {
+        return true;
+    }
+    
+    @Override
+    final public boolean isDefense()
+    {
+        return true;
+    }
+    
+    @Override
+    final public boolean isSpawner()
     {
         return true;
     }

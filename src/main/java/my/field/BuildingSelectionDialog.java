@@ -7,8 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.BorderFactory;
@@ -31,7 +29,7 @@ import my.game.Manager;
  */
 public class BuildingSelectionDialog extends JDialog implements ActionListener
 {
-    private final List<BuildingField> allBuildings;
+    private final BuildingField[] allBuildings;
     private int current;
     
     private Manager manager;
@@ -44,7 +42,7 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
     private JButton buyButton;
     
     private int playerMoney;
-    private Map<FieldType, Integer> prices;
+    private Map<FieldType, Integer> counts;
     private Set<FieldType> erectableBuildings;
     
     private final FieldsManager fieldsManager;
@@ -55,14 +53,14 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
         fieldsManager = FieldsManager.getInstance();
 
-        allBuildings = new ArrayList<>();
-        allBuildings.add(new VillageField());
-        allBuildings.add(new FarmField());
-        allBuildings.add(new TownField());
-        allBuildings.add(new MineField());
-        allBuildings.add(new FortressField());
-        allBuildings.add(new BarracksField());
-        allBuildings.add(new ShipyardField());
+        allBuildings = new BuildingField[7];
+        allBuildings[0] = new VillageField();
+        allBuildings[1] = new FarmField();
+        allBuildings[2] = new TownField();
+        allBuildings[3] = new MineField();
+        allBuildings[4] = new FortressField();
+        allBuildings[5] = new BarracksField();
+        allBuildings[6] = new ShipyardField();
 
         setContentPane(makeContentPane());
         pack();
@@ -181,15 +179,15 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
 
     private void reassignValues()
     {
-        BuildingField building = allBuildings.get(current);
+        BuildingField building = allBuildings[current];
         FieldType type = building.getType();
         nameLabel.setText(type.name());
-        iconLabel.setIcon(fieldsManager.getFieldAsIcon(type));
+        iconLabel.setIcon(building.getIcon());
         descriptionTextArea.setText(building.getDescription());
         conditionsTextArea.setText(building.getCondition());
-        priceTextArea.setText(String.format("%d Ħ", prices.get(type)));
+        priceTextArea.setText(String.format("%d Ħ", building.computePrice(counts.get(type))));
         
-        boolean isAffordable = prices != null && prices.containsKey(type) && prices.get(type) <= playerMoney;
+        boolean isAffordable = counts != null && counts.containsKey(type) && counts.get(type) <= playerMoney;
         boolean isErectable = erectableBuildings != null && erectableBuildings.contains(type);
         buyButton.setEnabled(isAffordable && isErectable);
         
@@ -208,7 +206,7 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
     
     private void setPrices(Map<FieldType, Integer> prices)
     {
-        this.prices = prices;
+        this.counts = prices;
     }
     
     private void setErectableBuildings(Set<FieldType> buildings)
@@ -224,17 +222,17 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
         {
             case "left" ->
             {
-                current = (current > 0) ? current - 1 : allBuildings.size() - 1;
+                current = (current > 0) ? current - 1 : allBuildings.length - 1;
                 reassignValues();
             }
             case "right" ->
             {
-                current = (current < allBuildings.size() - 1) ? current + 1 : 0;
+                current = (current < allBuildings.length - 1) ? current + 1 : 0;
                 reassignValues();
             }
             case "buy" ->
             {
-                manager.passCommand(new PursueBuildingCommand(allBuildings.get(current)));
+                manager.passCommand(new PursueBuildingCommand(allBuildings[current]));
             }
         }
     }
@@ -243,17 +241,17 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
     {
         private JFrame frame;
         private Manager manager;
-        private Map<FieldType, Integer> prices;
+        private Map<FieldType, Integer> counts;
         private int playerMoney;
         private Set<FieldType> erectableBuildings;
         
         public BuildingSelectionDialog get()
         {
-            if (frame != null && manager != null && prices != null && erectableBuildings != null)
+            if (frame != null && manager != null && counts != null && erectableBuildings != null)
             {
                 BuildingSelectionDialog dialog = new BuildingSelectionDialog(frame);
                 dialog.setManager(manager);
-                dialog.setPrices(prices);
+                dialog.setPrices(counts);
                 dialog.setPlayerMoney(playerMoney);
                 dialog.setErectableBuildings(erectableBuildings);
                 dialog.reassignValues();
@@ -275,9 +273,9 @@ public class BuildingSelectionDialog extends JDialog implements ActionListener
             this.manager = manager;
         }
         
-        public void setPrices(Map<FieldType, Integer> prices)
+        public void setCounts(Map<FieldType, Integer> counts)
         {
-            this.prices = prices;
+            this.counts = counts;
         }
         
         public void setPlayerMoney(int playerMoney)

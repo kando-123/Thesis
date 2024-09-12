@@ -258,6 +258,11 @@ public class Hex
         int rDistance = Math.abs(rCoord - other.rCoord);
         return (pDistance + qDistance + rDistance) / 2;
     }
+    
+    public boolean isNeighbor(Hex other)
+    {
+        return distance(other) == 1;
+    }
 
     public boolean isRadial()
     {

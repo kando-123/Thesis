@@ -11,7 +11,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import my.field.AbstractField;
+import my.field.CapitalField;
 import my.field.FieldType;
+import my.field.GrassField;
+import my.field.MeadowField;
+import my.field.MountainsField;
+import my.field.SeaField;
+import my.field.ShipyardField;
+import my.field.WoodField;
 import my.utils.Doublet;
 import my.utils.Hex;
 import my.utils.HexagonalDirection;
@@ -63,9 +70,9 @@ public class World
         return side;
     }
 
-    private void createFieldAt(FieldType type, Hex hex)
+    private void placeField(Hex hex, AbstractField field)
     {
-        AbstractField field = AbstractField.newInstanceAt(type, hex);
+        field.setHex(hex);
         fields.put(hex, field);
     }
 
@@ -164,7 +171,7 @@ public class World
             double noise = entry.getValue();
             if (noise < seaThreshold)
             {
-                createFieldAt(FieldType.SEA, hex);
+                placeField(hex, new SeaField());
                 keysForRemoval.add(hex);
             }
         }
@@ -201,7 +208,7 @@ public class World
             double noise = entry.getValue();
             if (noise < mountainsThreshold)
             {
-                createFieldAt(FieldType.MOUNTAINS, hex);
+                placeField(hex, new MountainsField());
                 keysForRemoval.add(hex);
             }
         }
@@ -225,7 +232,25 @@ public class World
             {
                 var entry = iterator.next();
                 Hex hex = (Hex) entry.getKey();
-                createFieldAt(generator.get(), hex);
+                placeField(hex, switch (generator.get())
+                {
+                    case GRASS ->
+                    {
+                        yield new GrassField();
+                    }
+                    case MEADOW ->
+                    {
+                        yield new MeadowField();
+                    }
+                    case WOOD ->
+                    {
+                        yield new WoodField();
+                    }
+                    default ->
+                    {
+                        yield null; // never happens
+                    }
+                });
             }
         }
         catch (WeightedGenerator.NonpositiveWeightException
@@ -388,7 +413,7 @@ public class World
         /* Create the capital fields. */
         for (var capital : capitals)
         {
-            createFieldAt(FieldType.CAPITAL, capital);
+            placeField(capital, new CapitalField());
         }
 
         return capitals;
@@ -805,6 +830,11 @@ public class World
             newField.cloneProperties(oldField);
             fields.put(hex, newField);
         }
+    }
+    
+    public void substitute(AbstractField oldField, ShipyardField shipyard)
+    {
+        
     }
 
     private final HashSet<AbstractField> markedFields;

@@ -11,5 +11,20 @@ public class NavyEntity extends AbstractEntity
     public NavyEntity()
     {
         super(EntityType.NAVY);
+        
+        priceIntercept = 130;
+        priceSlope = 20;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Navy is the marine entity. It can transport Infantry onboard.";
+    }
+
+    @Override
+    public String getCondition()
+    {
+        return "You need a Shipyard to spawn Navy.";
     }
 }

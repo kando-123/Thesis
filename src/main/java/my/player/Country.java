@@ -15,14 +15,14 @@ public class Country
 {
     private final Player owner;
     
-    private final World.Accessor worldAccessor;
+    private final World.Accessor accessor;
     private final Set<Hex> territory;
     private Hex capital;
     
     public Country(Player owner, World.Accessor worldAccessor)
     {
         this.owner = owner;
-        this.worldAccessor = worldAccessor;
+        this.accessor = worldAccessor;
         
         territory = new HashSet<>();
     }
@@ -51,10 +51,22 @@ public class Country
         territory.remove(field.getHex());
     }
     
-    public int getCount(FieldType type)
+    public int count(FieldType type)
     {
         return (int) territory.stream()
-                .filter((hex) -> worldAccessor.getFieldAt(hex).getType() == type)
+                .filter((hex) -> accessor.getFieldAt(hex).getType() == type)
+                .count();
+    }
+    
+    public interface UnaryPredicate<T>
+    {
+        public boolean test(T item);
+    }
+    
+    public int count(UnaryPredicate<AbstractField> predicate)
+    {
+        return (int) territory.stream()
+                .filter((hex) -> predicate.test(accessor.getFieldAt(hex)))
                 .count();
     }
     

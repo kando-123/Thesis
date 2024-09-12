@@ -64,19 +64,4 @@ public class FieldsManager
         }
         return rescaler.filter(input, null);
     }
-    
-    public BufferedImage getField(FieldType type)
-    {
-        return fields.get(type).left;
-    }
-
-    public BufferedImage getMarkedField(FieldType type)
-    {
-        return fields.get(type).right;
-    }
-
-    public Icon getFieldAsIcon(FieldType type)
-    {
-        return iFields.get(type);
-    }
 }

@@ -1,7 +1,7 @@
 package my.command;
 
+import my.entity.AbstractEntity;
 import my.game.Manager;
-import my.entity.EntityType;
 
 /**
  *
@@ -9,9 +9,9 @@ import my.entity.EntityType;
  */
 public class PursueHiringCommand extends ManagerCommand
 {
-    private final EntityType entity;
+    private final AbstractEntity entity;
     
-    public PursueHiringCommand(EntityType entity)
+    public PursueHiringCommand(AbstractEntity entity)
     {
         this.entity = entity;
     }

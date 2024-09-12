@@ -36,46 +36,4 @@ public enum EntityType
                 name.substring(0, 1).toUpperCase(),
                 name.substring(1).toLowerCase());
     }
-
-    public int getPrice()
-    {
-        return switch (this)
-        {
-            case INFANTRY ->
-            {
-                yield 20;
-            }
-            case CAVALRY ->
-            {
-                yield 25;
-            }
-            case NAVY ->
-            {
-                yield 130;
-            }
-        };
-    }
-    
-    public String getDescription()
-    {
-        return switch (this)
-        {
-            case INFANTRY ->
-            {
-                yield "Infantry can go up to %d plains field(s) and %d mountainous field(s) per round. "
-                        .formatted(INFANTRY.plainsSpeed, INFANTRY.mountainsSpeed)
-                    + "Infantry can embark and disembark ships.";
-            }
-            case CAVALRY ->
-            {
-                yield "Cavalry can go up to %d plains field(s) and %d mountainous field(s) per round. "
-                        .formatted(CAVALRY.plainsSpeed, CAVALRY.mountainsSpeed);
-            }
-            case NAVY ->
-            {
-                yield "Navy can go up to %d sea field(s) per round. Navy transports Infantry as sailors."
-                        .formatted(NAVY.seaSpeed);
-            }
-        };
-    }
 }

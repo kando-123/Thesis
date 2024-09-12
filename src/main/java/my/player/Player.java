@@ -1,14 +1,13 @@
 package my.player;
 
 import java.awt.image.BufferedImage;
-import my.field.BuildingPriceCalculator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import my.utils.Hex;
 import my.field.AbstractField;
 import java.util.Set;
-import my.field.BuildingField;
+import my.entity.EntityType;
 import my.field.ContoursManager;
 import my.field.FieldType;
 import my.world.World;
@@ -33,8 +32,7 @@ public class Player
     private int money;
     private static final int INITIAL_MONEY = 500;
 
-    private final BuildingPriceCalculator priceCalculator;
-
+    //private final BuildingPriceCalculator priceCalculator;
     public Player(PlayerType type, World.Accessor accessor, World.Marker marker)
     {
         this.type = type;
@@ -44,7 +42,7 @@ public class Player
         country = new Country(this, accessor);
         money = INITIAL_MONEY;
 
-        priceCalculator = BuildingPriceCalculator.getInstance();
+        //priceCalculator = BuildingPriceCalculator.getInstance();
     }
 
     public PlayerType getType()
@@ -62,7 +60,7 @@ public class Player
     {
         return color;
     }
-    
+
     public BufferedImage getContour()
     {
         return contour;
@@ -102,22 +100,6 @@ public class Player
     {
         return country.getTerritory();
     }
-    
-    private int getPriceFor(FieldType buildingType)
-    {
-        int count = country.getCount(buildingType);
-        return priceCalculator.calculatePrice(buildingType, count);
-    }
-
-    public int getPriceFor(BuildingField building)
-    {
-        return getPriceFor(building.getType());
-    }
-    
-    public int getCount(FieldType type)
-    {
-        return country.getCount(type);
-    }
 
     public Hex setCapital(Hex newCapital)
     {
@@ -129,19 +111,24 @@ public class Player
         return country.getCapitalHex();
     }
 
-    public Map<FieldType, Integer> getPrices()
+    public int getCount(FieldType type)
     {
-        Map<FieldType, Integer> prices = new HashMap<>();
-        for (var value : FieldType.values())
-        {
-            prices.put(value, getPriceFor(value));
-        }
-        return prices;
+        return country.count(type);
     }
-
+    
     private interface UnaryPredicate<T>
     {
         public boolean test(T item);
+    }
+
+    public Map<FieldType, Integer> getCounts()
+    {
+        Map<FieldType, Integer> counts = new HashMap<>();
+        for (var value : FieldType.values())
+        {
+            counts.put(value, country.count(value));
+        }
+        return counts;
     }
 
     private final Map<FieldType, UnaryPredicate<Hex>> predicates = createPredicates();
@@ -226,25 +213,43 @@ public class Player
         }
     }
 
-    public Set<FieldType> getErectableBuildings()
+    public Set<FieldType> getAvailableBuildings()
     {
         Set<FieldType> buildings = new HashSet<>();
-        for (var value : FieldType.values())
+        for (var value : FieldType.buildings())
         {
-            if (value.isBuilding())
+
+            var predicate = predicates.get(value);
+            for (var hex : country.getTerritory())
             {
-                var predicate = predicates.get(value);
-                for (var hex : country.getTerritory())
+                if (predicate.test(hex))
                 {
-                    if (predicate.test(hex))
-                    {
-                        buildings.add(value);
-                        break;
-                    }
+                    buildings.add(value);
+                    break;
                 }
             }
+
         }
         return buildings;
+    }
+    
+    public Set<EntityType> getAvailableEntities()
+    {
+        Set<EntityType> entities = new HashSet<>();
+        
+        int freeBarracks = country.count((AbstractField field) ->
+        {
+            return field.getType() == FieldType.BARRACKS && field.isFree();
+        });
+        if (freeBarracks > 0)
+        {
+            entities.add(EntityType.INFANTRY);
+            entities.add(EntityType.CAVALRY);
+        }
+        
+        
+        
+        return entities;
     }
 
     public void play()

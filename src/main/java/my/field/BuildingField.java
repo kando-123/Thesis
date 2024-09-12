@@ -1,7 +1,5 @@
 package my.field;
 
-import my.utils.IntegerLinearFunction;
-
 /**
  *
  * @author Kay Jay O'Nail
@@ -25,8 +23,8 @@ public abstract class BuildingField extends AbstractField
     protected int priceIntercept;
     protected int priceSlope;
     
-    public IntegerLinearFunction getPriceFunction()
+    public int computePrice(int ordinal)
     {
-        return new IntegerLinearFunction(priceSlope, priceIntercept);
+        return priceSlope * ordinal + priceIntercept;
     }
 }

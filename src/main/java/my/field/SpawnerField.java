@@ -4,7 +4,7 @@ package my.field;
  *
  * @author Kay Jay O'Nail
  */
-public abstract class SpawnerField extends BuildingField
+public abstract class SpawnerField extends BuildingField implements Spawner
 {
     protected SpawnerField(FieldType type)
     {
@@ -15,5 +15,10 @@ public abstract class SpawnerField extends BuildingField
     final public boolean isSpawner()
     {
         return true;
+    }
+    
+    public boolean canSpawn()
+    {
+        return isFree();
     }
 }

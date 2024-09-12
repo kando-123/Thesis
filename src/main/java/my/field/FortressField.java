@@ -4,7 +4,7 @@ package my.field;
  *
  * @author Kay Jay O'Nail
  */
-public class FortressField extends BuildingField
+public class FortressField extends DefenseField
 {
     public FortressField()
     {
