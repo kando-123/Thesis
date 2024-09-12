@@ -17,12 +17,12 @@ public class ShipyardField extends SpawnerField
     @Override
     public String getDescription()
     {
-        return "Shipyard is where you can place the new ships.";
+        return "Shipyard is where you can place the new Navy ships.";
     }
 
     @Override
     public String getCondition()
     {
-        return "You need a land field that is adjacent to a see field to build a shipyard.";
+        return "To build a shipyard, you need a plains field adjacent to a see field.";
     }
 }

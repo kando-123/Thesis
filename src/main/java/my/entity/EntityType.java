@@ -23,17 +23,18 @@ public enum EntityType
 
     public String getFile()
     {
-        String name = name();
-        return String.format("/Entities/%s%s.png",
-                name.substring(0, 1).toUpperCase(),
-                name.substring(1).toLowerCase());
+        return String.format("/Entities/%s.png", toString());
     }
     
     public String getIconFile()
     {
+        return String.format("/iEntities/i%s.png", toString());
+    }
+    
+    @Override
+    public String toString()
+    {
         String name = name();
-        return String.format("/iEntities/i%s%s.png",
-                name.substring(0, 1).toUpperCase(),
-                name.substring(1).toLowerCase());
+        return name.substring(0, 1).concat(name.substring(1).toLowerCase());
     }
 }

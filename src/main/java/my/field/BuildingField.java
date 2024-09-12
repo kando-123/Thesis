@@ -27,4 +27,14 @@ public abstract class BuildingField extends AbstractField
     {
         return priceSlope * ordinal + priceIntercept;
     }
+    
+    public int getPriceIntercept()
+    {
+        return priceIntercept;
+    }
+    
+    public int getPriceSlope()
+    {
+        return priceSlope;
+    }
 }

@@ -97,6 +97,11 @@ public abstract class AbstractEntity
             }
         };
     }
+    
+    public String getName()
+    {
+        return type.toString();
+    }
 
     public EntityType getType()
     {

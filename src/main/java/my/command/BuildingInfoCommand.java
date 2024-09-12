@@ -7,11 +7,11 @@ import my.main.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class PursueBuildingCommand extends Command
+public class BuildingInfoCommand extends Command
 {
     private final BuildingField building;
-
-    public PursueBuildingCommand(BuildingField building)
+    
+    public BuildingInfoCommand(BuildingField building)
     {
         this.building = building;
     }
@@ -19,6 +19,6 @@ public class PursueBuildingCommand extends Command
     @Override
     public void execute(Manager manager)
     {
-        manager.pursueBuilding(building);
+        manager.showBuildingInfo(building);
     }
 }

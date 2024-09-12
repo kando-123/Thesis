@@ -3,6 +3,7 @@ package my.main;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,12 +11,16 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import my.command.ManagerCommand;
-import my.command.BeginBuildingCommand;
-import my.command.BeginHiringCommand;
+import javax.swing.JTabbedPane;
+import my.command.Command;
 import my.command.NextPlayerCommand;
 import my.command.RedoCommand;
 import my.command.UndoCommand;
+import my.entity.AbstractEntity;
+import my.entity.EntityType;
+import my.field.AbstractField;
+import my.field.BuildingField;
+import my.field.FieldType;
 import my.player.Player;
 
 /**
@@ -26,8 +31,6 @@ public class UserPanel extends JPanel implements ActionListener
 {
     private JLabel nameLabel;
     private JLabel moneyLabel;
-    private JButton buildings;
-    private JButton entities;
     private final Manager manager;
 
     public UserPanel(Manager manager)
@@ -41,13 +44,13 @@ public class UserPanel extends JPanel implements ActionListener
         c.weighty = 1;
         c.gridx = 0;
         c.gridy = 0;
-        add(makeDataPanel(), c);
+        add(makeDataPanel(), c.clone());
 
         ++c.gridy;
-        add(makeShopPanel(), c);
+        add(makeShopPanel(), c.clone());
 
         ++c.gridy;
-        add(makeButtonsPanel(), c);
+        add(makeButtonsPanel(), c.clone());
 
         setBackground(Color.white);
     }
@@ -72,7 +75,7 @@ public class UserPanel extends JPanel implements ActionListener
         nameLabel.setOpaque(true);
         nameLabel.setBackground(Color.white);
         nameLabel.setBorder(BorderFactory.createLineBorder(Color.black));
-        dataPanel.add(nameLabel, c);
+        dataPanel.add(nameLabel, c.clone());
 
         ++c.gridy;
         c.insets.bottom = INSET;
@@ -82,7 +85,7 @@ public class UserPanel extends JPanel implements ActionListener
         moneyLabel.setBackground(Color.white);
         moneyLabel.setBorder(BorderFactory.createLineBorder(Color.black));
         moneyLabel.setToolTipText("HexCoin");
-        dataPanel.add(moneyLabel, c);
+        dataPanel.add(moneyLabel, c.clone());
 
         return dataPanel;
     }
@@ -91,27 +94,51 @@ public class UserPanel extends JPanel implements ActionListener
     {
         JPanel shopPanel = new JPanel(new GridBagLayout());
         shopPanel.setOpaque(false);
-        
+
         GridBagConstraints c = new GridBagConstraints();
-        c.weightx = 1;
-        c.weighty = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.CENTER;
         c.gridx = 0;
         c.gridy = 0;
-        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1;
+        c.weighty = 1;
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.add("New Building", makeBuildingButtonsPanel());
+        tabbedPane.add("New Entity", makeEntityButtonsPanel());
+        shopPanel.add(tabbedPane, c.clone());
         
-        buildings = new JButton("Build a New Property");
-        buildings.setActionCommand("to-build");
-        buildings.addActionListener(this);
-        shopPanel.add(buildings, c);
-        
-        c.gridx = 0;
-        c.gridy = 1;
-        entities = new JButton("Hire a New Entity");
-        entities.setActionCommand("to-hire");
-        entities.addActionListener(this);
-        shopPanel.add(entities, c);
+        ++c.gridy;
+        JLabel label = new JLabel("Shift-click to see info");
+        label.setOpaque(true);
+        label.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        label.setForeground(Color.DARK_GRAY);
+        shopPanel.add(label, c.clone());
 
         return shopPanel;
+    }
+
+    private JPanel makeBuildingButtonsPanel()
+    {
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        for (FieldType buildingType : FieldType.buildings())
+        {
+            BuildingField building = (BuildingField) AbstractField.newInstance(buildingType);
+            BuildingButton button = new BuildingButton(manager, building);
+            panel.add(button);
+        }
+        return panel;
+    }
+    
+    private JPanel makeEntityButtonsPanel()
+    {
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        for (EntityType entityType : EntityType.values())
+        {
+            AbstractEntity entity = AbstractEntity.newInstance(entityType);
+            EntityButton button = new EntityButton(manager, entity);
+            panel.add(button);
+        }
+        return panel;
     }
 
     private JPanel makeButtonsPanel()
@@ -129,21 +156,21 @@ public class UserPanel extends JPanel implements ActionListener
         JButton undoButton = new JButton("Undo ↺");
         undoButton.setActionCommand("undo");
         undoButton.addActionListener(this);
-        buttonsPanel.add(undoButton, c);
+        buttonsPanel.add(undoButton, c.clone());
 
         c.gridx = 1;
         JButton redoButton = new JButton("Redo ↻");
         redoButton.setActionCommand("redo");
         redoButton.addActionListener(this);
-        buttonsPanel.add(redoButton, c);
+        buttonsPanel.add(redoButton, c.clone());
 
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 2;
-        JButton doneButton = new JButton("Done!");
+        JButton doneButton = new JButton("Done ✓");
         doneButton.setActionCommand("done");
         doneButton.addActionListener(this);
-        buttonsPanel.add(doneButton, c);
+        buttonsPanel.add(doneButton, c.clone());
 
         return buttonsPanel;
     }
@@ -156,7 +183,7 @@ public class UserPanel extends JPanel implements ActionListener
         Color userColor = user.getColor().colorValue;
         setBackground(userColor);
     }
-    
+
     public void setMoney(int newMoney)
     {
         moneyLabel.setText(String.format("Money: %d Ħ", newMoney));
@@ -165,16 +192,8 @@ public class UserPanel extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        ManagerCommand command = switch (e.getActionCommand())
+        Command command = switch (e.getActionCommand())
         {
-            case "to-build" ->
-            {
-                yield new BeginBuildingCommand();
-            }
-            case "to-hire" ->
-            {
-                yield new BeginHiringCommand();
-            }
             case "undo" ->
             {
                 yield new UndoCommand();
@@ -190,20 +209,7 @@ public class UserPanel extends JPanel implements ActionListener
             default ->
             {
                 /* Never happens. */
-                yield new ManagerCommand()
-                {
-                    @Override
-                    public void execute(Manager manager)
-                    {
-                        System.err.println("Impossible happened.");
-                    }
-
-                    @Override
-                    public void undo(Manager manager)
-                    {
-                        System.err.println("Impossible happened.");
-                    }
-                };
+                yield null;
             }
         };
         manager.passCommand(command);

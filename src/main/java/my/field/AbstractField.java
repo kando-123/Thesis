@@ -89,6 +89,8 @@ public abstract class AbstractField
 
     private AbstractEntity entity;
 
+    private static final AssetManager assetManager = new AssetManager();
+    
     protected AbstractField(FieldType type)
     {
         this.type = type;
@@ -96,13 +98,23 @@ public abstract class AbstractField
         images.left = assetManager.getImage(type);
         images.right = assetManager.getBrightImage(type);
     }
+    
+    public AbstractField copy()
+    {
+        return newInstance(type);
+    }
 
     public void cloneProperties(AbstractField other)
     {
         hex = other.hex;
         owner = other.owner;
         entity = other.entity;
-        // other.entity = null; // ?
+        other.entity = null;
+    }
+    
+    public String getName()
+    {
+        return type.toString();
     }
 
     public FieldType getType()
@@ -243,5 +255,62 @@ public abstract class AbstractField
         return false;
     }
 
-    private static final AssetManager assetManager = new AssetManager();
+    public static AbstractField newInstance(FieldType type)
+    {
+        return switch (type)
+        {
+            case BARRACKS ->
+            {
+                yield new BarracksField();
+            }
+            case CAPITAL ->
+            {
+                yield new CapitalField();
+            }
+            case FARMFIELD ->
+            {
+                yield new FarmField();
+            }
+            case FORTRESS ->
+            {
+                yield new FortressField();
+            }
+            case GRASS ->
+            {
+                yield new GrassField();
+            }
+            case MEADOW ->
+            {
+                yield new MeadowField();
+            }
+            case MINE ->
+            {
+                yield new MineField();
+            }
+            case MOUNTAINS ->
+            {
+                yield new MountainsField();
+            }
+            case SEA ->
+            {
+                yield new SeaField();
+            }
+            case SHIPYARD ->
+            {
+                yield new ShipyardField();
+            }
+            case TOWN ->
+            {
+                yield new TownField();
+            }
+            case VILLAGE ->
+            {
+                yield new VillageField();
+            }
+            case WOOD ->
+            {
+                yield new WoodField();
+            }
+        };
+    }
 }

@@ -1,9 +1,9 @@
 package my.main;
 
-import my.field.BuildingSelectionDialog;
 import java.util.List;
+import javax.swing.JOptionPane;
 //import java.util.Stack;
-import my.command.ManagerCommand;
+import my.command.Command;
 import my.entity.AbstractEntity;
 import my.entity.EntitySelectionDialog;
 import my.player.Player;
@@ -11,6 +11,8 @@ import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
 import my.field.AbstractField;
 import my.field.BuildingField;
+import my.field.BuildingInfoDialog;
+import my.field.BuildingPurchaseDialog;
 import my.utils.Hex;
 import my.world.World;
 import my.world.WorldConfiguration;
@@ -55,11 +57,8 @@ public class Manager
     private final World world;
     private final World.Marker marker;
     private final PlayersQueue players;
-//    private Stack<ManagerCommand> executedCommands;
-//    private Stack<ManagerCommand> undoneCommands;
-
-    private BuildingSelectionDialog buildingDialog;
-    private EntitySelectionDialog entityDialog;
+//    private Stack<ReversibleCommand> executedCommands;
+//    private Stack<ReversibleCommand> undoneCommands;
 
     public World getWorld()
     {
@@ -71,20 +70,49 @@ public class Manager
         return players.first();
     }
 
-    public void beginBuilding()
+    private BuildingPurchaseDialog buildingDialog;
+
+    public void showBuildingInfo(BuildingField building)
     {
-        state = State.BUILDING_BEGUN;
+        var dialog = new BuildingInfoDialog(master, building);
+        dialog.setVisible(true);
+    }
+
+    public void beginBuilding(BuildingField building)
+    {
+        System.out.println("Begin building for: %s".formatted(building.getName()));
 
         Player player = players.current();
-        BuildingSelectionDialog.Builder builder = new BuildingSelectionDialog.Builder();
-        builder.setFrame(master);
-        builder.setManager(this);
-        builder.setCounts(player.getCounts());
-        builder.setPlayerMoney(player.getMoney());
-        builder.setErectableBuildings(player.getAvailableBuildings());
-        buildingDialog = builder.get();
-        buildingDialog.setLocationRelativeTo(master);
-        buildingDialog.setVisible(true);
+        if (!player.canBuild(building))
+        {
+            JOptionPane.showMessageDialog(master, """
+                    Unfortunately, you cannot buy this building.
+
+                    You do not have a place for this building.
+                    Shift-click the building's button for details.
+                    """);
+        }
+        else if (!player.canAfford(building))
+        {
+            JOptionPane.showMessageDialog(master, """
+                    Unfortunately, you cannot buy this building.
+
+                    You do not have enough money for this building.
+                    Shift-click the building's button for details.
+                    """);
+        }
+        else
+        {
+            state = State.BUILDING_BEGUN;
+            
+            var builder = new BuildingPurchaseDialog.Builder();
+            builder.setFrame(master);
+            builder.setManager(this);
+            builder.setBuilding(building);
+            builder.setPrice(player.computePriceFor(building));
+            buildingDialog = builder.get();
+            buildingDialog.setVisible(true);
+        }
     }
 
     private BuildingField selectedBuilding;
@@ -95,23 +123,34 @@ public class Manager
         {
             state = State.BUILDING_IN_PROGRESS;
 
+            buildingDialog.setVisible(false);
             buildingDialog.dispose();
+            buildingDialog = null;
             selectedBuilding = building;
             players.current().markFor(building.getType());
         }
     }
 
-    public void beginHiring()
+    private EntitySelectionDialog entityDialog;
+
+    public void showEntityInfo(AbstractEntity entity)
     {
+        System.out.println("Show entity info for: %s".formatted(entity.getName()));
+    }
+
+    public void beginHiring(AbstractEntity entity)
+    {
+        System.out.println("Begin hiring for: %s".formatted(entity.getName()));
+
         state = State.HIRING_BEGUN;
 
-        Player player = players.current();
-        entityDialog = new EntitySelectionDialog(master);
-        entityDialog.setManager(this);
-        entityDialog.setPlayerMoney(player.getMoney());
-        entityDialog.reassignValues();
-        entityDialog.setLocationRelativeTo(master);
-        entityDialog.setVisible(true);
+//        Player player = players.current();
+//        entityDialog = new EntitySelectionDialog(master);
+//        entityDialog.setManager(this);
+//        entityDialog.setPlayerMoney(player.getMoney());
+//        entityDialog.reassignValues();
+//        entityDialog.setLocationRelativeTo(master);
+//        entityDialog.setVisible(true);
     }
 
     public void pursueHiring(AbstractEntity entity)
@@ -127,13 +166,13 @@ public class Manager
             {
                 if (marker.isMarked(field.getHex()))
                 {
-                    Player player = players.current();
-                    int count = player.getCount(selectedBuilding.getType());
-                    int cost = selectedBuilding.computePrice(count);
-                    player.takeMoney(cost);
-                    master.setMoney(player.getMoney());
-
-                    world.substitute(field, selectedBuilding);
+//                    Player player = players.current();
+//                    int count = player.getCount(selectedBuilding.getType());
+//                    int cost = selectedBuilding.computePrice(count);
+//                    player.spendMoney(cost);
+//                    master.setMoney(player.getMoney());
+//
+//                    world.substitute(field, selectedBuilding);
                 }
                 marker.unmarkAll();
                 selectedBuilding = null;
@@ -163,7 +202,7 @@ public class Manager
         master.setCenter(hex);
     }
 
-    public void passCommand(ManagerCommand command)
+    public void passCommand(Command command)
     {
         command.execute(this);
     }

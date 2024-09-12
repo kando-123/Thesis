@@ -23,6 +23,6 @@ public class VillageField extends CommercialField
     @Override
     public String getCondition()
     {
-        return "You need a plains field to build a village.";
+        return "To build a village, you need a plains field.";
     }
 }

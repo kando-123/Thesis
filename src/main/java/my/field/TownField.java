@@ -23,6 +23,6 @@ public class TownField extends CommercialField
     @Override
     public String getCondition()
     {
-        return "You need a continental field to build a town.";
+        return "To build a town, you need a continental field.";
     }
 }

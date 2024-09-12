@@ -17,12 +17,12 @@ public class BarracksField extends SpawnerField
     @Override
     public String getDescription()
     {
-        return "Barracks are where you can place the new entities you hire.";
+        return "Barracks is where you can place the new Infantry and Cavalry you hire.";
     }
 
     @Override
     public String getCondition()
     {
-        return "You need a land field to build barracks.";
+        return "To build barracks, you need a plains field.";
     }
 }

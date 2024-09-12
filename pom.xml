@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
-        <exec.mainClass>my.game.Master</exec.mainClass>
+        <exec.mainClass>my.main.Master</exec.mainClass>
     </properties>
     <build>
         <plugins>
@@ -20,7 +20,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>my.game.Master</mainClass>
+                            <mainClass>my.main.Master</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

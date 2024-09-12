@@ -23,6 +23,6 @@ public class FortressField extends DefenseField
     @Override
     public String getCondition()
     {
-        return "You need a continental field to build a fortress.";
+        return "To build a fortress, you need a continental field.";
     }
 }

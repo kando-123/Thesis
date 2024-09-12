@@ -7,7 +7,7 @@ import my.main.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class PursueHiringCommand extends ManagerCommand
+public class PursueHiringCommand extends Command
 {
     private final AbstractEntity entity;
     
@@ -20,11 +20,5 @@ public class PursueHiringCommand extends ManagerCommand
     public void execute(Manager manager)
     {
         manager.pursueHiring(entity);
-    }
-
-    @Override
-    public void undo(Manager manager)
-    {
-        
-    }    
+    }  
 }

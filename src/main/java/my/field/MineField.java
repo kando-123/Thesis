@@ -23,6 +23,6 @@ public class MineField extends CommercialField
     @Override
     public String getCondition()
     {
-        return "You need a mountain field to build a mine.";
+        return "To build a mine, you need a mountain field.";
     }
 }

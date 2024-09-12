@@ -7,11 +7,11 @@ import my.main.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class BeginHiringCommand extends Command
+public class EntityInfoCommand extends Command
 {
     private final AbstractEntity entity;
     
-    public BeginHiringCommand(AbstractEntity entity)
+    public EntityInfoCommand(AbstractEntity entity)
     {
         this.entity = entity;
     }
@@ -19,6 +19,6 @@ public class BeginHiringCommand extends Command
     @Override
     public void execute(Manager manager)
     {
-        manager.beginHiring(entity);
+        manager.showEntityInfo(entity);
     }
 }

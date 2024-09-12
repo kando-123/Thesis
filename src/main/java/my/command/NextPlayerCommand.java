@@ -6,18 +6,11 @@ import my.main.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class NextPlayerCommand extends ManagerCommand
+public class NextPlayerCommand extends Command
 {
     @Override
     public void execute(Manager manager)
     {
         manager.nextPlayer();
     }
-
-    @Override
-    public void undo(Manager manager)
-    {
-        
-    }
-    
 }

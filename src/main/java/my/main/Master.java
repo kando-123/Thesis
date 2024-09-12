@@ -126,7 +126,6 @@ public class Master extends JFrame implements ActionListener
                                   worldContentPane.getConfiguration(),
                                   playerContentPane.getPlayerConfigurations());
             
-            
             InputHandler inputHandler = new InputHandler();
             addKeyListener(inputHandler);
             setFocusable(true);

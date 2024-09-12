@@ -1,7 +1,5 @@
 package my.field;
 
-import java.util.Arrays;
-
 /**
  *
  * @author Kay Jay O'Nail
@@ -22,23 +20,35 @@ public enum FieldType
     VILLAGE,
     WOOD;
 
+    @Override
+    public String toString()
+    {
+        String name = name();
+        return name.substring(0, 1).concat(name.substring(1).toLowerCase());
+    }
+    
     public String getFile()
     {
-        String filename = name().substring(0, 1).concat(name().substring(1).toLowerCase());
-        return String.format("/Fields/%s.png", filename);
+        return String.format("/Fields/%s.png", toString());
     }
 
     public String getIconFile()
     {
-        String filename = name().substring(0, 1).concat(name().substring(1).toLowerCase());
-        return String.format("/iFields/i%s.png", filename);
+        return String.format("/iFields/i%s.png", toString());
     }
 
     public static FieldType[] buildings()
     {
         return new FieldType[]
         {
-            BARRACKS, FARMFIELD, FORTRESS, MINE, SHIPYARD, TOWN, VILLAGE
+            /* Commercial Fields */
+            VILLAGE, FARMFIELD, TOWN, MINE,
+            
+            /* Spawner Fields */
+            BARRACKS, SHIPYARD,
+            
+            /* Defense Fields */
+            FORTRESS
         };
     }
 }

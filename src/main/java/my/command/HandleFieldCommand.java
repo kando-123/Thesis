@@ -7,7 +7,7 @@ import my.field.AbstractField;
  *
  * @author Kay Jay O'Nail
  */
-public class HandleFieldCommand extends ManagerCommand
+public class HandleFieldCommand extends Command
 {
     private final AbstractField field;
     
@@ -20,11 +20,5 @@ public class HandleFieldCommand extends ManagerCommand
     public void execute(Manager manager)
     {
         manager.handleField(field);
-    }
-
-    @Override
-    public void undo(Manager manager)
-    {
-        
     }
 }

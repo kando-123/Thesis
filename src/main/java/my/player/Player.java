@@ -1,16 +1,58 @@
 package my.player;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import my.utils.Hex;
 import my.field.AbstractField;
-import java.util.Set;
-import my.entity.EntityType;
-import my.field.ContoursManager;
+import my.field.BuildingField;
 import my.field.FieldType;
 import my.world.World;
+
+class ContoursManager
+{
+    private Map<PlayerColor, BufferedImage> contours;
+    
+    private ContoursManager()
+    {
+        contours = new HashMap<>(PlayerColor.values().length);
+        for (var color : PlayerColor.values())
+        {
+            if (color == PlayerColor.RANDOM)
+            {
+                continue;
+            }
+
+            String path = String.format("/Contours/%s.png", color.toString());
+            InputStream stream = getClass().getResourceAsStream(path);
+            try
+            {
+                BufferedImage image = ImageIO.read(stream);
+                contours.put(color, image);
+            }
+            catch (IOException io)
+            {
+                System.err.println(io.getMessage());
+            }
+        }
+    }
+    
+    private static final ContoursManager instance = new ContoursManager();
+
+    public static ContoursManager getInstance()
+    {
+        return instance;
+    }
+    
+    public BufferedImage getContour(PlayerColor color)
+    {
+        return contours.get(color);
+    }
+    
+}
 
 /**
  *
@@ -32,7 +74,6 @@ public class Player
     private int money;
     private static final int INITIAL_MONEY = 500;
 
-    //private final BuildingPriceCalculator priceCalculator;
     public Player(PlayerType type, World.Accessor accessor, World.Marker marker)
     {
         this.type = type;
@@ -41,8 +82,6 @@ public class Player
 
         country = new Country(this, accessor);
         money = INITIAL_MONEY;
-
-        //priceCalculator = BuildingPriceCalculator.getInstance();
     }
 
     public PlayerType getType()
@@ -81,7 +120,7 @@ public class Player
         return money;
     }
 
-    public void takeMoney(int outcome)
+    public void spendMoney(int outcome)
     {
         money -= outcome;
     }
@@ -96,11 +135,6 @@ public class Player
         country.removeField(field);
     }
 
-    public Set<Hex> getOwnedHexes()
-    {
-        return country.getTerritory();
-    }
-
     public Hex setCapital(Hex newCapital)
     {
         return country.setCapital(newCapital);
@@ -109,26 +143,6 @@ public class Player
     public Hex getCapitalHex()
     {
         return country.getCapitalHex();
-    }
-
-    public int getCount(FieldType type)
-    {
-        return country.count(type);
-    }
-    
-    private interface UnaryPredicate<T>
-    {
-        public boolean test(T item);
-    }
-
-    public Map<FieldType, Integer> getCounts()
-    {
-        Map<FieldType, Integer> counts = new HashMap<>();
-        for (var value : FieldType.values())
-        {
-            counts.put(value, country.count(value));
-        }
-        return counts;
     }
 
     private final Map<FieldType, UnaryPredicate<Hex>> predicates = createPredicates();
@@ -201,63 +215,32 @@ public class Player
     public void markFor(FieldType building)
     {
         UnaryPredicate<Hex> predicate = predicates.get(building);
-        if (predicate != null)
-        {
-            for (var hex : country.getTerritory())
-            {
-                if (predicate.test(hex))
-                {
-                    marker.mark(hex);
-                }
-            }
-        }
+        country.markIf(predicate, marker);
     }
 
-    public Set<FieldType> getAvailableBuildings()
+    public boolean canBuild(BuildingField building)
     {
-        Set<FieldType> buildings = new HashSet<>();
-        for (var value : FieldType.buildings())
-        {
-
-            var predicate = predicates.get(value);
-            for (var hex : country.getTerritory())
-            {
-                if (predicate.test(hex))
-                {
-                    buildings.add(value);
-                    break;
-                }
-            }
-
-        }
-        return buildings;
+        var predicate = predicates.get(building.getType());
+        return country.isAny(predicate);
     }
     
-    public Set<EntityType> getAvailableEntities()
+    public boolean canAfford(BuildingField building)
     {
-        Set<EntityType> entities = new HashSet<>();
-        
-        int freeBarracks = country.count((AbstractField field) ->
-        {
-            return field.getType() == FieldType.BARRACKS && field.isFree();
-        });
-        if (freeBarracks > 0)
-        {
-            entities.add(EntityType.INFANTRY);
-            entities.add(EntityType.CAVALRY);
-        }
-        
-        
-        
-        return entities;
+        int count = country.count(building.getType());
+        return building.computePrice(count) <= money;
+    }
+    
+    public int computePriceFor(BuildingField building)
+    {
+        int count = country.count(building.getType());
+        return building.computePrice(count);
     }
 
     public void play()
     {
-
+        // Bot method.
     }
 
-    //private static final int INCOME_PER_FIELD = 1;
     public void endRound()
     {
         //money += territory.size() * INCOME_PER_FIELD;

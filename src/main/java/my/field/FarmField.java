@@ -23,6 +23,6 @@ public class FarmField extends CommercialField
     @Override
     public String getCondition()
     {
-        return "You need a plains field adjacent to a village to build a farmfield.";
+        return "To build a farmfield, you need a plains field adjacent to a village.";
     }
 }
