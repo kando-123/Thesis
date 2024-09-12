@@ -1,4 +1,4 @@
-package my.game;
+package my.main;
 
 import my.field.BuildingSelectionDialog;
 import java.util.List;

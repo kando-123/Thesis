@@ -1,4 +1,4 @@
-package my.game;
+package my.main;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

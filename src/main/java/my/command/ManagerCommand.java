@@ -1,6 +1,6 @@
 package my.command;
 
-import my.game.Manager;
+import my.main.Manager;
 
 /**
  *

@@ -20,8 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import my.command.PursueBuildingCommand;
-import my.game.ArrowsManager;
-import my.game.Manager;
+import my.main.ArrowsManager;
+import my.main.Manager;
 
 /**
  *

@@ -1,7 +1,7 @@
 package my.command;
 
 import my.field.BuildingField;
-import my.game.Manager;
+import my.main.Manager;
 import my.field.FieldType;
 
 /**

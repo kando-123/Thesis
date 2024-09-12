@@ -1,4 +1,4 @@
-package my.game;
+package my.main;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
