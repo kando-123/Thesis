@@ -1,5 +1,7 @@
 package my.field;
 
+import my.entity.AbstractEntity;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -24,5 +26,21 @@ public class BarracksField extends SpawnerField
     public String getCondition()
     {
         return "To build barracks, you need a plains field.";
+    }
+    
+    @Override
+    public boolean canSpawn(AbstractEntity entity)
+    {
+        return isFree() && switch (entity.getType())
+        {
+            case INFANTRY, CAVALRY ->
+            {
+                yield true;
+            }
+            default ->
+            {
+                yield false;
+            }
+        };
     }
 }

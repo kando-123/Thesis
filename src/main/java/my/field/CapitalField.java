@@ -1,5 +1,7 @@
 package my.field;
 
+import my.entity.AbstractEntity;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -27,5 +29,11 @@ public class CapitalField extends AbstractField implements Defense, Spawner
     final public boolean isSpawner()
     {
         return true;
+    }
+
+    @Override
+    public boolean canSpawn(AbstractEntity entity)
+    {
+        return isFree();
     }
 }

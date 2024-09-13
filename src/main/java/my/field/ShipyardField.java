@@ -1,5 +1,7 @@
 package my.field;
 
+import my.entity.AbstractEntity;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -24,5 +26,21 @@ public class ShipyardField extends SpawnerField
     public String getCondition()
     {
         return "To build a shipyard, you need a plains field adjacent to a see field.";
+    }
+
+    @Override
+    public boolean canSpawn(AbstractEntity entity)
+    {
+        return isFree() && switch (entity.getType())
+        {
+            case NAVY ->
+            {
+                yield true;
+            }
+            default ->
+            {
+                yield false;
+            }
+        };
     }
 }

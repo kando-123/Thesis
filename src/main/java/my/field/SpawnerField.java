@@ -16,9 +16,4 @@ public abstract class SpawnerField extends BuildingField implements Spawner
     {
         return true;
     }
-    
-    public boolean canSpawn()
-    {
-        return isFree();
-    }
 }
