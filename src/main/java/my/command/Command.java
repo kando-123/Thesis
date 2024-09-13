@@ -1,14 +1,13 @@
 package my.command;
 
-import my.main.Manager;
-
 /**
  *
  * @author Kay Jay O'Nail
+ * @param <E>
  */
-public abstract class Command
+public abstract class Command<E>
 {
-    public abstract void execute(Manager manager);
+    public abstract void execute(E executor);
     
     public boolean isReversible()
     {

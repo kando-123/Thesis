@@ -7,7 +7,7 @@ import my.main.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class EntityInfoCommand extends Command
+public class EntityInfoCommand extends Command<Manager>
 {
     private final AbstractEntity entity;
     

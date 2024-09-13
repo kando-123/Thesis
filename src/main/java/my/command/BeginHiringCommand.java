@@ -7,7 +7,7 @@ import my.main.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class BeginHiringCommand extends Command
+public class BeginHiringCommand extends Command<Manager>
 {
     private final AbstractEntity entity;
     

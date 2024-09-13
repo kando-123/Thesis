@@ -3,9 +3,8 @@ package my.main;
 import java.util.List;
 import javax.swing.JOptionPane;
 //import java.util.Stack;
-import my.command.Command;
+import my.command.Invoker;
 import my.entity.AbstractEntity;
-import my.entity.EntitySelectionDialog;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
@@ -107,7 +106,7 @@ public class Manager
             
             var builder = new BuildingPurchaseDialog.Builder();
             builder.setFrame(master);
-            builder.setManager(this);
+            builder.setInvoker(new Invoker<>(this));
             builder.setBuilding(building);
             builder.setPrice(player.computePriceFor(building));
             buildingDialog = builder.get();
@@ -131,7 +130,7 @@ public class Manager
         }
     }
 
-    private EntitySelectionDialog entityDialog;
+    
 
     public void showEntityInfo(AbstractEntity entity)
     {
@@ -202,8 +201,8 @@ public class Manager
         master.setCenter(hex);
     }
 
-    public void passCommand(Command command)
+    public Invoker<Manager> createInvoker()
     {
-        command.execute(this);
+        return new Invoker(this);
     }
 }

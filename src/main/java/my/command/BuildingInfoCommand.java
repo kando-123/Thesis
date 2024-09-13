@@ -7,7 +7,7 @@ import my.main.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class BuildingInfoCommand extends Command
+public class BuildingInfoCommand extends Command<Manager>
 {
     private final BuildingField building;
     

@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import my.command.Command;
+import my.command.Invoker;
 import my.command.NextPlayerCommand;
 import my.command.RedoCommand;
 import my.command.UndoCommand;
@@ -31,12 +32,12 @@ public class UserPanel extends JPanel implements ActionListener
 {
     private JLabel nameLabel;
     private JLabel moneyLabel;
-    private final Manager manager;
+    private final Invoker<Manager> invoker;
 
-    public UserPanel(Manager manager)
+    public UserPanel(Invoker<Manager> ivoker)
     {
         super(new GridBagLayout());
-        this.manager = manager;
+        this.invoker = ivoker;
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -123,7 +124,7 @@ public class UserPanel extends JPanel implements ActionListener
         for (FieldType buildingType : FieldType.buildings())
         {
             BuildingField building = (BuildingField) AbstractField.newInstance(buildingType);
-            BuildingButton button = new BuildingButton(manager, building);
+            BuildingButton button = new BuildingButton(invoker, building);
             panel.add(button);
         }
         return panel;
@@ -135,7 +136,7 @@ public class UserPanel extends JPanel implements ActionListener
         for (EntityType entityType : EntityType.values())
         {
             AbstractEntity entity = AbstractEntity.newInstance(entityType);
-            EntityButton button = new EntityButton(manager, entity);
+            EntityButton button = new EntityButton(invoker, entity);
             panel.add(button);
         }
         return panel;
@@ -212,6 +213,6 @@ public class UserPanel extends JPanel implements ActionListener
                 yield null;
             }
         };
-        manager.passCommand(command);
+        invoker.invoke(command);
     }
 }

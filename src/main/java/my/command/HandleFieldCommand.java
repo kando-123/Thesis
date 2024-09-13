@@ -7,7 +7,7 @@ import my.field.AbstractField;
  *
  * @author Kay Jay O'Nail
  */
-public class HandleFieldCommand extends Command
+public class HandleFieldCommand extends Command<Manager>
 {
     private final AbstractField field;
     

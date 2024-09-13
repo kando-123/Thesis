@@ -23,15 +23,15 @@ public class GameplayContentPane extends JPanel
         int width = (int) (screenSize.width * (0.75));
         int height = (int) (screenSize.height * (0.75));
 
-        Dimension worldPanelSize = new Dimension((int) (0.85 * width), height);
-        worldPanel = new WorldPanel(manager);
+        Dimension worldPanelSize = new Dimension((int) (0.8 * width), height);
+        worldPanel = new WorldPanel(manager.createInvoker());
         worldPanel.setWorld(manager.getWorld());
         worldPanel.setInputHandler(inputHandler);
         worldPanel.setPreferredSize(worldPanelSize);
         add(worldPanel, BorderLayout.CENTER);
 
-        Dimension userPanelSize = new Dimension((int) (0.15 * width), height);
-        userPanel = new UserPanel(manager);
+        Dimension userPanelSize = new Dimension((int) (0.2 * width), height);
+        userPanel = new UserPanel(manager.createInvoker());
         userPanel.setPreferredSize(userPanelSize);
         add(userPanel, BorderLayout.WEST);
     }

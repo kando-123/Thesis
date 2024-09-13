@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import my.command.BeginHiringCommand;
 import my.command.EntityInfoCommand;
 import my.command.Command;
+import my.command.Invoker;
 import my.entity.AbstractEntity;
 
 /**
@@ -15,7 +16,7 @@ import my.entity.AbstractEntity;
  */
 public class EntityButton extends JButton
 {
-    public EntityButton(Manager manager, AbstractEntity entity)
+    public EntityButton(Invoker<Manager> invoker, AbstractEntity entity)
     {
         super(entity.getIcon());
         
@@ -31,12 +32,12 @@ public class EntityButton extends JButton
                 if (e.isShiftDown())
                 {
                     Command command = new EntityInfoCommand(entity);
-                    manager.passCommand(command);
+                    invoker.invoke(command);
                 }
                 else
                 {
                     Command command = new BeginHiringCommand(entity);
-                    manager.passCommand(command);
+                    invoker.invoke(command);
                 }
             }
         });

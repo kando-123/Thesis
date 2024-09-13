@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import my.command.Invoker;
 import my.command.PursueBuildingCommand;
 import my.main.Manager;
 
@@ -26,7 +27,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
     private final JLabel priceLabel;
     
     private BuildingField building;
-    private Manager manager;
+    private Invoker<Manager> invoker;
     
     private BuildingPurchaseDialog(JFrame frame)
     {
@@ -75,7 +76,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
     {
         if (e.getActionCommand().equals("buy"))
         {
-            manager.passCommand(new PursueBuildingCommand(building));
+            invoker.invoke(new PursueBuildingCommand(building));
         }
     }
     
@@ -86,9 +87,9 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
         iconLabel.setIcon(building.getIcon());
     }
     
-    private void setManager(Manager newManager)
+    private void setInvoker(Invoker<Manager> newInvoker)
     {
-        manager = newManager;
+        invoker = newInvoker;
     }
     
     private void setPrice(int newPrice)
@@ -101,7 +102,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
         private JFrame frame;
         private BuildingField building;
         private int price;
-        private Manager manager;
+        private Invoker<Manager> invoker;
         
         public void setFrame(JFrame frame)
         {
@@ -118,20 +119,20 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
             this.price = price;
         }
         
-        public void setManager(Manager manager)
+        public void setInvoker(Invoker<Manager> invoker)
         {
-            this.manager = manager;
+            this.invoker = invoker;
         }
         
         public BuildingPurchaseDialog get()
         {
             BuildingPurchaseDialog dialog = null;
-            if (frame != null && building != null && manager != null)
+            if (frame != null && building != null && invoker != null)
             {
                 dialog = new BuildingPurchaseDialog(frame);
                 dialog.setBuilding(building);
                 dialog.setPrice(price);
-                dialog.setManager(manager);
+                dialog.setInvoker(invoker);
             }
             return dialog;
         }

@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import my.command.HandleFieldCommand;
+import my.command.Invoker;
 import my.field.AbstractField;
 import my.utils.Doublet;
 import my.utils.Hex;
@@ -37,11 +38,11 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
 
     private World world;
     
-    private final Manager manager;
+    private final Invoker<Manager> invoker;
 
-    public WorldPanel(Manager manager)
+    public WorldPanel(Invoker<Manager> invoker)
     {
-        this.manager = manager;
+        this.invoker = invoker;
         
         scale = 1.0;
         addMouseListener(this);
@@ -71,8 +72,8 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     {
         super.setPreferredSize(newSize);
         
-        panelCenter = new Doublet<Double>((double) newSize.width / 2, (double) newSize.height / 2);
-        worldCenter = new Doublet<Double>((double) newSize.width / 2, (double) newSize.height / 2);
+        panelCenter = new Doublet<>((double) newSize.width / 2, (double) newSize.height / 2);
+        worldCenter = new Doublet<>((double) newSize.width / 2, (double) newSize.height / 2);
     }
 
     @Override
@@ -253,7 +254,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
         
         AbstractField field = world.getFieldAt(hex);
-        manager.passCommand(new HandleFieldCommand(field));
+        invoker.invoke(new HandleFieldCommand(field));
     }
 
     @Override

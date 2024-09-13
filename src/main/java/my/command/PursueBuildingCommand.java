@@ -7,7 +7,7 @@ import my.main.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public class PursueBuildingCommand extends Command
+public class PursueBuildingCommand extends Command<Manager>
 {
     private final BuildingField building;
 

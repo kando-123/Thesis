@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import my.command.BeginBuildingCommand;
 import my.command.BuildingInfoCommand;
 import my.command.Command;
+import my.command.Invoker;
 import my.field.BuildingField;
 
 /**
@@ -15,7 +16,7 @@ import my.field.BuildingField;
  */
 public class BuildingButton extends JButton
 {
-    public BuildingButton(Manager manager, BuildingField building)
+    public BuildingButton(Invoker<Manager> invoker, BuildingField building)
     {
         super(building.getIcon());
         
@@ -30,12 +31,12 @@ public class BuildingButton extends JButton
                 if (e.isShiftDown())
                 {
                     Command command = new BuildingInfoCommand(building);
-                    manager.passCommand(command);
+                    invoker.invoke(command);
                 }
                 else
                 {
                     Command command = new BeginBuildingCommand(building);
-                    manager.passCommand(command);
+                    invoker.invoke(command);
                 }
             }
         });
