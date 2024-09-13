@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 //import java.util.Stack;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
+import my.entity.EntityInfoDialog;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
@@ -128,13 +129,12 @@ public class Manager
             selectedBuilding = building;
             players.current().markFor(building.getType());
         }
-    }
-
-    
+    }    
 
     public void showEntityInfo(AbstractEntity entity)
     {
-        System.out.println("Show entity info for: %s".formatted(entity.getName()));
+        var dialog = new EntityInfoDialog(master, entity);
+        dialog.setVisible(true);
     }
 
     public void beginHiring(AbstractEntity entity)

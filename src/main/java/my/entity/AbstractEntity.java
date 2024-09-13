@@ -131,6 +131,16 @@ public abstract class AbstractEntity
     {
         return priceSlope * number + priceIntercept;
     }
+    
+    public int getPriceIntercept()
+    {
+        return priceIntercept;
+    }
+    
+    public int getPriceSlope()
+    {
+        return priceSlope;
+    }
 
     public abstract String getDescription();
 
