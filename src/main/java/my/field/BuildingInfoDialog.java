@@ -51,11 +51,7 @@ public class BuildingInfoDialog extends JDialog
         contentPane.add(conditionTextArea);
         
         JTextArea pricingTextArea = new JTextArea();
-        String pattern = "The first %s costs %d Ħ.\nEvery next costs %d Ħ more.";
-        pricingTextArea.setText(String.format(pattern,
-                building.getName(),
-                building.getPriceIntercept(),
-                building.getPriceSlope()));
+        pricingTextArea.setText(building.getPricing());
         pricingTextArea.setOpaque(false);
         pricingTextArea.setEditable(false);
         pricingTextArea.setBorder(BorderFactory.createTitledBorder("Price"));
@@ -66,5 +62,6 @@ public class BuildingInfoDialog extends JDialog
         setContentPane(contentPane);
         pack();
         setLocationRelativeTo(frame);
+        setResizable(false);
     }
 }

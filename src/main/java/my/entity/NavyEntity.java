@@ -25,6 +25,13 @@ public class NavyEntity extends AbstractEntity
     @Override
     public String getCondition()
     {
-        return "You need a Shipyard to spawn Navy.";
+        return "To spawn Navy, you need Shipyard or Capital. (No entity must be there.)";
+    }
+    
+    @Override
+    public String getPricing()
+    {
+        return String.format("A troop of Navy costs %d Ħ for the ship + %d Ħ × number of soldiers.",
+                priceIntercept, priceSlope);
     }
 }

@@ -135,20 +135,10 @@ public abstract class AbstractEntity
     {
         return priceSlope * number + priceIntercept;
     }
-    
-    public int getPriceIntercept()
-    {
-        return priceIntercept;
-    }
-    
-    public int getPriceSlope()
-    {
-        return priceSlope;
-    }
 
     public abstract String getDescription();
-
     public abstract String getCondition();
+    public abstract String getPricing();
 
     private static final AssetManager assetManager = new AssetManager();
     

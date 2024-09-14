@@ -827,7 +827,7 @@ public class World
         Hex hex = oldField.getHex();
         if (fields.get(hex) == oldField)
         {
-            newField.cloneProperties(oldField);
+            newField.copyProperties(oldField);
             fields.put(hex, newField);
         }
     }

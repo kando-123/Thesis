@@ -24,6 +24,13 @@ public class InfantryEntity extends AbstractEntity
     @Override
     public String getCondition()
     {
-        return "You need Barracks to spawn Infantry.";
+        return "To spawn Infantry, you need Barracks or Capital. (No entity must be there.)";
+    }
+    
+    @Override
+    public String getPricing()
+    {
+        return String.format("A troop of Infantry costs %d Ħ × number of soldiers.",
+                priceSlope);
     }
 }

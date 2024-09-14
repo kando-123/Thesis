@@ -104,7 +104,7 @@ public abstract class AbstractField
         return newInstance(type);
     }
 
-    public void cloneProperties(AbstractField other)
+    public void copyProperties(AbstractField other)
     {
         hex = other.hex;
         owner = other.owner;

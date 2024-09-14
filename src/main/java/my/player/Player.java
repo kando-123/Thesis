@@ -121,11 +121,6 @@ public class Player
         return money;
     }
 
-    public void spendMoney(int outcome)
-    {
-        money -= outcome;
-    }
-
     public void capture(AbstractField field)
     {
         country.addField(field);
@@ -180,6 +175,11 @@ public class Player
     {
         int count = country.count(building.getType());
         return building.computePrice(count);
+    }
+    
+    public int buy(BuildingField building)
+    {
+        return (money -= computePriceFor(building));
     }
 
     public void play()

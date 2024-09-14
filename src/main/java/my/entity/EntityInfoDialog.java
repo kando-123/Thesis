@@ -51,15 +51,7 @@ public class EntityInfoDialog extends JDialog
         contentPane.add(conditionTextArea);
         
         JTextArea pricingTextArea = new JTextArea();
-        String name = entity.getName();
-        int intercept = entity.getPriceIntercept();
-        int slope = entity.getPriceSlope();
-        String text = (intercept == 0)
-                ? String.format("The %s troop costs %d Ħ × number of soldiers.",
-                        name, slope)
-                : String.format("The %s troop costs %d Ħ × number of soldiers + %d Ħ",
-                        name, slope, intercept);
-        pricingTextArea.setText(text);
+        pricingTextArea.setText(entity.getPricing());
         pricingTextArea.setOpaque(false);
         pricingTextArea.setEditable(false);
         pricingTextArea.setBorder(BorderFactory.createTitledBorder("Price"));
@@ -70,5 +62,6 @@ public class EntityInfoDialog extends JDialog
         setContentPane(contentPane);
         pack();
         setLocationRelativeTo(frame);
+        setResizable(false);
     }
 }

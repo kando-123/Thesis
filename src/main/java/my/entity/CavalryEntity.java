@@ -1,10 +1,5 @@
 package my.entity;
 
-import my.field.Spawner;
-import my.player.UnaryPredicate;
-import my.utils.Hex;
-import my.world.WorldAccessor;
-
 /**
  *
  * @author Kay Jay O'Nail
@@ -29,6 +24,13 @@ public class CavalryEntity extends AbstractEntity
     @Override
     public String getCondition()
     {
-        return "You need Barracks to spawn Cavalry.";
+        return "To spawn Cavalry, you need Barracks or Capital. (No entity must be there.)";
+    }
+    
+    @Override
+    public String getPricing()
+    {
+        return String.format("A troop of Cavalry costs %d Ħ × number of soldiers.",
+                priceSlope);
     }
 }

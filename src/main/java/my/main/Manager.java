@@ -67,6 +67,8 @@ public class Manager
     {
         return players.first();
     }
+    
+    /* -------------------- BuildingManager? -------------------- */
 
     private BuildingPurchaseDialog buildingDialog;
 
@@ -78,8 +80,6 @@ public class Manager
 
     public void beginBuilding(BuildingField building)
     {
-        System.out.println("Begin building for: %s".formatted(building.getName()));
-
         Player player = players.current();
         if (!player.canBuild(building))
         {
@@ -127,7 +127,9 @@ public class Manager
             selectedBuilding = building;
             players.current().markFor(building);
         }
-    }    
+    }
+    
+    /* -------------------- EntityManager? -------------------- */
 
     public void showEntityInfo(AbstractEntity entity)
     {
@@ -154,6 +156,8 @@ public class Manager
     {
         state = State.HIRING_IN_PROGRESS;
     }
+    
+    /* -------------------- Manager -> ... -------------------- */
 
     public void handleField(AbstractField field)
     {
@@ -163,16 +167,20 @@ public class Manager
             {
                 if (world.isMarked(field.getHex()))
                 {
-//                    Player player = players.current();
-//                    int count = player.getCount(selectedBuilding.getType());
-//                    int cost = selectedBuilding.computePrice(count);
-//                    player.spendMoney(cost);
-//                    master.setMoney(player.getMoney());
-//
-//                    world.substitute(field, selectedBuilding);
+                    master.setMoney(players.current().buy(selectedBuilding));
+
+                    world.substitute(field, selectedBuilding);
                 }
                 world.unmarkAll();
                 selectedBuilding = null;
+            }
+            case HIRING_IN_PROGRESS ->
+            {
+                
+            }
+            case IDLE ->
+            {
+                
             }
         }
     }

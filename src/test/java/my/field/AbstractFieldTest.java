@@ -60,7 +60,7 @@ public class AbstractFieldTest
     }
 
     /**
-     * Test of cloneProperties method, of class AbstractField.
+     * Test of copyProperties method, of class AbstractField.
      */
     @Test
     public void testCloneProperties()
@@ -68,7 +68,7 @@ public class AbstractFieldTest
         System.out.println("cloneProperties");
         AbstractField other = null;
         AbstractField instance = null;
-        instance.cloneProperties(other);
+        instance.copyProperties(other);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
