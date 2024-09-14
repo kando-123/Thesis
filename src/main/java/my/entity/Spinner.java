@@ -4,12 +4,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -91,6 +91,8 @@ public class Spinner extends JPanel implements ActionListener
     private final JLabel valueLabel;
 
     private final Model model;
+    
+    private static final Insets noMargin = new Insets(0, 0, 0, 0);
 
     public Spinner(Model model, Dimension size)
     {
@@ -114,44 +116,50 @@ public class Spinner extends JPanel implements ActionListener
         minus10Button = new JButton("-10");
         minus10Button.setPreferredSize(buttonSize);
         minus10Button.addActionListener(this);
-        add(minus10Button, c.clone());
+        minus10Button.setMargin(noMargin);
+        add(minus10Button, c);
 
         ++c.gridx;
         minus5Button = new JButton("-5");
         minus5Button.setPreferredSize(buttonSize);
         minus5Button.addActionListener(this);
-        add(minus5Button, c.clone());
+        minus5Button.setMargin(noMargin);
+        add(minus5Button, c);
 
         ++c.gridx;
         minus1Button = new JButton("-1");
         minus1Button.setPreferredSize(buttonSize);
         minus1Button.addActionListener(this);
-        add(minus1Button, c.clone());
+        minus1Button.setMargin(noMargin);
+        add(minus1Button, c);
 
         ++c.gridx;
         valueLabel = new JLabel(String.valueOf(model.getValue()));
         valueLabel.setPreferredSize(labelSize);
         valueLabel.setHorizontalAlignment(JLabel.CENTER);
         valueLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        add(valueLabel, c.clone());
+        add(valueLabel, c);
 
         ++c.gridx;
         plus1Button = new JButton("+1");
         plus1Button.setPreferredSize(buttonSize);
         plus1Button.addActionListener(this);
-        add(plus1Button, c.clone());
+        plus1Button.setMargin(noMargin);
+        add(plus1Button, c);
 
         ++c.gridx;
         plus5Button = new JButton("+5");
         plus5Button.setPreferredSize(buttonSize);
         plus5Button.addActionListener(this);
-        add(plus5Button, c.clone());
+        plus5Button.setMargin(noMargin);
+        add(plus5Button, c);
 
         ++c.gridx;
         plus10Button = new JButton("+10");
         plus10Button.setPreferredSize(buttonSize);
         plus10Button.addActionListener(this);
-        add(plus10Button, c.clone());
+        plus10Button.setMargin(noMargin);
+        add(plus10Button, c);
 
         listeners = new LinkedList<>();
     }

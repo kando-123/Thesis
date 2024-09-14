@@ -1,5 +1,6 @@
 package my.main;
 
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -7,6 +8,7 @@ import javax.swing.JOptionPane;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
 import my.entity.EntityInfoDialog;
+import my.entity.EntityPurchaseDialog;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
@@ -22,7 +24,7 @@ import my.world.WorldConfiguration;
  *
  * @author Kay Jay O'Nail
  */
-public class Manager implements DefaultWindowListener
+public class Manager
 {
     private static enum State
     {
@@ -68,17 +70,23 @@ public class Manager implements DefaultWindowListener
     {
         return players.first();
     }
-    
+
     /* -------------------- BuildingManager? -------------------- */
-
-    private BuildingPurchaseDialog buildingDialog;
-
     public void showBuildingInfo(BuildingField building)
     {
         var dialog = new BuildingInfoDialog(master, building);
-        dialog.addWindowListener(this);
+        dialog.addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                master.requestFocus();
+            }
+        });
         dialog.setVisible(true);
     }
+
+    private BuildingPurchaseDialog buildingDialog;
 
     public void beginBuilding(BuildingField building)
     {
@@ -89,8 +97,8 @@ public class Manager implements DefaultWindowListener
                     Unfortunately, you cannot buy this building.
 
                     You do not have a place for this building.
-                    Shift-click the building's button for details.
-                    """);
+                    Shift-click the building's button for details.""");
+            master.requestFocus();
         }
         else if (!player.canAfford(building))
         {
@@ -98,20 +106,27 @@ public class Manager implements DefaultWindowListener
                     Unfortunately, you cannot buy this building.
 
                     You do not have enough money for this building.
-                    Shift-click the building's button for details.
-                    """);
+                    Shift-click the building's button for details.""");
+            master.requestFocus();
         }
         else
         {
             state = State.BUILDING_BEGUN;
-            
+
             var builder = new BuildingPurchaseDialog.Builder();
             builder.setFrame(master);
             builder.setInvoker(new Invoker<>(this));
             builder.setBuilding(building);
             builder.setPrice(player.computePriceFor(building));
             buildingDialog = builder.get();
-            buildingDialog.addWindowListener(this);
+            buildingDialog.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosing(WindowEvent e)
+                {
+                    master.requestFocus();
+                }
+            });
             buildingDialog.setVisible(true);
         }
     }
@@ -131,36 +146,66 @@ public class Manager implements DefaultWindowListener
             players.current().markFor(building);
         }
     }
-    
-    /* -------------------- EntityManager? -------------------- */
 
+    /* -------------------- EntityManager? -------------------- */
     public void showEntityInfo(AbstractEntity entity)
     {
         var dialog = new EntityInfoDialog(master, entity);
-        dialog.addWindowListener(this);
+        dialog.addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                master.requestFocus();
+            }
+        });
         dialog.setVisible(true);
     }
+
+    private EntityPurchaseDialog entityDialog;
 
     public void beginHiring(AbstractEntity entity)
     {
         state = State.HIRING_BEGUN;
 
-//        Player player = players.current();
-//        entityDialog = new EntitySelectionDialog(master);
-//        entityDialog.setManager(this);
-//        entityDialog.setPlayerMoney(player.getMoney());
-//        entityDialog.reassignValues();
-//        entityDialog.setLocationRelativeTo(master);
-//        entityDialog.setVisible(true);
+        Player player = players.current();
+        if (!player.canHire(entity))
+        {
+            JOptionPane.showMessageDialog(master, """
+                    Unfortunately, you cannot buy this entity.
+
+                    You do not have a place for this entity.
+                    Shift-click the entity's button for details.""");
+            master.requestFocus();
+        }
+        else
+        {
+            state = State.HIRING_BEGUN;
+
+            var builder = new EntityPurchaseDialog.Builder();
+            builder.setFrame(master);
+            builder.setInvoker(new Invoker<>(this));
+            builder.setEntity(entity);
+            builder.setBudget(players.current().getMoney());
+            entityDialog = builder.get();
+            entityDialog.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosing(WindowEvent e)
+                {
+                    master.requestFocus();
+                }
+            });
+            entityDialog.setVisible(true);
+        }
     }
 
     public void pursueHiring(AbstractEntity entity)
     {
         state = State.HIRING_IN_PROGRESS;
     }
-    
-    /* -------------------- Manager -> ... -------------------- */
 
+    /* -------------------- Manager -> ... -------------------- */
     public void handleField(AbstractField field)
     {
         switch (state)
@@ -178,11 +223,11 @@ public class Manager implements DefaultWindowListener
             }
             case HIRING_IN_PROGRESS ->
             {
-                
+
             }
             case IDLE ->
             {
-                
+
             }
         }
     }
@@ -212,13 +257,5 @@ public class Manager implements DefaultWindowListener
     public Invoker<Manager> createInvoker()
     {
         return new Invoker(this);
-    }
-    
-    @Override
-    public void windowClosing(WindowEvent e)
-    {
-        System.out.println("A dialog window is being closed...");
-        state = State.IDLE;
-        master.requestFocus();
     }
 }

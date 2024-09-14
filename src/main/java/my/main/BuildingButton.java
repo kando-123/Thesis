@@ -28,15 +28,14 @@ public class BuildingButton extends JButton
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                var copy = (BuildingField) building.copy();
                 if (e.isShiftDown())
                 {
-                    Command command = new BuildingInfoCommand(copy);
+                    Command command = new BuildingInfoCommand(building);
                     invoker.invoke(command);
                 }
                 else
                 {
-                    Command command = new BeginBuildingCommand(copy);
+                    Command command = new BeginBuildingCommand((BuildingField) building.copy());
                     invoker.invoke(command);
                 }
             }

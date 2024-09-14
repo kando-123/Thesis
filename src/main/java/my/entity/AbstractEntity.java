@@ -72,6 +72,11 @@ public abstract class AbstractEntity
         this.type = type;
         this.image = assetManager.getImage(type);
     }
+    
+    public AbstractEntity copy()
+    {
+        return newInstance(type);
+    }
 
     public BufferedImage getImage()
     {
@@ -157,5 +162,62 @@ public abstract class AbstractEntity
                 return false;
             }
         };
+    }
+    
+    public static final int DEFAULT_NUMBER =  25;
+    public static final int MINIMAL_NUMBER =   1;
+    public static final int MAXIMAL_NUMBER = 100;
+    public static final int MINIMAL_MORALE =   1;
+    public static final int MAXIMAL_MORALE = 100;
+    
+    private int number = DEFAULT_NUMBER;
+    
+    public void setNumber(int newNumber)
+    {
+        if (newNumber > MAXIMAL_NUMBER)
+        {
+            //throw null;
+        }
+        else if (newNumber < MINIMAL_NUMBER)
+        {
+            //throw null;
+        }
+        else
+        {
+            number = newNumber;
+        }
+    }
+    
+    public int getNumber()
+    {
+        return number;
+    }
+    
+    public int computePrice()
+    {
+        return priceSlope * number + priceIntercept;
+    }
+    
+    private int morale = 0;
+    
+    public void setMorale(int newMorale)
+    {
+        if (newMorale > MAXIMAL_MORALE)
+        {
+            //throw null;
+        }
+        else if (newMorale < MINIMAL_MORALE)
+        {
+            //throw null;
+        }
+        else
+        {
+            morale = newMorale;
+        }
+    }
+    
+    public int getMorale()
+    {
+        return morale;
     }
 }

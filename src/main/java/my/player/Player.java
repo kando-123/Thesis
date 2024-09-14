@@ -73,7 +73,7 @@ public class Player
     private final WorldAccessor accessor;
 
     private int money;
-    private static final int INITIAL_MONEY = 500;
+    private static final int INITIAL_MONEY = 1000;
 
     public Player(PlayerType type, WorldAccessor accessor, WorldMarker marker)
     {

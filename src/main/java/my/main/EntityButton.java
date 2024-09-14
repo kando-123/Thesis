@@ -36,7 +36,7 @@ public class EntityButton extends JButton
                 }
                 else
                 {
-                    Command command = new BeginHiringCommand(entity);
+                    Command command = new BeginHiringCommand(entity.copy());
                     invoker.invoke(command);
                 }
             }
