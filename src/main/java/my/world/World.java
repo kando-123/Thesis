@@ -17,7 +17,6 @@ import my.field.GrassField;
 import my.field.MeadowField;
 import my.field.MountainsField;
 import my.field.SeaField;
-import my.field.ShipyardField;
 import my.field.WoodField;
 import my.utils.Doublet;
 import my.utils.Hex;

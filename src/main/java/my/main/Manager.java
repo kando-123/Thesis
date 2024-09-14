@@ -1,5 +1,6 @@
 package my.main;
 
+import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
 //import java.util.Stack;
@@ -21,7 +22,7 @@ import my.world.WorldConfiguration;
  *
  * @author Kay Jay O'Nail
  */
-public class Manager
+public class Manager implements DefaultWindowListener
 {
     private static enum State
     {
@@ -75,6 +76,7 @@ public class Manager
     public void showBuildingInfo(BuildingField building)
     {
         var dialog = new BuildingInfoDialog(master, building);
+        dialog.addWindowListener(this);
         dialog.setVisible(true);
     }
 
@@ -109,6 +111,7 @@ public class Manager
             builder.setBuilding(building);
             builder.setPrice(player.computePriceFor(building));
             buildingDialog = builder.get();
+            buildingDialog.addWindowListener(this);
             buildingDialog.setVisible(true);
         }
     }
@@ -134,13 +137,12 @@ public class Manager
     public void showEntityInfo(AbstractEntity entity)
     {
         var dialog = new EntityInfoDialog(master, entity);
+        dialog.addWindowListener(this);
         dialog.setVisible(true);
     }
 
     public void beginHiring(AbstractEntity entity)
     {
-        System.out.println("Begin hiring for: %s".formatted(entity.getName()));
-
         state = State.HIRING_BEGUN;
 
 //        Player player = players.current();
@@ -210,5 +212,13 @@ public class Manager
     public Invoker<Manager> createInvoker()
     {
         return new Invoker(this);
+    }
+    
+    @Override
+    public void windowClosing(WindowEvent e)
+    {
+        System.out.println("A dialog window is being closed...");
+        state = State.IDLE;
+        master.requestFocus();
     }
 }
