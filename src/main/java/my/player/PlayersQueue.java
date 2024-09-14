@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 import my.utils.Hex;
 import my.world.World;
+import my.world.WorldAccessor;
+import my.world.WorldMarker;
 
 /**
  *
@@ -17,7 +19,7 @@ public class PlayersQueue
     
     private int usersCount;
     
-    public PlayersQueue(List<PlayerConfiguration> configurations, World.Accessor accessor, World.Marker marker)
+    public PlayersQueue(List<PlayerConfiguration> configurations, WorldAccessor accessor, WorldMarker marker)
     {
         queue = new LinkedList<>();
         usersCount = 0;

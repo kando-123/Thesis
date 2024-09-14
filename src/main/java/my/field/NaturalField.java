@@ -10,10 +10,4 @@ public abstract class NaturalField extends AbstractField
     {
         super(type);
     }
-    
-    @Override
-    final public boolean isNatural()
-    {
-        return true;
-    }
 }

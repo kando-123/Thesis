@@ -10,10 +10,4 @@ public abstract class PropertyField extends AbstractField
     {
         super(type);
     }
-    
-    @Override
-    final public boolean isProperty()
-    {
-        return true;
-    }
 }

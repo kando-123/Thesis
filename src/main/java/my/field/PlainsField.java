@@ -10,10 +10,4 @@ public abstract class PlainsField extends ContinentalField
     {
         super(type);
     }
-    
-    @Override
-    final public boolean isPlains()
-    {
-        return true;
-    }
 }

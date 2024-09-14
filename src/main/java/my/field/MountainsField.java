@@ -10,10 +10,4 @@ public class MountainsField extends ContinentalField
     {
         super(FieldType.MOUNTAINS);
     }
-    
-    @Override
-    final public boolean isMountainous()
-    {
-        return true;
-    }
 }

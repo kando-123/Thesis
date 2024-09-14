@@ -1,6 +1,9 @@
 package my.field;
 
 import my.entity.AbstractEntity;
+import my.player.UnaryPredicate;
+import my.utils.Hex;
+import my.world.WorldAccessor;
 
 /**
  *
@@ -41,6 +44,27 @@ public class ShipyardField extends SpawnerField
             {
                 yield false;
             }
+        };
+    }
+
+    @Override
+    public UnaryPredicate<Hex> getPredicate(WorldAccessor accessor)
+    {
+        return (Hex item) ->
+        {
+            var field = accessor.getFieldAt(item);
+            if (field.isPlains())
+            {
+                for (var neighbor : item.neighbors())
+                {
+                    field = accessor.getFieldAt(neighbor);
+                    if (field != null && field.isMarine())
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         };
     }
 }

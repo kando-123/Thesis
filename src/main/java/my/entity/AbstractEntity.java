@@ -11,7 +11,11 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import my.field.AbstractField;
+import my.field.Spawner;
+import my.player.UnaryPredicate;
 import my.utils.Doublet;
+import my.utils.Hex;
+import my.world.WorldAccessor;
 
 class AssetManager
 {
@@ -147,4 +151,21 @@ public abstract class AbstractEntity
     public abstract String getCondition();
 
     private static final AssetManager assetManager = new AssetManager();
+    
+    public UnaryPredicate<Hex> getPredicate(WorldAccessor accessor)
+    {
+        return (Hex hex) ->
+        {
+            var place = accessor.getFieldAt(hex);
+            if (place != null && place.isSpawner())
+            {
+                Spawner spawner = (Spawner) place;
+                return spawner.canSpawn(this);
+            }
+            else
+            {
+                return false;
+            }
+        };
+    }
 }

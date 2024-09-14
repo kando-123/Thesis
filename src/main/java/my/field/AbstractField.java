@@ -200,59 +200,59 @@ public abstract class AbstractField
         return assetManager.getIcon(type);
     }
 
-    public boolean isNatural()
+    final public boolean isNatural()
     {
-        return false;
+        return this instanceof NaturalField;
     }
 
-    public boolean isMarine()
+    final public boolean isMarine()
     {
-        return false;
+        return this instanceof SeaField;
     }
 
-    public boolean isContinental()
+    final public boolean isContinental()
     {
-        return false;
+        return this instanceof ContinentalField;
     }
 
-    public boolean isMountainous()
+    final public boolean isMountainous()
     {
-        return false;
+        return this instanceof MountainsField;
     }
 
-    public boolean isPlains()
+    final public boolean isPlains()
     {
-        return false;
+        return this instanceof PlainsField;
     }
 
-    public boolean isProperty()
+    final public boolean isProperty()
     {
-        return false;
+        return this instanceof PropertyField;
     }
 
-    public boolean isCapital()
+    final public boolean isCapital()
     {
-        return false;
+        return this instanceof CapitalField;
     }
 
-    public boolean isBuilding()
+    final public boolean isBuilding()
     {
-        return false;
+        return this instanceof BuildingField;
     }
 
-    public boolean isCommercial()
+    final public boolean isCommercial()
     {
-        return false;
+        return this instanceof CommercialField;
     }
 
-    public boolean isSpawner()
+    final public boolean isSpawner()
     {
-        return false;
+        return this instanceof Spawner;
     }
     
-    public boolean isDefense()
+    final public boolean isDefense()
     {
-        return false;
+        return this instanceof Defense;
     }
 
     public static AbstractField newInstance(FieldType type)

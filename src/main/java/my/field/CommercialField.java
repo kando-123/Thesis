@@ -10,10 +10,4 @@ public abstract class CommercialField extends BuildingField
     {
         super(type);
     }
-    
-    @Override
-    final public boolean isCommercial()
-    {
-        return true;
-    }
 }

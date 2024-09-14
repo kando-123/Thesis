@@ -1,5 +1,9 @@
 package my.field;
 
+import my.player.UnaryPredicate;
+import my.utils.Hex;
+import my.world.WorldAccessor;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -9,12 +13,6 @@ public abstract class BuildingField extends AbstractField
     protected BuildingField(FieldType type)
     {
         super(type);
-    }
-    
-    @Override
-    final public boolean isBuilding()
-    {
-        return true;
     }
     
     public abstract String getDescription();
@@ -37,4 +35,6 @@ public abstract class BuildingField extends AbstractField
     {
         return priceSlope;
     }
+    
+    public abstract UnaryPredicate<Hex> getPredicate(WorldAccessor accessor);
 }

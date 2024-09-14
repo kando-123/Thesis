@@ -10,10 +10,4 @@ public abstract class DefenseField extends BuildingField implements Defense
     {
         super(type);
     }
-    
-    @Override
-    final public boolean isDefense()
-    {
-        return true;
-    }
 }

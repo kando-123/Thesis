@@ -12,24 +12,6 @@ public class CapitalField extends AbstractField implements Defense, Spawner
     {
         super(FieldType.CAPITAL);
     }
-    
-    @Override
-    final public boolean isCapital()
-    {
-        return true;
-    }
-    
-    @Override
-    final public boolean isDefense()
-    {
-        return true;
-    }
-    
-    @Override
-    final public boolean isSpawner()
-    {
-        return true;
-    }
 
     @Override
     public boolean canSpawn(AbstractEntity entity)

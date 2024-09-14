@@ -43,7 +43,6 @@ public class Manager
         state = State.IDLE;
 
         world = new World(worldConfiguration);
-        marker = world.createMarker();
         players = new PlayersQueue(playerConfigurations, world.createAccessor(), world.createMarker());
 
         Hex[] capitals = world.locateCapitals(playerConfigurations.size());
@@ -55,7 +54,6 @@ public class Manager
 
     private final Master master;
     private final World world;
-    private final World.Marker marker;
     private final PlayersQueue players;
 //    private Stack<ReversibleCommand> executedCommands;
 //    private Stack<ReversibleCommand> undoneCommands;
@@ -127,7 +125,7 @@ public class Manager
             buildingDialog.dispose();
             buildingDialog = null;
             selectedBuilding = building;
-            players.current().markFor(building.getType());
+            players.current().markFor(building);
         }
     }    
 
@@ -163,7 +161,7 @@ public class Manager
         {
             case BUILDING_IN_PROGRESS ->
             {
-                if (marker.isMarked(field.getHex()))
+                if (world.isMarked(field.getHex()))
                 {
 //                    Player player = players.current();
 //                    int count = player.getCount(selectedBuilding.getType());
@@ -173,7 +171,7 @@ public class Manager
 //
 //                    world.substitute(field, selectedBuilding);
                 }
-                marker.unmarkAll();
+                world.unmarkAll();
                 selectedBuilding = null;
             }
         }

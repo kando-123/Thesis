@@ -10,10 +10,4 @@ public abstract class SpawnerField extends BuildingField implements Spawner
     {
         super(type);
     }
-    
-    @Override
-    final public boolean isSpawner()
-    {
-        return true;
-    }
 }

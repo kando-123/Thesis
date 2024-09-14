@@ -6,17 +6,18 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import my.entity.AbstractEntity;
 import my.utils.Hex;
 import my.field.AbstractField;
 import my.field.BuildingField;
-import my.field.FieldType;
-import my.world.World;
+import my.world.WorldAccessor;
+import my.world.WorldMarker;
 
-class ContoursManager
+class AssetManager
 {
     private Map<PlayerColor, BufferedImage> contours;
     
-    private ContoursManager()
+    private AssetManager()
     {
         contours = new HashMap<>(PlayerColor.values().length);
         for (var color : PlayerColor.values())
@@ -40,9 +41,9 @@ class ContoursManager
         }
     }
     
-    private static final ContoursManager instance = new ContoursManager();
+    private static final AssetManager instance = new AssetManager();
 
-    public static ContoursManager getInstance()
+    public static AssetManager getInstance()
     {
         return instance;
     }
@@ -68,13 +69,13 @@ public class Player
     private BufferedImage contour;
 
     private final Country country;
-    private final World.Marker marker;
-    private final World.Accessor accessor;
+    private final WorldMarker marker;
+    private final WorldAccessor accessor;
 
     private int money;
     private static final int INITIAL_MONEY = 500;
 
-    public Player(PlayerType type, World.Accessor accessor, World.Marker marker)
+    public Player(PlayerType type, WorldAccessor accessor, WorldMarker marker)
     {
         this.type = type;
         this.marker = marker;
@@ -92,7 +93,7 @@ public class Player
     public void setColor(PlayerColor newColor)
     {
         color = newColor;
-        contour = ContoursManager.getInstance().getContour(color);
+        contour = AssetManager.getInstance().getContour(color);
     }
 
     public PlayerColor getColor()
@@ -145,82 +146,9 @@ public class Player
         return country.getCapitalHex();
     }
 
-    private final Map<FieldType, UnaryPredicate<Hex>> predicates = createPredicates();
-
-    private Map<FieldType, UnaryPredicate<Hex>> createPredicates()
-    {
-        var map = new HashMap<FieldType, UnaryPredicate<Hex>>();
-
-        map.put(FieldType.BARRACKS, (Hex hex) ->
-        {
-            var field = accessor.getFieldAt(hex);
-            return field != null && field.isPlains();
-        });
-        map.put(FieldType.TOWN, (Hex hex) ->
-        {
-            var field = accessor.getFieldAt(hex);
-            return field != null && field.isPlains();
-        });
-        map.put(FieldType.VILLAGE, (Hex hex) ->
-        {
-            var field = accessor.getFieldAt(hex);
-            return field != null && field.isPlains();
-        });
-        map.put(FieldType.FORTRESS, (Hex hex) ->
-        {
-            var field = accessor.getFieldAt(hex);
-            return field != null && field.isContinental();
-        });
-        map.put(FieldType.MINE, (Hex hex) ->
-        {
-            var field = accessor.getFieldAt(hex);
-            return field != null && field.isMountainous();
-        });
-        map.put(FieldType.FARMFIELD, (Hex hex) ->
-        {
-            var field = accessor.getFieldAt(hex);
-            if (field.isPlains())
-            {
-                for (var neighbor : hex.neighbors())
-                {
-                    field = accessor.getFieldAt(neighbor);
-                    if (field != null && field.getType() == FieldType.VILLAGE)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        });
-        map.put(FieldType.SHIPYARD, (Hex hex) ->
-        {
-            var field = accessor.getFieldAt(hex);
-            if (field.isPlains())
-            {
-                for (var neighbor : hex.neighbors())
-                {
-                    field = accessor.getFieldAt(neighbor);
-                    if (field != null && field.isMarine())
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        });
-
-        return map;
-    }
-
-    public void markFor(FieldType building)
-    {
-        UnaryPredicate<Hex> predicate = predicates.get(building);
-        country.markIf(predicate, marker);
-    }
-
     public boolean canBuild(BuildingField building)
     {
-        var predicate = predicates.get(building.getType());
+        var predicate = building.getPredicate(accessor);
         return country.isAny(predicate);
     }
     
@@ -228,6 +156,24 @@ public class Player
     {
         int count = country.count(building.getType());
         return building.computePrice(count) <= money;
+    }
+
+    public void markFor(BuildingField building)
+    {
+        var predicate = building.getPredicate(accessor);
+        country.markIf(predicate, marker);
+    }
+    
+    public boolean canHire(AbstractEntity entity)
+    {
+        var predicate = entity.getPredicate(accessor);
+        return country.isAny(predicate);
+    }
+
+    public void markFor(AbstractEntity entity)
+    {
+        var predicate = entity.getPredicate(accessor);
+        country.markIf(predicate, marker);
     }
     
     public int computePriceFor(BuildingField building)

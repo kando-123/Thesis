@@ -1,6 +1,9 @@
 package my.field;
 
 import my.entity.AbstractEntity;
+import my.player.UnaryPredicate;
+import my.utils.Hex;
+import my.world.WorldAccessor;
 
 /**
  *
@@ -41,6 +44,16 @@ public class BarracksField extends SpawnerField
             {
                 yield false;
             }
+        };
+    }
+
+    @Override
+    public UnaryPredicate<Hex> getPredicate(WorldAccessor accessor)
+    {
+        return (Hex item) ->
+        {
+            var field = accessor.getFieldAt(item);
+            return field != null && field.isPlains();
         };
     }
 }

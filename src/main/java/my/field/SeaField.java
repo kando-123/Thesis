@@ -10,10 +10,4 @@ public class SeaField extends NaturalField
     {
         super(FieldType.SEA);
     }
-    
-    @Override
-    final public boolean isMarine()
-    {
-        return true;
-    }
 }

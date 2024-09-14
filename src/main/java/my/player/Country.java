@@ -5,7 +5,8 @@ import java.util.Set;
 import my.field.AbstractField;
 import my.field.FieldType;
 import my.utils.Hex;
-import my.world.World;
+import my.world.WorldAccessor;
+import my.world.WorldMarker;
 
 /**
  *
@@ -16,11 +17,11 @@ public class Country
     private final Player owner;
     
 
-    private final World.Accessor accessor;
+    private final WorldAccessor accessor;
     private final Set<Hex> territory;
     private Hex capital;
 
-    public Country(Player owner, World.Accessor worldAccessor)
+    public Country(Player owner, WorldAccessor worldAccessor)
     {
         this.owner = owner;
         this.accessor = worldAccessor;
@@ -66,7 +67,7 @@ public class Country
                 .count();
     }
 
-    public void markIf(UnaryPredicate<Hex> predicate, World.Marker marker)
+    public void markIf(UnaryPredicate<Hex> predicate, WorldMarker marker)
     {
         for (var hex : territory)
         {

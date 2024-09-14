@@ -10,10 +10,4 @@ public abstract class ContinentalField extends NaturalField
     {
         super(type);
     }
-    
-    @Override
-    final public boolean isContinental()
-    {
-        return true;
-    }
 }

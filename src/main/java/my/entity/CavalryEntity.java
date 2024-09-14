@@ -1,5 +1,10 @@
 package my.entity;
 
+import my.field.Spawner;
+import my.player.UnaryPredicate;
+import my.utils.Hex;
+import my.world.WorldAccessor;
+
 /**
  *
  * @author Kay Jay O'Nail

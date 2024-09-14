@@ -831,11 +831,6 @@ public class World
             fields.put(hex, newField);
         }
     }
-    
-    public void substitute(AbstractField oldField, ShipyardField shipyard)
-    {
-        
-    }
 
     private final HashSet<AbstractField> markedFields;
 
@@ -874,58 +869,13 @@ public class World
         return markedFields.contains(field);
     }
 
-    public static class Marker
+    public WorldMarker createMarker()
     {
-        private final World world;
-
-        private Marker(World world)
-        {
-            this.world = world;
-        }
-
-        public void mark(Hex hex)
-        {
-            world.mark(hex);
-        }
-
-        public void unmark(Hex hex)
-        {
-            world.unmark(hex);
-        }
-
-        public void unmarkAll()
-        {
-            world.unmarkAll();
-        }
-
-        public boolean isMarked(Hex hex)
-        {
-            return world.isMarked(hex);
-        }
+        return new WorldMarker(this);
     }
 
-    public Marker createMarker()
+    public WorldAccessor createAccessor()
     {
-        return new Marker(this);
-    }
-
-    public static class Accessor
-    {
-        private final World world;
-
-        private Accessor(World world)
-        {
-            this.world = world;
-        }
-
-        public AbstractField getFieldAt(Hex hex)
-        {
-            return world.getFieldAt(hex);
-        }
-    }
-
-    public Accessor createAccessor()
-    {
-        return new Accessor(this);
+        return new WorldAccessor(this);
     }
 }
