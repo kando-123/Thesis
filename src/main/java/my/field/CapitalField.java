@@ -16,6 +16,16 @@ public class CapitalField extends AbstractField implements Defense, Spawner
     @Override
     public boolean canSpawn(AbstractEntity entity)
     {
-        return isFree();
+        return isFree() && switch (entity.getType())
+        {
+            case INFANTRY, CAVALRY ->
+            {
+                yield true;
+            }
+            default ->
+            {
+                yield false;
+            }
+        };
     }
 }

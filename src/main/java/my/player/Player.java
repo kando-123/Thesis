@@ -181,6 +181,11 @@ public class Player
     {
         return (money -= computePriceFor(building));
     }
+    
+    public int buy(AbstractEntity entity)
+    {
+        return (money -= entity.computePrice());
+    }
 
     public void play()
     {

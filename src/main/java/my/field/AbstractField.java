@@ -1,4 +1,4 @@
-package my.field;
+ package my.field;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -151,7 +151,18 @@ public abstract class AbstractField
 
     public void setOwner(Player newOwner)
     {
+        if (owner != null)
+        {
+            owner.release(this);
+        }
         owner = newOwner;
+    }
+    
+    public AbstractEntity setEntity(AbstractEntity newEntity)
+    {
+        AbstractEntity oldEntity = entity;
+        entity = newEntity;
+        return oldEntity;
     }
 
     public Player getOwner()

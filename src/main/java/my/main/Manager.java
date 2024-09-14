@@ -143,7 +143,7 @@ public class Manager
             buildingDialog.dispose();
             buildingDialog = null;
             selectedBuilding = building;
-            players.current().markFor(building);
+            players.current().markFor(selectedBuilding);
         }
     }
 
@@ -199,10 +199,21 @@ public class Manager
             entityDialog.setVisible(true);
         }
     }
+    
+    private AbstractEntity selectedEntity;
 
     public void pursueHiring(AbstractEntity entity)
     {
-        state = State.HIRING_IN_PROGRESS;
+        if (state == State.HIRING_BEGUN)
+        {
+            state = State.HIRING_IN_PROGRESS;
+
+            entityDialog.setVisible(false);
+            entityDialog.dispose();
+            entityDialog = null;
+            selectedEntity = entity;
+            players.current().markFor(selectedEntity);
+        }
     }
 
     /* -------------------- Manager -> ... -------------------- */
@@ -215,15 +226,22 @@ public class Manager
                 if (world.isMarked(field.getHex()))
                 {
                     master.setMoney(players.current().buy(selectedBuilding));
-
                     world.substitute(field, selectedBuilding);
                 }
                 world.unmarkAll();
                 selectedBuilding = null;
+                state = State.IDLE;
             }
             case HIRING_IN_PROGRESS ->
             {
-
+                if (world.isMarked(field.getHex()))
+                {
+                    master.setMoney(players.current().buy(selectedEntity));
+                    field.setEntity(selectedEntity);
+                }
+                world.unmarkAll();
+                selectedEntity = null;
+                state = State.IDLE;
             }
             case IDLE ->
             {
