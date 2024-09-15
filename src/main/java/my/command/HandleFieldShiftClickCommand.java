@@ -1,17 +1,17 @@
 package my.command;
 
-import my.flow.Manager;
 import my.field.AbstractField;
+import my.flow.Manager;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class HandleFieldCommand extends Command<Manager>
+public class HandleFieldShiftClickCommand extends Command<Manager>
 {
     private final AbstractField field;
     
-    public HandleFieldCommand(AbstractField field)
+    public HandleFieldShiftClickCommand(AbstractField field)
     {
         this.field = field;
     }
@@ -19,6 +19,6 @@ public class HandleFieldCommand extends Command<Manager>
     @Override
     public void execute(Manager manager)
     {
-        manager.handleField(field);
+        manager.handleFieldShiftClick(field);
     }
 }

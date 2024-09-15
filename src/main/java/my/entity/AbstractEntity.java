@@ -19,15 +19,20 @@ public abstract class AbstractEntity
 {
     private final EntityType type;
     private final BufferedImage image;
+    private final BufferedImage brightImage;
+    private boolean isMarked;
 
     private AbstractField field;
 
     protected AbstractEntity(EntityType type)
     {
         this.type = type;
-        this.image = assetManager.getImage(type);
+
+        image = assetManager.getImage(type);
+        brightImage = assetManager.getBrightImage(type);
+        isMarked = false;
     }
-    
+
     public AbstractEntity copy()
     {
         return newInstance(type);
@@ -61,7 +66,7 @@ public abstract class AbstractEntity
             }
         };
     }
-    
+
     public String getName()
     {
         return type.toString();
@@ -85,7 +90,7 @@ public abstract class AbstractEntity
         int y = (int) (position.right + 0.30 * size.height);
         int w = (int) (0.7 * size.width);
         int h = (int) (0.7 * size.height);
-        graphics.drawImage(image, x, y, w, h, null);
+        graphics.drawImage(!isMarked ? image : brightImage, x, y, w, h, null);
     }
 
     protected int priceIntercept;
@@ -97,11 +102,13 @@ public abstract class AbstractEntity
     }
 
     public abstract String getDescription();
+
     public abstract String getCondition();
+
     public abstract String getPricing();
 
     private static final EntityAssetManager assetManager = EntityAssetManager.getInstance();
-    
+
     public UnaryPredicate<Hex> getPredicate(WorldAccessor accessor)
     {
         return (Hex hex) ->
@@ -118,15 +125,15 @@ public abstract class AbstractEntity
             }
         };
     }
-    
-    public static final int DEFAULT_NUMBER =  25;
-    public static final int MINIMAL_NUMBER =   1;
+
+    public static final int DEFAULT_NUMBER = 25;
+    public static final int MINIMAL_NUMBER = 1;
     public static final int MAXIMAL_NUMBER = 100;
-    public static final int MINIMAL_MORALE =   1;
+    public static final int MINIMAL_MORALE = 1;
     public static final int MAXIMAL_MORALE = 100;
-    
+
     private int number = DEFAULT_NUMBER;
-    
+
     public void setNumber(int newNumber)
     {
         if (newNumber > MAXIMAL_NUMBER)
@@ -142,19 +149,19 @@ public abstract class AbstractEntity
             number = newNumber;
         }
     }
-    
+
     public int getNumber()
     {
         return number;
     }
-    
+
     public int computePrice()
     {
         return priceSlope * number + priceIntercept;
     }
-    
+
     private int morale = 0;
-    
+
     public void setMorale(int newMorale)
     {
         if (newMorale > MAXIMAL_MORALE)
@@ -170,9 +177,75 @@ public abstract class AbstractEntity
             morale = newMorale;
         }
     }
-    
+
     public int getMorale()
     {
         return morale;
+    }
+
+    public void mark()
+    {
+        isMarked = true;
+    }
+
+    public void unmark()
+    {
+        isMarked = false;
+    }
+
+    public static class OutOfRangeException extends Exception
+    {
+    }
+
+    public AbstractEntity extract(int extractedNumber) throws OutOfRangeException
+    {
+        if (extractedNumber < 1 || extractedNumber >= number)
+        {
+            throw new OutOfRangeException();
+        }
+
+        int extractedMorale = (int) ((double) extractedNumber / (double) number * (double) morale);
+
+        AbstractEntity extractedEntity = copy();
+        extractedEntity.number = extractedNumber;
+        extractedEntity.morale = extractedMorale;
+
+        number -= extractedNumber;
+        morale -= extractedMorale;
+
+        return extractedEntity;
+    }
+
+    public AbstractEntity merge(AbstractEntity other)
+    {
+        int aggregateNumber = number + other.number;
+        int aggregateMorale = morale + other.morale;
+        
+        if (aggregateNumber <= MAXIMAL_NUMBER)
+        {
+            number = aggregateNumber;
+            morale = Math.min(aggregateMorale, MAXIMAL_MORALE);
+            
+            other.number = 0;
+            other.morale = 0;
+            
+            return null; // no remainder
+        }
+        else
+        {
+            int mergedNumber = MAXIMAL_NUMBER;
+            int mergedMorale = (int) ((double) MAXIMAL_NUMBER / aggregateNumber * aggregateMorale);
+            
+            int remainingNumber = MAXIMAL_NUMBER - aggregateNumber;
+            int remainingMorale = aggregateMorale - mergedMorale;
+            
+            number = mergedNumber;
+            morale = Math.min(mergedMorale, MAXIMAL_MORALE);
+            
+            other.number = remainingNumber;
+            other.morale = Math.min(remainingMorale, MAXIMAL_MORALE);
+            
+            return other; // remainder
+        }
     }
 }

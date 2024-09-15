@@ -17,12 +17,12 @@ import my.utils.Doublet;
  */
 public class FieldAssetManager
 {
-    private Map<FieldType, Doublet<BufferedImage>> fields;
+    private Map<FieldType, Doublet<BufferedImage>> images;
     private Map<FieldType, Icon> icons;
 
     private FieldAssetManager()
     {
-        fields = new HashMap<>(FieldType.values().length);
+        images = new HashMap<>(FieldType.values().length);
         icons = new HashMap<>(FieldType.values().length);
         for (var value : FieldType.values())
         {
@@ -32,10 +32,10 @@ public class FieldAssetManager
             {
                 BufferedImage field = ImageIO.read(stream);
                 BufferedImage brightField = brightenImage(field);
-                fields.put(value, new Doublet<>(field, brightField));
+                images.put(value, new Doublet<>(field, brightField));
 
-                BufferedImage iField = ImageIO.read(iStream);
-                icons.put(value, new ImageIcon(iField));
+                BufferedImage icon = ImageIO.read(iStream);
+                icons.put(value, new ImageIcon(icon));
             }
             catch (IOException io)
             {
@@ -66,12 +66,12 @@ public class FieldAssetManager
 
     public BufferedImage getImage(FieldType type)
     {
-        return fields.get(type).left;
+        return images.get(type).left;
     }
 
     public BufferedImage getBrightImage(FieldType type)
     {
-        return fields.get(type).right;
+        return images.get(type).right;
     }
 
     public Icon getIcon(FieldType type)

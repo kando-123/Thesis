@@ -218,7 +218,7 @@ public class Manager
     }
 
     /* -------------------- Manager -> ... -------------------- */
-    public void handleField(AbstractField field)
+    public void handleFieldClick(AbstractField field)
     {
         switch (state)
         {
@@ -249,6 +249,11 @@ public class Manager
 
             }
         }
+    }
+    
+    public void handleFieldShiftClick(AbstractField field)
+    {
+        
     }
 
     public void undo()

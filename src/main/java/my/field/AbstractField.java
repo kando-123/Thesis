@@ -20,7 +20,8 @@ public abstract class AbstractField
 
     private Player owner;
     private boolean isMarked;
-    private final Doublet<BufferedImage> images;
+    private final BufferedImage image;
+    private final BufferedImage brightImage;
 
     private AbstractEntity entity;
 
@@ -29,9 +30,8 @@ public abstract class AbstractField
     protected AbstractField(FieldType type)
     {
         this.type = type;
-        images = new Doublet<>();
-        images.left = assetManager.getImage(type);
-        images.right = assetManager.getBrightImage(type);
+        image = assetManager.getImage(type);
+        brightImage = assetManager.getBrightImage(type);
     }
     
     public AbstractField copy()
@@ -71,12 +71,12 @@ public abstract class AbstractField
 
     public int getWidth()
     {
-        return images.left.getWidth();
+        return image.getWidth();
     }
 
     public int getHeight()
     {
-        return images.left.getHeight();
+        return image.getHeight();
     }
 
     public boolean isOwned()
@@ -122,7 +122,7 @@ public abstract class AbstractField
 
     public void draw(Graphics2D graphics, Doublet<Integer> position, Dimension size)
     {
-        graphics.drawImage(!isMarked ? images.left : images.right,
+        graphics.drawImage(!isMarked ? image : brightImage,
                 position.left, position.right,
                 size.width, size.height,
                 null);

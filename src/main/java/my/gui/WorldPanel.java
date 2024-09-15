@@ -9,7 +9,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
-import my.command.HandleFieldCommand;
+import my.command.HandleFieldClickCommand;
+import my.command.HandleFieldShiftClickCommand;
 import my.command.Invoker;
 import my.field.AbstractField;
 import my.utils.Doublet;
@@ -255,7 +256,9 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
         
         AbstractField field = world.getFieldAt(hex);
-        invoker.invoke(new HandleFieldCommand(field));
+        invoker.invoke(!e.isShiftDown()
+                ? new HandleFieldClickCommand(field)
+                : new HandleFieldShiftClickCommand(field));
     }
 
     @Override
