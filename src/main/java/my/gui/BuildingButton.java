@@ -1,28 +1,28 @@
-package my.main;
+package my.gui;
 
+import my.flow.Manager;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
-import my.command.BeginHiringCommand;
-import my.command.EntityInfoCommand;
+import my.command.BeginBuildingCommand;
+import my.command.BuildingInfoCommand;
 import my.command.Command;
 import my.command.Invoker;
-import my.entity.AbstractEntity;
+import my.field.BuildingField;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class EntityButton extends JButton
+public class BuildingButton extends JButton
 {
-    public EntityButton(Invoker<Manager> invoker, AbstractEntity entity)
+    public BuildingButton(Invoker<Manager> invoker, BuildingField building)
     {
-        super(entity.getIcon());
+        super(building.getIcon());
         
         setBackground(Color.getHSBColor(210f / 360f, 0.3f, 1.0f));
-        
-        setToolTipText(entity.getName());
+        setToolTipText(building.getName());
 
         addMouseListener(new MouseAdapter()
         {
@@ -31,12 +31,12 @@ public class EntityButton extends JButton
             {
                 if (e.isShiftDown())
                 {
-                    Command command = new EntityInfoCommand(entity);
+                    Command command = new BuildingInfoCommand(building);
                     invoker.invoke(command);
                 }
                 else
                 {
-                    Command command = new BeginHiringCommand(entity.copy());
+                    Command command = new BeginBuildingCommand((BuildingField) building.copy());
                     invoker.invoke(command);
                 }
             }

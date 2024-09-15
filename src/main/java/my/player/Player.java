@@ -1,59 +1,12 @@
 package my.player;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import javax.imageio.ImageIO;
 import my.entity.AbstractEntity;
 import my.utils.Hex;
 import my.field.AbstractField;
 import my.field.BuildingField;
 import my.world.WorldAccessor;
 import my.world.WorldMarker;
-
-class AssetManager
-{
-    private Map<PlayerColor, BufferedImage> contours;
-    
-    private AssetManager()
-    {
-        contours = new HashMap<>(PlayerColor.values().length);
-        for (var color : PlayerColor.values())
-        {
-            if (color == PlayerColor.RANDOM)
-            {
-                continue;
-            }
-
-            String path = String.format("/Contours/%s.png", color.toString());
-            InputStream stream = getClass().getResourceAsStream(path);
-            try
-            {
-                BufferedImage image = ImageIO.read(stream);
-                contours.put(color, image);
-            }
-            catch (IOException io)
-            {
-                System.err.println(io.getMessage());
-            }
-        }
-    }
-    
-    private static final AssetManager instance = new AssetManager();
-
-    public static AssetManager getInstance()
-    {
-        return instance;
-    }
-    
-    public BufferedImage getContour(PlayerColor color)
-    {
-        return contours.get(color);
-    }
-    
-}
 
 /**
  *
@@ -93,7 +46,7 @@ public class Player
     public void setColor(PlayerColor newColor)
     {
         color = newColor;
-        contour = AssetManager.getInstance().getContour(color);
+        contour = ContourAssetManager.getInstance().getContour(color);
     }
 
     public PlayerColor getColor()

@@ -1,5 +1,6 @@
-package my.main;
+package my.gui;
 
+import my.flow.Manager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;

@@ -1,4 +1,4 @@
-package my.main;
+package my.flow;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -7,15 +7,16 @@ import javax.swing.JOptionPane;
 //import java.util.Stack;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
-import my.entity.EntityInfoDialog;
-import my.entity.EntityPurchaseDialog;
+import my.gui.EntityInfoDialog;
+import my.gui.EntityPurchaseDialog;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
 import my.field.AbstractField;
 import my.field.BuildingField;
-import my.field.BuildingInfoDialog;
-import my.field.BuildingPurchaseDialog;
+import my.gui.BuildingInfoDialog;
+import my.gui.BuildingPurchaseDialog;
+import my.gui.Master;
 import my.utils.Hex;
 import my.world.World;
 import my.world.WorldConfiguration;

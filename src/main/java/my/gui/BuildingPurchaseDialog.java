@@ -1,6 +1,5 @@
-package my.entity;
+package my.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -14,32 +13,30 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import my.command.Invoker;
-import my.command.PursueHiringCommand;
-import my.main.Manager;
+import my.command.PursueBuildingCommand;
+import my.field.BuildingField;
+import my.flow.Manager;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class EntityPurchaseDialog extends JDialog implements ActionListener, Spinner.ValueChangeListener
+public class BuildingPurchaseDialog extends JDialog implements ActionListener
 {
     private final JLabel nameLabel;
     private final JLabel iconLabel;
-    private final Spinner spinner;
     private final JLabel priceLabel;
-    private final JButton button;
-
-    private AbstractEntity entity;
-    private int budget;
+    
+    private BuildingField building;
     private Invoker<Manager> invoker;
-
-    private EntityPurchaseDialog(JFrame frame)
+    
+    private BuildingPurchaseDialog(JFrame frame)
     {
         super(frame, true);
-
+        
         JPanel contentPane = new JPanel(new GridBagLayout());
         contentPane.setPreferredSize(new Dimension(300, 200));
-
+        
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -50,37 +47,28 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
         nameLabel = new JLabel();
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPane.add(nameLabel, c);
-
+        
         ++c.gridy;
         iconLabel = new JLabel();
         contentPane.add(iconLabel, c);
-
-        ++c.gridy;
-        Spinner.Model model = new Spinner.Model(AbstractEntity.DEFAULT_NUMBER,
-                AbstractEntity.MINIMAL_NUMBER,
-                AbstractEntity.MAXIMAL_NUMBER);
-        spinner = new Spinner(model, new Dimension(300, 50));
-        spinner.addValueChangeListener(this);
-        contentPane.add(spinner, c);
-
+        
         ++c.gridy;
         c.gridwidth = 1;
         priceLabel = new JLabel();
         priceLabel.setBorder(BorderFactory.createTitledBorder("Price"));
         priceLabel.setPreferredSize(new Dimension(100, 50));
         contentPane.add(priceLabel, c);
-
+        
         ++c.gridx;
-        button = new JButton("Buy");
+        JButton button = new JButton("Buy");
         button.setActionCommand("buy");
         button.addActionListener(this);
         button.setPreferredSize(new Dimension(100, 50));
         contentPane.add(button, c);
-
+        
         setContentPane(contentPane);
-
+        
         pack();
-        button.requestFocus();
         setResizable(false);
         setLocationRelativeTo(frame);
     }
@@ -90,79 +78,62 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
     {
         if (e.getActionCommand().equals("buy"))
         {
-            invoker.invoke(new PursueHiringCommand(entity));
+            invoker.invoke(new PursueBuildingCommand(building));
         }
     }
-
-    private void setEntity(AbstractEntity newEntity)
+    
+    private void setBuilding(BuildingField newBuilding)
     {
-        entity = newEntity;
-        nameLabel.setText(entity.getName());
-        iconLabel.setIcon(entity.getIcon());
-        spinner.setValue(entity.getNumber());
-        setPrice(entity.computePrice());
+        building = newBuilding;
+        nameLabel.setText(building.getName());
+        iconLabel.setIcon(building.getIcon());
     }
-
-    private void setBudget(int newBudget)
-    {
-        budget = newBudget;
-    }
-
+    
     private void setInvoker(Invoker<Manager> newInvoker)
     {
         invoker = newInvoker;
     }
-
+    
     private void setPrice(int newPrice)
     {
         priceLabel.setText(String.format("%d Ħ", newPrice));
-        priceLabel.setForeground(newPrice > budget ? Color.RED : Color.BLACK);
-        button.setEnabled(newPrice <= budget);
-
     }
-
-    @Override
-    public void valueChanged(Spinner.ValueChangeEvent e)
-    {
-        entity.setNumber(e.newValue);
-        setPrice(entity.computePrice());
-    }
-
+    
     public static class Builder
     {
         private JFrame frame;
-        private AbstractEntity entity;
-        private int budget;
+        private BuildingField building;
+        private int price;
         private Invoker<Manager> invoker;
-
+        
         public void setFrame(JFrame frame)
         {
             this.frame = frame;
         }
-
-        public void setEntity(AbstractEntity entity)
+        
+        public void setBuilding(BuildingField building)
         {
-            this.entity = entity;
+            this.building = building;
         }
-
-        public void setBudget(int budget)
+        
+        public void setPrice(int price)
         {
-            this.budget = budget;
+            this.price = price;
         }
-
+        
         public void setInvoker(Invoker<Manager> invoker)
         {
             this.invoker = invoker;
         }
-
-        public EntityPurchaseDialog get()
+        
+        public BuildingPurchaseDialog get()
         {
-            EntityPurchaseDialog dialog = null;
-            if (frame != null && entity != null && invoker != null)
+            BuildingPurchaseDialog dialog = null;
+            if (frame != null && building != null && invoker != null)
             {
-                dialog = new EntityPurchaseDialog(frame);
-                dialog.setBudget(budget);
-                dialog.setEntity(entity);
+                dialog = new BuildingPurchaseDialog(frame);
+                dialog.setBuilding(building);
+                dialog.setPrice(price);
                 dialog.setInvoker(invoker);
             }
             return dialog;

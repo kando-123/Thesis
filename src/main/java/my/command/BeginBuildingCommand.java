@@ -1,7 +1,7 @@
 package my.command;
 
 import my.field.BuildingField;
-import my.main.Manager;
+import my.flow.Manager;
 
 /**
  *

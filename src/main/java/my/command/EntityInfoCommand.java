@@ -1,7 +1,7 @@
 package my.command;
 
 import my.entity.AbstractEntity;
-import my.main.Manager;
+import my.flow.Manager;
 
 /**
  *
