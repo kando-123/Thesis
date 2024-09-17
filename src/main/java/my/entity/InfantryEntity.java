@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 import my.field.AbstractField;
+import my.field.FieldType;
 import my.utils.Hex;
 import my.world.WorldAccessor;
 
@@ -47,7 +48,7 @@ public class InfantryEntity extends AbstractEntity
     private boolean isAccessible(AbstractField place)
     {
         boolean accessibility = false;
-        if (place.isMarine()) // Sea.
+        if (place.isMarine() || place.getType() == FieldType.SHIPYARD) // Sea or Shipyard.
         {
             AbstractEntity entity = place.getEntity();
             if (entity != null && entity.getType() == EntityType.NAVY) // Ship.
