@@ -1,5 +1,9 @@
 package my.entity;
 
+import java.util.Set;
+import my.utils.Hex;
+import my.world.WorldAccessor;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -33,5 +37,11 @@ public class NavyEntity extends AbstractEntity
     {
         return String.format("A troop of Navy costs %d Ħ for the ship + %d Ħ × number of soldiers.",
                 priceIntercept, priceSlope);
+    }
+
+    @Override
+    public Set<Hex> getMovementRange(WorldAccessor accessor)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -3,6 +3,7 @@ package my.entity;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Set;
 import javax.swing.Icon;
 import my.field.AbstractField;
 import my.field.Spawner;
@@ -17,12 +18,34 @@ import my.world.WorldAccessor;
  */
 public abstract class AbstractEntity
 {
+    /* Properties */
+    
     private final EntityType type;
     private final BufferedImage image;
     private final BufferedImage brightImage;
     private boolean isMarked;
 
-    private AbstractField field;
+    protected AbstractField field;
+    
+    protected int priceIntercept;
+    protected int priceSlope;
+    
+    private int number = DEFAULT_NUMBER;
+    private int morale = 0;
+    
+    /* Static Properties */
+    
+    private static final EntityAssetManager assetManager = EntityAssetManager.getInstance();
+    
+    /* Constants */
+    
+    public static final int DEFAULT_NUMBER = 25;
+    public static final int MINIMAL_NUMBER = 1;
+    public static final int MAXIMAL_NUMBER = 100;
+    public static final int MINIMAL_MORALE = 1;
+    public static final int MAXIMAL_MORALE = 100;
+    
+    /* Creation */
 
     protected AbstractEntity(EntityType type)
     {
@@ -32,22 +55,7 @@ public abstract class AbstractEntity
         brightImage = assetManager.getBrightImage(type);
         isMarked = false;
     }
-
-    public AbstractEntity copy()
-    {
-        return newInstance(type);
-    }
-
-    public BufferedImage getImage()
-    {
-        return image;
-    }
-
-    public Icon getIcon()
-    {
-        return assetManager.getIcon(type);
-    }
-
+    
     public static AbstractEntity newInstance(EntityType type)
     {
         return switch (type)
@@ -67,14 +75,21 @@ public abstract class AbstractEntity
         };
     }
 
-    public String getName()
+    public AbstractEntity copy()
     {
-        return type.toString();
+        return newInstance(type);
     }
+    
+    /* Accessors & Mutators */
 
     public EntityType getType()
     {
         return type;
+    }
+
+    public String getName()
+    {
+        return type.toString();
     }
 
     public AbstractField setField(AbstractField newField)
@@ -83,6 +98,35 @@ public abstract class AbstractEntity
         field = newField;
         return oldField;
     }
+    
+    /* Accessors & Mutators: Graphics */
+
+    public BufferedImage getImage()
+    {
+        return image;
+    }
+    
+    public Icon getIcon()
+    {
+        return assetManager.getIcon(type);
+    }
+    
+    public void setMarked(boolean marked)
+    {
+        isMarked = marked;
+    }
+    
+    public void mark()
+    {
+        isMarked = true;
+    }
+
+    public void unmark()
+    {
+        isMarked = false;
+    }
+    
+    /* Graphics */
 
     public void draw(Graphics2D graphics, Doublet<Integer> position, Dimension size)
     {
@@ -93,22 +137,21 @@ public abstract class AbstractEntity
         graphics.drawImage(!isMarked ? image : brightImage, x, y, w, h, null);
     }
 
-    protected int priceIntercept;
-    protected int priceSlope;
-
-    public int computePriceFor(int number)
-    {
-        return priceSlope * number + priceIntercept;
-    }
-
+    /* Purchasing */
+    
     public abstract String getDescription();
 
     public abstract String getCondition();
 
     public abstract String getPricing();
-
-    private static final EntityAssetManager assetManager = EntityAssetManager.getInstance();
-
+    
+    public int computePriceFor(int number)
+    {
+        return priceSlope * number + priceIntercept;
+    }
+    
+    /* Spawning */
+    
     public UnaryPredicate<Hex> getPredicate(WorldAccessor accessor)
     {
         return (Hex hex) ->
@@ -125,24 +168,27 @@ public abstract class AbstractEntity
             }
         };
     }
+    
+    /* Movement */
+    
+    public abstract Set<Hex> getMovementRange(WorldAccessor accessor);
+    
+    /* Arithmetics */
 
-    public static final int DEFAULT_NUMBER = 25;
-    public static final int MINIMAL_NUMBER = 1;
-    public static final int MAXIMAL_NUMBER = 100;
-    public static final int MINIMAL_MORALE = 1;
-    public static final int MAXIMAL_MORALE = 100;
-
-    private int number = DEFAULT_NUMBER;
+    public int computePrice()
+    {
+        return priceSlope * number + priceIntercept;
+    }
 
     public void setNumber(int newNumber)
     {
         if (newNumber > MAXIMAL_NUMBER)
         {
-            //throw null;
+            //throw ...;
         }
         else if (newNumber < MINIMAL_NUMBER)
         {
-            //throw null;
+            //throw ...;
         }
         else
         {
@@ -155,22 +201,15 @@ public abstract class AbstractEntity
         return number;
     }
 
-    public int computePrice()
-    {
-        return priceSlope * number + priceIntercept;
-    }
-
-    private int morale = 0;
-
     public void setMorale(int newMorale)
     {
         if (newMorale > MAXIMAL_MORALE)
         {
-            //throw null;
+            //throw ...;
         }
         else if (newMorale < MINIMAL_MORALE)
         {
-            //throw null;
+            //throw ...;
         }
         else
         {
@@ -183,19 +222,7 @@ public abstract class AbstractEntity
         return morale;
     }
 
-    public void mark()
-    {
-        isMarked = true;
-    }
-
-    public void unmark()
-    {
-        isMarked = false;
-    }
-
-    public static class OutOfRangeException extends Exception
-    {
-    }
+    public static class OutOfRangeException extends Exception {}
 
     public AbstractEntity extract(int extractedNumber) throws OutOfRangeException
     {

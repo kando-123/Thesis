@@ -30,10 +30,14 @@ public class Manager
     private static enum State
     {
         IDLE,
+        
         BUILDING_BEGUN,
         BUILDING_IN_PROGRESS,
+        
         HIRING_BEGUN,
-        HIRING_IN_PROGRESS;
+        HIRING_IN_PROGRESS,
+        
+        MOVING_BEGUN
     }
 
     private State state;
@@ -91,44 +95,48 @@ public class Manager
 
     public void beginBuilding(BuildingField building)
     {
-        Player player = players.current();
-        if (!player.canBuild(building))
+        if (state == State.IDLE)
         {
-            JOptionPane.showMessageDialog(master, """
-                    Unfortunately, you cannot buy this building.
-
-                    You do not have a place for this building.
-                    Shift-click the building's button for details.""");
-            master.requestFocus();
-        }
-        else if (!player.canAfford(building))
-        {
-            JOptionPane.showMessageDialog(master, """
-                    Unfortunately, you cannot buy this building.
-
-                    You do not have enough money for this building.
-                    Shift-click the building's button for details.""");
-            master.requestFocus();
-        }
-        else
-        {
-            state = State.BUILDING_BEGUN;
-
-            var builder = new BuildingPurchaseDialog.Builder();
-            builder.setFrame(master);
-            builder.setInvoker(new Invoker<>(this));
-            builder.setBuilding(building);
-            builder.setPrice(player.computePriceFor(building));
-            buildingDialog = builder.get();
-            buildingDialog.addWindowListener(new WindowAdapter()
+            Player player = players.current();
+            if (!player.canBuild(building))
             {
-                @Override
-                public void windowClosing(WindowEvent e)
+                JOptionPane.showMessageDialog(master, """
+                        Unfortunately, you cannot buy this building.
+
+                        You do not have a place for this building.
+                        Shift-click the building's button for details.""");
+                master.requestFocus();
+            }
+            else if (!player.canAfford(building))
+            {
+                JOptionPane.showMessageDialog(master, """
+                        Unfortunately, you cannot buy this building.
+
+                        You do not have enough money for this building.
+                        Shift-click the building's button for details.""");
+                master.requestFocus();
+            }
+            else
+            {
+                state = State.BUILDING_BEGUN;
+
+                var builder = new BuildingPurchaseDialog.Builder();
+                builder.setFrame(master);
+                builder.setInvoker(new Invoker<>(this));
+                builder.setBuilding(building);
+                builder.setPrice(player.computePriceFor(building));
+                buildingDialog = builder.get();
+                buildingDialog.addWindowListener(new WindowAdapter()
                 {
-                    master.requestFocus();
-                }
-            });
-            buildingDialog.setVisible(true);
+                    @Override
+                    public void windowClosing(WindowEvent e)
+                    {
+                        state = State.IDLE;
+                        master.requestFocus();
+                    }
+                });
+                buildingDialog.setVisible(true);
+            }
         }
     }
 
@@ -167,37 +175,39 @@ public class Manager
 
     public void beginHiring(AbstractEntity entity)
     {
-        state = State.HIRING_BEGUN;
-
-        Player player = players.current();
-        if (!player.canHire(entity))
+        if (state == State.IDLE)
         {
-            JOptionPane.showMessageDialog(master, """
-                    Unfortunately, you cannot buy this entity.
-
-                    You do not have a place for this entity.
-                    Shift-click the entity's button for details.""");
-            master.requestFocus();
-        }
-        else
-        {
-            state = State.HIRING_BEGUN;
-
-            var builder = new EntityPurchaseDialog.Builder();
-            builder.setFrame(master);
-            builder.setInvoker(new Invoker<>(this));
-            builder.setEntity(entity);
-            builder.setBudget(players.current().getMoney());
-            entityDialog = builder.get();
-            entityDialog.addWindowListener(new WindowAdapter()
+            Player player = players.current();
+            if (!player.canHire(entity))
             {
-                @Override
-                public void windowClosing(WindowEvent e)
+                JOptionPane.showMessageDialog(master, """
+                        Unfortunately, you cannot buy this entity.
+
+                        You do not have a place for this entity.
+                        Shift-click the entity's button for details.""");
+                master.requestFocus();
+            }
+            else
+            {
+                state = State.HIRING_BEGUN;
+
+                var builder = new EntityPurchaseDialog.Builder();
+                builder.setFrame(master);
+                builder.setInvoker(new Invoker<>(this));
+                builder.setEntity(entity);
+                builder.setBudget(players.current().getMoney());
+                entityDialog = builder.get();
+                entityDialog.addWindowListener(new WindowAdapter()
                 {
-                    master.requestFocus();
-                }
-            });
-            entityDialog.setVisible(true);
+                    @Override
+                    public void windowClosing(WindowEvent e)
+                    {
+                        state = State.IDLE;
+                        master.requestFocus();
+                    }
+                });
+                entityDialog.setVisible(true);
+            }
         }
     }
     
@@ -239,6 +249,7 @@ public class Manager
                 {
                     master.setMoney(players.current().buy(selectedEntity));
                     field.setEntity(selectedEntity);
+                    selectedEntity.setField(field);
                 }
                 world.unmarkAll();
                 selectedEntity = null;
@@ -246,14 +257,31 @@ public class Manager
             }
             case IDLE ->
             {
-
+                if (field.hasEntity())
+                {
+                    //state = State.MOVING_BEGUN;
+                    
+                    AbstractEntity entity = field.getEntity();
+                    entity.mark();
+                    
+                    for (var hex : entity.getMovementRange(world.createAccessor()))
+                    {
+                        world.mark(hex);
+                    }
+                    
+                    
+                }
+                /* has entity -> begin move: check whither it can move, mark and wait
+                   until a field is selected, then move (if free) or merge (if own),
+                   or militate (if enemy's) */
             }
         }
     }
     
     public void handleFieldShiftClick(AbstractField field)
     {
-        
+        /* has entity -> extract (dialog etc.), in case of a ship: extract = disembark
+           (a ship cannot produce a new ship) */
     }
 
     public void undo()

@@ -34,7 +34,7 @@ public class BarracksField extends SpawnerField
     @Override
     public boolean canSpawn(AbstractEntity entity)
     {
-        return isFree() && switch (entity.getType())
+        return !hasEntity() && switch (entity.getType())
         {
             case INFANTRY, CAVALRY ->
             {

@@ -1,5 +1,9 @@
 package my.entity;
 
+import java.util.Set;
+import my.utils.Hex;
+import my.world.WorldAccessor;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -32,5 +36,11 @@ public class CavalryEntity extends AbstractEntity
     {
         return String.format("A troop of Cavalry costs %d Ħ × number of soldiers.",
                 priceSlope);
+    }
+
+    @Override
+    public Set<Hex> getMovementRange(WorldAccessor accessor)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
