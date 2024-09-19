@@ -153,6 +153,8 @@ public class Manager
             buildingDialog = null;
             selectedBuilding = building;
             players.current().markFor(selectedBuilding);
+            
+            master.requestFocus();
         }
     }
 
@@ -224,6 +226,8 @@ public class Manager
             entityDialog = null;
             selectedEntity = entity;
             players.current().markFor(selectedEntity);
+            
+            master.requestFocus();
         }
     }
 
@@ -241,7 +245,9 @@ public class Manager
                 }
                 world.unmarkAll();
                 selectedBuilding = null;
+                
                 state = State.IDLE;
+                master.requestFocus();
             }
             case HIRING_IN_PROGRESS ->
             {
@@ -253,7 +259,9 @@ public class Manager
                 }
                 world.unmarkAll();
                 selectedEntity = null;
+                
                 state = State.IDLE;
+                master.requestFocus();
             }
             case IDLE ->
             {

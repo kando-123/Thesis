@@ -10,8 +10,6 @@ import my.world.WorldAccessor;
  */
 public class NavyEntity extends AbstractEntity
 {
-    private int sailors;
-
     public NavyEntity()
     {
         super(EntityType.NAVY);

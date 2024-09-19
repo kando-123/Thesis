@@ -1,4 +1,4 @@
-package my.gui;
+package my.flow;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;

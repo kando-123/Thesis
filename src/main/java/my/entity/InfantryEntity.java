@@ -71,8 +71,11 @@ public class InfantryEntity extends AbstractEntity
                 if (place.getOwner() == field.getOwner()) // Own.
                 {
                     // A troop of other type blocks movement.
-                    // A field with a troop of the same type is accessible. (MERGE scenario)
-                    accessibility = place.getEntity().getType() == EntityType.INFANTRY;
+                    // A field with a troop of the same type is accessible,
+                    // on condition that merging is possible. (MERGE scenario)
+                    AbstractEntity entity = place.getEntity();
+                    accessibility = entity.getType() == EntityType.INFANTRY
+                                    && entity.getNumber() < AbstractEntity.MAXIMAL_NUMBER;
                 }
                 else
                 {
@@ -93,52 +96,74 @@ public class InfantryEntity extends AbstractEntity
     @Override
     public Set<Hex> getMovementRange(WorldAccessor accessor)
     {
-        // The set of hexagonal coordinates of the fields this entity can go to.
         Set<Hex> range = new HashSet<>();
-
-        // The set of hexagonal coordinates of the fields whose accessibility has already
-        // been settled.
         Set<Hex> visited = new HashSet<>();
-
-        // The BFS queue.
         Queue<Hex> queue = new LinkedList<>();
 
-        // The starting point of the algorithm.
         Hex center = field.getHex();
         queue.add(center);
         visited.add(center);
 
-        // Do BFS.
-        while (!queue.isEmpty())
+        for (int i = 0; i < RADIUS; ++i)
         {
-            Hex current = queue.remove();
-            for (var neighborHex : current.neighbors())
+            for (int j = queue.size(); j > 0; --j)
             {
-                if (visited.contains(neighborHex))
+                Hex current = queue.remove();
+                for (var neighborHex : current.neighbors())
                 {
-                    continue;
-                }
-                
-                AbstractField neighborField = accessor.getFieldAt(neighborHex);
-                if (neighborField != null)
-                {
-                    // This field has already been considered. No need to come back later.
-                    visited.add(neighborHex);
-                    if (isAccessible(neighborField))
+                    if (visited.contains(neighborHex))
                     {
-                        // This field is accessible.
-                        range.add(neighborHex);
-                        if (isTransitable(neighborField))
+                        continue;
+                    }
+
+                    AbstractField neighborField = accessor.getFieldAt(neighborHex);
+                    if (neighborField != null)
+                    {
+                        visited.add(neighborHex);
+                        if (isAccessible(neighborField))
                         {
-                            // This field can be passed through, so its neighbors can,
-                            // potentially, be reached. Push to the queue for later
-                            // examination.
-                            queue.add(neighborHex);
+                            range.add(neighborHex);
+                            if (isTransitable(neighborField))
+                            {
+                                queue.add(neighborHex);
+                            }
                         }
                     }
                 }
             }
         }
+
+//        // Do BFS.
+//        while (!queue.isEmpty())
+//        {
+//            Hex current = queue.remove();
+//            for (var neighborHex : current.neighbors())
+//            {
+//                if (visited.contains(neighborHex))
+//                {
+//                    continue;
+//                }
+//
+//                AbstractField neighborField = accessor.getFieldAt(neighborHex);
+//                if (neighborField != null)
+//                {
+//                    // This field is being considered. No need to come back later.
+//                    visited.add(neighborHex);
+//                    if (isAccessible(neighborField))
+//                    {
+//                        // This field is accessible.
+//                        range.add(neighborHex);
+//                        if (isTransitable(neighborField))
+//                        {
+//                            // This field can be passed through, so its neighbors can,
+//                            // potentially, be reached. Push to the queue for later
+//                            // examination.
+//                            queue.add(neighborHex);
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         return range;
     }

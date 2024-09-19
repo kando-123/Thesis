@@ -137,6 +137,7 @@ public class Master extends JFrame implements ActionListener
 
             Player firstUser = manager.getFirstPlayer();
             gameplayContentPane.getUserPanel().setUser(firstUser);
+            gameplayContentPane.getWorldPanel().setCenter(firstUser.getCapitalHex());
 
             setContentPane(gameplayContentPane);
             setResizable(true);
