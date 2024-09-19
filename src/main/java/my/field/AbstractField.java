@@ -147,11 +147,9 @@ public abstract class AbstractField
     
     /* Accessors & Mutators: Interactions with Entity */
     
-    public AbstractEntity setEntity(AbstractEntity newEntity)
+    public void setEntity(AbstractEntity newEntity)
     {
-        AbstractEntity oldEntity = entity;
         entity = newEntity;
-        return oldEntity;
     }
     
     public AbstractEntity getEntity()

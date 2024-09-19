@@ -92,10 +92,20 @@ public abstract class AbstractEntity
         return type.toString();
     }
 
-    public AbstractField setField(AbstractField newField)
+    public AbstractField changeField(AbstractField newField)
     {
         AbstractField oldField = field;
         field = newField;
+        
+        if (oldField != null)
+        {
+            oldField.setEntity(null);
+        }
+        if (newField != null)
+        {
+            newField.setEntity(this);
+        }
+        
         return oldField;
     }
     

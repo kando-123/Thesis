@@ -253,7 +253,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         double globalY = point.y;
         double relativeX = globalX - worldCenter.left;
         double relativeY = globalY - worldCenter.right;
-        Hex hex = Hex.getHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
+        Hex hex = Hex.computeHexAt(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
         
         AbstractField field = world.getFieldAt(hex);
         invoker.invoke(!e.isShiftDown()

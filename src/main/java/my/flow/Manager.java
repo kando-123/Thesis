@@ -140,7 +140,7 @@ public class Manager
         }
     }
 
-    private BuildingField selectedBuilding;
+    private BuildingField buildingBeingPurchased;
 
     public void pursueBuilding(BuildingField building)
     {
@@ -151,8 +151,8 @@ public class Manager
             buildingDialog.setVisible(false);
             buildingDialog.dispose();
             buildingDialog = null;
-            selectedBuilding = building;
-            players.current().markFor(selectedBuilding);
+            buildingBeingPurchased = building;
+            players.current().markFor(buildingBeingPurchased);
             
             master.requestFocus();
         }
@@ -213,7 +213,7 @@ public class Manager
         }
     }
     
-    private AbstractEntity selectedEntity;
+    private AbstractEntity entityBeingPurchased;
 
     public void pursueHiring(AbstractEntity entity)
     {
@@ -224,14 +224,16 @@ public class Manager
             entityDialog.setVisible(false);
             entityDialog.dispose();
             entityDialog = null;
-            selectedEntity = entity;
-            players.current().markFor(selectedEntity);
+            entityBeingPurchased = entity;
+            players.current().markFor(entityBeingPurchased);
             
             master.requestFocus();
         }
     }
 
     /* -------------------- Manager -> ... -------------------- */
+    private AbstractEntity entityBeingMoved;
+    
     public void handleFieldClick(AbstractField field)
     {
         switch (state)
@@ -240,11 +242,11 @@ public class Manager
             {
                 if (world.isMarked(field.getHex()))
                 {
-                    master.setMoney(players.current().buy(selectedBuilding));
-                    world.substitute(field, selectedBuilding);
+                    master.setMoney(players.current().buy(buildingBeingPurchased));
+                    world.substitute(field, buildingBeingPurchased);
                 }
                 world.unmarkAll();
-                selectedBuilding = null;
+                buildingBeingPurchased = null;
                 
                 state = State.IDLE;
                 master.requestFocus();
@@ -253,12 +255,12 @@ public class Manager
             {
                 if (world.isMarked(field.getHex()))
                 {
-                    master.setMoney(players.current().buy(selectedEntity));
-                    field.setEntity(selectedEntity);
-                    selectedEntity.setField(field);
+                    master.setMoney(players.current().buy(entityBeingPurchased));
+                    field.setEntity(entityBeingPurchased);
+                    entityBeingPurchased.changeField(field);
                 }
                 world.unmarkAll();
-                selectedEntity = null;
+                entityBeingPurchased = null;
                 
                 state = State.IDLE;
                 master.requestFocus();
@@ -267,21 +269,27 @@ public class Manager
             {
                 if (field.hasEntity())
                 {
-                    //state = State.MOVING_BEGUN;
+                    state = State.MOVING_BEGUN;
                     
-                    AbstractEntity entity = field.getEntity();
-                    entity.mark();
+                    entityBeingMoved = field.getEntity();
+                    entityBeingMoved.mark();
                     
-                    for (var hex : entity.getMovementRange(world.createAccessor()))
+                    for (var hex : entityBeingMoved.getMovementRange(world.createAccessor()))
                     {
                         world.mark(hex);
                     }
-                    
-                    
                 }
-                /* has entity -> begin move: check whither it can move, mark and wait
-                   until a field is selected, then move (if free) or merge (if own),
-                   or militate (if enemy's) */
+            }
+            case MOVING_BEGUN ->
+            {
+                state = State.IDLE;
+                
+                if (world.isMarked(field.getHex()))
+                {
+                    entityBeingMoved.changeField(field);
+                }
+                entityBeingMoved = null;
+                world.unmarkAll();
             }
         }
     }

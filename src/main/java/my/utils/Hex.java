@@ -11,7 +11,6 @@ public class Hex
     private int rCoord;
 
     /* Creation of a new instance */
-    
     private Hex(int p, int q, int r)
     {
         assert (p + q + r == 0);
@@ -26,7 +25,7 @@ public class Hex
     {
         return new Hex(pCoord, qCoord, rCoord);
     }
-    
+
     public static Hex newInstance(int p, int q)
     {
         return new Hex(p, q, -(p + q));
@@ -41,17 +40,61 @@ public class Hex
     {
         return new Hex(0, 0, 0);
     }
-    
-    public static Hex getHexAt(int x, int y, int outerRadius)
+
+    public static Hex computeHexAt(double x, double y, double outerRadius, double innerRadius)
     {
-        int p = (int) ((2. / 3.) * x / outerRadius);
-        int q = (int) ((-x + Math.sqrt(3.) * y) / (3. * outerRadius));
-        
-        return new Hex(p, q, -(p + q));
+        // Fractional coordinates
+        double Φp = (2.0 / 3.0 * x) / outerRadius;
+        double Φq = (-1.0 / 3.0 * x + Math.sqrt(3.0) / 3.0 * y) / outerRadius;
+        double Φr = -(Φp + Φq);
+
+        long p = Math.round(Φp);
+        long q = Math.round(Φq);
+        long r = Math.round(Φr);
+
+        double Δp = Math.abs(p - Φp);
+        double Δq = Math.abs(q - Φq);
+        double Δr = Math.abs(r - Φr);
+
+        if (Δp > Δq && Δp > Δr)
+        {
+            p = -(q + r);
+        }
+        else if (Δq > Δr && Δq > Δp)
+        {
+            q = -(r + p);
+        }
+        else // if (Δr > Δp && Δr > Δq)
+        {
+            r = -(p + q);
+        }
+
+        return new Hex((int) p, (int) q, (int) r);
+    }
+
+    public Hex[] lineTo(Hex other)
+    {
+        int hexDistance = distance(other);
+        Hex[] hexes = new Hex[hexDistance + 1];
+
+        Doublet<Double> begin = getCentralPoint(1.0, INNER_TO_OUTER_RATIO);
+        Doublet<Double> end = other.getCentralPoint(1.0, INNER_TO_OUTER_RATIO);
+
+        hexes[0] = clone();
+        double Δx = (end.left - begin.left) / hexDistance;
+        double Δy = (end.right - begin.right) / hexDistance;
+        for (int i = 1; i < hexDistance; ++i)
+        {
+            double x = begin.left + i * Δx;
+            double y = begin.right + i * Δy;
+            hexes[i] = computeHexAt(x, y, 1.0, INNER_TO_OUTER_RATIO);
+        }
+        hexes[hexDistance] = other.clone();
+
+        return hexes;
     }
 
     /* Property accessors */
-    
     public int getP()
     {
         return pCoord;
@@ -68,7 +111,6 @@ public class Hex
     }
 
     /* Mutators */
-    
     public void add(Hex other)
     {
         pCoord += other.pCoord;
@@ -155,7 +197,6 @@ public class Hex
     }
 
     /* Operators */
-    
     public Hex plus(Hex other)
     {
         int p = pCoord + other.pCoord;
@@ -239,18 +280,17 @@ public class Hex
     public Hex[] neighbors()
     {
         HexagonalDirection[] directions = HexagonalDirection.values();
-        
+
         Hex[] hexes = new Hex[directions.length];
         for (int i = 0; i < directions.length; ++i)
         {
             hexes[i] = neighbor(directions[i]);
         }
-        
+
         return hexes;
     }
 
     /* Descriptors */
-    
     public int distance(Hex other)
     {
         int pDistance = Math.abs(pCoord - other.pCoord);
@@ -258,7 +298,7 @@ public class Hex
         int rDistance = Math.abs(rCoord - other.rCoord);
         return (pDistance + qDistance + rDistance) / 2;
     }
-    
+
     public boolean isNeighbor(Hex other)
     {
         return distance(other) == 1;
@@ -273,14 +313,20 @@ public class Hex
     {
         return (Math.abs(pCoord) + Math.abs(qCoord) + Math.abs(rCoord)) / 2;
     }
-    
+
     /* Geometry */
-    
-    public static int getHexSurfaceSize(int side)
+    private static final double INNER_TO_OUTER_RATIO = Math.sin(Math.PI / 3.0);
+
+    public static double computeInnerRadius(double outerRadius)
+    {
+        return outerRadius * INNER_TO_OUTER_RATIO;
+    }
+
+    public static int computeHexSurfaceSize(int side)
     {
         return 3 * side * (side - 1) + 1;
     }
-    
+
     public Doublet<Integer> getCentralPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2;
@@ -356,29 +402,28 @@ public class Hex
         }
         return point;
     }
-    
+
     public static int computeSurfaceWidth(int side, int outerRadius)
     {
         return 3 * (side - 1) * outerRadius + 2 * outerRadius;
     }
-    
+
     public static int computeSurfaceHeight(int side, int innerRadius)
     {
         return 4 * (side - 1) * innerRadius + 2 * innerRadius;
     }
-    
+
     public static double computeSurfaceWidth(int side, double outerRadius)
     {
         return 3 * (side - 1) * outerRadius + 2 * outerRadius;
     }
-    
+
     public static double computeSurfaceHeight(int side, double innerRadius)
     {
         return 4 * (side - 1) * innerRadius + 2 * innerRadius;
     }
 
     /* Other */
-    
     @Override
     public boolean equals(Object other)
     {
@@ -407,37 +452,5 @@ public class Hex
     public String toString()
     {
         return String.format("Hex@[p=%d, q=%d, r=%d]", pCoord, qCoord, rCoord);
-    }
-    
-    private static final double SQRT_3 = Math.sqrt(3.0);
-    
-    public static Hex getHexAt(double x, double y, double outerRadius, double innerRadius)
-    {
-        double fractionalP = (2./3. * x) / outerRadius;
-        double fractionalQ = (-1./3. * x + SQRT_3/3. * y) / outerRadius;
-        double fractionalR = -(fractionalP + fractionalQ);
-        
-        long p = Math.round(fractionalP);
-        long q = Math.round(fractionalQ);
-        long r = Math.round(fractionalR);
-        
-        double Δp = Math.abs(p - fractionalP);
-        double Δq = Math.abs(q - fractionalQ);
-        double Δr = Math.abs(r - fractionalR);
-        
-        if (Δp > Δq && Δp > Δr)
-        {
-            p = -(q + r);
-        }
-        else if (Δq > Δr && Δq > Δp)
-        {
-            q = -(r + p);
-        }
-        else // if (Δr > Δp && Δr > Δq)
-        {
-            r = -(p + q);
-        }
-        
-        return new Hex((int) p, (int) q, (int) r);
     }
 }

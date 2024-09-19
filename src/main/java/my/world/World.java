@@ -30,9 +30,9 @@ import my.utils.WeightedGenerator;
 public class World
 {
     public static final int HEX_OUTER_RADIUS = 40;
-    public static final int HEX_INNER_RADIUS = (int) (HEX_OUTER_RADIUS * Math.sin(Math.PI / 3.0));
-    public static final int HEX_WIDTH = 2 * HEX_OUTER_RADIUS;
-    public static final int HEX_HEIGHT = (int) (2 * HEX_OUTER_RADIUS * Math.sin(Math.PI / 3.0));
+    public static final int HEX_INNER_RADIUS = (int) Hex.computeInnerRadius(HEX_OUTER_RADIUS);
+    public static final int HEX_WIDTH  = 2 * HEX_OUTER_RADIUS;
+    public static final int HEX_HEIGHT = (int) Hex.computeInnerRadius(2 * HEX_OUTER_RADIUS);
 
     private final int side;
     private final Map<Hex, AbstractField> fields;
@@ -47,7 +47,7 @@ public class World
         assert (seaPercentage >= 0.00 && seaPercentage <= 1.00);
         assert (mountainsPercentage >= 0.00 && mountainsPercentage <= 1.00);
 
-        int surface = Hex.getHexSurfaceSize(side);
+        int surface = Hex.computeHexSurfaceSize(side);
         fields = new HashMap<>(surface);
 
         int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left;
@@ -82,7 +82,7 @@ public class World
 
     private Map<Object, Doublet<Integer>> generateCenters(int side, Doublet<Integer> offset)
     {
-        Map<Object, Doublet<Integer>> centers = new HashMap<>(Hex.getHexSurfaceSize(side));
+        Map<Object, Doublet<Integer>> centers = new HashMap<>(Hex.computeHexSurfaceSize(side));
         Hex hex = Hex.getOrigin();
         Doublet<Integer> center = hex.getCentralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
         center.left += offset.left;
