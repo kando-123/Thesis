@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 import my.field.AbstractField;
-import my.field.FieldType;
 import my.utils.Hex;
 import my.world.WorldAccessor;
 
@@ -49,62 +48,71 @@ public class CavalryEntity extends AbstractEntity
     {
         boolean accessibility = false;
         
-        
+        if (!place.isMarine())
+        {
+            if (!place.hasEntity()) // An unoccupied field is accessible. (MOVE scenario)
+            {
+                accessibility = true;
+            }
+            else // The field is occupied. By whose forces? 
+            {
+                if (place.getOwner() != field.getOwner()) // The enemy is there. (MILITATION scenario)
+                {
+                    accessibility = true;
+                }
+                else // Fellow troop is there.
+                {
+                    AbstractEntity entity = place.getEntity();
+                    
+                    // If the troop is of the same type and can merge, the field is accessible. (MERGE scenario)
+                    accessibility = entity.getType() == EntityType.CAVALRY && entity.canMerge();
+                }
+            }
+        }
         
         return accessibility;
     }
 
     private boolean isTransitable(AbstractField place)
     {
-        return !place.isMarine() && !place.hasEntity()
+        return !place.isMarine() && !place.isMountainous() && !place.hasEntity()
                && field.getHex().distance(place.getHex()) < RADIUS;
     }
 
     @Override
     public Set<Hex> getMovementRange(WorldAccessor accessor)
     {
-        // The set of hexagonal coordinates of the fields this entity can go to.
         Set<Hex> range = new HashSet<>();
-
-        // The set of hexagonal coordinates of the fields whose accessibility has already
-        // been settled (+ the central field, whose accessibility is not settled at all
-        // but it is also 'visited').
         Set<Hex> visited = new HashSet<>();
-
-        // The BFS queue.
         Queue<Hex> queue = new LinkedList<>();
 
-        // The starting point of the algorithm.
         Hex center = field.getHex();
         queue.add(center);
         visited.add(center);
 
-        // Do BFS.
-        while (!queue.isEmpty())
+        for (int i = 0; i < RADIUS; ++i)
         {
-            Hex current = queue.remove();
-            for (var neighborHex : current.neighbors())
+            for (int j = queue.size(); j > 0; --j)
             {
-                if (visited.contains(neighborHex))
+                Hex current = queue.remove();
+                for (var neighborHex : current.neighbors())
                 {
-                    continue;
-                }
-                
-                AbstractField neighborField = accessor.getFieldAt(neighborHex);
-                if (neighborField != null)
-                {
-                    // This field is being considered. No need to come back later.
-                    visited.add(neighborHex);
-                    if (isAccessible(neighborField))
+                    if (visited.contains(neighborHex))
                     {
-                        // This field is accessible.
-                        range.add(neighborHex);
-                        if (isTransitable(neighborField))
+                        continue;
+                    }
+
+                    AbstractField neighborField = accessor.getFieldAt(neighborHex);
+                    if (neighborField != null)
+                    {
+                        visited.add(neighborHex);
+                        if (isAccessible(neighborField))
                         {
-                            // This field can be passed through, so its neighbors can,
-                            // potentially, be reached. Push to the queue for later
-                            // examination.
-                            queue.add(neighborHex);
+                            range.add(neighborHex);
+                            if (isTransitable(neighborField))
+                            {
+                                queue.add(neighborHex);
+                            }
                         }
                     }
                 }

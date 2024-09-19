@@ -55,8 +55,7 @@ public class InfantryEntity extends AbstractEntity
             {
                 // An own ship that does have space onboard can be embarked. (EMBARK scenario)
                 // A foreign ship is inaccessible.
-                accessibility = place.getOwner() == field.getOwner()
-                                && entity.getNumber() < AbstractEntity.MAXIMAL_NUMBER;
+                accessibility = place.getOwner() == field.getOwner() && entity.canMerge();
             }
         }
         else // Land.
@@ -74,8 +73,7 @@ public class InfantryEntity extends AbstractEntity
                     // A field with a troop of the same type is accessible,
                     // on condition that merging is possible. (MERGE scenario)
                     AbstractEntity entity = place.getEntity();
-                    accessibility = entity.getType() == EntityType.INFANTRY
-                                    && entity.getNumber() < AbstractEntity.MAXIMAL_NUMBER;
+                    accessibility = entity.getType() == EntityType.INFANTRY && entity.canMerge();
                 }
                 else
                 {
@@ -132,38 +130,6 @@ public class InfantryEntity extends AbstractEntity
                 }
             }
         }
-
-//        // Do BFS.
-//        while (!queue.isEmpty())
-//        {
-//            Hex current = queue.remove();
-//            for (var neighborHex : current.neighbors())
-//            {
-//                if (visited.contains(neighborHex))
-//                {
-//                    continue;
-//                }
-//
-//                AbstractField neighborField = accessor.getFieldAt(neighborHex);
-//                if (neighborField != null)
-//                {
-//                    // This field is being considered. No need to come back later.
-//                    visited.add(neighborHex);
-//                    if (isAccessible(neighborField))
-//                    {
-//                        // This field is accessible.
-//                        range.add(neighborHex);
-//                        if (isTransitable(neighborField))
-//                        {
-//                            // This field can be passed through, so its neighbors can,
-//                            // potentially, be reached. Push to the queue for later
-//                            // examination.
-//                            queue.add(neighborHex);
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         return range;
     }

@@ -200,6 +200,11 @@ public abstract class AbstractEntity
     {
         return number;
     }
+    
+    public boolean canMerge()
+    {
+        return number < MAXIMAL_NUMBER;
+    }
 
     public void setMorale(int newMorale)
     {
