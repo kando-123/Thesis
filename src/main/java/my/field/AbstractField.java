@@ -128,10 +128,6 @@ public abstract class AbstractField
 
     public void setOwner(Player newOwner)
     {
-        if (owner != null)
-        {
-            owner.release(this);
-        }
         owner = newOwner;
     }
 
