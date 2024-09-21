@@ -1,7 +1,11 @@
 package my.entity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import my.field.AbstractField;
@@ -92,9 +96,9 @@ public class InfantryEntity extends AbstractEntity
     }
 
     @Override
-    public Set<Hex> getMovementRange(WorldAccessor accessor)
+    public Map<Hex, List<Hex>> getMovementRange(WorldAccessor accessor)
     {
-        Set<Hex> range = new HashSet<>();
+        Map<Hex, List<Hex>> range = new HashMap<>();
         Set<Hex> visited = new HashSet<>();
         Queue<Hex> queue = new LinkedList<>();
 
@@ -107,6 +111,13 @@ public class InfantryEntity extends AbstractEntity
             for (int j = queue.size(); j > 0; --j)
             {
                 Hex current = queue.remove();
+                List<Hex> oldPath = range.get(current), newPath = new ArrayList<>();
+                if (oldPath != null)
+                {
+                    newPath.addAll(oldPath);
+                    newPath.add(current);
+                }
+                
                 for (var neighborHex : current.neighbors())
                 {
                     if (visited.contains(neighborHex))
@@ -120,7 +131,7 @@ public class InfantryEntity extends AbstractEntity
                         visited.add(neighborHex);
                         if (isAccessible(neighborField))
                         {
-                            range.add(neighborHex);
+                            range.put(neighborHex, newPath);
                             if (isTransitable(neighborField))
                             {
                                 queue.add(neighborHex);
@@ -130,7 +141,6 @@ public class InfantryEntity extends AbstractEntity
                 }
             }
         }
-
         return range;
     }
 }

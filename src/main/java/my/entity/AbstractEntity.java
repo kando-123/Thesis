@@ -3,6 +3,8 @@ package my.entity;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.Icon;
 import my.field.AbstractField;
@@ -181,7 +183,7 @@ public abstract class AbstractEntity
     
     /* Movement */
     
-    public abstract Set<Hex> getMovementRange(WorldAccessor accessor);
+    public abstract Map<Hex, List<Hex>> getMovementRange(WorldAccessor accessor);
     
     /* Arithmetics */
 

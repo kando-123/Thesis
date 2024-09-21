@@ -3,6 +3,8 @@ package my.flow;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.JOptionPane;
 //import java.util.Stack;
 import my.command.Invoker;
@@ -31,13 +33,10 @@ public class Manager
     private static enum State
     {
         IDLE,
-        
         BUILDING_BEGUN,
         BUILDING_IN_PROGRESS,
-        
         HIRING_BEGUN,
         HIRING_IN_PROGRESS,
-        
         MOVING_BEGUN
     }
 
@@ -154,7 +153,7 @@ public class Manager
             buildingDialog = null;
             buildingBeingPurchased = building;
             players.current().markFor(buildingBeingPurchased);
-            
+
             master.requestFocus();
         }
     }
@@ -213,7 +212,7 @@ public class Manager
             }
         }
     }
-    
+
     private AbstractEntity entityBeingPurchased;
 
     public void pursueHiring(AbstractEntity entity)
@@ -227,14 +226,15 @@ public class Manager
             entityDialog = null;
             entityBeingPurchased = entity;
             players.current().markFor(entityBeingPurchased);
-            
+
             master.requestFocus();
         }
     }
 
     /* -------------------- Manager -> ... -------------------- */
     private AbstractEntity entityBeingMoved;
-    
+    private Map<Hex, List<Hex>> movementRange;
+
     public void handleFieldClick(AbstractField field)
     {
         switch (state)
@@ -248,7 +248,7 @@ public class Manager
                 }
                 world.unmarkAll();
                 buildingBeingPurchased = null;
-                
+
                 state = State.IDLE;
                 master.requestFocus();
             }
@@ -262,7 +262,7 @@ public class Manager
                 }
                 world.unmarkAll();
                 entityBeingPurchased = null;
-                
+
                 state = State.IDLE;
                 master.requestFocus();
             }
@@ -271,11 +271,12 @@ public class Manager
                 if (field.hasEntity())
                 {
                     state = State.MOVING_BEGUN;
-                    
+
                     entityBeingMoved = field.getEntity();
                     entityBeingMoved.mark();
-                    
-                    for (var hex : entityBeingMoved.getMovementRange(world.createAccessor()))
+
+                    movementRange = entityBeingMoved.getMovementRange(world.createAccessor());
+                    for (var hex : movementRange.keySet())
                     {
                         world.mark(hex);
                     }
@@ -284,19 +285,31 @@ public class Manager
             case MOVING_BEGUN ->
             {
                 state = State.IDLE;
-                
+
                 if (world.isMarked(field.getHex()))
                 {
                     AbstractField begin = entityBeingMoved.changeField(field);
                     Player player = players.current();
-                    
+
                     if (entityBeingMoved.getType() != EntityType.NAVY)
                     {
-                        Hex[] hexes = begin.getHex().lineTo(field.getHex());
-                        for (var hex : hexes)
+                        var path = movementRange.get(field.getHex());
+                        for (var hex : path)
                         {
                             AbstractField passedField = world.getFieldAt(hex);
                             player.capture(passedField);
+                        }
+                        player.capture(field);
+                        for (var hex : field.getHex().neighbors())
+                        {
+                            var neighbor = world.getFieldAt(hex);
+                            if (neighbor != null
+                                    && neighbor.isPlains()
+                                    && !neighbor.hasEntity()
+                                    && neighbor.getOwner() != player)
+                            {
+                                player.capture(neighbor);
+                            }
                         }
                     }
                     else
@@ -314,7 +327,7 @@ public class Manager
             }
         }
     }
-    
+
     public void handleFieldShiftClick(AbstractField field)
     {
         /* has entity -> extract (dialog etc.), in case of a ship: extract = disembark
