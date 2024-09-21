@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 //import java.util.Stack;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
+import my.entity.EntityType;
 import my.gui.EntityInfoDialog;
 import my.gui.EntityPurchaseDialog;
 import my.player.Player;
@@ -286,8 +287,28 @@ public class Manager
                 
                 if (world.isMarked(field.getHex()))
                 {
-                    entityBeingMoved.changeField(field);
+                    AbstractField begin = entityBeingMoved.changeField(field);
+                    Player player = players.current();
+                    
+                    if (entityBeingMoved.getType() != EntityType.NAVY)
+                    {
+                        Hex[] hexes = begin.getHex().lineTo(field.getHex());
+                        for (var hex : hexes)
+                        {
+                            AbstractField passedField = world.getFieldAt(hex);
+                            player.capture(passedField);
+                        }
+                    }
+                    else
+                    {
+                        if (begin.isMarine())
+                        {
+                            player.release(begin);
+                        }
+                        player.capture(field);
+                    }
                 }
+                entityBeingMoved.unmark();
                 entityBeingMoved = null;
                 world.unmarkAll();
             }

@@ -73,11 +73,11 @@ public class InputHandler implements KeyListener
                 north = true;
             }
             
-            case KeyEvent.VK_E ->
+            case KeyEvent.VK_E, KeyEvent.VK_ADD ->
             {
                 zoomIn = true;
             }
-            case KeyEvent.VK_Q ->
+            case KeyEvent.VK_Q, KeyEvent.VK_SUBTRACT ->
             {
                 zoomOut = true;
             }
@@ -130,11 +130,11 @@ public class InputHandler implements KeyListener
                 north = false;
                 --directions;
             }
-            case KeyEvent.VK_E ->
+            case KeyEvent.VK_E, KeyEvent.VK_ADD ->
             {
                 zoomIn = false;
             }
-            case KeyEvent.VK_Q ->
+            case KeyEvent.VK_Q, KeyEvent.VK_SUBTRACT ->
             {
                 zoomOut = false;
             }

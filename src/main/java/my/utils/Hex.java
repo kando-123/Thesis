@@ -75,21 +75,19 @@ public class Hex
     public Hex[] lineTo(Hex other)
     {
         int hexDistance = distance(other);
-        Hex[] hexes = new Hex[hexDistance + 1];
+        Hex[] hexes = new Hex[hexDistance];
 
         Doublet<Double> begin = getCentralPoint(1.0, INNER_TO_OUTER_RATIO);
         Doublet<Double> end = other.getCentralPoint(1.0, INNER_TO_OUTER_RATIO);
 
-        hexes[0] = clone();
         double Δx = (end.left - begin.left) / hexDistance;
         double Δy = (end.right - begin.right) / hexDistance;
-        for (int i = 1; i < hexDistance; ++i)
+        for (int i = 0; i < hexDistance; ++i)
         {
-            double x = begin.left + i * Δx;
-            double y = begin.right + i * Δy;
+            double x = begin.left + (i + 1) * Δx;
+            double y = begin.right + (i + 1) * Δy;
             hexes[i] = computeHexAt(x, y, 1.0, INNER_TO_OUTER_RATIO);
         }
-        hexes[hexDistance] = other.clone();
 
         return hexes;
     }
