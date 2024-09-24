@@ -1,8 +1,11 @@
 package my.entity;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +16,7 @@ import java.util.Queue;
 import java.util.Set;
 import javax.swing.Icon;
 import my.field.AbstractField;
+import my.field.Defense;
 import my.field.Spawner;
 import my.player.UnaryPredicate;
 import my.utils.Doublet;
@@ -154,6 +158,25 @@ public abstract class AbstractEntity
         int w = (int) (0.7 * size.width);
         int h = (int) (0.7 * size.height);
         graphics.drawImage(!isMarked ? image : brightImage, x, y, w, h, null);
+        
+        String bar;
+        if (field.isDefense())
+        {
+            Defense defense = (Defense) field;
+            bar = String.format("N%d M%d D%d", number, morale, defense.getFortitude());
+        }
+        else
+        {
+            bar = String.format("N%d M%d", number, morale);
+        }
+        
+        if (0.2 * size.height > 9)
+        {
+            AttributedString attributedBar = new AttributedString(bar);
+            attributedBar.addAttribute(TextAttribute.SIZE, 0.2 * size.height);
+            attributedBar.addAttribute(TextAttribute.BACKGROUND, Color.WHITE);
+            graphics.drawString(attributedBar.getIterator(), (float) position.left, (float) (position.right + 0.2 * size.height));
+        }
     }
 
     /* Purchasing */

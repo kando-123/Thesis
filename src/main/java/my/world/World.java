@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 import my.field.AbstractField;
 import my.field.CapitalField;
 import my.field.FieldType;
@@ -262,11 +263,34 @@ public class World
 
     public void draw(Graphics2D graphics, Doublet<Double> centerOffset, double scale, Dimension panelSize)
     {
-        var iterator = fields.entrySet().iterator();
-        while (iterator.hasNext())
+//        var iterator = fields.entrySet().iterator();
+//        while (iterator.hasNext())
+//        {
+//            Map.Entry<Hex, AbstractField> entry = iterator.next();
+//
+//            Hex hex = entry.getKey();
+//            Doublet<Integer> pixel = hex.getCornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
+//
+//            int x = centerOffset.left.intValue() + (int) (pixel.left * scale);
+//            int y = centerOffset.right.intValue() + (int) (pixel.right * scale);
+//
+//            AbstractField field = entry.getValue();
+//
+//            int w = (int) (HEX_WIDTH * scale);
+//            int h = (int) (HEX_HEIGHT * scale);
+//
+//            if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
+//            {
+//                field.draw(graphics, new Doublet<>(x, y), new Dimension(w, h));
+//            }
+//        }
+        
+        var stream = fields.entrySet().stream();
+        var entries = stream
+                .sorted((o1, o2) -> o1.getValue().hasEntity() ? +1 : o2.getValue().hasEntity() ? -1 : 0)
+                .collect(Collectors.toList());
+        for (var entry : entries)
         {
-            Map.Entry<Hex, AbstractField> entry = iterator.next();
-
             Hex hex = entry.getKey();
             Doublet<Integer> pixel = hex.getCornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
 

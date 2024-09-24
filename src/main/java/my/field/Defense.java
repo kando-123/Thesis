@@ -6,5 +6,5 @@ package my.field;
  */
 public interface Defense
 {
-    
+    public int getFortitude();
 }
