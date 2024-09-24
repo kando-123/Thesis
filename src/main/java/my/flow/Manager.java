@@ -2,6 +2,7 @@ package my.flow;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -293,23 +294,33 @@ public class Manager
 
                     if (entityBeingMoved.getType() != EntityType.NAVY)
                     {
-                        var path = movementRange.get(field.getHex());
-                        for (var hex : path)
+                        Set<Hex> way = new HashSet<>();
+                        List<Hex> path = movementRange.get(field.getHex());
+                        path.add(field.getHex());
+                        for (int i = path.size() - 1; i >= 0; --i)
+                        {
+                            Hex hex = path.get(i);
+                            way.add(hex);
+                            
+                            if (((path.size() - 1 - i) & 1) == 0)
+                            {
+                                for (var neighborHex : hex.neighbors())
+                                {
+                                    var neighborField = world.getFieldAt(neighborHex);
+                                    if (neighborField != null
+                                            && neighborField.isPlains()
+                                            && !neighborField.hasEntity()
+                                            && neighborField.getOwner() != player)
+                                    {
+                                        way.add(neighborHex);
+                                    }
+                                }
+                            }
+                        }
+                        for (var hex : way)
                         {
                             AbstractField passedField = world.getFieldAt(hex);
                             player.capture(passedField);
-                        }
-                        player.capture(field);
-                        for (var hex : field.getHex().neighbors())
-                        {
-                            var neighbor = world.getFieldAt(hex);
-                            if (neighbor != null
-                                    && neighbor.isPlains()
-                                    && !neighbor.hasEntity()
-                                    && neighbor.getOwner() != player)
-                            {
-                                player.capture(neighbor);
-                            }
                         }
                     }
                     else

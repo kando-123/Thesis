@@ -1,17 +1,7 @@
 package my.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 import my.field.AbstractField;
 import my.field.FieldType;
-import my.utils.Hex;
-import my.world.WorldAccessor;
 
 /**
  *
@@ -19,7 +9,7 @@ import my.world.WorldAccessor;
  */
 public class InfantryEntity extends AbstractEntity
 {
-    private static final int RADIUS = 2;
+    
 
     public InfantryEntity()
     {
@@ -27,6 +17,8 @@ public class InfantryEntity extends AbstractEntity
 
         priceIntercept = 0;
         priceSlope = 20;
+        
+        RADIUS = 2;
     }
 
     @Override
@@ -49,7 +41,8 @@ public class InfantryEntity extends AbstractEntity
                 priceSlope);
     }
 
-    private boolean isAccessible(AbstractField place)
+    @Override
+    protected boolean isAccessible(AbstractField place)
     {
         boolean accessibility = false;
         if (place.isMarine() || place.getType() == FieldType.SHIPYARD) // Sea or Shipyard.
@@ -89,58 +82,10 @@ public class InfantryEntity extends AbstractEntity
         return accessibility;
     }
 
-    private boolean isTransitable(AbstractField place)
+    @Override
+    protected boolean isTransitable(AbstractField place)
     {
         return !place.isMarine() && !place.hasEntity()
                && field.getHex().distance(place.getHex()) < RADIUS;
-    }
-
-    @Override
-    public Map<Hex, List<Hex>> getMovementRange(WorldAccessor accessor)
-    {
-        Map<Hex, List<Hex>> range = new HashMap<>();
-        Set<Hex> visited = new HashSet<>();
-        Queue<Hex> queue = new LinkedList<>();
-
-        Hex center = field.getHex();
-        queue.add(center);
-        visited.add(center);
-
-        for (int i = 0; i < RADIUS; ++i)
-        {
-            for (int j = queue.size(); j > 0; --j)
-            {
-                Hex current = queue.remove();
-                List<Hex> oldPath = range.get(current), newPath = new ArrayList<>();
-                if (oldPath != null)
-                {
-                    newPath.addAll(oldPath);
-                    newPath.add(current);
-                }
-                
-                for (var neighborHex : current.neighbors())
-                {
-                    if (visited.contains(neighborHex))
-                    {
-                        continue;
-                    }
-
-                    AbstractField neighborField = accessor.getFieldAt(neighborHex);
-                    if (neighborField != null)
-                    {
-                        visited.add(neighborHex);
-                        if (isAccessible(neighborField))
-                        {
-                            range.put(neighborHex, newPath);
-                            if (isTransitable(neighborField))
-                            {
-                                queue.add(neighborHex);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return range;
     }
 }
