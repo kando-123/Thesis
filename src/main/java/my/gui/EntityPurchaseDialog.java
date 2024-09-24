@@ -92,6 +92,8 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
     {
         if (e.getActionCommand().equals("buy"))
         {
+            int number = entity.getNumber();
+            entity.setMorale(number / 5);
             invoker.invoke(new PursueHiringCommand(entity));
         }
     }

@@ -259,7 +259,7 @@ public class Manager
                 {
                     master.setMoney(players.current().buy(entityBeingPurchased));
                     field.setEntity(entityBeingPurchased);
-                    entityBeingPurchased.changeField(field);
+                    entityBeingPurchased.setField(field);
                 }
                 world.unmarkAll();
                 entityBeingPurchased = null;
@@ -289,14 +289,16 @@ public class Manager
 
                 if (world.isMarked(field.getHex()))
                 {
-                    AbstractField begin = entityBeingMoved.changeField(field);
-                    Player player = players.current();
+                    entityBeingMoved.move(field);
 
+                    Player player = players.current();
                     if (entityBeingMoved.getType() != EntityType.NAVY)
                     {
                         Set<Hex> way = new HashSet<>();
                         List<Hex> path = movementRange.get(field.getHex());
+                        
                         path.add(field.getHex());
+                        
                         for (int i = path.size() - 1; i >= 0; --i)
                         {
                             Hex hex = path.get(i);
@@ -325,6 +327,7 @@ public class Manager
                     }
                     else
                     {
+                        AbstractField begin = entityBeingMoved.getField();
                         if (begin.isMarine())
                         {
                             player.release(begin);

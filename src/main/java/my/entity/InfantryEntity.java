@@ -52,7 +52,7 @@ public class InfantryEntity extends AbstractEntity
             {
                 // An own ship that does have space onboard can be embarked. (EMBARK scenario)
                 // A foreign ship is inaccessible.
-                accessibility = place.getOwner() == field.getOwner() && entity.canMerge();
+                accessibility = entity.canMerge(this);
             }
         }
         else // Land.
@@ -70,7 +70,7 @@ public class InfantryEntity extends AbstractEntity
                     // A field with a troop of the same type is accessible,
                     // on condition that merging is possible. (MERGE scenario)
                     AbstractEntity entity = place.getEntity();
-                    accessibility = entity.getType() == EntityType.INFANTRY && entity.canMerge();
+                    accessibility = entity.canMerge(this);
                 }
                 else
                 {

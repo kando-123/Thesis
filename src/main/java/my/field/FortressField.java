@@ -76,4 +76,18 @@ public class FortressField extends DefenseField
     {
         return fortitude;
     }
+    
+    public static class MaximalLevelException extends Exception {}
+    
+    public void upgrade() throws MaximalLevelException
+    {
+        if (level < FORTITUDE.length - 1)
+        {
+            fortitude = FORTITUDE[++level];
+        }
+        else
+        {
+            throw new MaximalLevelException();
+        }
+    }
 }

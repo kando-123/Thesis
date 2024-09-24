@@ -62,4 +62,10 @@ public class NavyEntity extends AbstractEntity
     {
         return place.isMarine() && !place.hasEntity() && field.getHex().distance(place.getHex()) < RADIUS;
     }
+    
+    @Override
+    public boolean canMerge(AbstractEntity entity)
+    {
+        return entity.getType() == EntityType.INFANTRY && getNumber() < MAXIMAL_NUMBER;
+    }
 }

@@ -23,6 +23,7 @@ import my.utils.Doublet;
 import my.utils.Hex;
 import my.world.WorldAccessor;
 
+// A builder will be suitable.
 /**
  *
  * @author Kay Jay O'Nail
@@ -30,36 +31,33 @@ import my.world.WorldAccessor;
 public abstract class AbstractEntity
 {
     /* Properties */
-    
+
     private final EntityType type;
     private final BufferedImage image;
     private final BufferedImage brightImage;
     private boolean isMarked;
 
     protected AbstractField field;
-    
+
     protected int priceIntercept;
     protected int priceSlope;
-    
+
     private int number = DEFAULT_NUMBER;
     private int morale = 0;
-    
+
     protected int RADIUS;
-    
+
     /* Static Properties */
-    
     private static final EntityAssetManager assetManager = EntityAssetManager.getInstance();
-    
+
     /* Constants */
-    
     public static final int DEFAULT_NUMBER = 25;
     public static final int MINIMAL_NUMBER = 1;
     public static final int MAXIMAL_NUMBER = 100;
     public static final int MINIMAL_MORALE = 1;
     public static final int MAXIMAL_MORALE = 100;
-    
-    /* Creation */
 
+    /* Creation */
     protected AbstractEntity(EntityType type)
     {
         this.type = type;
@@ -68,7 +66,7 @@ public abstract class AbstractEntity
         brightImage = assetManager.getBrightImage(type);
         isMarked = false;
     }
-    
+
     public static AbstractEntity newInstance(EntityType type)
     {
         return switch (type)
@@ -92,9 +90,8 @@ public abstract class AbstractEntity
     {
         return newInstance(type);
     }
-    
-    /* Accessors & Mutators */
 
+    /* Accessors & Mutators */
     public EntityType getType()
     {
         return type;
@@ -105,40 +102,22 @@ public abstract class AbstractEntity
         return type.toString();
     }
 
-    public AbstractField changeField(AbstractField newField)
-    {
-        AbstractField oldField = field;
-        field = newField;
-        
-        if (oldField != null)
-        {
-            oldField.setEntity(null);
-        }
-        if (newField != null)
-        {
-            newField.setEntity(this);
-        }
-        
-        return oldField;
-    }
-    
     /* Accessors & Mutators: Graphics */
-
     public BufferedImage getImage()
     {
         return image;
     }
-    
+
     public Icon getIcon()
     {
         return assetManager.getIcon(type);
     }
-    
+
     public void setMarked(boolean marked)
     {
         isMarked = marked;
     }
-    
+
     public void mark()
     {
         isMarked = true;
@@ -148,9 +127,8 @@ public abstract class AbstractEntity
     {
         isMarked = false;
     }
-    
-    /* Graphics */
 
+    /* Graphics */
     public void draw(Graphics2D graphics, Doublet<Integer> position, Dimension size)
     {
         int x = (int) (position.left + 0.15 * size.width);
@@ -158,9 +136,9 @@ public abstract class AbstractEntity
         int w = (int) (0.7 * size.width);
         int h = (int) (0.7 * size.height);
         graphics.drawImage(!isMarked ? image : brightImage, x, y, w, h, null);
-        
+
         String bar;
-        if (field.isDefense())
+        if (field != null && field.isDefense())
         {
             Defense defense = (Defense) field;
             bar = String.format("N%d M%d D%d", number, morale, defense.getFortitude());
@@ -169,7 +147,7 @@ public abstract class AbstractEntity
         {
             bar = String.format("N%d M%d", number, morale);
         }
-        
+
         if (0.2 * size.height > 9)
         {
             AttributedString attributedBar = new AttributedString(bar);
@@ -180,20 +158,18 @@ public abstract class AbstractEntity
     }
 
     /* Purchasing */
-    
     public abstract String getDescription();
 
     public abstract String getCondition();
 
     public abstract String getPricing();
-    
+
     public int computePriceFor(int number)
     {
         return priceSlope * number + priceIntercept;
     }
-    
+
     /* Spawning */
-    
     public UnaryPredicate<Hex> getPredicate(WorldAccessor accessor)
     {
         return (Hex hex) ->
@@ -210,13 +186,12 @@ public abstract class AbstractEntity
             }
         };
     }
-    
+
     /* Movement */
-    
     protected abstract boolean isAccessible(AbstractField place);
-    
+
     protected abstract boolean isTransitable(AbstractField place);
-    
+
     public Map<Hex, List<Hex>> getMovementRange(WorldAccessor accessor)
     {
         Map<Hex, List<Hex>> range = new HashMap<>();
@@ -238,7 +213,7 @@ public abstract class AbstractEntity
                     newPath.addAll(oldPath);
                     newPath.add(current);
                 }
-                
+
                 for (var neighborHex : current.neighbors())
                 {
                     if (visited.contains(neighborHex))
@@ -264,9 +239,62 @@ public abstract class AbstractEntity
         }
         return range;
     }
-    
-    /* Arithmetics */
 
+    public void setField(AbstractField newField)
+    {
+        field = newField;
+    }
+
+    public AbstractField getField()
+    {
+        return field;
+    }
+
+    public void move(AbstractField newField)
+    {
+        boolean isOccupied = newField.hasEntity();
+        boolean isOwn = field.getOwner() == newField.getOwner();
+        boolean isDefense = newField.isDefense();
+        if (!isOccupied && (isOwn || (!isOwn && !isDefense)))
+        {
+            // MOVE to an unoccupied, own field or unoccupied, non-own, nondefensive field.
+            
+            newField.setEntity(this);
+            field.setEntity(null);
+            field = newField;
+        }
+
+        if (isOwn && isOccupied)
+        {
+            // MERGE/EMBARK
+            
+            var fellow = newField.getEntity();
+            var remainder = fellow.merge(this);
+            
+            field.setEntity(remainder);
+        }
+
+        // MILITATE
+        
+    }
+
+//    public AbstractField move(AbstractField newField)
+//    {
+//        AbstractField oldField = field;
+//        field = newField;
+//        
+//        if (oldField != null)
+//        {
+//            oldField.setEntity(null);
+//        }
+//        if (newField != null)
+//        {
+//            newField.setEntity(this);
+//        }
+//        
+//        return oldField;
+//    }
+    /* Arithmetics */
     public int computePrice()
     {
         return priceSlope * number + priceIntercept;
@@ -292,10 +320,12 @@ public abstract class AbstractEntity
     {
         return number;
     }
-    
-    public boolean canMerge()
+
+    public boolean canMerge(AbstractEntity entity)
     {
-        return number < MAXIMAL_NUMBER;
+        return entity.getField().getOwner() == field.getOwner()
+               && entity.type == type
+               && number < MAXIMAL_NUMBER;
     }
 
     public void setMorale(int newMorale)
@@ -319,7 +349,9 @@ public abstract class AbstractEntity
         return morale;
     }
 
-    public static class OutOfRangeException extends Exception {}
+    public static class OutOfRangeException extends Exception
+    {
+    }
 
     public AbstractEntity extract(int extractedNumber) throws OutOfRangeException
     {
@@ -344,31 +376,31 @@ public abstract class AbstractEntity
     {
         int aggregateNumber = number + other.number;
         int aggregateMorale = morale + other.morale;
-        
+
         if (aggregateNumber <= MAXIMAL_NUMBER)
         {
             number = aggregateNumber;
             morale = Math.min(aggregateMorale, MAXIMAL_MORALE);
-            
+
             other.number = 0;
             other.morale = 0;
-            
+
             return null; // no remainder
         }
         else
         {
             int mergedNumber = MAXIMAL_NUMBER;
             int mergedMorale = (int) ((double) MAXIMAL_NUMBER / aggregateNumber * aggregateMorale);
-            
+
             int remainingNumber = MAXIMAL_NUMBER - aggregateNumber;
             int remainingMorale = aggregateMorale - mergedMorale;
-            
+
             number = mergedNumber;
             morale = Math.min(mergedMorale, MAXIMAL_MORALE);
-            
+
             other.number = remainingNumber;
             other.morale = Math.min(remainingMorale, MAXIMAL_MORALE);
-            
+
             return other; // remainder
         }
     }

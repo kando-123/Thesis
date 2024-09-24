@@ -60,7 +60,7 @@ public class CavalryEntity extends AbstractEntity
                     AbstractEntity entity = place.getEntity();
                     
                     // If the troop is of the same type and can merge, the field is accessible. (MERGE scenario)
-                    accessibility = entity.getType() == EntityType.CAVALRY && entity.canMerge();
+                    accessibility = entity.canMerge(this);
                 }
             }
         }
