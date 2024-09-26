@@ -289,6 +289,7 @@ public class Manager
 
                 if (world.isMarked(field.getHex()))
                 {
+                    AbstractField begin = entityBeingMoved.getField();
                     entityBeingMoved.move(field);
 
                     Player player = players.current();
@@ -327,7 +328,6 @@ public class Manager
                     }
                     else
                     {
-                        AbstractField begin = entityBeingMoved.getField();
                         if (begin.isMarine())
                         {
                             player.release(begin);
