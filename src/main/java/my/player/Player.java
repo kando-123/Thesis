@@ -76,11 +76,13 @@ public class Player
 
     public void capture(AbstractField field)
     {
+        field.setOwner(this);
         country.addField(field);
     }
 
     public void release(AbstractField field)
     {
+        field.setOwner(null);
         country.removeField(field);
     }
 

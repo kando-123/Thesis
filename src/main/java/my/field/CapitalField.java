@@ -12,7 +12,7 @@ import my.utils.Doublet;
  *
  * @author Kay Jay O'Nail
  */
-public class CapitalField extends AbstractField implements Defense, Spawner
+public class CapitalField extends AbstractField implements Fortification, Spawner
 {
     private static final int FORTITUDE = 200;
     
@@ -56,8 +56,14 @@ public class CapitalField extends AbstractField implements Defense, Spawner
     }
 
     @Override
-    public int getFortitude()
+    public int getDefense()
     {
         return FORTITUDE;
+    }
+
+    @Override
+    public int setDefense(int newFortitude)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

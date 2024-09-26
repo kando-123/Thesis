@@ -16,12 +16,12 @@ import java.util.Queue;
 import java.util.Set;
 import javax.swing.Icon;
 import my.field.AbstractField;
-import my.field.Defense;
 import my.field.Spawner;
 import my.player.UnaryPredicate;
 import my.utils.Doublet;
 import my.utils.Hex;
 import my.world.WorldAccessor;
+import my.field.Fortification;
 
 // A builder will be suitable.
 /**
@@ -138,10 +138,10 @@ public abstract class AbstractEntity
         graphics.drawImage(!isMarked ? image : brightImage, x, y, w, h, null);
 
         String bar;
-        if (field != null && field.isDefense())
+        if (field != null && field.isFortification())
         {
-            Defense defense = (Defense) field;
-            bar = String.format("N%d M%d D%d", number, morale, defense.getFortitude());
+            var fortification = (Fortification) field;
+            bar = String.format("N%d M%d D%d", number, morale, fortification.getDefense());
         }
         else
         {
@@ -260,11 +260,11 @@ public abstract class AbstractEntity
     {
         if (newNumber > MAXIMAL_NUMBER)
         {
-            //throw ...;
+            number = MAXIMAL_NUMBER;
         }
         else if (newNumber < MINIMAL_NUMBER)
         {
-            //throw ...;
+            number = MINIMAL_NUMBER;
         }
         else
         {
@@ -288,11 +288,11 @@ public abstract class AbstractEntity
     {
         if (newMorale > MAXIMAL_MORALE)
         {
-            //throw ...;
+            morale = MAXIMAL_MORALE;
         }
         else if (newMorale < MINIMAL_MORALE)
         {
-            //throw ...;
+            morale = MINIMAL_MORALE;
         }
         else
         {
@@ -360,4 +360,6 @@ public abstract class AbstractEntity
             return other; // remainder
         }
     }
+    
+    /* Militation */
 }

@@ -14,7 +14,7 @@ import my.world.WorldAccessor;
  *
  * @author Kay Jay O'Nail
  */
-public class FortressField extends DefenseField
+public class FortressField extends FortificationField
 {
     private static final int[] FORTITUDE = {100, 125, 150};
     private int level;
@@ -72,9 +72,15 @@ public class FortressField extends DefenseField
     }
 
     @Override
-    public int getFortitude()
+    public int getDefense()
     {
         return fortitude;
+    }
+
+    @Override
+    public int setDefense(int newFortitude)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     public static class MaximalLevelException extends Exception {}

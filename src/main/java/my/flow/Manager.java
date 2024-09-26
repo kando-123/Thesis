@@ -291,6 +291,7 @@ public class Manager
                 {
                     AbstractField begin = entityBeingMoved.getField();
                     
+                    assert(false);
                     field.interact(entityBeingMoved);
 
                     Player player = players.current();

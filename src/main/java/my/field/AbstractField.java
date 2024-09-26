@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.Icon;
-import my.entity.AbstractEntity; 
+import my.entity.AbstractEntity;
 import my.player.Player;
 import my.utils.Doublet;
 import my.utils.Hex;
@@ -141,7 +141,7 @@ public abstract class AbstractField
     {
         return field.owner == owner;
     }
-    
+
     public boolean isFellow(AbstractEntity entity)
     {
         return entity.getField().owner == owner;
@@ -163,35 +163,103 @@ public abstract class AbstractField
         return entity != null;
     }
 
-    private void move(AbstractEntity newEntity)
+    private void move(AbstractEntity comer)
     {
-        var origin = newEntity.getField();
-        
-        entity = newEntity;
-        newEntity.setField(this);
-        
+        var origin = comer.getField();
+
+        entity = comer;
+        comer.setField(this);
+
         origin.entity = null;
-        
     }
 
-    private void merge(AbstractEntity newEntity)
+    private void merge(AbstractEntity fellow)
     {
-        var origin = newEntity.getField();
-        var remainder = entity.merge(newEntity);
-        
+        var origin = fellow.getField();
+        var remainder = entity.merge(fellow);
+
         origin.entity = remainder;
     }
 
-    private void militate(AbstractEntity newEntity)
+    private void militate(AbstractEntity attacker)
     {
-
+        int offensive = attacker.getNumber() + attacker.getMorale();
+        
+        var fortification = isFortification() ? (Fortification) this : null;
+        
+        int defensive = 0;
+        if (fortification != null)
+        {
+            defensive += fortification.getDefense();
+        }
+        if (entity != null)
+        {
+            defensive += entity.getNumber() + entity.getMorale();
+        }
+        assert (defensive != 0);
+        
+        if (offensive > defensive)
+        {
+            // The attacker wins, but is being damaged.
+            
+            int number = attacker.getNumber();
+            int morale = attacker.getMorale();
+            
+            double numberFraction = (double) number / (double) offensive;
+            double moraleFraction = (double) morale / (double) offensive;
+            
+            number -= (int) (numberFraction * defensive);
+            morale -= (int) (moraleFraction * defensive);
+            
+            attacker.setNumber(number);
+            attacker.setMorale(morale);
+            
+            // The attacker moves to this field and conquers it.
+            
+            var origin = attacker.getField();
+            origin.entity = null;
+            origin.owner.capture(this);
+            attacker.setField(this);
+            entity = attacker;
+        }
+        else
+        {
+            // The defender (be it an entity, a defense, or both) wins,
+            // but is being damaged.
+            
+            int number = (entity != null) ? entity.getNumber() : 0;
+            int morale = (entity != null) ? entity.getMorale() : 0;
+            int defense = (fortification != null) ? fortification.getDefense() : 0;
+            
+            double numberFraction = (double) number / (double) defensive;
+            double moraleFraction = (double) morale / (double) defensive;
+            double defenseFraction = (double) defense / (double) defensive;
+            
+            number -= (int) (numberFraction * offensive);
+            morale -= (int) (moraleFraction * offensive);
+            defense -= (int) (defenseFraction * offensive);
+            
+            if (entity != null)
+            {
+                entity.setNumber(number);
+                entity.setMorale(morale);
+            }
+            if (fortification != null)
+            {
+                fortification.setDefense(defense);
+            }
+            
+            // The attacker disappears.
+            
+            attacker.getField().entity = null;
+        }
     }
 
     public void interact(AbstractEntity newEntity)
     {
         boolean isOccupied = hasEntity();
         boolean isFellow = isFellow(newEntity);
-        boolean isDefense = isDefense();
+        boolean isDefense = isFortification();
 
         if (!isOccupied && (isFellow || !isDefense))
         {
@@ -301,9 +369,9 @@ public abstract class AbstractField
         return this instanceof Spawner;
     }
 
-    final public boolean isDefense()
+    final public boolean isFortification()
     {
-        return this instanceof Defense;
+        return this instanceof Fortification;
     }
 
     /* Graphics */

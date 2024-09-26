@@ -15,7 +15,6 @@ import my.world.WorldMarker;
 public class Country
 {
     private final Player owner;
-    
 
     private final WorldAccessor accessor;
     private final Set<Hex> territory;
@@ -43,13 +42,11 @@ public class Country
 
     public void addField(AbstractField field)
     {
-        field.setOwner(owner);
         territory.add(field.getHex());
     }
 
     public void removeField(AbstractField field)
     {
-        field.setOwner(null);
         territory.remove(field.getHex());
     }
 
