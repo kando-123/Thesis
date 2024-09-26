@@ -290,7 +290,8 @@ public class Manager
                 if (world.isMarked(field.getHex()))
                 {
                     AbstractField begin = entityBeingMoved.getField();
-                    entityBeingMoved.move(field);
+                    
+                    field.interact(entityBeingMoved);
 
                     Player player = players.current();
                     if (entityBeingMoved.getType() != EntityType.NAVY)
@@ -360,6 +361,8 @@ public class Manager
 
     public void nextPlayer()
     {
+        state = State.IDLE;
+        
         Player current = players.current();
         current.endRound();
 

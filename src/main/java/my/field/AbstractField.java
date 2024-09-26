@@ -1,10 +1,10 @@
- package my.field;
+package my.field;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.Icon;
-import my.entity.AbstractEntity;
+import my.entity.AbstractEntity; 
 import my.player.Player;
 import my.utils.Doublet;
 import my.utils.Hex;
@@ -16,7 +16,7 @@ import my.utils.Hex;
 public abstract class AbstractField
 {
     /* Properties */
-    
+
     private final FieldType type;
     protected Hex hex;
 
@@ -26,20 +26,18 @@ public abstract class AbstractField
     private final BufferedImage brightImage;
 
     private AbstractEntity entity;
-    
-    /* Static Properties */
 
+    /* Static Properties */
     private static final FieldAssetManager assetManager = FieldAssetManager.getInstance();
-    
+
     /* Creation */
-    
     protected AbstractField(FieldType type)
     {
         this.type = type;
         image = assetManager.getImage(type);
         brightImage = assetManager.getBrightImage(type);
     }
-    
+
     public static AbstractField newInstance(FieldType type)
     {
         return switch (type)
@@ -98,7 +96,7 @@ public abstract class AbstractField
             }
         };
     }
-    
+
     public AbstractField copy()
     {
         return newInstance(type);
@@ -111,21 +109,19 @@ public abstract class AbstractField
         entity = other.entity;
         other.entity = null;
     }
-    
-    /* Accessors & Mutators */
 
+    /* Accessors & Mutators */
     public FieldType getType()
     {
         return type;
     }
-    
+
     public String getName()
     {
         return type.toString();
     }
-    
-    /* Accessors & Mutators: Interaction with Player */
 
+    /* Accessors & Mutators: Interaction with Player */
     public void setOwner(Player newOwner)
     {
         owner = newOwner;
@@ -140,14 +136,23 @@ public abstract class AbstractField
     {
         return (owner != null);
     }
+
+    public boolean isFellow(AbstractField field)
+    {
+        return field.owner == owner;
+    }
     
+    public boolean isFellow(AbstractEntity entity)
+    {
+        return entity.getField().owner == owner;
+    }
+
     /* Accessors & Mutators: Interactions with Entity */
-    
     public void setEntity(AbstractEntity newEntity)
     {
         entity = newEntity;
     }
-    
+
     public AbstractEntity getEntity()
     {
         return entity;
@@ -157,9 +162,52 @@ public abstract class AbstractField
     {
         return entity != null;
     }
-    
+
+    private void move(AbstractEntity newEntity)
+    {
+        var origin = newEntity.getField();
+        
+        entity = newEntity;
+        newEntity.setField(this);
+        
+        origin.entity = null;
+        
+    }
+
+    private void merge(AbstractEntity newEntity)
+    {
+        var origin = newEntity.getField();
+        var remainder = entity.merge(newEntity);
+        
+        origin.entity = remainder;
+    }
+
+    private void militate(AbstractEntity newEntity)
+    {
+
+    }
+
+    public void interact(AbstractEntity newEntity)
+    {
+        boolean isOccupied = hasEntity();
+        boolean isFellow = isFellow(newEntity);
+        boolean isDefense = isDefense();
+
+        if (!isOccupied && (isFellow || !isDefense))
+        {
+            move(newEntity);
+        }
+        else if (isFellow && isOccupied)
+        {
+            merge(newEntity);
+        }
+        else if (!isFellow && (isOccupied || isDefense))
+        {
+            militate(newEntity);
+        }
+    }
+
     /* Accessors & Mutators: Graphics & Geometry */
-    
     public Hex setHex(Hex newHex)
     {
         Hex oldHex = hex;
@@ -181,7 +229,7 @@ public abstract class AbstractField
     {
         return image.getHeight();
     }
-    
+
     public void setMarked(boolean marked)
     {
         isMarked = marked;
@@ -196,14 +244,13 @@ public abstract class AbstractField
     {
         isMarked = false;
     }
-    
+
     public Icon getIcon()
     {
         return assetManager.getIcon(type);
     }
-    
+
     /* Class Hierarchy */
-    
     final public boolean isNatural()
     {
         return this instanceof NaturalField;
@@ -253,14 +300,13 @@ public abstract class AbstractField
     {
         return this instanceof Spawner;
     }
-    
+
     final public boolean isDefense()
     {
         return this instanceof Defense;
     }
-    
-    /* Graphics */
 
+    /* Graphics */
     public void draw(Graphics2D graphics, Doublet<Integer> position, Dimension size)
     {
         graphics.drawImage(!isMarked ? image : brightImage,
@@ -281,4 +327,5 @@ public abstract class AbstractField
             entity.draw(graphics, position, size);
         }
     }
+
 }

@@ -64,7 +64,7 @@ public class InfantryEntity extends AbstractEntity
             }
             else // Occupied.
             {
-                if (place.getOwner() == field.getOwner()) // Own.
+                if (field.isFellow(place)) // Fellow.
                 {
                     // A troop of other type blocks movement.
                     // A field with a troop of the same type is accessible,

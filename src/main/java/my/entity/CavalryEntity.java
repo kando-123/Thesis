@@ -51,7 +51,7 @@ public class CavalryEntity extends AbstractEntity
             }
             else // The field is occupied. By whose forces? 
             {
-                if (place.getOwner() != field.getOwner()) // The enemy is there. (MILITATION scenario)
+                if (!field.isFellow(place)) // An enemy is there. (MILITATION scenario)
                 {
                     accessibility = true;
                 }

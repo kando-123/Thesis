@@ -50,7 +50,7 @@ public class NavyEntity extends AbstractEntity
             }
             else // The field is occupied. By whose forces?
             {
-                accessibility = place.getOwner() != field.getOwner(); // The enemy is there. (MILITATION scenario)
+                accessibility = field.isFellow(place); // The enemy is there. (MILITATION scenario)
             }
         }
         

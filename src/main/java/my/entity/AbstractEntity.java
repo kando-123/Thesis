@@ -249,51 +249,7 @@ public abstract class AbstractEntity
     {
         return field;
     }
-
-    public void move(AbstractField newField)
-    {
-        boolean isOccupied = newField.hasEntity();
-        boolean isOwn = field.getOwner() == newField.getOwner();
-        boolean isDefense = newField.isDefense();
-        if (!isOccupied && (isOwn || (!isOwn && !isDefense)))
-        {
-            // MOVE to an unoccupied, own field or unoccupied, non-own, nondefensive field.
-            
-            newField.setEntity(this);
-            field.setEntity(null);
-            field = newField;
-        }
-
-        if (isOwn && isOccupied)
-        {
-            // MERGE/EMBARK
-            
-            var fellow = newField.getEntity();
-            var remainder = fellow.merge(this);
-            
-            field.setEntity(remainder);
-        }
-
-        // MILITATE
-        
-    }
-
-//    public AbstractField move(AbstractField newField)
-//    {
-//        AbstractField oldField = field;
-//        field = newField;
-//        
-//        if (oldField != null)
-//        {
-//            oldField.setEntity(null);
-//        }
-//        if (newField != null)
-//        {
-//            newField.setEntity(this);
-//        }
-//        
-//        return oldField;
-//    }
+    
     /* Arithmetics */
     public int computePrice()
     {
@@ -323,7 +279,7 @@ public abstract class AbstractEntity
 
     public boolean canMerge(AbstractEntity entity)
     {
-        return entity.getField().getOwner() == field.getOwner()
+        return field.isFellow(entity)
                && entity.type == type
                && number < MAXIMAL_NUMBER;
     }
@@ -392,7 +348,7 @@ public abstract class AbstractEntity
             int mergedNumber = MAXIMAL_NUMBER;
             int mergedMorale = (int) ((double) MAXIMAL_NUMBER / aggregateNumber * aggregateMorale);
 
-            int remainingNumber = MAXIMAL_NUMBER - aggregateNumber;
+            int remainingNumber = aggregateNumber - mergedNumber;
             int remainingMorale = aggregateMorale - mergedMorale;
 
             number = mergedNumber;
