@@ -850,7 +850,7 @@ public class World
         Hex hex = oldField.getHex();
         if (fields.get(hex) == oldField)
         {
-            newField.copyProperties(oldField);
+            newField.moveProperties(oldField);
             fields.put(hex, newField);
         }
     }

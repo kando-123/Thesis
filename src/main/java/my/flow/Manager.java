@@ -269,7 +269,7 @@ public class Manager
             }
             case IDLE ->
             {
-                if (field.hasEntity())
+                if (field.hasEntity() && field.getOwner() == players.current())
                 {
                     state = State.MOVING_BEGUN;
 
@@ -291,7 +291,7 @@ public class Manager
                 {
                     AbstractField begin = entityBeingMoved.getField();
                     
-                    assert(false);
+                    //assert(false);
                     field.interact(entityBeingMoved);
 
                     Player player = players.current();
@@ -300,7 +300,10 @@ public class Manager
                         Set<Hex> way = new HashSet<>();
                         List<Hex> path = movementRange.get(field.getHex());
                         
-                        path.add(field.getHex());
+                        if (field.getOwner() == player)
+                        {
+                            path.add(field.getHex());
+                        }
                         
                         for (int i = path.size() - 1; i >= 0; --i)
                         {

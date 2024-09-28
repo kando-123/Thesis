@@ -102,11 +102,15 @@ public abstract class AbstractField
         return newInstance(type);
     }
 
-    public void copyProperties(AbstractField other)
+    public void moveProperties(AbstractField other)
     {
         hex = other.hex;
         owner = other.owner;
         entity = other.entity;
+        entity.setField(this);
+        
+        other.hex = null;
+        other.owner = null;
         other.entity = null;
     }
 
@@ -171,6 +175,7 @@ public abstract class AbstractField
         comer.setField(this);
 
         origin.entity = null;
+        owner = origin.owner;
     }
 
     private void merge(AbstractEntity fellow)
