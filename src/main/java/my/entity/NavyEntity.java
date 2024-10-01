@@ -29,7 +29,7 @@ public class NavyEntity extends AbstractEntity
     @Override
     public String getCondition()
     {
-        return "To spawn Navy, you need Shipyard or Capital. (No entity must be there.)";
+        return "To spawn Navy, you need Shipyard. (No entity must be there.)";
     }
     
     @Override

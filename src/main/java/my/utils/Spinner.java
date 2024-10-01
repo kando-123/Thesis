@@ -1,4 +1,4 @@
-package my.entity;
+package my.utils;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -44,7 +44,7 @@ public abstract class AbstractEntity
     protected int priceSlope;
 
     private int number = DEFAULT_NUMBER;
-    private int morale = 0;
+    private int morale;
 
     protected int radius;
     private boolean movable;

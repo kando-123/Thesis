@@ -6,13 +6,7 @@ import my.flow.Manager;
  *
  * @author Kay Jay O'Nail
  */
-public abstract class ReversibleCommand extends Command
+public abstract class ReversibleCommand extends Command<Manager>
 {
     public abstract void undo(Manager manager);
-    
-    @Override
-    final public boolean isReversible()
-    {
-        return true;
-    }
 }

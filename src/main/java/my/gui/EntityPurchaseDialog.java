@@ -1,7 +1,7 @@
 package my.gui;
 
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,7 +17,7 @@ import javax.swing.JPanel;
 import my.command.Invoker;
 import my.command.PursueHiringCommand;
 import my.entity.AbstractEntity;
-import my.entity.Spinner;
+import my.utils.Spinner;
 import my.flow.Manager;
 
 /**
@@ -39,10 +40,10 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
     {
         super(frame, true);
 
-        JPanel contentPane = new JPanel(new GridBagLayout());
+        Container contentPane = new JPanel(new GridBagLayout());
         contentPane.setPreferredSize(new Dimension(300, 200));
 
-        GridBagConstraints c = new GridBagConstraints();
+        var c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 1;
@@ -50,7 +51,7 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 1;
         nameLabel = new JLabel();
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nameLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         contentPane.add(nameLabel, c);
 
         ++c.gridy;

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JOptionPane;
+import my.command.ExtractEntityCommand;
 //import java.util.Stack;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
@@ -20,6 +21,7 @@ import my.field.AbstractField;
 import my.field.BuildingField;
 import my.gui.BuildingInfoDialog;
 import my.gui.BuildingPurchaseDialog;
+import my.gui.EntityExtractionDialog;
 import my.gui.Master;
 import my.utils.Hex;
 import my.world.World;
@@ -355,6 +357,19 @@ public class Manager
     {
         /* has entity -> extract (dialog etc.), in case of a ship: extract = disembark
            (a ship cannot produce a new ship) */
+        if (field.hasEntity())
+        {
+            var dialog = new EntityExtractionDialog(master, field.getEntity());
+            dialog.setVisible(true);
+            dialog.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosed(WindowEvent e)
+                {
+                    master.requestFocus();
+                }
+            });
+        }
     }
 
     public void undo()

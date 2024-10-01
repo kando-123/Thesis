@@ -8,9 +8,4 @@ package my.command;
 public abstract class Command<E>
 {
     public abstract void execute(E executor);
-    
-    public boolean isReversible()
-    {
-        return false;
-    }
 }
