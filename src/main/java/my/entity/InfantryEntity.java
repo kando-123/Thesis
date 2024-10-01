@@ -9,7 +9,7 @@ import my.field.FieldType;
  */
 public class InfantryEntity extends AbstractEntity
 {
-    
+    private static final int INITIAL_RADIUS = 2;
 
     public InfantryEntity()
     {
@@ -18,7 +18,7 @@ public class InfantryEntity extends AbstractEntity
         priceIntercept = 0;
         priceSlope = 20;
         
-        RADIUS = 2;
+        radius = INITIAL_RADIUS;
     }
 
     @Override
@@ -86,6 +86,6 @@ public class InfantryEntity extends AbstractEntity
     protected boolean isTransitable(AbstractField place)
     {
         return !place.isMarine() && !place.hasEntity()
-               && field.getHex().distance(place.getHex()) < RADIUS;
+               && field.getHex().distance(place.getHex()) < radius;
     }
 }

@@ -34,7 +34,7 @@ public class Player
         this.marker = marker;
         this.accessor = accessor;
 
-        country = new Country(this, accessor);
+        country = new Country(accessor);
         money = INITIAL_MONEY;
     }
 
@@ -140,6 +140,11 @@ public class Player
     public int buy(AbstractEntity entity)
     {
         return (money -= entity.computePrice());
+    }
+    
+    public void resetEntities()
+    {
+        country.resetEntities();
     }
 
     public void play()

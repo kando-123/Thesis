@@ -23,7 +23,8 @@ import my.utils.Hex;
 import my.world.WorldAccessor;
 import my.field.Fortification;
 
-// A builder will be suitable.
+// A builder might be suitable.
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -45,7 +46,8 @@ public abstract class AbstractEntity
     private int number = DEFAULT_NUMBER;
     private int morale = 0;
 
-    protected int RADIUS;
+    protected int radius;
+    private boolean movable;
 
     /* Static Properties */
     private static final EntityAssetManager assetManager = EntityAssetManager.getInstance();
@@ -64,7 +66,6 @@ public abstract class AbstractEntity
 
         image = assetManager.getImage(type);
         brightImage = assetManager.getBrightImage(type);
-        isMarked = false;
     }
 
     public static AbstractEntity newInstance(EntityType type)
@@ -172,13 +173,13 @@ public abstract class AbstractEntity
     /* Spawning */
     public UnaryPredicate<Hex> getPredicate(WorldAccessor accessor)
     {
-        return (Hex hex) ->
+        return (var hex) ->
         {
             var place = accessor.getFieldAt(hex);
             if (place != null && place.isSpawner())
             {
                 Spawner spawner = (Spawner) place;
-                return spawner.canSpawn(this);
+                return spawner.canSpawn(AbstractEntity.this);
             }
             else
             {
@@ -188,12 +189,27 @@ public abstract class AbstractEntity
     }
 
     /* Movement */
+    public void setMovable(boolean m)
+    {
+        movable = m;
+    }
+    
+    public boolean isMovable()
+    {
+        return movable;
+    }
+    
     protected abstract boolean isAccessible(AbstractField place);
 
     protected abstract boolean isTransitable(AbstractField place);
 
     public Map<Hex, List<Hex>> getMovementRange(WorldAccessor accessor)
     {
+        if (!movable)
+        {
+            return new HashMap<>();
+        }
+        
         Map<Hex, List<Hex>> range = new HashMap<>();
         Set<Hex> visited = new HashSet<>();
         Queue<Hex> queue = new LinkedList<>();
@@ -202,7 +218,7 @@ public abstract class AbstractEntity
         queue.add(center);
         visited.add(center);
 
-        for (int i = 0; i < RADIUS; ++i)
+        for (int i = 0; i < radius; ++i)
         {
             for (int j = queue.size(); j > 0; --j)
             {
@@ -221,7 +237,7 @@ public abstract class AbstractEntity
                         continue;
                     }
 
-                    AbstractField neighborField = accessor.getFieldAt(neighborHex);
+                    var neighborField = accessor.getFieldAt(neighborHex);
                     if (neighborField != null)
                     {
                         visited.add(neighborHex);
@@ -239,7 +255,7 @@ public abstract class AbstractEntity
         }
         return range;
     }
-
+    
     public void setField(AbstractField newField)
     {
         field = newField;
@@ -332,7 +348,7 @@ public abstract class AbstractEntity
     {
         int aggregateNumber = number + other.number;
         int aggregateMorale = morale + other.morale;
-
+        
         if (aggregateNumber <= MAXIMAL_NUMBER)
         {
             number = aggregateNumber;
@@ -361,5 +377,4 @@ public abstract class AbstractEntity
         }
     }
     
-    /* Militation */
 }

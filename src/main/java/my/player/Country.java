@@ -14,15 +14,12 @@ import my.world.WorldMarker;
  */
 public class Country
 {
-    private final Player owner;
-
     private final WorldAccessor accessor;
     private final Set<Hex> territory;
     private Hex capital;
 
-    public Country(Player owner, WorldAccessor worldAccessor)
+    public Country(WorldAccessor worldAccessor)
     {
-        this.owner = owner;
         this.accessor = worldAccessor;
 
         territory = new HashSet<>();
@@ -85,5 +82,17 @@ public class Country
             }
         }
         return false;
+    }
+    
+    public void resetEntities()
+    {
+        territory.forEach((hex) ->
+        {
+            var field = accessor.getFieldAt(hex);
+            if (field.hasEntity())
+            {
+                field.getEntity().setMovable(true);
+            }
+        });
     }
 }

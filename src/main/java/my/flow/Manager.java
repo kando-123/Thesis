@@ -260,6 +260,11 @@ public class Manager
                     master.setMoney(players.current().buy(entityBeingPurchased));
                     field.setEntity(entityBeingPurchased);
                     entityBeingPurchased.setField(field);
+                    
+                    if (field.isCapital())
+                    {
+                        entityBeingPurchased.setMovable(true);
+                    }
                 }
                 world.unmarkAll();
                 entityBeingPurchased = null;
@@ -291,9 +296,8 @@ public class Manager
                 {
                     AbstractField begin = entityBeingMoved.getField();
                     
-                    //assert(false);
                     field.interact(entityBeingMoved);
-
+                    
                     Player player = players.current();
                     if (entityBeingMoved.getType() != EntityType.NAVY)
                     {
@@ -372,6 +376,7 @@ public class Manager
 
         Player next = players.next();
         master.setUser(next);
+        next.resetEntities();
 
         Hex hex = next.getCapitalHex();
         master.setCenter(hex);

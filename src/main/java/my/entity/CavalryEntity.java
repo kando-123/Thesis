@@ -8,6 +8,8 @@ import my.field.AbstractField;
  */
 public class CavalryEntity extends AbstractEntity
 {
+    private static final int INITIAL_RADIUS = 4;
+    
     public CavalryEntity()
     {
         super(EntityType.CAVALRY);
@@ -15,7 +17,7 @@ public class CavalryEntity extends AbstractEntity
         priceIntercept = 0;
         priceSlope = 25;
         
-        RADIUS = 4;
+        radius = INITIAL_RADIUS;
     }
 
     @Override
@@ -72,8 +74,6 @@ public class CavalryEntity extends AbstractEntity
     protected boolean isTransitable(AbstractField place)
     {
         return !place.isMarine() && !place.isMountainous() && !place.hasEntity()
-               && field.getHex().distance(place.getHex()) < RADIUS;
+               && field.getHex().distance(place.getHex()) < radius;
     }
-
-    
 }

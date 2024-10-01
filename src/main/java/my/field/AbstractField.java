@@ -107,7 +107,10 @@ public abstract class AbstractField
         hex = other.hex;
         owner = other.owner;
         entity = other.entity;
-        entity.setField(this);
+        if (entity != null)
+        {
+            entity.setField(this);
+        }
         
         other.hex = null;
         other.owner = null;
@@ -167,7 +170,7 @@ public abstract class AbstractField
         return entity != null;
     }
 
-    private void move(AbstractEntity comer)
+    private AbstractEntity move(AbstractEntity comer)
     {
         var origin = comer.getField();
 
@@ -176,17 +179,25 @@ public abstract class AbstractField
 
         origin.entity = null;
         owner = origin.owner;
+        
+        entity.setMovable(false);
+        
+        return entity;
     }
 
-    private void merge(AbstractEntity fellow)
+    private AbstractEntity merge(AbstractEntity fellow)
     {
         var origin = fellow.getField();
         var remainder = entity.merge(fellow);
 
         origin.entity = remainder;
+        
+        entity.setMovable(false);
+        
+        return entity;
     }
 
-    private void militate(AbstractEntity attacker)
+    private AbstractEntity militate(AbstractEntity attacker)
     {
         int offensive = attacker.getNumber() + attacker.getMorale();
         
@@ -226,6 +237,10 @@ public abstract class AbstractField
             origin.owner.capture(this);
             attacker.setField(this);
             entity = attacker;
+            
+            attacker.setMovable(false);
+            
+            return attacker;
         }
         else
         {
@@ -257,26 +272,28 @@ public abstract class AbstractField
             // The attacker disappears.
             
             attacker.getField().entity = null;
+            
+            return null;
         }
     }
 
-    public void interact(AbstractEntity newEntity)
+    public AbstractEntity interact(AbstractEntity newEntity)
     {
-        boolean isOccupied = hasEntity();
-        boolean isFellow = isFellow(newEntity);
-        boolean isDefense = isFortification();
+        final boolean isOccupied = hasEntity();
+        final boolean isFellow = isFellow(newEntity);
+        final boolean isDefense = isFortification();
 
         if (!isOccupied && (isFellow || !isDefense))
         {
-            move(newEntity);
+            return move(newEntity);
         }
         else if (isFellow && isOccupied)
         {
-            merge(newEntity);
+            return merge(newEntity);
         }
-        else if (!isFellow && (isOccupied || isDefense))
+        else // if (!isFellow && (isOccupied || isDefense))
         {
-            militate(newEntity);
+            return militate(newEntity);
         }
     }
 
@@ -400,5 +417,4 @@ public abstract class AbstractField
             entity.draw(graphics, position, size);
         }
     }
-
 }
