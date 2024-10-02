@@ -35,11 +35,17 @@ public class Manager
     private static enum State
     {
         IDLE,
+        
         BUILDING_BEGUN,
         BUILDING_IN_PROGRESS,
+        
         HIRING_BEGUN,
         HIRING_IN_PROGRESS,
-        MOVING_BEGUN
+        
+        MOVING_BEGUN,
+        
+        EXTRACTION_BEGUN,
+        EXTRACTION_IN_PROGRESS;
     }
 
     private State state;
@@ -362,15 +368,21 @@ public class Manager
         }
     }
 
+    private AbstractEntity entityBeingExtracted;
+            
     public void handleFieldShiftClick(AbstractField field)
     {
         /* has entity -> extract (dialog etc.), in case of a ship: extract = disembark
            (a ship cannot produce a new ship) */
         if (field != null && field.hasEntity())
         {
+            state = State.EXTRACTION_BEGUN;
+            
             var entity = field.getEntity();
             if (entity.canExtract(world.createAccessor()))
             {
+                entityBeingExtracted = entity;
+                
                 var dialog = new EntityExtractionDialog(master, entity);
                 dialog.setVisible(true);
                 dialog.addWindowListener(new WindowAdapter()

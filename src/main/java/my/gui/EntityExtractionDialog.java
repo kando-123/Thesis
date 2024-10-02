@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import my.command.ExtractEntityCommand;
+import my.command.BeginExtractionCommand;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
 import my.entity.EntityAssetManager;
@@ -108,7 +108,7 @@ public class EntityExtractionDialog extends JDialog implements ActionListener, S
     {
         if (e.getActionCommand().equals("extract"))
         {
-            invoker.invoke(new ExtractEntityCommand(spinner.getValue()));
+            invoker.invoke(new BeginExtractionCommand(spinner.getValue()));
         }
     }
 
