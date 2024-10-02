@@ -24,7 +24,6 @@ import my.world.WorldAccessor;
 import my.field.Fortification;
 
 // A builder might be suitable.
-
 /**
  *
  * @author Kay Jay O'Nail
@@ -32,7 +31,7 @@ import my.field.Fortification;
 public abstract class AbstractEntity
 {
     /* Properties */
-
+    
     private final EntityType type;
     private final BufferedImage image;
     private final BufferedImage brightImage;
@@ -193,12 +192,12 @@ public abstract class AbstractEntity
     {
         this.movable = movable;
     }
-    
+
     public boolean isMovable()
     {
         return movable;
     }
-    
+
     protected abstract boolean isAccessible(AbstractField place);
 
     protected abstract boolean isTransitable(AbstractField place);
@@ -209,7 +208,7 @@ public abstract class AbstractEntity
         {
             return new HashMap<>();
         }
-        
+
         Map<Hex, List<Hex>> range = new HashMap<>();
         Set<Hex> visited = new HashSet<>();
         Queue<Hex> queue = new LinkedList<>();
@@ -255,7 +254,7 @@ public abstract class AbstractEntity
         }
         return range;
     }
-    
+
     public void setField(AbstractField newField)
     {
         field = newField;
@@ -265,7 +264,7 @@ public abstract class AbstractEntity
     {
         return field;
     }
-    
+
     /* Arithmetics */
     public int computePrice()
     {
@@ -317,8 +316,13 @@ public abstract class AbstractEntity
     public static class OutOfRangeException extends Exception
     {
     }
-    
+
     public abstract boolean canExtract(WorldAccessor accessor);
+    
+    public EntityType getExtractedType()
+    {
+        return type;
+    }
 
     public AbstractEntity extract(int extractedNumber) throws OutOfRangeException
     {
@@ -329,7 +333,7 @@ public abstract class AbstractEntity
 
         int extractedMorale = (int) ((double) extractedNumber / (double) number * (double) morale);
 
-        AbstractEntity extractedEntity = copy();
+        AbstractEntity extractedEntity = newInstance(getExtractedType());
         extractedEntity.number = extractedNumber;
         extractedEntity.morale = extractedMorale;
 
@@ -350,7 +354,7 @@ public abstract class AbstractEntity
     {
         int aggregateNumber = number + other.number;
         int aggregateMorale = morale + other.morale;
-        
+
         if (aggregateNumber <= MAXIMAL_NUMBER)
         {
             number = aggregateNumber;
@@ -378,5 +382,5 @@ public abstract class AbstractEntity
             return other; // remainder
         }
     }
-    
+
 }

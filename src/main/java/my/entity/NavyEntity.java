@@ -41,27 +41,6 @@ public class NavyEntity extends AbstractEntity
     }
 
     @Override
-    public AbstractEntity extract(int extractedNumber) throws OutOfRangeException
-    {
-        if (extractedNumber < 1 || extractedNumber >= number)
-        {
-            throw new OutOfRangeException();
-        }
-
-        int extractedMorale = (int) ((double) extractedNumber / (double) number * (double) morale);
-
-        AbstractEntity extractedEntity = new InfantryEntity();
-        extractedEntity.number = extractedNumber;
-        extractedEntity.morale = extractedMorale;
-
-        number -= extractedNumber;
-        morale -= extractedMorale;
-
-        return extractedEntity;
-    
-    }
-
-    @Override
     protected boolean isAccessible(AbstractField place)
     {
         boolean accessibility = false;
@@ -91,6 +70,12 @@ public class NavyEntity extends AbstractEntity
     public boolean canMerge(AbstractEntity entity)
     {
         return entity.getType() == EntityType.INFANTRY && getNumber() < MAXIMAL_NUMBER;
+    }
+
+    @Override
+    public EntityType getExtractedType()
+    {
+        return EntityType.INFANTRY;
     }
 
     @Override

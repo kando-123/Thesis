@@ -16,6 +16,8 @@ import javax.swing.JTextArea;
 import my.command.ExtractEntityCommand;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
+import my.entity.EntityAssetManager;
+import my.entity.EntityType;
 import my.utils.Spinner;
 import my.flow.Manager;
 
@@ -46,6 +48,8 @@ public class EntityExtractionDialog extends JDialog implements ActionListener, S
     {
         super(frame, "Extract a Troop", true);
         this.entity = entity;
+        
+        EntityType extractedType = entity.getExtractedType();
 
         Container contentPane = new JPanel(new GridBagLayout());
         contentPane.setPreferredSize(new Dimension(300, 200));
@@ -57,13 +61,13 @@ public class EntityExtractionDialog extends JDialog implements ActionListener, S
         c.weighty = 1;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 1;
-        nameLabel = new JLabel(entity.getName());
+        nameLabel = new JLabel(extractedType.toString());
         nameLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         nameLabel.setPreferredSize(new Dimension(300, 25));
         contentPane.add(nameLabel, c);
 
         ++c.gridy;
-        iconLabel = new JLabel(entity.getIcon());
+        iconLabel = new JLabel(EntityAssetManager.getInstance().getIcon(extractedType));
         iconLabel.setPreferredSize(new Dimension(300, 75));
         contentPane.add(iconLabel, c);
 
