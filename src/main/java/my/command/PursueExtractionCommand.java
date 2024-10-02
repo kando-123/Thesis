@@ -8,6 +8,13 @@ import my.flow.Manager;
  */
 public class PursueExtractionCommand extends Command<Manager>
 {
+    private final int number;
+    
+    public PursueExtractionCommand(int number)
+    {
+        this.number = number;
+    }
+    
     @Override
     public void execute(Manager executor)
     {
