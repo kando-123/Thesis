@@ -187,11 +187,7 @@ public abstract class AbstractField
 
     private AbstractEntity merge(AbstractEntity fellow)
     {
-        var origin = fellow.getField();
-        var remainder = entity.merge(fellow);
-
-        origin.entity = remainder;
-        
+        fellow.getField().entity = entity.merge(fellow);
         entity.setMovable(false);
         
         return entity;

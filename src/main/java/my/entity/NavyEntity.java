@@ -1,6 +1,7 @@
 package my.entity;
 
 import my.field.AbstractField;
+import my.world.WorldAccessor;
 
 /**
  *
@@ -40,6 +41,27 @@ public class NavyEntity extends AbstractEntity
     }
 
     @Override
+    public AbstractEntity extract(int extractedNumber) throws OutOfRangeException
+    {
+        if (extractedNumber < 1 || extractedNumber >= number)
+        {
+            throw new OutOfRangeException();
+        }
+
+        int extractedMorale = (int) ((double) extractedNumber / (double) number * (double) morale);
+
+        AbstractEntity extractedEntity = new InfantryEntity();
+        extractedEntity.number = extractedNumber;
+        extractedEntity.morale = extractedMorale;
+
+        number -= extractedNumber;
+        morale -= extractedMorale;
+
+        return extractedEntity;
+    
+    }
+
+    @Override
     protected boolean isAccessible(AbstractField place)
     {
         boolean accessibility = false;
@@ -52,7 +74,7 @@ public class NavyEntity extends AbstractEntity
             }
             else // The field is occupied. By whose forces?
             {
-                accessibility = field.isFellow(place); // The enemy is there. (MILITATION scenario)
+                accessibility = !field.isFellow(place); // The enemy is there. (MILITATION scenario)
             }
         }
         
@@ -69,5 +91,26 @@ public class NavyEntity extends AbstractEntity
     public boolean canMerge(AbstractEntity entity)
     {
         return entity.getType() == EntityType.INFANTRY && getNumber() < MAXIMAL_NUMBER;
+    }
+
+    @Override
+    public boolean canExtract(WorldAccessor accessor)
+    {
+        if (movable && number > MINIMAL_NUMBER)
+        {
+            for (var neighborHex : field.getHex().neighbors())
+            {
+                var neighborField = accessor.getFieldAt(neighborHex);
+                if (neighborField != null && !neighborField.isMarine())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package my.entity;
 
 import my.field.AbstractField;
+import my.world.WorldAccessor;
 
 /**
  *
@@ -73,7 +74,16 @@ public class CavalryEntity extends AbstractEntity
     @Override
     protected boolean isTransitable(AbstractField place)
     {
-        return !place.isMarine() && !place.isMountainous() && !place.hasEntity()
+        return !place.isMarine()
+               && !place.isFortification()
+               && !place.isMountainous()
+               && !place.hasEntity()
                && field.getHex().distance(place.getHex()) < radius;
+    }
+
+    @Override
+    public boolean canExtract(WorldAccessor accessor)
+    {
+        return movable && number > MINIMAL_NUMBER;
     }
 }

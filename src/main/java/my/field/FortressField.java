@@ -16,17 +16,20 @@ import my.world.WorldAccessor;
  */
 public class FortressField extends FortificationField
 {
-    private static final int[] FORTITUDE = {100, 125, 150};
+    private static final int[] FORTITUDE =
+    {
+        100, 125, 150
+    };
     private int level;
     private int fortitude;
-    
+
     public FortressField()
     {
         super(FieldType.FORTRESS);
-        
+
         priceIntercept = 400;
         priceSlope = 100;
-        
+
         level = 0;
         fortitude = FORTITUDE[level];
     }
@@ -52,16 +55,16 @@ public class FortressField extends FortificationField
             return field != null && field.isContinental();
         };
     }
-    
+
     @Override
     public void draw(Graphics2D graphics, Doublet<Integer> position, Dimension size)
     {
         super.draw(graphics, position, size);
-        
+
         if (!hasEntity() && 0.13 * size.height > 9)
         {
             String bar = String.format("D%d", fortitude);
-            
+
             AttributedString attributedBar = new AttributedString(bar);
             attributedBar.addAttribute(TextAttribute.SIZE, 0.13 * size.height);
             attributedBar.addAttribute(TextAttribute.FOREGROUND, Color.WHITE);
@@ -78,13 +81,15 @@ public class FortressField extends FortificationField
     }
 
     @Override
-    public int setDefense(int newFortitude)
+    public void setDefense(int newFortitude)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        fortitude = newFortitude;
     }
-    
-    public static class MaximalLevelException extends Exception {}
-    
+
+    public static class MaximalLevelException extends Exception
+    {
+    }
+
     public void upgrade() throws MaximalLevelException
     {
         if (level < FORTITUDE.length - 1)

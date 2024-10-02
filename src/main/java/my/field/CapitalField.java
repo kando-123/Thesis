@@ -14,11 +14,15 @@ import my.utils.Doublet;
  */
 public class CapitalField extends AbstractField implements Fortification, Spawner
 {
-    private static final int FORTITUDE = 200;
+    private int fortitude;
+    
+    private static final int DEFAULT_FORTITUDE = 200;
     
     public CapitalField()
     {
         super(FieldType.CAPITAL);
+        
+        fortitude = DEFAULT_FORTITUDE;
     }
 
     @Override
@@ -44,7 +48,7 @@ public class CapitalField extends AbstractField implements Fortification, Spawne
         
         if (!hasEntity() && 0.13 * size.height > 9)
         {
-            String bar = String.format("D%d", FORTITUDE);
+            String bar = String.format("D%d", DEFAULT_FORTITUDE);
             
             AttributedString attributedBar = new AttributedString(bar);
             attributedBar.addAttribute(TextAttribute.SIZE, 0.13 * size.height);
@@ -58,12 +62,12 @@ public class CapitalField extends AbstractField implements Fortification, Spawne
     @Override
     public int getDefense()
     {
-        return FORTITUDE;
+        return fortitude;
     }
 
     @Override
-    public int setDefense(int newFortitude)
+    public void setDefense(int newFortitude)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        fortitude = newFortitude;
     }
 }

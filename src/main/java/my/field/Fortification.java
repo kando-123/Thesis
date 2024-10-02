@@ -7,5 +7,5 @@ package my.field;
 public interface Fortification
 {
     public int getDefense();
-    public int setDefense(int newFortitude);
+    public void setDefense(int newFortitude);
 }

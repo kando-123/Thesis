@@ -43,11 +43,11 @@ public abstract class AbstractEntity
     protected int priceIntercept;
     protected int priceSlope;
 
-    private int number = DEFAULT_NUMBER;
-    private int morale;
+    protected int number = DEFAULT_NUMBER;
+    protected int morale;
 
     protected int radius;
-    private boolean movable;
+    protected boolean movable;
 
     /* Static Properties */
     private static final EntityAssetManager assetManager = EntityAssetManager.getInstance();
@@ -189,9 +189,9 @@ public abstract class AbstractEntity
     }
 
     /* Movement */
-    public void setMovable(boolean m)
+    public void setMovable(boolean movable)
     {
-        movable = m;
+        this.movable = movable;
     }
     
     public boolean isMovable()
@@ -293,13 +293,6 @@ public abstract class AbstractEntity
         return number;
     }
 
-    public boolean canMerge(AbstractEntity entity)
-    {
-        return field.isFellow(entity)
-               && entity.type == type
-               && number < MAXIMAL_NUMBER;
-    }
-
     public void setMorale(int newMorale)
     {
         if (newMorale > MAXIMAL_MORALE)
@@ -324,6 +317,8 @@ public abstract class AbstractEntity
     public static class OutOfRangeException extends Exception
     {
     }
+    
+    public abstract boolean canExtract(WorldAccessor accessor);
 
     public AbstractEntity extract(int extractedNumber) throws OutOfRangeException
     {
@@ -342,6 +337,13 @@ public abstract class AbstractEntity
         morale -= extractedMorale;
 
         return extractedEntity;
+    }
+
+    public boolean canMerge(AbstractEntity entity)
+    {
+        return field.isFellow(entity)
+               && entity.type == type
+               && number < MAXIMAL_NUMBER;
     }
 
     public AbstractEntity merge(AbstractEntity other)

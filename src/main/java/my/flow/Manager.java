@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JOptionPane;
-import my.command.ExtractEntityCommand;
 //import java.util.Stack;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
@@ -45,9 +44,18 @@ public class Manager
 
     private State state;
 
-    public Manager(Master master,
-                   WorldConfiguration worldConfiguration,
-                   List<PlayerConfiguration> playerConfigurations)
+    private final Master master;
+    private final World world;
+    private final PlayersQueue players;
+//    private Stack<ReversibleCommand> executedCommands;
+//    private Stack<ReversibleCommand> undoneCommands;
+    
+//    private final BuildingPurchaseManager buildingPurchaseManager;
+//    private final EntityPurchaseManager entityPurchaseManager;
+//    private final MovementManager movementManager;
+//    private final ExtractionManager extractionManager;
+
+    public Manager(Master master, WorldConfiguration worldConfiguration, List<PlayerConfiguration> playerConfigurations)
     {
         this.master = master;
 
@@ -61,13 +69,12 @@ public class Manager
 
 //        executedCommands = new Stack();
 //        undoneCommands = new Stack();
+        
+//        buildingPurchaseManager = new BuildingPurchaseManager();
+//        entityPurchaseManager = new EntityPurchaseManager();
+//        movementManager = new MovementManager();
+//        extractionManager = new ExtractionManager();
     }
-
-    private final Master master;
-    private final World world;
-    private final PlayersQueue players;
-//    private Stack<ReversibleCommand> executedCommands;
-//    private Stack<ReversibleCommand> undoneCommands;
 
     public World getWorld()
     {
@@ -244,7 +251,7 @@ public class Manager
         {
             case BUILDING_IN_PROGRESS ->
             {
-                if (world.isMarked(field.getHex()))
+                if (field != null && world.isMarked(field.getHex()))
                 {
                     master.setMoney(players.current().buy(buildingBeingPurchased));
                     world.substitute(field, buildingBeingPurchased);
@@ -257,7 +264,7 @@ public class Manager
             }
             case HIRING_IN_PROGRESS ->
             {
-                if (world.isMarked(field.getHex()))
+                if (field != null && world.isMarked(field.getHex()))
                 {
                     master.setMoney(players.current().buy(entityBeingPurchased));
                     field.setEntity(entityBeingPurchased);
@@ -276,7 +283,7 @@ public class Manager
             }
             case IDLE ->
             {
-                if (field.hasEntity() && field.getOwner() == players.current())
+                if (field != null && field.hasEntity() && field.getOwner() == players.current())
                 {
                     state = State.MOVING_BEGUN;
 
@@ -294,59 +301,61 @@ public class Manager
             {
                 state = State.IDLE;
 
-                if (world.isMarked(field.getHex()))
+                entityBeingMoved.unmark();
+                if (field != null && world.isMarked(field.getHex()))
                 {
-                    AbstractField begin = entityBeingMoved.getField();
-                    
-                    field.interact(entityBeingMoved);
+                    AbstractField origin = entityBeingMoved.getField();
+                    AbstractEntity resultant = field.interact(entityBeingMoved);
                     
                     Player player = players.current();
-                    if (entityBeingMoved.getType() != EntityType.NAVY)
+                    if (resultant != null)
                     {
-                        Set<Hex> way = new HashSet<>();
-                        List<Hex> path = movementRange.get(field.getHex());
-                        
-                        if (field.getOwner() == player)
+                        if (resultant.getType() != EntityType.NAVY)
                         {
-                            path.add(field.getHex());
-                        }
-                        
-                        for (int i = path.size() - 1; i >= 0; --i)
-                        {
-                            Hex hex = path.get(i);
-                            way.add(hex);
-                            
-                            if (((path.size() - 1 - i) & 1) == 0)
+                            Set<Hex> way = new HashSet<>();
+                            List<Hex> path = movementRange.get(field.getHex());
+
+                            if (field.getOwner() == player)
                             {
-                                for (var neighborHex : hex.neighbors())
+                                path.add(field.getHex());
+                            }
+
+                            for (int i = path.size() - 1; i >= 0; --i)
+                            {
+                                Hex hex = path.get(i);
+                                way.add(hex);
+
+                                if (((path.size() - 1 - i) & 1) == 0)
                                 {
-                                    var neighborField = world.getFieldAt(neighborHex);
-                                    if (neighborField != null
-                                            && neighborField.isPlains()
-                                            && !neighborField.hasEntity()
-                                            && neighborField.getOwner() != player)
+                                    for (var neighborHex : hex.neighbors())
                                     {
-                                        way.add(neighborHex);
+                                        var neighborField = world.getFieldAt(neighborHex);
+                                        if (neighborField != null
+                                                && neighborField.isPlains()
+                                                && !neighborField.hasEntity()
+                                                && neighborField.getOwner() != player)
+                                        {
+                                            way.add(neighborHex);
+                                        }
                                     }
                                 }
                             }
+                            for (var hex : way)
+                            {
+                                AbstractField passedField = world.getFieldAt(hex);
+                                player.capture(passedField);
+                            }
                         }
-                        for (var hex : way)
+                        else
                         {
-                            AbstractField passedField = world.getFieldAt(hex);
-                            player.capture(passedField);
+                            if (origin.isMarine())
+                            {
+                                player.release(origin);
+                            }
+                            player.capture(field);
                         }
-                    }
-                    else
-                    {
-                        if (begin.isMarine())
-                        {
-                            player.release(begin);
-                        }
-                        player.capture(field);
                     }
                 }
-                entityBeingMoved.unmark();
                 entityBeingMoved = null;
                 world.unmarkAll();
             }
@@ -357,18 +366,22 @@ public class Manager
     {
         /* has entity -> extract (dialog etc.), in case of a ship: extract = disembark
            (a ship cannot produce a new ship) */
-        if (field.hasEntity())
+        if (field != null && field.hasEntity())
         {
-            var dialog = new EntityExtractionDialog(master, field.getEntity());
-            dialog.setVisible(true);
-            dialog.addWindowListener(new WindowAdapter()
+            var entity = field.getEntity();
+            if (entity.canExtract(world.createAccessor()))
             {
-                @Override
-                public void windowClosed(WindowEvent e)
+                var dialog = new EntityExtractionDialog(master, entity);
+                dialog.setVisible(true);
+                dialog.addWindowListener(new WindowAdapter()
                 {
-                    master.requestFocus();
-                }
-            });
+                    @Override
+                    public void windowClosed(WindowEvent e)
+                    {
+                        master.requestFocus();
+                    }
+                });
+            }
         }
     }
 
