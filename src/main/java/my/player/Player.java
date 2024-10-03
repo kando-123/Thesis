@@ -26,7 +26,7 @@ public class Player
     private final WorldAccessor accessor;
 
     private int money;
-    private static final int INITIAL_MONEY = 1_000_000; // for testing
+    private static final int INITIAL_MONEY = 1000; // for testing
 
     public Player(PlayerType type, WorldAccessor accessor, WorldMarker marker)
     {
@@ -154,7 +154,7 @@ public class Player
 
     public void endRound()
     {
-        //money += territory.size() * INCOME_PER_FIELD;
+        money += country.getIncome();
     }
 
     @Override

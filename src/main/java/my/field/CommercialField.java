@@ -10,4 +10,6 @@ public abstract class CommercialField extends BuildingField
     {
         super(type);
     }
+    
+    public abstract int getIncome();
 }

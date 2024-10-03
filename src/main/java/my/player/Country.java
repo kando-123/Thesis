@@ -3,6 +3,7 @@ package my.player;
 import java.util.HashSet;
 import java.util.Set;
 import my.field.AbstractField;
+import my.field.CommercialField;
 import my.field.FieldType;
 import my.utils.Hex;
 import my.world.WorldAccessor;
@@ -94,5 +95,24 @@ public class Country
                 field.getEntity().setMovable(true);
             }
         });
+    }
+    
+    public int getIncome()
+    {
+        int income = 0;
+        for (var hex : territory)
+        {
+            var field = accessor.getFieldAt(hex);
+            if (field.isCommercial())
+            {
+                var commercial = (CommercialField) field;
+                income += commercial.getIncome();
+            }
+            else
+            {
+                ++income;
+            }
+        }
+        return income;
     }
 }

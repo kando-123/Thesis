@@ -39,4 +39,10 @@ public class TownField extends CommercialField
             return field != null && field.isPlains();
         };
     }
+
+    @Override
+    public int getIncome()
+    {
+        return 100;
+    }
 }

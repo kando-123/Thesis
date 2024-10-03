@@ -50,4 +50,10 @@ public class FarmField extends CommercialField
             return false;
         };
     }
+
+    @Override
+    public int getIncome()
+    {
+        return 100;
+    }
 }

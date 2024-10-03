@@ -39,4 +39,10 @@ public class MineField extends CommercialField
             return field != null && field.isMountainous();
         };
     }
+
+    @Override
+    public int getIncome()
+    {
+        return 100;
+    }
 }
