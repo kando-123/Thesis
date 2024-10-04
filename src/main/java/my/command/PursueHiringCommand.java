@@ -1,6 +1,5 @@
 package my.command;
 
-import my.entity.AbstractEntity;
 import my.flow.Manager;
 
 /**
@@ -9,16 +8,9 @@ import my.flow.Manager;
  */
 public class PursueHiringCommand extends Command<Manager>
 {
-    private final AbstractEntity entity;
-    
-    public PursueHiringCommand(AbstractEntity entity)
-    {
-        this.entity = entity;
-    }
-    
     @Override
     public void execute(Manager manager)
     {
-        manager.pursueHiring(entity);
+        manager.pursueHiring();
     }  
 }
