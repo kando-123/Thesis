@@ -2,15 +2,11 @@ package my.flow;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.swing.JOptionPane;
 //import java.util.Stack;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
-import my.entity.EntityType;
 import my.gui.EntityInfoDialog;
 import my.gui.EntityPurchaseDialog;
 import my.player.Player;
@@ -56,9 +52,9 @@ public class Manager
 //    private Stack<ReversibleCommand> executedCommands;
 //    private Stack<ReversibleCommand> undoneCommands;
     
-//    private final BuildingPurchaseManager buildingPurchaseManager;
+    private final BuildingPurchaseManager buildingPurchaseManager;
 //    private final EntityPurchaseManager entityPurchaseManager;
-//    private final MovementManager movementManager;
+    private final MovementManager movementManager;
 //    private final ExtractionManager extractionManager;
 
     public Manager(Master master, WorldConfiguration worldConfiguration, List<PlayerConfiguration> playerConfigurations)
@@ -76,9 +72,9 @@ public class Manager
 //        executedCommands = new Stack();
 //        undoneCommands = new Stack();
         
-//        buildingPurchaseManager = new BuildingPurchaseManager();
+        buildingPurchaseManager = new BuildingPurchaseManager();
 //        entityPurchaseManager = new EntityPurchaseManager();
-//        movementManager = new MovementManager();
+        movementManager = new MovementManager(world.createMarker(), world.createAccessor());
 //        extractionManager = new ExtractionManager();
     }
 
@@ -95,19 +91,8 @@ public class Manager
     /* -------------------- BuildingManager? -------------------- */
     public void showBuildingInfo(BuildingField building)
     {
-        var dialog = new BuildingInfoDialog(master, building);
-        dialog.addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                master.requestFocus();
-            }
-        });
-        dialog.setVisible(true);
+        buildingPurchaseManager.showInfo();
     }
-
-    private BuildingPurchaseDialog buildingDialog;
 
     public void beginBuilding(BuildingField building)
     {
@@ -136,22 +121,7 @@ public class Manager
             {
                 state = State.BUILDING_BEGUN;
 
-                var builder = new BuildingPurchaseDialog.Builder();
-                builder.setFrame(master);
-                builder.setInvoker(new Invoker<>(this));
-                builder.setBuilding(building);
-                builder.setPrice(player.computePriceFor(building));
-                buildingDialog = builder.get();
-                buildingDialog.addWindowListener(new WindowAdapter()
-                {
-                    @Override
-                    public void windowClosing(WindowEvent e)
-                    {
-                        state = State.IDLE;
-                        master.requestFocus();
-                    }
-                });
-                buildingDialog.setVisible(true);
+                buildingPurchaseManager.begin();
             }
         }
     }
@@ -248,8 +218,7 @@ public class Manager
     }
 
     /* -------------------- Manager -> ... -------------------- */
-    private AbstractEntity entityBeingMoved;
-    private Map<Hex, List<Hex>> movementRange;
+    
 
     public void handleFieldClick(AbstractField field)
     {
@@ -289,81 +258,18 @@ public class Manager
             }
             case IDLE ->
             {
-                if (field != null && field.hasEntity() && field.getOwner() == players.current())
+                if (field != null && field.hasEntity() && field.isOwned(players.current()))
                 {
                     state = State.MOVING_BEGUN;
 
-                    entityBeingMoved = field.getEntity();
-                    entityBeingMoved.mark();
-
-                    movementRange = entityBeingMoved.getMovementRange(world.createAccessor());
-                    for (var hex : movementRange.keySet())
-                    {
-                        world.mark(hex);
-                    }
+                    movementManager.begin(field.getEntity());
                 }
             }
             case MOVING_BEGUN ->
             {
                 state = State.IDLE;
 
-                entityBeingMoved.unmark();
-                if (field != null && world.isMarked(field.getHex()))
-                {
-                    AbstractField origin = entityBeingMoved.getField();
-                    AbstractEntity resultant = field.interact(entityBeingMoved);
-                    
-                    Player player = players.current();
-                    if (resultant != null)
-                    {
-                        if (resultant.getType() != EntityType.NAVY)
-                        {
-                            Set<Hex> way = new HashSet<>();
-                            List<Hex> path = movementRange.get(field.getHex());
-
-                            if (field.getOwner() == player)
-                            {
-                                path.add(field.getHex());
-                            }
-
-                            for (int i = path.size() - 1; i >= 0; --i)
-                            {
-                                Hex hex = path.get(i);
-                                way.add(hex);
-
-                                if (((path.size() - 1 - i) & 1) == 0)
-                                {
-                                    for (var neighborHex : hex.neighbors())
-                                    {
-                                        var neighborField = world.getFieldAt(neighborHex);
-                                        if (neighborField != null
-                                                && neighborField.isPlains()
-                                                && !neighborField.hasEntity()
-                                                && neighborField.getOwner() != player)
-                                        {
-                                            way.add(neighborHex);
-                                        }
-                                    }
-                                }
-                            }
-                            for (var hex : way)
-                            {
-                                AbstractField passedField = world.getFieldAt(hex);
-                                player.capture(passedField);
-                            }
-                        }
-                        else
-                        {
-                            if (origin.isMarine())
-                            {
-                                player.release(origin);
-                            }
-                            player.capture(field);
-                        }
-                    }
-                }
-                entityBeingMoved = null;
-                world.unmarkAll();
+                movementManager.finish(field, players.current());
             }
         }
     }
@@ -372,8 +278,6 @@ public class Manager
             
     public void handleFieldShiftClick(AbstractField field)
     {
-        /* has entity -> extract (dialog etc.), in case of a ship: extract = disembark
-           (a ship cannot produce a new ship) */
         if (field != null && field.hasEntity())
         {
             state = State.EXTRACTION_BEGUN;
@@ -390,11 +294,17 @@ public class Manager
                     @Override
                     public void windowClosed(WindowEvent e)
                     {
+                        state = State.IDLE;
                         master.requestFocus();
                     }
                 });
             }
         }
+    }
+    
+    public void pursueExtraction()
+    {
+        
     }
 
     public void undo()

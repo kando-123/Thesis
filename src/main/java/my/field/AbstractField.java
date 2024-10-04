@@ -143,6 +143,11 @@ public abstract class AbstractField
     {
         return (owner != null);
     }
+    
+    public boolean isOwned(Player player)
+    {
+        return owner == player;
+    }
 
     public boolean isFellow(AbstractField field)
     {
@@ -277,9 +282,9 @@ public abstract class AbstractField
     {
         final boolean isOccupied = hasEntity();
         final boolean isFellow = isFellow(newEntity);
-        final boolean isDefense = isFortification();
+        final boolean isFortification = isFortification();
 
-        if (!isOccupied && (isFellow || !isDefense))
+        if (!isOccupied && (isFellow || !isFortification))
         {
             return move(newEntity);
         }

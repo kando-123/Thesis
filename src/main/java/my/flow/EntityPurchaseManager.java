@@ -6,5 +6,8 @@ package my.flow;
  */
 public class EntityPurchaseManager
 {
-    
+    public void showInfo() {}
+    public void begin() {}
+    public void pursue() {}
+    public void finish() {}
 }
