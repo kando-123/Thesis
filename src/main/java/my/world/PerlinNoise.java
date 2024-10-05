@@ -243,10 +243,10 @@ public class PerlinNoise
         double pixelBottomQ = (double) (pixel.right - chunkBottomY) / (double) chunkSize;
 
         /* Find the gradients. */
-        var gradientA = gradientVectors.get(new Doublet<Integer>(chunkCol, chunkRow));
-        var gradientB = gradientVectors.get(new Doublet<Integer>(chunkCol + 1, chunkRow));
-        var gradientC = gradientVectors.get(new Doublet<Integer>(chunkCol, chunkRow + 1));
-        var gradientD = gradientVectors.get(new Doublet<Integer>(chunkCol + 1, chunkRow + 1));
+        var gradientA = gradientVectors.get(new Doublet<>(chunkCol, chunkRow));
+        var gradientB = gradientVectors.get(new Doublet<>(chunkCol + 1, chunkRow));
+        var gradientC = gradientVectors.get(new Doublet<>(chunkCol, chunkRow + 1));
+        var gradientD = gradientVectors.get(new Doublet<>(chunkCol + 1, chunkRow + 1));
 
         /* Calculate the products. */
         double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.left, gradientA.right);
@@ -276,7 +276,7 @@ public class PerlinNoise
             double amplitude = persistence;
             for (int i = 1; i < octavesCount; ++i)
             {
-                Doublet<Integer> newPixel = new Doublet<Integer>(0, 0);
+                Doublet<Integer> newPixel = new Doublet<>(0, 0);
                 newPixel.left = (int) (frequency * (double) pixel.left);
                 newPixel.right = (int) (frequency * (double) pixel.right);
                 noise += amplitude * getRawNoise(newPixel);

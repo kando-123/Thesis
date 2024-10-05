@@ -93,6 +93,12 @@ public class InfantryEntity extends AbstractEntity
     }
 
     @Override
+    public boolean canExtract() throws AccessorIsNeededException
+    {
+        return movable && number > MINIMAL_NUMBER;
+    }
+
+    @Override
     public boolean canExtract(WorldAccessor accessor)
     {
         return movable && number > MINIMAL_NUMBER;

@@ -44,7 +44,7 @@ public class EntityExtractionDialog extends JDialog implements ActionListener, S
         return PATTERN.formatted(extract, extract > 1 ? "s" : "", remainder);
     }
 
-    public EntityExtractionDialog(JFrame frame, AbstractEntity entity)
+    private EntityExtractionDialog(JFrame frame, AbstractEntity entity)
     {
         super(frame, "Extract a Troop", true);
         this.entity = entity;
@@ -102,6 +102,11 @@ public class EntityExtractionDialog extends JDialog implements ActionListener, S
         setResizable(false);
         setLocationRelativeTo(frame);
     }
+    
+    private void setInvoker(Invoker<Manager> invoker)
+    {
+        this.invoker = invoker;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e)
@@ -116,5 +121,42 @@ public class EntityExtractionDialog extends JDialog implements ActionListener, S
     public void valueChanged(Spinner.ValueChangeEvent e)
     {
         summaryTextArea.setText(formatPattern(e.newValue));
+    }
+    
+    public static class Builder
+    {
+        private JFrame frame;
+        private AbstractEntity entity;
+        private Invoker<Manager> invoker;
+        
+        public void setFrame(JFrame frame)
+        {
+            this.frame = frame;
+        }
+
+        public void setEntity(AbstractEntity entity)
+        {
+            this.entity = entity;
+        }
+
+        public void setInvoker(Invoker<Manager> invoker)
+        {
+            this.invoker = invoker;
+        }
+        
+        public EntityExtractionDialog get()
+        {
+            if (frame != null && entity != null && invoker != null)
+            {
+                var product = new EntityExtractionDialog(frame, entity);
+                product.setInvoker(invoker);
+                
+                return product;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

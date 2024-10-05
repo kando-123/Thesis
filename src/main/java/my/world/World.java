@@ -32,7 +32,7 @@ public class World
 {
     public static final int HEX_OUTER_RADIUS = 40;
     public static final int HEX_INNER_RADIUS = (int) Hex.computeInnerRadius(HEX_OUTER_RADIUS);
-    public static final int HEX_WIDTH  = 2 * HEX_OUTER_RADIUS;
+    public static final int HEX_WIDTH = 2 * HEX_OUTER_RADIUS;
     public static final int HEX_HEIGHT = (int) Hex.computeInnerRadius(2 * HEX_OUTER_RADIUS);
 
     private final int side;
@@ -263,31 +263,22 @@ public class World
 
     public void draw(Graphics2D graphics, Doublet<Double> centerOffset, double scale, Dimension panelSize)
     {
-//        var iterator = fields.entrySet().iterator();
-//        while (iterator.hasNext())
-//        {
-//            Map.Entry<Hex, AbstractField> entry = iterator.next();
-//
-//            Hex hex = entry.getKey();
-//            Doublet<Integer> pixel = hex.getCornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
-//
-//            int x = centerOffset.left.intValue() + (int) (pixel.left * scale);
-//            int y = centerOffset.right.intValue() + (int) (pixel.right * scale);
-//
-//            AbstractField field = entry.getValue();
-//
-//            int w = (int) (HEX_WIDTH * scale);
-//            int h = (int) (HEX_HEIGHT * scale);
-//
-//            if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
-//            {
-//                field.draw(graphics, new Doublet<>(x, y), new Dimension(w, h));
-//            }
-//        }
-        
-        var stream = fields.entrySet().stream();
-        var entries = stream
-                .sorted((o1, o2) -> o1.getValue().hasEntity() ? +1 : o2.getValue().hasEntity() ? -1 : 0)
+        // If both entries have entities, that which is more to the right will be drawn later.
+        // If o1 has and entity and o2 does not, o1 will be drawn later.
+        // If o1 has no entity and o2 does, o1 will be drawn before o2.
+        // If both have no entities, they relative order is irrelevant;
+        // since the comparison should be symmetric, 0 is returned.
+        var entries = fields.entrySet()
+                .stream()
+                .sorted((Map.Entry<Hex, AbstractField> o1, Map.Entry<Hex, AbstractField> o2) ->
+                {
+                    boolean e1 = o1.getValue().hasEntity();
+                    boolean e2 = o2.getValue().hasEntity();
+                    int p1 = o1.getKey().getP();
+                    int p2 = o2.getKey().getP();
+                    
+                    return e1 ? (e2 ? p1 - p2 : +1) : (e2 ? -1 : 0);
+                })
                 .collect(Collectors.toList());
         for (var entry : entries)
         {

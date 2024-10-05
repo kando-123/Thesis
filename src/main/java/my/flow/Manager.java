@@ -2,11 +2,15 @@ package my.flow;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.JOptionPane;
 //import java.util.Stack;
 import my.command.Invoker;
 import my.entity.AbstractEntity;
+import my.entity.EntityType;
 import my.gui.EntityInfoDialog;
 import my.gui.EntityPurchaseDialog;
 import my.player.Player;
@@ -31,15 +35,11 @@ public class Manager
     private static enum State
     {
         IDLE,
-        
         BUILDING_BEGUN,
         BUILDING_IN_PROGRESS,
-        
         HIRING_BEGUN,
         HIRING_IN_PROGRESS,
-        
         MOVING_BEGUN,
-        
         EXTRACTION_BEGUN,
         EXTRACTION_IN_PROGRESS;
     }
@@ -51,11 +51,11 @@ public class Manager
     private final PlayersQueue players;
 //    private Stack<ReversibleCommand> executedCommands;
 //    private Stack<ReversibleCommand> undoneCommands;
-    
-    private final BuildingPurchaseManager buildingPurchaseManager;
-//    private final EntityPurchaseManager entityPurchaseManager;
+
+    private final BuildingPurchaseManager buildingManager;
+    private final EntityPurchaseManager entityManager;
     private final MovementManager movementManager;
-//    private final ExtractionManager extractionManager;
+    private final ExtractionManager extractionManager;
 
     public Manager(Master master, WorldConfiguration worldConfiguration, List<PlayerConfiguration> playerConfigurations)
     {
@@ -71,11 +71,10 @@ public class Manager
 
 //        executedCommands = new Stack();
 //        undoneCommands = new Stack();
-        
-        buildingPurchaseManager = new BuildingPurchaseManager();
-//        entityPurchaseManager = new EntityPurchaseManager();
-        movementManager = new MovementManager(world.createMarker(), world.createAccessor());
-//        extractionManager = new ExtractionManager();
+        buildingManager = new BuildingPurchaseManager();
+        entityManager = new EntityPurchaseManager();
+        movementManager = new MovementManager();
+        extractionManager = new ExtractionManager();
     }
 
     public World getWorld()
@@ -88,15 +87,124 @@ public class Manager
         return players.first();
     }
 
-    /* -------------------- BuildingManager? -------------------- */
     public void showBuildingInfo(BuildingField building)
     {
-        buildingPurchaseManager.showInfo();
+        buildingManager.showInfo(building);
     }
 
     public void beginBuilding(BuildingField building)
     {
-        if (state == State.IDLE)
+        buildingManager.begin(building);
+    }
+
+    public void pursueBuilding()
+    {
+        buildingManager.pursue();
+    }
+
+    /* -------------------- EntityManager? -------------------- */
+    public void showEntityInfo(AbstractEntity entity)
+    {
+        entityManager.showInfo(entity);
+    }
+
+    public void beginHiring(AbstractEntity entity)
+    {
+        entityManager.begin(entity);
+    }
+
+    public void pursueHiring()
+    {
+        entityManager.pursue();
+    }
+
+    /* -------------------- Manager -> ... -------------------- */
+    public void handleFieldClick(AbstractField field)
+    {
+        switch (state)
+        {
+            case BUILDING_IN_PROGRESS ->
+            {
+                buildingManager.finish(field);
+            }
+            case HIRING_IN_PROGRESS ->
+            {
+                entityManager.finish(field);
+            }
+            case IDLE ->
+            {
+                movementManager.begin(field);
+            }
+            case MOVING_BEGUN ->
+            {
+                movementManager.finish(field);
+            }
+        }
+    }
+
+    public void handleFieldShiftClick(AbstractField field)
+    {
+        if (field != null && field.hasEntity())
+        {
+            extractionManager.begin(field);
+        }
+    }
+
+    public void pursueExtraction(int number)
+    {
+        extractionManager.pursue(number);
+    }
+
+    public void undo()
+    {
+
+    }
+
+    public void redo()
+    {
+
+    }
+
+    public void nextPlayer()
+    {
+        state = State.IDLE;
+
+        Player current = players.current();
+        current.endRound();
+
+        Player next = players.next();
+        master.setUser(next);
+        next.resetEntities();
+
+        Hex hex = next.getCapitalHex();
+        master.setCenter(hex);
+    }
+
+    public Invoker<Manager> createInvoker()
+    {
+        return new Invoker(this);
+    }
+
+    private class BuildingPurchaseManager
+    {
+        private BuildingField building;
+        private BuildingPurchaseDialog dialog;
+
+        void showInfo(BuildingField building)
+        {
+            var info = new BuildingInfoDialog(master, building);
+            info.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosing(WindowEvent e)
+                {
+                    master.requestFocus();
+                }
+            });
+            info.setVisible(true);
+        }
+
+        void begin(BuildingField building)
         {
             Player player = players.current();
             if (!player.canBuild(building))
@@ -120,175 +228,276 @@ public class Manager
             else
             {
                 state = State.BUILDING_BEGUN;
+                this.building = building;
 
-                buildingPurchaseManager.begin();
-            }
-        }
-    }
-
-    private BuildingField buildingBeingPurchased;
-
-    public void pursueBuilding(BuildingField building)
-    {
-        if (state == State.BUILDING_BEGUN)
-        {
-            state = State.BUILDING_IN_PROGRESS;
-
-            buildingDialog.setVisible(false);
-            buildingDialog.dispose();
-            buildingDialog = null;
-            buildingBeingPurchased = building;
-            players.current().markFor(buildingBeingPurchased);
-
-            master.requestFocus();
-        }
-    }
-
-    /* -------------------- EntityManager? -------------------- */
-    public void showEntityInfo(AbstractEntity entity)
-    {
-        var dialog = new EntityInfoDialog(master, entity);
-        dialog.addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                master.requestFocus();
-            }
-        });
-        dialog.setVisible(true);
-    }
-
-    private EntityPurchaseDialog entityDialog;
-
-    public void beginHiring(AbstractEntity entity)
-    {
-        if (state == State.IDLE)
-        {
-            Player player = players.current();
-            if (!player.canHire(entity))
-            {
-                JOptionPane.showMessageDialog(master, """
-                        Unfortunately, you cannot buy this entity.
-
-                        You do not have a place for this entity.
-                        Shift-click the entity's button for details.""");
-                master.requestFocus();
-            }
-            else
-            {
-                state = State.HIRING_BEGUN;
-
-                var builder = new EntityPurchaseDialog.Builder();
+                var builder = new BuildingPurchaseDialog.Builder();
                 builder.setFrame(master);
-                builder.setInvoker(new Invoker<>(this));
-                builder.setEntity(entity);
-                builder.setBudget(players.current().getMoney());
-                entityDialog = builder.get();
-                entityDialog.addWindowListener(new WindowAdapter()
+                builder.setInvoker(createInvoker());
+                builder.setBuilding(building);
+                builder.setPrice(players.current().computePriceFor(building));
+                dialog = builder.get();
+                dialog.addWindowListener(new WindowAdapter()
                 {
                     @Override
                     public void windowClosing(WindowEvent e)
                     {
-                        state = State.IDLE;
+                        state = Manager.State.IDLE;
                         master.requestFocus();
                     }
                 });
-                entityDialog.setVisible(true);
+                dialog.setVisible(true);
             }
         }
-    }
 
-    private AbstractEntity entityBeingPurchased;
-
-    public void pursueHiring(AbstractEntity entity)
-    {
-        if (state == State.HIRING_BEGUN)
+        void pursue()
         {
-            state = State.HIRING_IN_PROGRESS;
+            if (state == State.BUILDING_BEGUN)
+            {
+                state = State.BUILDING_IN_PROGRESS;
 
-            entityDialog.setVisible(false);
-            entityDialog.dispose();
-            entityDialog = null;
-            entityBeingPurchased = entity;
-            players.current().markFor(entityBeingPurchased);
+                dialog.setVisible(false);
+                dialog.dispose();
+                dialog = null;
+                players.current().markFor(building);
 
+                master.requestFocus();
+            }
+        }
+
+        void finish(AbstractField field)
+        {
+            if (field != null && world.isMarked(field.getHex()))
+            {
+                master.setMoney(players.current().buy(building));
+                world.substitute(field, building);
+            }
+            world.unmarkAll();
+            building = null;
+
+            state = State.IDLE;
             master.requestFocus();
         }
     }
 
-    /* -------------------- Manager -> ... -------------------- */
-    
-
-    public void handleFieldClick(AbstractField field)
+    private class EntityPurchaseManager
     {
-        switch (state)
+        private AbstractEntity entity;
+        private EntityPurchaseDialog dialog;
+
+        void showInfo(AbstractEntity entity)
         {
-            case BUILDING_IN_PROGRESS ->
+            var info = new EntityInfoDialog(master, entity);
+            info.addWindowListener(new WindowAdapter()
             {
-                if (field != null && world.isMarked(field.getHex()))
+                @Override
+                public void windowClosing(WindowEvent e)
                 {
-                    master.setMoney(players.current().buy(buildingBeingPurchased));
-                    world.substitute(field, buildingBeingPurchased);
+                    master.requestFocus();
                 }
-                world.unmarkAll();
-                buildingBeingPurchased = null;
+            });
+            info.setVisible(true);
+        }
 
-                state = State.IDLE;
-                master.requestFocus();
-            }
-            case HIRING_IN_PROGRESS ->
+        void begin(AbstractEntity entity)
+        {
+            if (state == State.IDLE)
             {
-                if (field != null && world.isMarked(field.getHex()))
+                Player player = players.current();
+                if (!player.canHire(entity))
                 {
-                    master.setMoney(players.current().buy(entityBeingPurchased));
-                    field.setEntity(entityBeingPurchased);
-                    entityBeingPurchased.setField(field);
-                    
-                    if (field.isCapital())
+                    JOptionPane.showMessageDialog(master, """
+                        Unfortunately, you cannot buy this entity.
+
+                        You do not have a place for this entity.
+                        Shift-click the entity's button for details.""");
+                    master.requestFocus();
+                }
+                else
+                {
+                    state = State.HIRING_BEGUN;
+
+                    this.entity = entity;
+
+                    var builder = new EntityPurchaseDialog.Builder();
+                    builder.setFrame(master);
+                    builder.setInvoker(createInvoker());
+                    builder.setEntity(entity);
+                    builder.setBudget(players.current().getMoney());
+                    dialog = builder.get();
+                    dialog.addWindowListener(new WindowAdapter()
                     {
-                        entityBeingPurchased.setMovable(true);
-                    }
+                        @Override
+                        public void windowClosing(WindowEvent e)
+                        {
+                            state = State.IDLE;
+                            master.requestFocus();
+                        }
+                    });
+                    dialog.setVisible(true);
                 }
-                world.unmarkAll();
-                entityBeingPurchased = null;
+            }
+        }
 
-                state = State.IDLE;
+        void pursue()
+        {
+            if (state == State.HIRING_BEGUN)
+            {
+                state = State.HIRING_IN_PROGRESS;
+
+                dialog.setVisible(false);
+                dialog.dispose();
+                dialog = null;
+
+                players.current().markFor(entity);
+
                 master.requestFocus();
             }
-            case IDLE ->
-            {
-                if (field != null && field.hasEntity() && field.isOwned(players.current()))
-                {
-                    state = State.MOVING_BEGUN;
+        }
 
-                    movementManager.begin(field.getEntity());
+        void finish(AbstractField field)
+        {
+            if (field != null && world.isMarked(field.getHex()))
+            {
+                master.setMoney(players.current().buy(entity));
+                field.setEntity(entity);
+                entity.setField(field);
+
+                if (field.isCapital())
+                {
+                    entity.setMovable(true);
                 }
             }
-            case MOVING_BEGUN ->
-            {
-                state = State.IDLE;
+            world.unmarkAll();
+            entity = null;
 
-                movementManager.finish(field, players.current());
-            }
+            state = State.IDLE;
+            master.requestFocus();
         }
     }
 
-    private AbstractEntity entityBeingExtracted;
-            
-    public void handleFieldShiftClick(AbstractField field)
+    private class MovementManager
     {
-        if (field != null && field.hasEntity())
+        private AbstractEntity entity;
+        private Map<Hex, List<Hex>> range;
+
+        void begin(AbstractField field)
+        {
+            if (field != null && field.hasEntity() && field.isOwned(players.current()))
+            {
+                state = State.MOVING_BEGUN;
+
+                this.entity = field.getEntity();
+                entity.mark();
+
+                range = entity.getMovementRange(world.createAccessor());
+                for (var hex : range.keySet())
+                {
+                    world.mark(hex);
+                }
+            }
+        }
+
+        void finish(AbstractField field)
+        {
+            state = State.IDLE;
+
+            entity.unmark();
+            if (field != null && world.isMarked(field.getHex()))
+            {
+                AbstractField origin = entity.getField();
+                AbstractEntity resultant = field.interact(entity);
+
+                if (resultant != null)
+                {
+                    var player = players.current();
+                    if (resultant.getType() != EntityType.NAVY)
+                    {
+                        List<Hex> path = range.get(field.getHex());
+
+                        if (field.isOwned(player))
+                        {
+                            path.add(field.getHex());
+                        }
+
+                        Set<Hex> way = makeWay(path);
+
+                        for (var hex : way)
+                        {
+                            AbstractField passedField = world.getFieldAt(hex);
+                            player.capture(passedField);
+                        }
+                    }
+                    else
+                    {
+                        if (origin.isMarine())
+                        {
+                            player.release(origin);
+                        }
+                        player.capture(field);
+                    }
+                }
+            }
+            entity = null;
+            world.unmarkAll();
+        }
+
+        private Set<Hex> makeWay(List<Hex> path)
+        {
+            Set<Hex> way = new HashSet<>();
+
+            var player = players.current();
+            for (int i = path.size() - 1; i >= 0; --i)
+            {
+                Hex hex = path.get(i);
+                way.add(hex);
+
+                if (((path.size() - 1 - i) & 1) == 0)
+                {
+                    for (var neighborHex : hex.neighbors())
+                    {
+                        var neighborField = world.getFieldAt(neighborHex);
+                        if (neighborField != null
+                            && neighborField.isPlains()
+                            && !neighborField.hasEntity()
+                            && neighborField.getOwner() != player)
+                        {
+                            way.add(neighborHex);
+                        }
+                    }
+                }
+            }
+
+            return way;
+        }
+    }
+
+    private class ExtractionManager
+    {
+        private AbstractEntity entity;
+        private EntityExtractionDialog dialog;
+
+        void begin(AbstractField field)
         {
             state = State.EXTRACTION_BEGUN;
-            
-            var entity = field.getEntity();
-            if (entity.canExtract(world.createAccessor()))
+
+            entity = field.getEntity();
+
+            boolean canExtract;
+            try
             {
-                entityBeingExtracted = entity;
-                
-                var dialog = new EntityExtractionDialog(master, entity);
-                dialog.setVisible(true);
+                canExtract = entity.canExtract();
+            }
+            catch (AbstractEntity.AccessorIsNeededException e)
+            {
+                canExtract = entity.canExtract(world.createAccessor());
+            }
+            if (canExtract)
+            {
+                var builder = new EntityExtractionDialog.Builder();
+                builder.setFrame(master);
+                builder.setEntity(entity);
+                builder.setInvoker(createInvoker());
+                dialog = builder.get();
                 dialog.addWindowListener(new WindowAdapter()
                 {
                     @Override
@@ -298,42 +507,24 @@ public class Manager
                         master.requestFocus();
                     }
                 });
+                dialog.setVisible(true);
             }
         }
-    }
-    
-    public void pursueExtraction()
-    {
-        
-    }
 
-    public void undo()
-    {
+        void pursue(int number)
+        {
+            state = State.EXTRACTION_IN_PROGRESS;
+            
+            dialog.setVisible(false);
+            dialog.dispose();
+            dialog = null;
+            
+            System.out.println("Pursuing the extraction: now, the movement range needs to be determined.");
+        }
 
-    }
+        void finish()
+        {
 
-    public void redo()
-    {
-
-    }
-
-    public void nextPlayer()
-    {
-        state = State.IDLE;
-        
-        Player current = players.current();
-        current.endRound();
-
-        Player next = players.next();
-        master.setUser(next);
-        next.resetEntities();
-
-        Hex hex = next.getCapitalHex();
-        master.setCenter(hex);
-    }
-
-    public Invoker<Manager> createInvoker()
-    {
-        return new Invoker(this);
+        }
     }
 }

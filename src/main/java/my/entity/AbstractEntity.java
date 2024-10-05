@@ -316,7 +316,12 @@ public abstract class AbstractEntity
     public static class OutOfRangeException extends Exception
     {
     }
+    
+    public static class AccessorIsNeededException extends Exception
+    {
+    }
 
+    public abstract boolean canExtract() throws AccessorIsNeededException;
     public abstract boolean canExtract(WorldAccessor accessor);
     
     public EntityType getExtractedType()
@@ -382,5 +387,4 @@ public abstract class AbstractEntity
             return other; // remainder
         }
     }
-
 }

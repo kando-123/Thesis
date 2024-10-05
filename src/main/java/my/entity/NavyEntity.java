@@ -79,6 +79,12 @@ public class NavyEntity extends AbstractEntity
     }
 
     @Override
+    public boolean canExtract() throws AccessorIsNeededException
+    {
+        throw new AccessorIsNeededException();
+    }
+
+    @Override
     public boolean canExtract(WorldAccessor accessor)
     {
         if (movable && number > MINIMAL_NUMBER)

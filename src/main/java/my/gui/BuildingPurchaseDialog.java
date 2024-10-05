@@ -78,7 +78,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
     {
         if (e.getActionCommand().equals("buy"))
         {
-            invoker.invoke(new PursueBuildingCommand(building));
+            invoker.invoke(new PursueBuildingCommand());
         }
     }
     
