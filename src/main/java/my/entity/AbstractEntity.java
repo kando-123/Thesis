@@ -338,14 +338,15 @@ public abstract class AbstractEntity
 
         int extractedMorale = (int) ((double) extractedNumber / (double) number * (double) morale);
 
-        AbstractEntity extractedEntity = newInstance(getExtractedType());
-        extractedEntity.number = extractedNumber;
-        extractedEntity.morale = extractedMorale;
+        AbstractEntity extract = newInstance(getExtractedType());
+        extract.number = extractedNumber;
+        extract.morale = extractedMorale;
+        extract.movable = movable;
 
         number -= extractedNumber;
         morale -= extractedMorale;
 
-        return extractedEntity;
+        return extract;
     }
 
     public boolean canMerge(AbstractEntity entity)

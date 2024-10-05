@@ -139,6 +139,10 @@ public class Manager
             {
                 movementManager.finish(field);
             }
+            case EXTRACTION_IN_PROGRESS ->
+            {
+                extractionManager.finish(field);
+            }
         }
     }
 
@@ -474,7 +478,10 @@ public class Manager
     private class ExtractionManager
     {
         private AbstractEntity entity;
+        private AbstractEntity extract;
         private EntityExtractionDialog dialog;
+        
+        private Map<Hex, List<Hex>> range;
 
         void begin(AbstractField field)
         {
@@ -519,12 +526,108 @@ public class Manager
             dialog.dispose();
             dialog = null;
             
-            System.out.println("Pursuing the extraction: now, the movement range needs to be determined.");
+            try
+            {
+                extract = entity.extract(number);
+                
+                var field = entity.getField();
+                entity.setField(null);
+                field.setEntity(extract);
+                extract.setField(field);
+                
+                range = extract.getMovementRange(world.createAccessor());
+                for (var hex : range.keySet())
+                {
+                    world.mark(hex);
+                }
+            }
+            catch (AbstractEntity.OutOfRangeException oor)
+            {
+                // In practice, no exception will be thrown.
+            }
         }
 
-        void finish()
+        void finish(AbstractField field)
         {
+            state = State.IDLE;
 
+            extract.unmark();
+            if (field != null && world.isMarked(field.getHex()))
+            {
+                // If the clicked field was valid, move the extract to that field.
+                // The extrahend should be then placed back to the field of origin.
+                // If the extract is being merged with another entity, the remainder
+                // should be merged back with the extrahend.
+                
+                AbstractField origin = extract.getField();
+                AbstractEntity resultant = field.interact(entity);
+
+                if (resultant != null)
+                {
+                    var player = players.current();
+                    if (resultant.getType() != EntityType.NAVY)
+                    {
+                        List<Hex> path = range.get(field.getHex());
+
+                        if (field.isOwned(player))
+                        {
+                            path.add(field.getHex());
+                        }
+
+                        Set<Hex> way = makeWay(path);
+
+                        for (var hex : way)
+                        {
+                            AbstractField passedField = world.getFieldAt(hex);
+                            player.capture(passedField);
+                        }
+                    }
+                    else
+                    {
+                        if (origin.isMarine())
+                        {
+                            player.release(origin);
+                        }
+                        player.capture(field);
+                    }
+                }
+            }
+            else
+            {
+                // Revert extraction: merge the extract back to the extrahend and place it
+                // onto the original field.
+            }
+            entity = null;
+            world.unmarkAll();
+        }
+        
+        private Set<Hex> makeWay(List<Hex> path)
+        {
+            Set<Hex> way = new HashSet<>();
+
+            var player = players.current();
+            for (int i = path.size() - 1; i >= 0; --i)
+            {
+                Hex hex = path.get(i);
+                way.add(hex);
+
+                if (((path.size() - 1 - i) & 1) == 0)
+                {
+                    for (var neighborHex : hex.neighbors())
+                    {
+                        var neighborField = world.getFieldAt(neighborHex);
+                        if (neighborField != null
+                            && neighborField.isPlains()
+                            && !neighborField.hasEntity()
+                            && neighborField.getOwner() != player)
+                        {
+                            way.add(neighborHex);
+                        }
+                    }
+                }
+            }
+
+            return way;
         }
     }
 }
