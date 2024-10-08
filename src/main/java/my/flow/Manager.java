@@ -510,7 +510,7 @@ public class Manager
                     @Override
                     public void windowClosed(WindowEvent e)
                     {
-                        state = State.IDLE;
+                        //state = State.IDLE;
                         master.requestFocus();
                     }
                 });
@@ -534,6 +534,10 @@ public class Manager
                 entity.setField(null);
                 field.setEntity(extract);
                 extract.setField(field);
+                // Now, `entity` "hangs fieldlessly in the air", and `extract` temporarily
+                // substitutes `entity` in the original field.
+                
+                extract.mark();
                 
                 range = extract.getMovementRange(world.createAccessor());
                 for (var hex : range.keySet())
@@ -560,36 +564,37 @@ public class Manager
                 // should be merged back with the extrahend.
                 
                 AbstractField origin = extract.getField();
-                AbstractEntity resultant = field.interact(entity);
+                AbstractEntity resultant = field.interact(extract);
 
                 if (resultant != null)
                 {
+                    // Unless a lost battle happened, conquer the way.
+                    
                     var player = players.current();
-                    if (resultant.getType() != EntityType.NAVY)
+                    List<Hex> path = range.get(field.getHex());
+
+                    if (field.isOwned(player))
                     {
-                        List<Hex> path = range.get(field.getHex());
-
-                        if (field.isOwned(player))
-                        {
-                            path.add(field.getHex());
-                        }
-
-                        Set<Hex> way = makeWay(path);
-
-                        for (var hex : way)
-                        {
-                            AbstractField passedField = world.getFieldAt(hex);
-                            player.capture(passedField);
-                        }
+                        path.add(field.getHex());
                     }
-                    else
+
+                    Set<Hex> way = makeWay(path);
+
+                    for (var hex : way)
                     {
-                        if (origin.isMarine())
-                        {
-                            player.release(origin);
-                        }
-                        player.capture(field);
-                    }
+                        AbstractField passedField = world.getFieldAt(hex);
+                        player.capture(passedField);
+                    }                    
+                }
+                
+                AbstractEntity remainder = origin.getEntity();
+                
+                entity.setField(origin);
+                origin.setEntity(entity);
+                
+                if (remainder != null)
+                {
+                    entity.merge(remainder);
                 }
             }
             else
