@@ -363,8 +363,10 @@ public class Manager
             if (field != null && world.isMarked(field.getHex()))
             {
                 master.setMoney(players.current().buy(entity));
-                field.setEntity(entity);
-                entity.setField(field);
+                
+//                field.setEntity(entity);
+//                entity.setField(field);
+                field.pin(entity);
 
                 if (field.isCapital())
                 {
@@ -532,8 +534,11 @@ public class Manager
                 
                 var field = entity.getField();
                 entity.setField(null);
-                field.setEntity(extract);
-                extract.setField(field);
+                
+//                field.setEntity(extract);
+//                extract.setField(field);
+                field.pin(extract);
+                
                 // Now, `entity` "hangs fieldlessly in the air", and `extract` temporarily
                 // substitutes `entity` in the original field.
                 
@@ -589,8 +594,9 @@ public class Manager
                 
                 AbstractEntity remainder = origin.getEntity();
                 
-                entity.setField(origin);
-                origin.setEntity(entity);
+//                entity.setField(origin);
+//                origin.setEntity(entity);
+                entity.pin(origin);
                 
                 if (remainder != null)
                 {
@@ -601,6 +607,16 @@ public class Manager
             {
                 // Revert extraction: merge the extract back to the extrahend and place it
                 // onto the original field.
+                
+//                var origin = extract.getField();
+//                extract.setField(null);
+                var origin = extract.unpin();
+                
+//                origin.setEntity(entity);
+//                entity.setField(origin);
+                origin.pin(entity);
+                
+                entity.merge(extract);
             }
             entity = null;
             world.unmarkAll();

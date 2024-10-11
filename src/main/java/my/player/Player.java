@@ -26,7 +26,7 @@ public class Player
     private final WorldAccessor accessor;
 
     private int money;
-    private static final int INITIAL_MONEY = 10_000; // for testing
+    private static final int INITIAL_MONEY = 1000;
 
     public Player(PlayerType type, WorldAccessor accessor, WorldMarker marker)
     {
@@ -155,11 +155,5 @@ public class Player
     public void endRound()
     {
         money += country.getIncome();
-    }
-
-    @Override
-    public String toString()
-    {
-        return String.format("Player@[type=%s, color=%s, name=%s]", type, color, name);
     }
 }

@@ -48,7 +48,7 @@ public class CapitalField extends AbstractField implements Fortification, Spawne
         
         if (!hasEntity() && 0.13 * size.height > 9)
         {
-            String bar = String.format("D%d", DEFAULT_FORTITUDE);
+            String bar = String.format("D%d", fortitude);
             
             AttributedString attributedBar = new AttributedString(bar);
             attributedBar.addAttribute(TextAttribute.SIZE, 0.13 * size.height);

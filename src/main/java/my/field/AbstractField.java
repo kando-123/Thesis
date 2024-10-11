@@ -174,6 +174,33 @@ public abstract class AbstractField
     {
         return entity != null;
     }
+    
+    public AbstractEntity unpin()
+    {
+        entity.setField(null);
+        
+        var oldEntity = entity;
+        entity = null;
+        
+        return oldEntity;
+    }
+    
+    public AbstractEntity pin(AbstractEntity newEntity)
+    {
+        if (entity != null)
+        {
+            entity.setField(null);
+        }
+        var oldEntity = entity;
+        
+        entity = newEntity;
+        if (entity != null)
+        {
+            entity.setField(this);
+        }
+        
+        return oldEntity;
+    }
 
     private AbstractEntity move(AbstractEntity comer)
     {

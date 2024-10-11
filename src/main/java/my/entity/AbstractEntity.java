@@ -264,6 +264,42 @@ public abstract class AbstractEntity
     {
         return field;
     }
+    
+    public void occupy(AbstractField newField)
+    {
+        field = newField;
+        if (field != null)
+        {
+            field.setEntity(this);
+        }
+    }
+    
+    public AbstractField pin(AbstractField newField)
+    {
+        if (field != null)
+        {
+            field.setEntity(null);
+        }
+        var oldField = field;
+        
+        field = newField;
+        if (field != null)
+        {
+            field.setEntity(this);
+        }
+        
+        return oldField;
+    }
+    
+    public AbstractField unpin()
+    {
+        field.setEntity(null);
+        
+        var oldField = field;
+        field = null;
+        
+        return oldField;
+    }
 
     /* Arithmetics */
     public int computePrice()
