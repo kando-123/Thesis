@@ -10,18 +10,20 @@ import my.world.WorldAccessor;
  */
 public class VillageField extends CommercialField
 {
+    private static final int INCOME = 25;
+    
     public VillageField()
     {
         super(FieldType.VILLAGE);
         
         priceIntercept = 150;
-        priceSlope = 25;
+        priceSlope = 15;
     }
 
     @Override
     public String getDescription()
     {
-        return "Village brings extra HexCoin after every round.";
+        return String.format("Village brings extra %d Ħ after every round.", INCOME);
     }
 
     @Override
@@ -43,6 +45,6 @@ public class VillageField extends CommercialField
     @Override
     public int getIncome()
     {
-        return 100;
+        return INCOME;
     }
 }

@@ -10,18 +10,20 @@ import my.world.WorldAccessor;
  */
 public class MineField extends CommercialField
 {
+    private static final int INCOME = 100;
+    
     public MineField()
     {
         super(FieldType.MINE);
         
-        priceIntercept = 200;
-        priceSlope = 50;
+        priceIntercept = 250;
+        priceSlope = 25;
     }
 
     @Override
     public String getDescription()
     {
-        return "Mine brings extra HexCoins after every round.";
+        return String.format("Mine brings extra %d Ħ after every round.", INCOME);
     }
 
     @Override
@@ -43,6 +45,6 @@ public class MineField extends CommercialField
     @Override
     public int getIncome()
     {
-        return 100;
+        return INCOME;
     }
 }

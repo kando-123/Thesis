@@ -16,7 +16,7 @@ public class BarracksField extends SpawnerField
         super(FieldType.BARRACKS);
         
         priceIntercept = 250;
-        priceSlope = 50;
+        priceSlope = 25;
     }
 
     @Override

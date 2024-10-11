@@ -27,8 +27,8 @@ public class FortressField extends FortificationField
     {
         super(FieldType.FORTRESS);
 
-        priceIntercept = 400;
-        priceSlope = 100;
+        priceIntercept = 600;
+        priceSlope = 50;
 
         level = 0;
         fortitude = FORTITUDE[level];

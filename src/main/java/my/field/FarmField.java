@@ -10,6 +10,8 @@ import my.world.WorldAccessor;
  */
 public class FarmField extends CommercialField
 {
+    private static final int INCOME = 50;
+    
     public FarmField()
     {
         super(FieldType.FARMFIELD);
@@ -21,7 +23,7 @@ public class FarmField extends CommercialField
     @Override
     public String getDescription()
     {
-        return "Farmfield brings extra HexCoins after every round.";
+        return String.format("Farmfield brings extra %d Ħ after every round.", INCOME);
     }
 
     @Override
@@ -54,6 +56,6 @@ public class FarmField extends CommercialField
     @Override
     public int getIncome()
     {
-        return 100;
+        return INCOME;
     }
 }

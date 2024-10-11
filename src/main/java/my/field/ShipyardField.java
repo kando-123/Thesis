@@ -16,7 +16,7 @@ public class ShipyardField extends SpawnerField
         super(FieldType.SHIPYARD);
 
         priceIntercept = 600;
-        priceSlope = 75;
+        priceSlope = 100;
     }
 
     @Override
