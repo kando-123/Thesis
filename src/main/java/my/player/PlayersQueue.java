@@ -121,4 +121,19 @@ public class PlayersQueue
     {
         return queue.getLast();
     }
+    
+    public void remove(Player loser)
+    {
+        queue.remove(loser);
+    }
+    
+    public int users()
+    {
+        return (int) queue.stream().filter((p) -> p.getType() == PlayerType.USER).count();
+    }
+    
+    public int bots()
+    {
+        return (int) queue.stream().filter((p) -> p.getType() == PlayerType.BOT).count();
+    }
 }

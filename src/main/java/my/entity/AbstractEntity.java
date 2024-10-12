@@ -293,7 +293,10 @@ public abstract class AbstractEntity
     
     public AbstractField unpin()
     {
-        field.setEntity(null);
+        if (field != null)
+        {
+            field.setEntity(null);
+        }
         
         var oldField = field;
         field = null;

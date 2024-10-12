@@ -18,6 +18,7 @@ import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
 import my.field.AbstractField;
 import my.field.BuildingField;
+import my.field.CapitalField;
 import my.gui.BuildingInfoDialog;
 import my.gui.BuildingPurchaseDialog;
 import my.gui.EntityExtractionDialog;
@@ -102,7 +103,6 @@ public class Manager
         buildingManager.pursue();
     }
 
-    /* -------------------- EntityManager? -------------------- */
     public void showEntityInfo(AbstractEntity entity)
     {
         entityManager.showInfo(entity);
@@ -118,7 +118,6 @@ public class Manager
         entityManager.pursue();
     }
 
-    /* -------------------- Manager -> ... -------------------- */
     public void handleFieldClick(AbstractField field)
     {
         switch (state)
@@ -157,6 +156,13 @@ public class Manager
     public void pursueExtraction(int number)
     {
         extractionManager.pursue(number);
+    }
+    
+    public void conquerCountry(Player loser)
+    {
+        JOptionPane.showMessageDialog(master, "%s loses!".formatted(loser.getName()), "Vae victis!", JOptionPane.INFORMATION_MESSAGE);
+        loser.die();
+        players.remove(loser);
     }
 
     public void undo()
@@ -363,9 +369,6 @@ public class Manager
             if (field != null && world.isMarked(field.getHex()))
             {
                 master.setMoney(players.current().buy(entity));
-                
-//                field.setEntity(entity);
-//                entity.setField(field);
                 field.pin(entity);
 
                 if (field.isCapital())
@@ -411,6 +414,8 @@ public class Manager
             if (field != null && world.isMarked(field.getHex()))
             {
                 AbstractField origin = entity.getField();
+                
+                Player previousOwner = field.getOwner();
                 AbstractEntity resultant = field.interact(entity);
 
                 if (resultant != null)
@@ -431,6 +436,11 @@ public class Manager
                         {
                             AbstractField passedField = world.getFieldAt(hex);
                             player.capture(passedField);
+                        }
+                        
+                        if (field.isCapital() && previousOwner != player)
+                        {
+                            conquerCountry(previousOwner);
                         }
                     }
                     else
@@ -535,8 +545,6 @@ public class Manager
                 var field = entity.getField();
                 entity.setField(null);
                 
-//                field.setEntity(extract);
-//                extract.setField(field);
                 field.pin(extract);
                 
                 // Now, `entity` "hangs fieldlessly in the air", and `extract` temporarily
@@ -593,9 +601,6 @@ public class Manager
                 }
                 
                 AbstractEntity remainder = origin.getEntity();
-                
-//                entity.setField(origin);
-//                origin.setEntity(entity);
                 entity.pin(origin);
                 
                 if (remainder != null)
@@ -605,17 +610,7 @@ public class Manager
             }
             else
             {
-                // Revert extraction: merge the extract back to the extrahend and place it
-                // onto the original field.
-                
-//                var origin = extract.getField();
-//                extract.setField(null);
-                var origin = extract.unpin();
-                
-//                origin.setEntity(entity);
-//                entity.setField(origin);
-                origin.pin(entity);
-                
+                extract.unpin().pin(entity);
                 entity.merge(extract);
             }
             entity = null;

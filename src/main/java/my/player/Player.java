@@ -26,7 +26,7 @@ public class Player
     private final WorldAccessor accessor;
 
     private int money;
-    private static final int INITIAL_MONEY = 1000;
+    private static final int INITIAL_MONEY = 10_000;
 
     public Player(PlayerType type, WorldAccessor accessor, WorldMarker marker)
     {
@@ -155,5 +155,10 @@ public class Player
     public void endRound()
     {
         money += country.getIncome();
+    }
+    
+    public void die()
+    {
+        country.release();
     }
 }

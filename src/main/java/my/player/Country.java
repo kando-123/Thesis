@@ -115,4 +115,14 @@ public class Country
         }
         return income;
     }
+    
+    public void release()
+    {
+        for (var hex : territory)
+        {
+            var field = accessor.getFieldAt(hex);
+            field.unpin();
+            field.setOwner(null);
+        }
+    }
 }
