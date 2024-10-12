@@ -2,9 +2,9 @@ package my.player;
 
 import java.util.HashSet;
 import java.util.Set;
-import my.unit.AbstractField;
-import my.unit.field.CommercialField;
-import my.unit.FieldType;
+import my.field.AbstractField;
+import my.field.CommercialField;
+import my.field.FieldType;
 import my.utils.Hex;
 import my.world.WorldAccessor;
 import my.world.WorldMarker;
@@ -38,14 +38,14 @@ public class Country
         return capital;
     }
 
-    public void addField(AbstractField field)
+    public void addHex(Hex hex)
     {
-        territory.add(field.getHex());
+        territory.add(hex);
     }
 
-    public void removeField(AbstractField field)
+    public void removeHex(Hex hex)
     {
-        territory.remove(field.getHex());
+        territory.remove(hex);
     }
 
     public int count(FieldType type)

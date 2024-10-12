@@ -9,16 +9,15 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 //import java.util.Stack;
 import my.command.Invoker;
-import my.unit.AbstractEntity;
-import my.unit.EntityType;
+import my.entity.AbstractEntity;
+import my.entity.EntityType;
 import my.gui.EntityInfoDialog;
 import my.gui.EntityPurchaseDialog;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
-import my.unit.AbstractField;
-import my.unit.field.BuildingField;
-import my.unit.field.CapitalField;
+import my.field.AbstractField;
+import my.field.BuildingField;
 import my.gui.BuildingInfoDialog;
 import my.gui.BuildingPurchaseDialog;
 import my.gui.EntityExtractionDialog;
@@ -53,26 +52,27 @@ public class Manager
 //    private Stack<ReversibleCommand> executedCommands;
 //    private Stack<ReversibleCommand> undoneCommands;
 
-    private final BuildingPurchaseManager buildingManager;
+    private final BuildingManager buildingManager;
+    
     private final EntityPurchaseManager entityManager;
     private final MovementManager movementManager;
     private final ExtractionManager extractionManager;
 
-    public Manager(Master master, WorldConfiguration worldConfiguration, List<PlayerConfiguration> playerConfigurations)
+    public Manager(Master master, WorldConfiguration worldConfig, List<PlayerConfiguration> playerConfigs)
     {
         this.master = master;
 
         state = State.IDLE;
 
-        world = new World(worldConfiguration);
-        players = new PlayersQueue(playerConfigurations, world.createAccessor(), world.createMarker());
+        world = new World(worldConfig);
+        players = new PlayersQueue(playerConfigs, world.createAccessor(), world.createMarker());
 
-        Hex[] capitals = world.locateCapitals(playerConfigurations.size());
+        Hex[] capitals = world.locateCapitals(playerConfigs.size());
         players.initCountries(capitals, world);
 
 //        executedCommands = new Stack();
 //        undoneCommands = new Stack();
-        buildingManager = new BuildingPurchaseManager();
+        buildingManager = new BuildingManager(master, world.createMarker(), world.createMutator());
         entityManager = new EntityPurchaseManager();
         movementManager = new MovementManager();
         extractionManager = new ExtractionManager();
@@ -95,11 +95,13 @@ public class Manager
 
     public void beginBuilding(BuildingField building)
     {
-        buildingManager.begin(building);
+        state = State.BUILDING_BEGUN;
+        buildingManager.begin(building, players.current(), createInvoker());
     }
 
     public void pursueBuilding()
     {
+        state = State.BUILDING_IN_PROGRESS;
         buildingManager.pursue();
     }
 
@@ -147,9 +149,16 @@ public class Manager
 
     public void handleFieldShiftClick(AbstractField field)
     {
-        if (field != null && field.hasEntity())
+        if (field != null)
         {
-            extractionManager.begin(field);
+            if (field.hasEntity())
+            {
+                extractionManager.begin(field);
+            }
+//            else if (/* is upgradeable */)
+//            {
+//                /* upgrade */
+//            }
         }
     }
 
@@ -195,99 +204,99 @@ public class Manager
         return new Invoker(this);
     }
 
-    private class BuildingPurchaseManager
-    {
-        private BuildingField building;
-        private BuildingPurchaseDialog dialog;
-
-        void showInfo(BuildingField building)
-        {
-            var info = new BuildingInfoDialog(master, building);
-            info.addWindowListener(new WindowAdapter()
-            {
-                @Override
-                public void windowClosing(WindowEvent e)
-                {
-                    master.requestFocus();
-                }
-            });
-            info.setVisible(true);
-        }
-
-        void begin(BuildingField building)
-        {
-            Player player = players.current();
-            if (!player.canBuild(building))
-            {
-                JOptionPane.showMessageDialog(master, """
-                        Unfortunately, you cannot buy this building.
-
-                        You do not have a place for this building.
-                        Shift-click the building's button for details.""");
-                master.requestFocus();
-            }
-            else if (!player.canAfford(building))
-            {
-                JOptionPane.showMessageDialog(master, """
-                        Unfortunately, you cannot buy this building.
-
-                        You do not have enough money for this building.
-                        Shift-click the building's button for details.""");
-                master.requestFocus();
-            }
-            else
-            {
-                state = State.BUILDING_BEGUN;
-                this.building = building;
-
-                var builder = new BuildingPurchaseDialog.Builder();
-                builder.setFrame(master);
-                builder.setInvoker(createInvoker());
-                builder.setBuilding(building);
-                builder.setPrice(players.current().computePriceFor(building));
-                dialog = builder.get();
-                dialog.addWindowListener(new WindowAdapter()
-                {
-                    @Override
-                    public void windowClosing(WindowEvent e)
-                    {
-                        state = Manager.State.IDLE;
-                        master.requestFocus();
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        }
-
-        void pursue()
-        {
-            if (state == State.BUILDING_BEGUN)
-            {
-                state = State.BUILDING_IN_PROGRESS;
-
-                dialog.setVisible(false);
-                dialog.dispose();
-                dialog = null;
-                players.current().markFor(building);
-
-                master.requestFocus();
-            }
-        }
-
-        void finish(AbstractField field)
-        {
-            if (field != null && world.isMarked(field.getHex()))
-            {
-                master.setMoney(players.current().buy(building));
-                world.substitute(field, building);
-            }
-            world.unmarkAll();
-            building = null;
-
-            state = State.IDLE;
-            master.requestFocus();
-        }
-    }
+//    private class BuildingPurchaseManager
+//    {
+//        private BuildingField building;
+//        private BuildingPurchaseDialog dialog;
+//
+//        void showInfo(BuildingField building)
+//        {
+//            var info = new BuildingInfoDialog(master, building);
+//            info.addWindowListener(new WindowAdapter()
+//            {
+//                @Override
+//                public void windowClosing(WindowEvent e)
+//                {
+//                    master.requestFocus();
+//                }
+//            });
+//            info.setVisible(true);
+//        }
+//
+//        void begin(BuildingField building)
+//        {
+//            Player player = players.current();
+//            if (!player.canBuild(building))
+//            {
+//                JOptionPane.showMessageDialog(master, """
+//                        Unfortunately, you cannot buy this building.
+//
+//                        You do not have a place for this building.
+//                        Shift-click the building's button for details.""");
+//                master.requestFocus();
+//            }
+//            else if (!player.canAfford(building))
+//            {
+//                JOptionPane.showMessageDialog(master, """
+//                        Unfortunately, you cannot buy this building.
+//
+//                        You do not have enough money for this building.
+//                        Shift-click the building's button for details.""");
+//                master.requestFocus();
+//            }
+//            else
+//            {
+//                state = State.BUILDING_BEGUN;
+//                this.building = building;
+//
+//                var builder = new BuildingPurchaseDialog.Builder();
+//                builder.setFrame(master);
+//                builder.setInvoker(createInvoker());
+//                builder.setBuilding(building);
+//                builder.setPrice(player.computePriceFor(building));
+//                dialog = builder.get();
+//                dialog.addWindowListener(new WindowAdapter()
+//                {
+//                    @Override
+//                    public void windowClosing(WindowEvent e)
+//                    {
+//                        state = Manager.State.IDLE;
+//                        master.requestFocus();
+//                    }
+//                });
+//                dialog.setVisible(true);
+//            }
+//        }
+//
+//        void pursue()
+//        {
+//            if (state == State.BUILDING_BEGUN)
+//            {
+//                state = State.BUILDING_IN_PROGRESS;
+//
+//                dialog.setVisible(false);
+//                dialog.dispose();
+//                dialog = null;
+//                players.current().markFor(building);
+//
+//                master.requestFocus();
+//            }
+//        }
+//
+//        void finish(AbstractField field)
+//        {
+//            if (field != null && world.isMarked(field.getHex()))
+//            {
+//                master.setMoney(players.current().buy(building));
+//                world.substitute(field, building);
+//            }
+//            world.unmarkAll();
+//            building = null;
+//
+//            state = State.IDLE;
+//            master.requestFocus();
+//        }
+//    }
 
     private class EntityPurchaseManager
     {
@@ -447,7 +456,7 @@ public class Manager
                     {
                         if (origin.isMarine())
                         {
-                            player.release(origin);
+                            origin.setOwner(null);
                         }
                         player.capture(field);
                     }

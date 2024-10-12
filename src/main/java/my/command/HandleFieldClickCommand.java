@@ -1,7 +1,7 @@
 package my.command;
 
 import my.flow.Manager;
-import my.unit.AbstractField;
+import my.field.AbstractField;
 
 /**
  *

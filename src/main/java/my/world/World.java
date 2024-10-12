@@ -11,14 +11,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
-import my.unit.AbstractField;
-import my.unit.field.CapitalField;
-import my.unit.FieldType;
-import my.unit.field.GrassField;
-import my.unit.field.MeadowField;
-import my.unit.field.MountainsField;
-import my.unit.field.SeaField;
-import my.unit.field.WoodField;
+import my.field.AbstractField;
+import my.field.CapitalField;
+import my.field.FieldType;
+import my.field.GrassField;
+import my.field.MeadowField;
+import my.field.MountainsField;
+import my.field.SeaField;
+import my.field.WoodField;
 import my.utils.Doublet;
 import my.utils.Hex;
 import my.utils.HexagonalDirection;
@@ -891,5 +891,10 @@ public class World
     public WorldAccessor createAccessor()
     {
         return new WorldAccessor(this);
+    }
+    
+    public WorldMutator createMutator()
+    {
+        return new WorldMutator(this);
     }
 }

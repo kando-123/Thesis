@@ -1,6 +1,6 @@
 package my.command;
 
-import my.unit.AbstractEntity;
+import my.entity.AbstractEntity;
 import my.flow.Manager;
 
 /**

@@ -9,7 +9,7 @@ import my.command.BeginBuildingCommand;
 import my.command.BuildingInfoCommand;
 import my.command.Command;
 import my.command.Invoker;
-import my.unit.field.BuildingField;
+import my.field.BuildingField;
 
 /**
  *

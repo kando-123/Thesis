@@ -1,10 +1,10 @@
 package my.player;
 
 import java.awt.image.BufferedImage;
-import my.unit.AbstractEntity;
+import my.entity.AbstractEntity;
 import my.utils.Hex;
-import my.unit.AbstractField;
-import my.unit.field.BuildingField;
+import my.field.AbstractField;
+import my.field.BuildingField;
 import my.world.WorldAccessor;
 import my.world.WorldMarker;
 
@@ -77,13 +77,12 @@ public class Player
     public void capture(AbstractField field)
     {
         field.setOwner(this);
-        country.addField(field);
+        country.addHex(field.getHex());
     }
 
-    public void release(AbstractField field)
+    public void release(Hex hex)
     {
-        field.setOwner(null);
-        country.removeField(field);
+        country.removeHex(hex);
     }
 
     public Hex setCapital(Hex newCapital)

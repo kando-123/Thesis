@@ -1,6 +1,5 @@
 package my.command;
 
-/*import my.field.BuildingField;*/
 import my.flow.Manager;
 
 /**
@@ -10,8 +9,8 @@ import my.flow.Manager;
 public class PursueBuildingCommand extends Command<Manager>
 {
     @Override
-    public void execute(Manager manager)
+    public void execute(Manager executor)
     {
-        manager.pursueBuilding();
+        executor.pursueBuilding();
     }
 }

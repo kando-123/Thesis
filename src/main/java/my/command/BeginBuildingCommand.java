@@ -1,6 +1,6 @@
 package my.command;
 
-import my.unit.field.BuildingField;
+import my.field.BuildingField;
 import my.flow.Manager;
 
 /**

@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import my.command.Invoker;
 import my.command.PursueBuildingCommand;
-import my.unit.field.BuildingField;
+import my.field.BuildingField;
 import my.flow.Manager;
 
 /**

@@ -18,11 +18,11 @@ import my.command.Invoker;
 import my.command.NextPlayerCommand;
 import my.command.RedoCommand;
 import my.command.UndoCommand;
-import my.unit.AbstractEntity;
-import my.unit.EntityType;
-import my.unit.AbstractField;
-import my.unit.field.BuildingField;
-import my.unit.FieldType;
+import my.entity.AbstractEntity;
+import my.entity.EntityType;
+import my.field.AbstractField;
+import my.field.BuildingField;
+import my.field.FieldType;
 import my.player.Player;
 
 /**
