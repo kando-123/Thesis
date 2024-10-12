@@ -1,6 +1,6 @@
 package my.world;
 
-import my.field.AbstractField;
+import my.unit.AbstractField;
 import my.utils.Hex;
 
 /**

@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import my.command.HandleFieldClickCommand;
 import my.command.HandleFieldShiftClickCommand;
 import my.command.Invoker;
-import my.field.AbstractField;
+import my.unit.AbstractField;
 import my.utils.Doublet;
 import my.utils.Hex;
 import my.world.OrthogonalDirection;

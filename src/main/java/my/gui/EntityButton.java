@@ -9,7 +9,7 @@ import my.command.BeginHiringCommand;
 import my.command.EntityInfoCommand;
 import my.command.Command;
 import my.command.Invoker;
-import my.entity.AbstractEntity;
+import my.unit.AbstractEntity;
 
 /**
  *

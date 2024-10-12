@@ -15,9 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import my.command.Invoker;
 import my.command.PursueExtractionCommand;
-import my.entity.AbstractEntity;
-import my.entity.EntityAssetManager;
-import my.entity.EntityType;
+import my.unit.AbstractEntity;
+import my.unit.EntityAssetManager;
+import my.unit.EntityType;
 import my.utils.Spinner;
 import my.flow.Manager;
 

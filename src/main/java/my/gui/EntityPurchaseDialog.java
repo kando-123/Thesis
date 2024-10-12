@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import my.command.Invoker;
 import my.command.PursueHiringCommand;
-import my.entity.AbstractEntity;
+import my.unit.AbstractEntity;
 import my.utils.Spinner;
 import my.flow.Manager;
 

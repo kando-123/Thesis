@@ -9,16 +9,16 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 //import java.util.Stack;
 import my.command.Invoker;
-import my.entity.AbstractEntity;
-import my.entity.EntityType;
+import my.unit.AbstractEntity;
+import my.unit.EntityType;
 import my.gui.EntityInfoDialog;
 import my.gui.EntityPurchaseDialog;
 import my.player.Player;
 import my.player.PlayerConfiguration;
 import my.player.PlayersQueue;
-import my.field.AbstractField;
-import my.field.BuildingField;
-import my.field.CapitalField;
+import my.unit.AbstractField;
+import my.unit.field.BuildingField;
+import my.unit.field.CapitalField;
 import my.gui.BuildingInfoDialog;
 import my.gui.BuildingPurchaseDialog;
 import my.gui.EntityExtractionDialog;
@@ -541,11 +541,7 @@ public class Manager
             try
             {
                 extract = entity.extract(number);
-                
-                var field = entity.getField();
-                entity.setField(null);
-                
-                field.pin(extract);
+                entity.unpin().pin(extract);
                 
                 // Now, `entity` "hangs fieldlessly in the air", and `extract` temporarily
                 // substitutes `entity` in the original field.

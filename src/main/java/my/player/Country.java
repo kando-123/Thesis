@@ -2,9 +2,9 @@ package my.player;
 
 import java.util.HashSet;
 import java.util.Set;
-import my.field.AbstractField;
-import my.field.CommercialField;
-import my.field.FieldType;
+import my.unit.AbstractField;
+import my.unit.field.CommercialField;
+import my.unit.FieldType;
 import my.utils.Hex;
 import my.world.WorldAccessor;
 import my.world.WorldMarker;

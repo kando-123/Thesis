@@ -1,10 +1,10 @@
 package my.player;
 
 import java.awt.image.BufferedImage;
-import my.entity.AbstractEntity;
+import my.unit.AbstractEntity;
 import my.utils.Hex;
-import my.field.AbstractField;
-import my.field.BuildingField;
+import my.unit.AbstractField;
+import my.unit.field.BuildingField;
 import my.world.WorldAccessor;
 import my.world.WorldMarker;
 

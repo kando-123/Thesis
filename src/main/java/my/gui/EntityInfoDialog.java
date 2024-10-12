@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import my.entity.AbstractEntity;
+import my.unit.AbstractEntity;
 
 /**
  *
