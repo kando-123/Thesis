@@ -106,6 +106,7 @@ public class BuildingManager
     {
         build(building, field);
         building = null;
+        player = null;
     }
 
     public void build(BuildingField newBuilding, AbstractField oldField)
@@ -117,10 +118,5 @@ public class BuildingManager
         }
         marker.unmarkAll();
         master.requestFocus();
-    }
-    
-    private Invoker<BuildingManager> createInvoker()
-    {
-        return new Invoker<>(this);
     }
 }
