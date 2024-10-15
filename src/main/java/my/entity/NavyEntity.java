@@ -1,7 +1,5 @@
 package my.entity;
 
-import my.entity.EntityType;
-import my.entity.AbstractEntity;
 import my.field.AbstractField;
 import my.world.WorldAccessor;
 

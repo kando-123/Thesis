@@ -23,7 +23,6 @@ import my.utils.Doublet;
 import my.utils.Hex;
 import my.world.WorldAccessor;
 
-// A builder might be suitable.
 /**
  *
  * @author Kay Jay O'Nail
