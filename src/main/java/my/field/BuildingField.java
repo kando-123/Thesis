@@ -1,7 +1,5 @@
 package my.field;
 
-import my.field.FieldType;
-import my.field.AbstractField;
 import my.player.UnaryPredicate;
 import my.utils.Hex;
 import my.world.WorldAccessor;

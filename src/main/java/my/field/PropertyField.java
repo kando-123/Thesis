@@ -1,8 +1,5 @@
 package my.field;
 
-import my.field.FieldType;
-import my.field.AbstractField;
-
 /**
  *
  * @author Kay Jay O'Nail

@@ -1,7 +1,5 @@
 package my.field;
 
-import my.field.FieldType;
-
 /**
  *
  * @author Kay Jay O'Nail

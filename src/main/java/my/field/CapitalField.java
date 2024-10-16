@@ -1,12 +1,10 @@
 package my.field;
 
-import my.field.AbstractField;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
-import my.field.FieldType;
 import my.entity.AbstractEntity;
 import my.utils.Doublet;
 

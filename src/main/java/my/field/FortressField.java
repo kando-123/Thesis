@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
-import my.field.FieldType;
 import my.player.UnaryPredicate;
 import my.utils.Doublet;
 import my.utils.Hex;

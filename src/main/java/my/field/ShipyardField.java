@@ -1,6 +1,5 @@
 package my.field;
 
-import my.field.FieldType;
 import my.entity.AbstractEntity;
 import my.player.UnaryPredicate;
 import my.utils.Hex;
