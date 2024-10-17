@@ -11,6 +11,6 @@ public class BeginWorldConfigCommand extends Command<GUIManager>
     @Override
     public void execute(GUIManager executor)
     {
-        //executor.beginWorldConfig();
+        executor.beginWorldConfig();
     }
 }

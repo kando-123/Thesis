@@ -1,6 +1,9 @@
 package ge.main;
 
+import ge.gui.GUIManager;
 import ge.gui.PlayerConfigContentPane;
+import ge.player.PlayerManager;
+import ge.world.WorldManager;
 import javax.swing.JFrame;
 
 /**
@@ -23,5 +26,9 @@ public class Engine
 
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+        
+        var guiManager = new GUIManager();
+        var worldManager = new WorldManager();
+        var playerManager = new PlayerManager();
     }
 }

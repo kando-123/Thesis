@@ -1,7 +1,6 @@
 package ge.gui;
 
-import ge.player.AbstractPlayer;
-import ge.player.PlayerColor;
+import ge.player.*;
 import ge.utilities.*;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -54,6 +53,16 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         add(button, c);
     }
 
+    public int getSelected()
+    {
+        return userSelection.getSelected() + botSelection.getSelected();
+    }
+
+    public PlayerConfig[] getConfigs()
+    {
+        return null;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -71,6 +80,8 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         private final HashMap<Integer, JRadioButton> radioButtons;
         private final HashMap<Integer, JTextField> textFields;
         private final HashMap<Integer, JComboBox> comboBoxes;
+
+        private int selected;
 
         public UserSelectionPanel()
         {
@@ -112,6 +123,16 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             }
         }
 
+        int getSelected()
+        {
+            return selected;
+        }
+
+        PlayerConfig[] getConfigs()
+        {
+            return null;
+        }
+
         @Override
         public void actionPerformed(ActionEvent e)
         {
@@ -121,26 +142,45 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
     private class BotSelectionPanel extends JPanel implements ActionListener
     {
-        private final int minimum = 0;
+        private final int minimum = 1;
         private final int maximum = AbstractPlayer.MAX_PLAYERS_COUNT - 1;
 
         private final HashMap<Integer, JRadioButton> radioButtons;
+        private final HashMap<Integer, JLabel> nameLabels;
         private final HashMap<Integer, JComboBox> comboBoxes;
+
+        private int selected;
 
         public BotSelectionPanel()
         {
             super(new GridBagLayout());
 
             radioButtons = new HashMap<>(maximum - minimum + 1);
+            nameLabels = new HashMap<>(maximum - minimum + 1);
             comboBoxes = new HashMap<>(maximum - minimum + 1);
 
             var c = new GridBagConstraints();
             c.weightx = c.weighty = 1;
             var group = new ButtonGroup();
+
+            c.gridx = 0;
+            c.gridy = 0;
+            var noBotsButton = new JRadioButton("0");
+            noBotsButton.setActionCommand("NUM=0");
+            noBotsButton.addActionListener(this);
+            group.add(noBotsButton);
+            radioButtons.put(0, noBotsButton);
+            add(noBotsButton, c);
+
+            c.gridx = 1;
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            add(new JLabel("play without bots"), c);
+            c.gridwidth = 1;
+
             for (int i = minimum; i <= maximum; ++i)
             {
                 c.gridx = 0;
-                c.gridy = i - minimum;
+                c.gridy = 1 + i - minimum;
 
                 var button = new JRadioButton(String.valueOf(i));
                 var command = String.format("NUM=%d", i);
@@ -150,30 +190,30 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                 radioButtons.put(i, button);
                 add(button, c);
 
-                if (i > 0)
-                {
-                    c.gridx = 1;
-                    var name = String.format("Bot #%d", i);
-                    var field = new JLabel(name);
-                    field.setMinimumSize(new Dimension(60, 20));
-                    add(field, c);
+                c.gridx = 1;
+                var name = String.format("Bot #%d", i);
+                var label = new JLabel(name);
+                label.setMinimumSize(new Dimension(60, 20));
+                nameLabels.put(i, label);
+                add(label, c);
 
-                    c.gridx = 2;
-                    var model = new ColorModel();
-                    model.addActionListener(this);
-                    var combo = new JComboBox(model);
-                    comboBoxes.put(i, combo);
-                    add(combo, c);
-                }
-                else
-                {
-                    c.gridx = 1;
-                    c.gridwidth = GridBagConstraints.REMAINDER;
-                    add(new JLabel("no bots"), c);
-                    
-                    c.gridwidth = 1;
-                }
+                c.gridx = 2;
+                var model = new ColorModel();
+                model.addActionListener(this);
+                var combo = new JComboBox(model);
+                comboBoxes.put(i, combo);
+                add(combo, c);
             }
+        }
+
+        int getSelected()
+        {
+            return selected;
+        }
+
+        PlayerConfig[] getConfigs()
+        {
+            return null;
         }
 
         @Override
@@ -263,7 +303,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                     var selected = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, selection);
                     listener.actionPerformed(selected);
                 }
-                
+
                 selectedColor = newColor;
             }
         }

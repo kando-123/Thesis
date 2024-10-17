@@ -11,6 +11,6 @@ public class BeginGameplayCommand extends Command<GUIManager>
     @Override
     public void execute(GUIManager executor)
     {
-        //executor.beginGameplay();
+        executor.beginGameplay();
     }
 }
