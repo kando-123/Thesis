@@ -21,16 +21,16 @@ public class InvitationContentPane extends JPanel implements ActionListener
         
         this.invoker = invoker;
         
-        GridBagConstraints c = new GridBagConstraints();
+        var c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
         try
         {
-            InputStream stream = getClass().getResourceAsStream("/Logo/Logo.png");
-            Image image = ImageIO.read(stream);
-            Icon icon = new ImageIcon(image);
-            JLabel imageLabel = new JLabel(icon);
+            var stream = getClass().getResourceAsStream("/Logo/Logo.png");
+            var image = ImageIO.read(stream);
+            var icon = new ImageIcon(image);
+            var imageLabel = new JLabel(icon);
             add(imageLabel, c);
         }
         catch (IOException e)
@@ -38,12 +38,8 @@ public class InvitationContentPane extends JPanel implements ActionListener
             add(new JLabel(e.toString()), c);
         }
         
-        /* Play button. */
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.fill = GridBagConstraints.BOTH;
-        JButton playButton = new JButton();
+        ++c.gridy;
+        var playButton = new JButton();
         playButton.setText("Play");
         playButton.setActionCommand("->players");
         playButton.addActionListener(this);

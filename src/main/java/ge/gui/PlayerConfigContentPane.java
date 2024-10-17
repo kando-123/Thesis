@@ -43,6 +43,9 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         botSelection = new BotSelectionPanel();
         tabbedPane.add("Bots", botSelection);
 
+        botSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - UserSelectionPanel.DEFAULT_SELECTION);
+        userSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - BotSelectionPanel.DEFAULT_SELECTION);
+
         var button = new JButton("Ready");
         button.setActionCommand("->world");
         button.addActionListener(this);
@@ -82,8 +85,11 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         private final HashMap<Integer, JComboBox> comboBoxes;
 
         private int selected;
+        private int limit;
 
-        public UserSelectionPanel()
+        static final int DEFAULT_SELECTION = 1;
+
+        UserSelectionPanel()
         {
             super(new GridBagLayout());
 
@@ -121,6 +127,28 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                 comboBoxes.put(i, combo);
                 add(combo, c);
             }
+
+            radioButtons.get(DEFAULT_SELECTION).setSelected(true);
+        }
+
+        void setLimit(int newLimit)
+        {
+            assert (newLimit >= minimum && newLimit <= maximum);
+
+            limit = newLimit;
+
+            for (int i = minimum; i <= maximum; ++i)
+            {
+                var radio = radioButtons.get(i);
+                var text = textFields.get(i);
+                var combo = comboBoxes.get(i);
+
+                boolean enabled = (i <= limit);
+
+                radio.setEnabled(enabled);
+                text.setEnabled(enabled);
+                combo.setEnabled(enabled);
+            }
         }
 
         int getSelected()
@@ -133,10 +161,71 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             return null;
         }
 
+        void addColor(PlayerColor color, Object exception)
+        {
+            for (var combo : comboBoxes.values())
+            {
+                var model = (ColorModel) combo.getModel();
+                if (model != exception)
+                {
+                    model.addElement(color);
+                }
+            }
+        }
+
+        void addColor(PlayerColor color)
+        {
+            addColor(color, null);
+        }
+
+        void removeColor(PlayerColor color, Object exception)
+        {
+            for (var combo : comboBoxes.values())
+            {
+                var model = (ColorModel) combo.getModel();
+                if (model != exception)
+                {
+                    model.removeElement(color);
+                }
+            }
+        }
+
+        void removeColor(PlayerColor color)
+        {
+            removeColor(color, null);
+        }
+
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println(e.getActionCommand());
+            var stringlets = e.getActionCommand().split("=");
+            switch (stringlets[0])
+            {
+                case "NUM" ->
+                {
+                    int number = Integer.parseInt(stringlets[1]);
+                    int botLimit = AbstractPlayer.MAX_PLAYERS_COUNT - number;
+                    botSelection.setLimit(botLimit);
+                }
+                case "DES" ->
+                {
+                    var color = PlayerColor.valueOf(stringlets[1]);
+                    if (color != PlayerColor.RANDOM)
+                    {
+                        addColor(color, e.getSource());
+                        botSelection.addColor(color);
+                    }
+                }
+                case "SEL" ->
+                {
+                    var color = PlayerColor.valueOf(stringlets[1]);
+                    if (color != PlayerColor.RANDOM)
+                    {
+                        removeColor(color, e.getSource());
+                        botSelection.removeColor(color);
+                    }
+                }
+            }
         }
     }
 
@@ -150,8 +239,11 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         private final HashMap<Integer, JComboBox> comboBoxes;
 
         private int selected;
+        private int limit;
 
-        public BotSelectionPanel()
+        static final int DEFAULT_SELECTION = 1;
+
+        BotSelectionPanel()
         {
             super(new GridBagLayout());
 
@@ -204,6 +296,26 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                 comboBoxes.put(i, combo);
                 add(combo, c);
             }
+
+            radioButtons.get(DEFAULT_SELECTION).setSelected(true);
+        }
+
+        void setLimit(int newLimit)
+        {
+            assert (newLimit >= minimum && newLimit <= maximum);
+
+            limit = newLimit;
+
+            for (int i = minimum; i <= maximum; ++i)
+            {
+                var radio = radioButtons.get(i);
+                var combo = comboBoxes.get(i);
+
+                boolean enabled = (i <= limit);
+
+                radio.setEnabled(enabled);
+                combo.setEnabled(enabled);
+            }
         }
 
         int getSelected()
@@ -216,10 +328,71 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             return null;
         }
 
+        void addColor(PlayerColor color, Object exception)
+        {
+            for (var combo : comboBoxes.values())
+            {
+                var model = (ColorModel) combo.getModel();
+                if (model != exception)
+                {
+                    model.addElement(color);
+                }
+            }
+        }
+
+        void addColor(PlayerColor color)
+        {
+            addColor(color, null);
+        }
+
+        void removeColor(PlayerColor color, Object exception)
+        {
+            for (var combo : comboBoxes.values())
+            {
+                var model = (ColorModel) combo.getModel();
+                if (model != exception)
+                {
+                    model.removeElement(color);
+                }
+            }
+        }
+
+        void removeColor(PlayerColor color)
+        {
+            removeColor(color, null);
+        }
+
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            System.out.println(e.getActionCommand());
+            var stringlets = e.getActionCommand().split("=");
+            switch (stringlets[0])
+            {
+                case "NUM" ->
+                {
+                    int number = Integer.parseInt(stringlets[1]);
+                    int userLimit = AbstractPlayer.MAX_PLAYERS_COUNT - number;
+                    userSelection.setLimit(userLimit);
+                }
+                case "DES" ->
+                {
+                    var color = PlayerColor.valueOf(stringlets[1]);
+                    if (color != PlayerColor.RANDOM)
+                    {
+                        addColor(color, e.getSource());
+                        userSelection.addColor(color);
+                    }
+                }
+                case "SEL" ->
+                {
+                    var color = PlayerColor.valueOf(stringlets[1]);
+                    if (color != PlayerColor.RANDOM)
+                    {
+                        removeColor(color, e.getSource());
+                        userSelection.removeColor(color);
+                    }
+                }
+            }
         }
     }
 

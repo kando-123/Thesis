@@ -1,10 +1,8 @@
 package ge.main;
 
 import ge.gui.GUIManager;
-import ge.gui.PlayerConfigContentPane;
 import ge.player.PlayerManager;
 import ge.world.WorldManager;
-import javax.swing.JFrame;
 
 /**
  *
@@ -14,19 +12,6 @@ public class Engine
 {
     public static void main(String[] args)
     {
-        var frame = new JFrame();
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("The Global Empire");
-        frame.setResizable(false);
-
-        var contentPane = new PlayerConfigContentPane(null);
-        frame.setContentPane(contentPane);
-        frame.pack();
-
-        frame.setVisible(true);
-        frame.setLocationRelativeTo(null);
-        
         var guiManager = new GUIManager();
         var worldManager = new WorldManager();
         var playerManager = new PlayerManager();
