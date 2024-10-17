@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.swing.*;
 
 /**
@@ -43,9 +44,11 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         botSelection = new BotSelectionPanel();
         tabbedPane.add("Bots", botSelection);
 
-        botSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - UserSelectionPanel.DEFAULT_SELECTION);
         userSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - BotSelectionPanel.DEFAULT_SELECTION);
-
+        botSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - UserSelectionPanel.DEFAULT_SELECTION);
+        userSelection.disableUnused();
+        botSelection.disableUnused();
+        
         var button = new JButton("Ready");
         button.setActionCommand("->world");
         button.addActionListener(this);
@@ -63,7 +66,12 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
     public PlayerConfig[] getConfigs()
     {
-        return null;
+        var users = userSelection.getConfigs();
+        var bots = botSelection.getConfigs();
+        var players = new PlayerConfig[users.length + bots.length];
+        System.arraycopy(users, 0, players, 0, users.length);
+        System.arraycopy(bots, 0, players, users.length, bots.length);
+        return players;
     }
 
     @Override
@@ -84,7 +92,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         private final HashMap<Integer, JTextField> textFields;
         private final HashMap<Integer, JComboBox> comboBoxes;
 
-        private int selected;
+        private int selected = DEFAULT_SELECTION;
         private int limit;
 
         static final int DEFAULT_SELECTION = 1;
@@ -139,15 +147,9 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
             for (int i = minimum; i <= maximum; ++i)
             {
-                var radio = radioButtons.get(i);
-                var text = textFields.get(i);
-                var combo = comboBoxes.get(i);
-
-                boolean enabled = (i <= limit);
-
-                radio.setEnabled(enabled);
-                text.setEnabled(enabled);
-                combo.setEnabled(enabled);
+                radioButtons.get(i).setEnabled(i <= limit);
+                textFields.get(i).setEnabled(i <= limit);
+                comboBoxes.get(i).setEnabled(i <= limit);
             }
         }
 
@@ -158,7 +160,14 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
         PlayerConfig[] getConfigs()
         {
-            return null;
+            var configs = new PlayerConfig[selected];
+            for (int i = minimum; i <= selected; ++i)
+            {
+                var color = (PlayerColor) comboBoxes.get(i).getModel().getSelectedItem();
+                var name = textFields.get(i).getText();
+                configs[i - minimum] = new PlayerConfig(PlayerType.USER, color, name);
+            }
+            return configs;
         }
 
         void addColor(PlayerColor color, Object exception)
@@ -195,6 +204,15 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             removeColor(color, null);
         }
 
+        void disableUnused()
+        {
+            for (int i = minimum; i <= limit; ++i)
+            {
+                textFields.get(i).setEnabled(i <= selected);
+                comboBoxes.get(i).setEnabled(i <= selected);
+            }
+        }
+
         @Override
         public void actionPerformed(ActionEvent e)
         {
@@ -203,9 +221,11 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             {
                 case "NUM" ->
                 {
-                    int number = Integer.parseInt(stringlets[1]);
-                    int botLimit = AbstractPlayer.MAX_PLAYERS_COUNT - number;
+                    selected = Integer.parseInt(stringlets[1]);
+                    int botLimit = AbstractPlayer.MAX_PLAYERS_COUNT - selected;
                     botSelection.setLimit(botLimit);
+
+                    disableUnused();
                 }
                 case "DES" ->
                 {
@@ -238,7 +258,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         private final HashMap<Integer, JLabel> nameLabels;
         private final HashMap<Integer, JComboBox> comboBoxes;
 
-        private int selected;
+        private int selected = DEFAULT_SELECTION;
         private int limit;
 
         static final int DEFAULT_SELECTION = 1;
@@ -308,13 +328,8 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
             for (int i = minimum; i <= maximum; ++i)
             {
-                var radio = radioButtons.get(i);
-                var combo = comboBoxes.get(i);
-
-                boolean enabled = (i <= limit);
-
-                radio.setEnabled(enabled);
-                combo.setEnabled(enabled);
+                radioButtons.get(i).setEnabled(i <= limit);
+                comboBoxes.get(i).setEnabled(i <= limit);
             }
         }
 
@@ -325,7 +340,14 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
         PlayerConfig[] getConfigs()
         {
-            return null;
+            var configs = new PlayerConfig[selected];
+            for (int i = minimum; i <= selected; ++i)
+            {
+                var color = (PlayerColor) comboBoxes.get(i).getModel().getSelectedItem();
+                var name = nameLabels.get(i).getText();
+                configs[i - minimum] = new PlayerConfig(PlayerType.USER, color, name);
+            }
+            return configs;
         }
 
         void addColor(PlayerColor color, Object exception)
@@ -361,6 +383,15 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         {
             removeColor(color, null);
         }
+        
+        void disableUnused()
+        {
+            for (int i = minimum; i <= limit; ++i)
+            {
+                nameLabels.get(i).setEnabled(i <= selected);
+                comboBoxes.get(i).setEnabled(i <= selected);
+            }
+        }
 
         @Override
         public void actionPerformed(ActionEvent e)
@@ -370,9 +401,11 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             {
                 case "NUM" ->
                 {
-                    int number = Integer.parseInt(stringlets[1]);
-                    int userLimit = AbstractPlayer.MAX_PLAYERS_COUNT - number;
+                    selected = Integer.parseInt(stringlets[1]);
+                    int userLimit = AbstractPlayer.MAX_PLAYERS_COUNT - selected;
                     userSelection.setLimit(userLimit);
+
+                    disableUnused();
                 }
                 case "DES" ->
                 {
