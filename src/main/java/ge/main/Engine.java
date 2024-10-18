@@ -18,22 +18,22 @@ public class Engine
         var engine = new Engine();
     }
     
-    private final ConfigManager configManager;
-    
     private GUIManager guiManager;
     private WorldManager worldManager;
     private PlayerManager playerManager;
     
     private Engine()
     {
-        configManager = new ConfigManager(new Invoker<>(this));
+        var configManager = new ConfigManager(new Invoker<>(this));
     }
     
     void beginGameplay(JFrame frame, WorldConfig worldConfig, PlayerConfig[] playerConfigs)
     {
         var builder = new ManagerBuilder();
         
-        
+        builder.setGUIFrame(frame);
+        builder.setWorldConfig(worldConfig);
+        builder.setPlayerConfigs(playerConfigs);
         
         guiManager = builder.getGUIManager();
         worldManager = builder.getWorldManager();
