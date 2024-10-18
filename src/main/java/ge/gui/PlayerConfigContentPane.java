@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
 import javax.swing.*;
 
 /**
@@ -31,29 +30,27 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         this.invoker = invoker;
 
         var c = new GridBagConstraints();
+        c.weightx = 1;
+        c.weighty = 1;
 
-        var tabbedPane = new JTabbedPane();
         c.gridx = 0;
         c.gridy = 0;
-        c.weighty = 1;
-        add(tabbedPane, c);
-
         userSelection = new UserSelectionPanel();
-        tabbedPane.add("Users", userSelection);
-
-        botSelection = new BotSelectionPanel();
-        tabbedPane.add("Bots", botSelection);
-
         userSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - BotSelectionPanel.DEFAULT_SELECTION);
-        botSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - UserSelectionPanel.DEFAULT_SELECTION);
+        add(userSelection, c);
         
+        c.gridx = 1;
+        c.gridy = 0;
+        botSelection = new BotSelectionPanel();
+        botSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - UserSelectionPanel.DEFAULT_SELECTION);
+        add(botSelection, c);
+        
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 2;
         var button = new JButton("Ready");
         button.setActionCommand("->world");
         button.addActionListener(this);
-
-        c.gridx = 0;
-        c.gridy = 1;
-        c.weighty = 1;
         add(button, c);
     }
 
@@ -79,6 +76,18 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         {
             invoker.invoke(new BeginWorldConfigCommand());
         }
+    }
+
+    @Override
+    public void setPreferredSize(Dimension preferredSize)
+    {
+        super.setPreferredSize(preferredSize);
+        
+        var panelSize = new Dimension(preferredSize);
+        panelSize.width *= 0.45;
+        panelSize.height *= 0.85;
+        userSelection.setPreferredSize(panelSize);
+        botSelection.setPreferredSize(panelSize);
     }
 
     private class UserSelectionPanel extends JPanel implements ActionListener
@@ -108,12 +117,18 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             combos = new HashMap<>(maximum - minimum + 1);
 
             var c = new GridBagConstraints();
-            c.weightx = c.weighty = 1;
+            c.weightx = 1;
+            c.weighty = 0;
+            c.gridwidth = 3;
+            add(new JLabel("The Human Players"), c);
+            
+            c.gridwidth = 1;
+            
             var group = new ButtonGroup();
             for (int i = minimum; i <= maximum; ++i)
             {
                 c.gridx = 0;
-                c.gridy = i - minimum;
+                c.gridy = i - minimum + 1;
 
                 var button = new JRadioButton(String.valueOf(i));
                 var command = String.format("NUM=%d", i);
@@ -279,11 +294,16 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             combos = new HashMap<>(maximum - minimum + 1);
 
             var c = new GridBagConstraints();
-            c.weightx = c.weighty = 1;
+            c.weightx = 1;
+            c.weighty = 0;
+            c.gridwidth = 3;
+            add(new JLabel("The Bot Players"), c);
+            
             var group = new ButtonGroup();
 
+            c.gridwidth = 1;
             c.gridx = 0;
-            c.gridy = 0;
+            c.gridy = 1;
             var noBotsButton = new JRadioButton("0");
             noBotsButton.setActionCommand("NUM=0");
             noBotsButton.addActionListener(this);
@@ -293,13 +313,17 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
             c.gridx = 1;
             c.gridwidth = GridBagConstraints.REMAINDER;
-            add(new JLabel("play without bots"), c);
+            var noBotsLabel = new JLabel("(play without bots)");
+            noBotsLabel.setEnabled(selected == 0);
+            names.put(0, noBotsLabel);
+            add(noBotsLabel, c);
+            
             c.gridwidth = 1;
 
             for (int i = minimum; i <= maximum; ++i)
             {
                 c.gridx = 0;
-                c.gridy = 1 + i - minimum;
+                c.gridy = i - minimum + 2;
 
                 var button = new JRadioButton(String.valueOf(i));
                 var command = String.format("NUM=%d", i);
@@ -400,6 +424,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                 names.get(i).setEnabled(i <= selected);
                 combos.get(i).setEnabled(i <= selected);
             }
+            names.get(0).setEnabled(selected == 0);
         }
 
         @Override

@@ -15,9 +15,9 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
 {
     private final Invoker<GUIManager> invoker;
     
-    private JSlider worldSizeSlider;
-    private JSlider seaPercentageSlider;
-    private JSlider mountainsPercentageSlider;
+    private JSlider sizeSlider;
+    private JSlider seaSlider;
+    private JSlider mountainSlider;
     
     private static final int SLIDER_WIDTH = 400;
     private static final int SLIDER_HEIGHT = 50;
@@ -30,8 +30,8 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         
         makeHeaderLabel();
         makeWorldSizeSlider();
-        makeSeaPercentageSlider();
-        makeMountainPercentageSlider();
+        makeSeaSlider();
+        makeMountainSlider();
         makeButtons();
     }
     
@@ -63,23 +63,23 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(worldSizeSliderPanel, c);
-        worldSizeSlider = new JSlider(JSlider.HORIZONTAL, 15, 30, 20);
-        worldSizeSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
+        sizeSlider = new JSlider(JSlider.HORIZONTAL, 15, 30, 20);
+        sizeSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
         Hashtable<Integer, JLabel> worldSizeLabels = new Hashtable<>(3);
         worldSizeLabels.put(15, new JLabel("small"));
         worldSizeLabels.put(20, new JLabel("medium"));
         worldSizeLabels.put(25, new JLabel("big"));
         worldSizeLabels.put(30, new JLabel("large"));
-        worldSizeSlider.setLabelTable(worldSizeLabels);
-        worldSizeSlider.setPaintLabels(true);
-        worldSizeSlider.setMinorTickSpacing(1);
-        worldSizeSlider.setMajorTickSpacing(5);
-        worldSizeSlider.setPaintTicks(true);
-        worldSizeSlider.setSnapToTicks(true);
-        worldSizeSliderPanel.add(worldSizeSlider);
+        sizeSlider.setLabelTable(worldSizeLabels);
+        sizeSlider.setPaintLabels(true);
+        sizeSlider.setMinorTickSpacing(1);
+        sizeSlider.setMajorTickSpacing(5);
+        sizeSlider.setPaintTicks(true);
+        sizeSlider.setSnapToTicks(true);
+        worldSizeSliderPanel.add(sizeSlider);
     }
     
-    private void makeSeaPercentageSlider()
+    private void makeSeaSlider()
     {
         JPanel seaPercentageSliderPanel = new JPanel();
         seaPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Sea"));
@@ -92,22 +92,22 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(seaPercentageSliderPanel, c);
-        seaPercentageSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 4);
-        seaPercentageSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
+        seaSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 4);
+        seaSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
         Hashtable<Integer, JLabel> seaPercentageLabels = new Hashtable<>(3);
         seaPercentageLabels.put(0, new JLabel("lakes"));
         seaPercentageLabels.put(5, new JLabel("seas"));
         seaPercentageLabels.put(10, new JLabel("oceans"));
-        seaPercentageSlider.setLabelTable(seaPercentageLabels);
-        seaPercentageSlider.setPaintLabels(true);
-        seaPercentageSlider.setMinorTickSpacing(1);
-        seaPercentageSlider.setMajorTickSpacing(5);
-        seaPercentageSlider.setPaintTicks(true);
-        seaPercentageSlider.setSnapToTicks(true);
-        seaPercentageSliderPanel.add(seaPercentageSlider);
+        seaSlider.setLabelTable(seaPercentageLabels);
+        seaSlider.setPaintLabels(true);
+        seaSlider.setMinorTickSpacing(1);
+        seaSlider.setMajorTickSpacing(5);
+        seaSlider.setPaintTicks(true);
+        seaSlider.setSnapToTicks(true);
+        seaPercentageSliderPanel.add(seaSlider);
     }
     
-    private void makeMountainPercentageSlider()
+    private void makeMountainSlider()
     {
         JPanel mountainsPercentageSliderPanel = new JPanel();
         mountainsPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Mountains"));
@@ -120,19 +120,19 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(mountainsPercentageSliderPanel, c);
-        mountainsPercentageSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 5);
-        mountainsPercentageSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
+        mountainSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 5);
+        mountainSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
         Hashtable<Integer, JLabel> mountsPercentageLabels = new Hashtable<>(3);
         mountsPercentageLabels.put(0, new JLabel("few"));
         mountsPercentageLabels.put(5, new JLabel("medium"));
         mountsPercentageLabels.put(10, new JLabel("many"));
-        mountainsPercentageSlider.setLabelTable(mountsPercentageLabels);
-        mountainsPercentageSlider.setPaintLabels(true);
-        mountainsPercentageSlider.setMinorTickSpacing(1);
-        mountainsPercentageSlider.setMajorTickSpacing(5);
-        mountainsPercentageSlider.setPaintTicks(true);
-        mountainsPercentageSlider.setSnapToTicks(true);
-        mountainsPercentageSliderPanel.add(mountainsPercentageSlider);
+        mountainSlider.setLabelTable(mountsPercentageLabels);
+        mountainSlider.setPaintLabels(true);
+        mountainSlider.setMinorTickSpacing(1);
+        mountainSlider.setMajorTickSpacing(5);
+        mountainSlider.setPaintTicks(true);
+        mountainSlider.setSnapToTicks(true);
+        mountainsPercentageSliderPanel.add(mountainSlider);
     }
     
     private void makeButtons()
@@ -164,7 +164,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         add(button, c);
     }
 
-    private double getSeaPercentage()
+    private double getSeaPoints()
     {
         /*  y = a * x + b,
                 a = (yMax - yMin) / (xMax - xMin) = 40 / 10 = 4
@@ -174,10 +174,10 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
                     yMax = 60
                 b = yMin - a * xMin = 20 - 0 = 20
         */
-        return 4 * seaPercentageSlider.getValue() + 20;
+        return 4 * seaSlider.getValue() + 20;
     }
 
-    private double getMountsPercentage()
+    private double getMountainPoints()
     {
         /*  y = a * x + b,
                 a = (yMax - yMin) / (xMax - xMin) = 30 / 10 = 3
@@ -187,15 +187,15 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
                     yMax = 40
                 b = yMin - a * xMin = 10 - 0 = 10
         */
-        return 3 * mountainsPercentageSlider.getValue() + 10;
+        return 3 * mountainSlider.getValue() + 10;
     }
 
-    public WorldConfig getConfiguration()
+    public WorldConfig getConfig()
     {
-        int worldSide = worldSizeSlider.getValue();
-        double seaPercentage = 0.01 * (double) getSeaPercentage();
-        double mountainsPercentage = 0.01 * (double) getMountsPercentage();
-        return new WorldConfig(worldSide, seaPercentage, mountainsPercentage);
+        int size = sizeSlider.getValue();
+        double seaPercentage = 0.01 * (double) getSeaPoints();
+        double mountainsPercentage = 0.01 * (double) getMountainPoints();
+        return new WorldConfig(size, seaPercentage, mountainsPercentage);
     }
 
     @Override
