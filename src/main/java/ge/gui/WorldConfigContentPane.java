@@ -13,7 +13,7 @@ import javax.swing.*;
  */
 public class WorldConfigContentPane extends JPanel implements ActionListener
 {
-    private final Invoker<GUIManager> invoker;
+    private final Invoker<ConfigManager> invoker;
     
     private JSlider sizeSlider;
     private JSlider seaSlider;
@@ -22,7 +22,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
     private static final int SLIDER_WIDTH = 400;
     private static final int SLIDER_HEIGHT = 50;
     
-    public WorldConfigContentPane(Invoker<GUIManager> invoker)
+    public WorldConfigContentPane(Invoker<ConfigManager> invoker)
     {
         super(new GridBagLayout());
         
@@ -209,7 +209,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
             }
             case "->gameplay" ->
             {
-                invoker.invoke(new BeginGameplayCommand());
+                invoker.invoke(new FinishConfigCommand());
             }
         }
     }

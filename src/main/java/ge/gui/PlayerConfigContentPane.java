@@ -18,12 +18,12 @@ import javax.swing.*;
  */
 public class PlayerConfigContentPane extends JPanel implements ActionListener
 {
-    private final Invoker<GUIManager> invoker;
+    private final Invoker<ConfigManager> invoker;
 
     private final UserSelectionPanel userSelection;
     private final BotSelectionPanel botSelection;
 
-    public PlayerConfigContentPane(Invoker<GUIManager> invoker)
+    public PlayerConfigContentPane(Invoker<ConfigManager> invoker)
     {
         super(new GridBagLayout());
 
@@ -74,7 +74,17 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
     {
         if (e.getActionCommand().equals("->world"))
         {
-            invoker.invoke(new BeginWorldConfigCommand());
+            if (getSelected() > 1)
+            {
+                invoker.invoke(new BeginWorldConfigCommand());
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this,
+                        "Choose at least two players.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

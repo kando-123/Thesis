@@ -1,33 +1,35 @@
 package ge.gui;
 
-import ge.main.CreatePlayersCommand;
-import ge.main.CreateWorldCommand;
-import ge.main.Engine;
+import ge.main.*;
 import ge.utilities.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class GUIManager
+public class ConfigManager
 {
     private final Invoker<Engine> invoker;
-    
-    private final JFrame frame;
-    
+
+    private JFrame frame;
+
     private PlayerConfigContentPane playerContentPane;
     private WorldConfigContentPane worldContentPane;
-    
+
     private final Dimension contentPaneSize;
-    
-    public GUIManager(Invoker<Engine> invoker)
+
+    public ConfigManager(Invoker<Engine> invoker)
     {
         this.invoker = invoker;
-        
+
         frame = new JFrame();
-        
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("The Global Empire");
         frame.setResizable(false);
@@ -35,13 +37,24 @@ public class GUIManager
         var pane = new InvitationContentPane(new Invoker<>(this));
         frame.setContentPane(pane);
         frame.pack();
-        
+
         contentPaneSize = pane.getSize();
 
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+
+        try
+        {
+            InputStream stream = getClass().getResourceAsStream("/Logo/Icon.png");
+            BufferedImage image = ImageIO.read(stream);
+            frame.setIconImage(image);
+        }
+        catch (IOException io)
+        {
+            /* Never thrown. */
+        }
     }
-    
+
     void beginPlayerConfig()
     {
         if (playerContentPane == null)
@@ -52,7 +65,7 @@ public class GUIManager
         frame.setContentPane(playerContentPane);
         frame.pack();
     }
-    
+
     void beginWorldConfig()
     {
         if (worldContentPane == null)
@@ -63,16 +76,18 @@ public class GUIManager
         frame.setContentPane(worldContentPane);
         frame.pack();
     }
-    
-    void beginGameplay()
+
+    void finishConfiguration()
     {
         var playerConfigs = playerContentPane.getConfigs();
         playerContentPane = null;
-        
+
         var worldConfig = worldContentPane.getConfig();
         worldContentPane = null;
         
-        invoker.invoke(new CreateWorldCommand(worldConfig));
-        invoker.invoke(new CreatePlayersCommand(playerConfigs));
+        var reusedFrame = frame;
+        frame = null;
+        
+        invoker.invoke(new BeginGameplayCommand(reusedFrame, worldConfig, playerConfigs));
     }
 }

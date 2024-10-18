@@ -1,9 +1,11 @@
 package ge.main;
 
 import ge.gui.*;
+import ge.manager.*;
 import ge.player.*;
 import ge.utilities.*;
 import ge.world.*;
+import javax.swing.*;
 
 /**
  *
@@ -16,24 +18,29 @@ public class Engine
         var engine = new Engine();
     }
     
-    private final GUIManager guiManager;
-    private final WorldManager worldManager;
-    private final PlayerManager playerManager;
+    private final ConfigManager configManager;
+    
+    private GUIManager guiManager;
+    private WorldManager worldManager;
+    private PlayerManager playerManager;
     
     private Engine()
     {
-        guiManager = new GUIManager(new Invoker<>(this));
-        worldManager = new WorldManager(new Invoker<>(this));
-        playerManager = new PlayerManager(new Invoker<>(this));
+        configManager = new ConfigManager(new Invoker<>(this));
     }
     
-    void createWorld(WorldConfig config)
+    void beginGameplay(JFrame frame, WorldConfig worldConfig, PlayerConfig[] playerConfigs)
     {
+        var builder = new ManagerBuilder();
         
-    }
-    
-    void createPlayers(PlayerConfig[] configs)
-    {
         
+        
+        guiManager = builder.getGUIManager();
+        worldManager = builder.getWorldManager();
+        playerManager = builder.getPlayerManager();
+        
+        assert (guiManager != null);
+        assert (worldManager != null);
+        assert (playerManager != null);
     }
 }

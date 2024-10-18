@@ -13,9 +13,9 @@ import javax.swing.*;
  */
 public class InvitationContentPane extends JPanel implements ActionListener
 {
-    private final Invoker<GUIManager> invoker;
+    private final Invoker<ConfigManager> invoker;
     
-    public InvitationContentPane(Invoker<GUIManager> invoker)
+    public InvitationContentPane(Invoker<ConfigManager> invoker)
     {
         super(new GridBagLayout());
         
