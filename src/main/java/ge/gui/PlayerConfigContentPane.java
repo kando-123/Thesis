@@ -46,8 +46,6 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
         userSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - BotSelectionPanel.DEFAULT_SELECTION);
         botSelection.setLimit(AbstractPlayer.MAX_PLAYERS_COUNT - UserSelectionPanel.DEFAULT_SELECTION);
-        userSelection.disableUnused();
-        botSelection.disableUnused();
         
         var button = new JButton("Ready");
         button.setActionCommand("->world");
@@ -85,14 +83,14 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
     private class UserSelectionPanel extends JPanel implements ActionListener
     {
-        private final int minimum = 1;
-        private final int maximum = AbstractPlayer.MAX_PLAYERS_COUNT;
+        private final int minimum;
+        private final int maximum;
 
-        private final HashMap<Integer, JRadioButton> radioButtons;
-        private final HashMap<Integer, JTextField> textFields;
-        private final HashMap<Integer, JComboBox> comboBoxes;
+        private final HashMap<Integer, JRadioButton> radios;
+        private final HashMap<Integer, JTextField> names;
+        private final HashMap<Integer, JComboBox> combos;
 
-        private int selected = DEFAULT_SELECTION;
+        private int selected;
         private int limit;
 
         static final int DEFAULT_SELECTION = 1;
@@ -100,10 +98,14 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         UserSelectionPanel()
         {
             super(new GridBagLayout());
+            
+            minimum = 1;
+            maximum = limit = AbstractPlayer.MAX_PLAYERS_COUNT;
+            selected = DEFAULT_SELECTION;
 
-            radioButtons = new HashMap<>(maximum - minimum + 1);
-            textFields = new HashMap<>(maximum - minimum + 1);
-            comboBoxes = new HashMap<>(maximum - minimum + 1);
+            radios = new HashMap<>(maximum - minimum + 1);
+            names = new HashMap<>(maximum - minimum + 1);
+            combos = new HashMap<>(maximum - minimum + 1);
 
             var c = new GridBagConstraints();
             c.weightx = c.weighty = 1;
@@ -117,26 +119,29 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                 var command = String.format("NUM=%d", i);
                 button.setActionCommand(command);
                 button.addActionListener(this);
+                button.setEnabled(i <= limit);
                 group.add(button);
-                radioButtons.put(i, button);
+                radios.put(i, button);
                 add(button, c);
 
                 c.gridx = 1;
                 var name = String.format("Player #%d", i);
                 var field = new JTextField(name, 12);
                 field.setMinimumSize(new Dimension(60, 20));
-                textFields.put(i, field);
+                field.setEnabled(i <= selected);
+                names.put(i, field);
                 add(field, c);
 
                 c.gridx = 2;
                 var model = new ColorModel();
                 model.addActionListener(this);
                 var combo = new JComboBox(model);
-                comboBoxes.put(i, combo);
+                combo.setEnabled(i <= selected);
+                combos.put(i, combo);
                 add(combo, c);
             }
 
-            radioButtons.get(DEFAULT_SELECTION).setSelected(true);
+            radios.get(DEFAULT_SELECTION).setSelected(true);
         }
 
         void setLimit(int newLimit)
@@ -147,9 +152,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
             for (int i = minimum; i <= maximum; ++i)
             {
-                radioButtons.get(i).setEnabled(i <= limit);
-                textFields.get(i).setEnabled(i <= limit);
-                comboBoxes.get(i).setEnabled(i <= limit);
+                radios.get(i).setEnabled(i <= limit);
             }
         }
 
@@ -163,8 +166,8 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             var configs = new PlayerConfig[selected];
             for (int i = minimum; i <= selected; ++i)
             {
-                var color = (PlayerColor) comboBoxes.get(i).getModel().getSelectedItem();
-                var name = textFields.get(i).getText();
+                var color = (PlayerColor) combos.get(i).getModel().getSelectedItem();
+                var name = names.get(i).getText();
                 configs[i - minimum] = new PlayerConfig(PlayerType.USER, color, name);
             }
             return configs;
@@ -172,7 +175,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
         void addColor(PlayerColor color, Object exception)
         {
-            for (var combo : comboBoxes.values())
+            for (var combo : combos.values())
             {
                 var model = (ColorModel) combo.getModel();
                 if (model != exception)
@@ -189,7 +192,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
         void removeColor(PlayerColor color, Object exception)
         {
-            for (var combo : comboBoxes.values())
+            for (var combo : combos.values())
             {
                 var model = (ColorModel) combo.getModel();
                 if (model != exception)
@@ -208,8 +211,8 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         {
             for (int i = minimum; i <= limit; ++i)
             {
-                textFields.get(i).setEnabled(i <= selected);
-                comboBoxes.get(i).setEnabled(i <= selected);
+                names.get(i).setEnabled(i <= selected);
+                combos.get(i).setEnabled(i <= selected);
             }
         }
 
@@ -251,14 +254,14 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
     private class BotSelectionPanel extends JPanel implements ActionListener
     {
-        private final int minimum = 1;
-        private final int maximum = AbstractPlayer.MAX_PLAYERS_COUNT - 1;
+        private final int minimum;
+        private final int maximum;
 
-        private final HashMap<Integer, JRadioButton> radioButtons;
-        private final HashMap<Integer, JLabel> nameLabels;
-        private final HashMap<Integer, JComboBox> comboBoxes;
+        private final HashMap<Integer, JRadioButton> radios;
+        private final HashMap<Integer, JLabel> names;
+        private final HashMap<Integer, JComboBox> combos;
 
-        private int selected = DEFAULT_SELECTION;
+        private int selected;
         private int limit;
 
         static final int DEFAULT_SELECTION = 1;
@@ -266,10 +269,14 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         BotSelectionPanel()
         {
             super(new GridBagLayout());
+            
+            minimum = 1;
+            maximum = limit = AbstractPlayer.MAX_PLAYERS_COUNT - 1;
+            selected = DEFAULT_SELECTION;
 
-            radioButtons = new HashMap<>(maximum - minimum + 1);
-            nameLabels = new HashMap<>(maximum - minimum + 1);
-            comboBoxes = new HashMap<>(maximum - minimum + 1);
+            radios = new HashMap<>(maximum - minimum + 1);
+            names = new HashMap<>(maximum - minimum + 1);
+            combos = new HashMap<>(maximum - minimum + 1);
 
             var c = new GridBagConstraints();
             c.weightx = c.weighty = 1;
@@ -281,7 +288,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             noBotsButton.setActionCommand("NUM=0");
             noBotsButton.addActionListener(this);
             group.add(noBotsButton);
-            radioButtons.put(0, noBotsButton);
+            radios.put(0, noBotsButton);
             add(noBotsButton, c);
 
             c.gridx = 1;
@@ -298,26 +305,29 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                 var command = String.format("NUM=%d", i);
                 button.setActionCommand(command);
                 button.addActionListener(this);
+                button.setEnabled(i <= limit);
                 group.add(button);
-                radioButtons.put(i, button);
+                radios.put(i, button);
                 add(button, c);
 
                 c.gridx = 1;
                 var name = String.format("Bot #%d", i);
                 var label = new JLabel(name);
                 label.setMinimumSize(new Dimension(60, 20));
-                nameLabels.put(i, label);
+                label.setEnabled(i <= selected);
+                names.put(i, label);
                 add(label, c);
 
                 c.gridx = 2;
                 var model = new ColorModel();
                 model.addActionListener(this);
                 var combo = new JComboBox(model);
-                comboBoxes.put(i, combo);
+                combo.setEnabled(i <= selected);
+                combos.put(i, combo);
                 add(combo, c);
             }
 
-            radioButtons.get(DEFAULT_SELECTION).setSelected(true);
+            radios.get(DEFAULT_SELECTION).setSelected(true);
         }
 
         void setLimit(int newLimit)
@@ -328,8 +338,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
             for (int i = minimum; i <= maximum; ++i)
             {
-                radioButtons.get(i).setEnabled(i <= limit);
-                comboBoxes.get(i).setEnabled(i <= limit);
+                radios.get(i).setEnabled(i <= limit);
             }
         }
 
@@ -343,8 +352,8 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             var configs = new PlayerConfig[selected];
             for (int i = minimum; i <= selected; ++i)
             {
-                var color = (PlayerColor) comboBoxes.get(i).getModel().getSelectedItem();
-                var name = nameLabels.get(i).getText();
+                var color = (PlayerColor) combos.get(i).getModel().getSelectedItem();
+                var name = names.get(i).getText();
                 configs[i - minimum] = new PlayerConfig(PlayerType.USER, color, name);
             }
             return configs;
@@ -352,7 +361,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
         void addColor(PlayerColor color, Object exception)
         {
-            for (var combo : comboBoxes.values())
+            for (var combo : combos.values())
             {
                 var model = (ColorModel) combo.getModel();
                 if (model != exception)
@@ -369,7 +378,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
         void removeColor(PlayerColor color, Object exception)
         {
-            for (var combo : comboBoxes.values())
+            for (var combo : combos.values())
             {
                 var model = (ColorModel) combo.getModel();
                 if (model != exception)
@@ -388,8 +397,8 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         {
             for (int i = minimum; i <= limit; ++i)
             {
-                nameLabels.get(i).setEnabled(i <= selected);
-                comboBoxes.get(i).setEnabled(i <= selected);
+                names.get(i).setEnabled(i <= selected);
+                combos.get(i).setEnabled(i <= selected);
             }
         }
 
