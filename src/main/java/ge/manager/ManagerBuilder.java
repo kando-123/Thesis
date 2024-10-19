@@ -63,6 +63,11 @@ public class ManagerBuilder
             playerManager = new PlayerManager(playerConfigs);
             
             /* Mutually relate the managers... */
+            
+            // guiM. should receive references to worldM. & playerM.
+            // playerM. should receive
+            
+            guiManager.build();
         }
     }
     

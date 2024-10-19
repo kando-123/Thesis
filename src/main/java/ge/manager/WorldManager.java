@@ -8,10 +8,10 @@ import ge.world.*;
  */
 public class WorldManager
 {
-//    private final World world;
+    private final World world;
     
     WorldManager(WorldConfig config)
     {
-//        world = new World(config);
+        world = new World(config);
     }
 }

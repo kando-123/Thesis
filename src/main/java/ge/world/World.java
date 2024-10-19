@@ -11,7 +11,7 @@ package ge.world;
 //import java.util.Set;
 //import java.util.Stack;
 //import java.util.stream.*;
-//import ge.utilities.*;
+import ge.utilities.*;
 
 /**
  *
@@ -19,24 +19,23 @@ package ge.world;
  */
 public class World
 {
-//    public static final int HEX_OUTER_RADIUS = 40;
-//    public static final int HEX_INNER_RADIUS = (int) Hex.computeInnerRadius(HEX_OUTER_RADIUS);
+    public static final int HEX_OUTER_RADIUS = 40;
+    public static final int HEX_INNER_RADIUS = (int) Hex.computeInnerRadius(HEX_OUTER_RADIUS);
 //    public static final int HEX_WIDTH = 2 * HEX_OUTER_RADIUS;
 //    public static final int HEX_HEIGHT = (int) Hex.computeInnerRadius(2 * HEX_OUTER_RADIUS);
 //
-//    private final int side;
+    private final int side;
 //    private final Map<Hex, AbstractField> fields;
-//
-//    public World(WorldConfig config)
-//    {
-//        side = config.worldSide;
+
+    public World(WorldConfig config)
+    {
+        side = config.worldSide;
 //
 //        assert (side > 0 && side <= 100);
 //        assert (config.seaPercentage >= 0.00 && config.seaPercentage <= 1.00);
 //        assert (config.mountainsPercentage >= 0.00 && config.mountainsPercentage <= 1.00);
 //
-//        int surface = Hex.computeHexSurfaceSize(side);
-//        fields = new HashMap<>(surface);
+//        fields = new HashMap<>(Hex.computeHexSurfaceSize(side));
 //
 //        int westmostX = Hex.computeCornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left;
 //        int northmostY = Hex.computeCornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right;
@@ -48,14 +47,12 @@ public class World
 //        generateSeaFields(config.seaPercentage, centers);
 //        generateMountainFields(config.mountainsPercentage, centers);
 //        generateLandFields(centers);
-//
-////        markedFields = new HashSet<>();
-//    }
-//
-//    public int getSide()
-//    {
-//        return side;
-//    }
+    }
+
+    public int getSide()
+    {
+        return side;
+    }
 //
 //    private void placeField(Hex hex, AbstractField field)
 //    {
@@ -241,7 +238,7 @@ public class World
 //            while (iterator.hasNext())
 //            {
 //                var entry = iterator.next();
-//                Hex hex = (Hex) entry.getKey();
+//                var hex = (Hex) entry.getKey();
 //                placeField(hex, switch (generator.get())
 //                {
 //                    case GRASS ->
@@ -856,8 +853,6 @@ public class World
 ////        }
 ////    }
 //
-////    private final HashSet<AbstractField> markedFields;
-////
 ////    public void mark(Hex hex)
 ////    {
 ////        AbstractField field = fields.get(hex);
@@ -891,20 +886,5 @@ public class World
 ////    {
 ////        AbstractField field = fields.get(hex);
 ////        return markedFields.contains(field);
-////    }
-//
-////    public WorldMarker createMarker()
-////    {
-////        return new WorldMarker(this);
-////    }
-////
-////    public WorldAccessor createAccessor()
-////    {
-////        return new WorldAccessor(this);
-////    }
-////
-////    public WorldMutator createMutator()
-////    {
-////        return new WorldMutator(this);
 ////    }
 }

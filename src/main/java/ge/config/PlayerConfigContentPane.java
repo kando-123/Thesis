@@ -1,4 +1,4 @@
-package ge.gui;
+package ge.config;
 
 import ge.player.*;
 import ge.utilities.*;

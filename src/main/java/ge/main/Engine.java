@@ -1,6 +1,6 @@
 package ge.main;
 
-import ge.gui.*;
+import ge.config.ConfigManager;
 import ge.manager.*;
 import ge.player.*;
 import ge.utilities.*;
@@ -34,6 +34,8 @@ public class Engine
         builder.setGUIFrame(frame);
         builder.setWorldConfig(worldConfig);
         builder.setPlayerConfigs(playerConfigs);
+        
+        builder.build();
         
         guiManager = builder.getGUIManager();
         worldManager = builder.getWorldManager();
