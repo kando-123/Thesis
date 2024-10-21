@@ -1,7 +1,7 @@
 package ge.config;
 
 import ge.utilities.*;
-import ge.world.*;
+//import ge.world.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -190,13 +190,13 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         return 3 * mountainSlider.getValue() + 10;
     }
 
-    public WorldConfig getConfig()
-    {
-        int size = sizeSlider.getValue();
-        double seaPercentage = 0.01 * (double) getSeaPoints();
-        double mountainsPercentage = 0.01 * (double) getMountainPoints();
-        return new WorldConfig(size, seaPercentage, mountainsPercentage);
-    }
+//    public WorldConfig getConfig()
+//    {
+//        int size = sizeSlider.getValue();
+//        double seaPercentage = 0.01 * (double) getSeaPoints();
+//        double mountainsPercentage = 0.01 * (double) getMountainPoints();
+//        return new WorldConfig(size, seaPercentage, mountainsPercentage);
+//    }
 
     @Override
     public void actionPerformed(ActionEvent e)

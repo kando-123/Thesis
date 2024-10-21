@@ -1,12 +1,10 @@
 package ge.config;
 
-import ge.main.*;
 import ge.utilities.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import javax.imageio.ImageIO;
+import java.awt.image.*;
+import java.io.*;
+import javax.imageio.*;
 import javax.swing.*;
 
 /**
@@ -15,7 +13,7 @@ import javax.swing.*;
  */
 public class ConfigManager
 {
-    private final Invoker<Engine> invoker;
+    //private final Invoker<Engine> invoker;
 
     private JFrame frame;
 
@@ -24,9 +22,9 @@ public class ConfigManager
 
     private final Dimension contentPaneSize;
 
-    public ConfigManager(Invoker<Engine> invoker)
+    public ConfigManager(/*Invoker<Engine> invoker*/)
     {
-        this.invoker = invoker;
+        //this.invoker = invoker;
 
         frame = new JFrame();
 
@@ -59,10 +57,10 @@ public class ConfigManager
     {
         if (playerContentPane == null)
         {
-            playerContentPane = new PlayerConfigContentPane(new Invoker<>(this));
-            playerContentPane.setPreferredSize(contentPaneSize);
+//            playerContentPane = new PlayerConfigContentPane(new Invoker<>(this));
+//            playerContentPane.setPreferredSize(contentPaneSize);
         }
-        frame.setContentPane(playerContentPane);
+//        frame.setContentPane(playerContentPane);
         frame.pack();
     }
 
@@ -79,15 +77,15 @@ public class ConfigManager
 
     void finishConfiguration()
     {
-        var playerConfigs = playerContentPane.getConfigs();
-        playerContentPane = null;
-
-        var worldConfig = worldContentPane.getConfig();
-        worldContentPane = null;
-        
-        var reusedFrame = frame;
-        frame = null;
-        
-        invoker.invoke(new BeginGameplayCommand(reusedFrame, worldConfig, playerConfigs));
+//        var playerConfigs = playerContentPane.getConfigs();
+//        playerContentPane = null;
+//
+//        var worldConfig = worldContentPane.getConfig();
+//        worldContentPane = null;
+//        
+//        var reusedFrame = frame;
+//        frame = null;
+//        
+//        invoker.invoke(new BeginGameplayCommand(reusedFrame, worldConfig, playerConfigs));
     }
 }

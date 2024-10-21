@@ -1,20 +1,18 @@
 package ge.world;
 
+import ge.field.*;
+import ge.utilities.*;
+
 /**
  *
  * @author Kay Jay O'Nail
  */
 public class WorldAccessor
 {
-    private final World world;
-
-    public WorldAccessor(World world)
-    {
-        this.world = world;
-    }
     
-    public int getSide()
+    
+    public Field getField(Hex coords)
     {
-        return world.
+        throw new UnsupportedOperationException();
     }
 }

@@ -345,16 +345,6 @@ public abstract class AbstractField
         return hex;
     }
 
-    public int getWidth()
-    {
-        return image.getWidth();
-    }
-
-    public int getHeight()
-    {
-        return image.getHeight();
-    }
-
     public void setMarked(boolean marked)
     {
         isMarked = marked;

@@ -41,7 +41,7 @@ public class Hex
         return new Hex(0, 0, 0);
     }
 
-    public static Hex computeHexAt(double x, double y, double outerRadius, double innerRadius)
+    public static Hex at(double x, double y, double outerRadius, double innerRadius)
     {
         // Fractional coordinates
         double Φp = (2.0 / 3.0 * x) / outerRadius;
@@ -72,26 +72,6 @@ public class Hex
         return new Hex((int) p, (int) q, (int) r);
     }
 
-    public Hex[] lineTo(Hex other)
-    {
-        int hexDistance = distance(other);
-        Hex[] hexes = new Hex[hexDistance];
-
-        Doublet<Double> begin = getCentralPoint(1.0, INNER_TO_OUTER_RATIO);
-        Doublet<Double> end = other.getCentralPoint(1.0, INNER_TO_OUTER_RATIO);
-
-        double Δx = (end.left - begin.left) / hexDistance;
-        double Δy = (end.right - begin.right) / hexDistance;
-        for (int i = 0; i < hexDistance; ++i)
-        {
-            double x = begin.left + (i + 1) * Δx;
-            double y = begin.right + (i + 1) * Δy;
-            hexes[i] = computeHexAt(x, y, 1.0, INNER_TO_OUTER_RATIO);
-        }
-
-        return hexes;
-    }
-
     /* Property accessors */
     public int getP()
     {
@@ -107,92 +87,6 @@ public class Hex
     {
         return rCoord;
     }
-
-//    /* Mutators */
-//    public void add(Hex other)
-//    {
-//        pCoord += other.pCoord;
-//        qCoord += other.qCoord;
-//        rCoord += other.rCoord;
-//    }
-//
-//    public void subtract(Hex other)
-//    {
-//        pCoord -= other.pCoord;
-//        qCoord -= other.qCoord;
-//        rCoord -= other.rCoord;
-//    }
-//
-//    public void multiply(int factor)
-//    {
-//        pCoord *= factor;
-//        qCoord *= factor;
-//        rCoord *= factor;
-//    }
-//
-//    public void shift(HexagonalDirection direction)
-//    {
-//        switch (direction)
-//        {
-//            case UP ->
-//            {
-//                --qCoord;
-//                ++rCoord;
-//            }
-//            case RIGHT_UP ->
-//            {
-//                ++pCoord;
-//                --qCoord;
-//            }
-//            case RIGHT_DOWN ->
-//            {
-//                ++pCoord;
-//                --rCoord;
-//            }
-//            case DOWN ->
-//            {
-//                ++qCoord;
-//                --rCoord;
-//            }
-//            case LEFT_DOWN ->
-//            {
-//                --pCoord;
-//                ++qCoord;
-//            }
-//            case LEFT_UP ->
-//            {
-//                --pCoord;
-//                ++rCoord;
-//            }
-//        }
-//    }
-//
-//    public void rotateRight()
-//    {
-//        int p = -qCoord;
-//        int q = -rCoord;
-//        int r = -pCoord;
-//        pCoord = p;
-//        qCoord = q;
-//        rCoord = r;
-//    }
-//
-//    public void rotateLeft()
-//    {
-//        int p = -rCoord;
-//        int q = -pCoord;
-//        int r = -qCoord;
-//        pCoord = p;
-//        qCoord = q;
-//        rCoord = r;
-//    }
-//
-//    public void reverse()
-//    {
-//        pCoord = -pCoord;
-//        qCoord = -qCoord;
-//        rCoord = -rCoord;
-//    }
 
     /* Operators */
     public Hex plus(Hex other)
@@ -219,22 +113,7 @@ public class Hex
         return new Hex(p, q, r);
     }
 
-    public Hex rotatedRight()
-    {
-        return new Hex(-qCoord, -rCoord, -pCoord);
-    }
-
-    public Hex rotatedLeft()
-    {
-        return new Hex(-rCoord, -pCoord, -qCoord);
-    }
-
-    public Hex opposite()
-    {
-        return new Hex(-pCoord, -qCoord, -rCoord);
-    }
-
-    public Hex neighbor(HexagonalDirection direction)
+    public Hex neighbor(Direction direction)
     {
         int p = pCoord;
         int q = qCoord;
@@ -277,7 +156,7 @@ public class Hex
 
     public Hex[] neighbors()
     {
-        HexagonalDirection[] directions = HexagonalDirection.values();
+        Direction[] directions = Direction.values();
 
         Hex[] hexes = new Hex[directions.length];
         for (int i = 0; i < directions.length; ++i)
@@ -315,45 +194,45 @@ public class Hex
     /* Geometry */
     private static final double INNER_TO_OUTER_RATIO = Math.sin(Math.PI / 3.0);
 
-    public static double computeInnerRadius(double outerRadius)
+    public static double innerRadius(double outerRadius)
     {
         return outerRadius * INNER_TO_OUTER_RATIO;
     }
 
-    public static int computeHexSurfaceSize(int side)
+    public static int surfaceSize(int side)
     {
         return 3 * side * (side - 1) + 1;
     }
 
-    public Doublet<Integer> getCentralPoint(int outerRadius, int innerRadius)
+    public Doublet<Integer> centralPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2;
         int y = (qCoord - rCoord) * innerRadius;
         return new Doublet<>(x, y);
     }
 
-    public Doublet<Integer> getCornerPoint(int outerRadius, int innerRadius)
+    public Doublet<Integer> cornerPoint(int outerRadius, int innerRadius)
     {
         int x = pCoord * outerRadius * 3 / 2 - outerRadius;
         int y = (qCoord - rCoord) * innerRadius - innerRadius;
         return new Doublet<>(x, y);
     }
 
-    public Doublet<Double> getCentralPoint(double outerRadius, double innerRadius)
+    public Doublet<Double> centralPoint(double outerRadius, double innerRadius)
     {
         double x = (double) (pCoord) * outerRadius * 1.5;
         double y = (double) (qCoord - rCoord) * innerRadius;
         return new Doublet<>(x, y);
     }
 
-    public Doublet<Double> getCornerPoint(double outerRadius, double innerRadius)
+    public Doublet<Double> cornerPoint(double outerRadius, double innerRadius)
     {
         double x = (double) (pCoord) * outerRadius * 1.5 - outerRadius;
         double y = (double) (qCoord - rCoord) * innerRadius - innerRadius;
         return new Doublet<>(x, y);
     }
 
-    public static Doublet<Integer> computeCentralPointAt(int p, int q, int r, int outerRadius, int innerRadius)
+    public static Doublet<Integer> centralPointAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
         Doublet<Integer> point = null;
         if (p + q + r == 0)
@@ -365,7 +244,7 @@ public class Hex
         return point;
     }
 
-    public static Doublet<Integer> computeCornerPointAt(int p, int q, int r, int outerRadius, int innerRadius)
+    public static Doublet<Integer> cornerPointAt(int p, int q, int r, int outerRadius, int innerRadius)
     {
         Doublet<Integer> point = null;
         if (p + q + r == 0)
@@ -377,7 +256,7 @@ public class Hex
         return point;
     }
 
-    public static Doublet<Double> computeCentralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    public static Doublet<Double> centralPointAt(int p, int q, int r, double outerRadius, double innerRadius)
     {
         Doublet<Double> point = null;
         if (p + q + r == 0)
@@ -389,7 +268,7 @@ public class Hex
         return point;
     }
 
-    public static Doublet<Double> computeCornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
+    public static Doublet<Double> cornerPointAt(int p, int q, int r, double outerRadius, double innerRadius)
     {
         Doublet<Double> point = null;
         if (p + q + r == 0)
@@ -401,22 +280,22 @@ public class Hex
         return point;
     }
 
-    public static int computeSurfaceWidth(int side, int outerRadius)
+    public static int surfaceWidth(int side, int outerRadius)
     {
         return 3 * (side - 1) * outerRadius + 2 * outerRadius;
     }
 
-    public static int computeSurfaceHeight(int side, int innerRadius)
+    public static int surfaceHeight(int side, int innerRadius)
     {
         return 4 * (side - 1) * innerRadius + 2 * innerRadius;
     }
 
-    public static double computeSurfaceWidth(int side, double outerRadius)
+    public static double surfaceWidth(int side, double outerRadius)
     {
         return 3 * (side - 1) * outerRadius + 2 * outerRadius;
     }
 
-    public static double computeSurfaceHeight(int side, double innerRadius)
+    public static double surfaceHeight(int side, double innerRadius)
     {
         return 4 * (side - 1) * innerRadius + 2 * innerRadius;
     }
@@ -450,5 +329,38 @@ public class Hex
     public String toString()
     {
         return String.format("Hex@[p=%d, q=%d, r=%d]", pCoord, qCoord, rCoord);
+    }
+
+    public enum Direction
+    {
+        UP,
+        RIGHT_UP,
+        RIGHT_DOWN,
+        DOWN,
+        LEFT_DOWN,
+        LEFT_UP;
+
+        public Direction next()
+        {
+            var values = values();
+            var index = (ordinal() + 1) % values.length;
+            return values[index];
+        }
+
+        public Direction prev()
+        {
+            var values = values();
+            int length = values.length;
+            int index = (ordinal() + length - 1) % length;
+            return values[index];
+        }
+
+        public Direction opposite()
+        {
+            var values = values();
+            int length = values.length;
+            int index = (ordinal() + (length / 2)) % length;
+            return values[index];
+        }
     }
 }

@@ -14,7 +14,7 @@ public class PerlinNoise
      * The width of the noised area, in pixels. Shall be positive.
      */
     private final int areaWidth;
-
+    
     /**
      * The height of the noised area, in pixels. Shall be positive.
      */
@@ -87,7 +87,7 @@ public class PerlinNoise
     private static double dotProduct(double x1, double y1, double x2, double y2)
     {
         return x1 * x2 + y1 * y2;
-    }
+}
 
     /**
      * Linear interpolation.
