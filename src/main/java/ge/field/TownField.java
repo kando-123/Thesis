@@ -8,6 +8,8 @@ import ge.utilities.Hex;
  */
 public class TownField extends CommercialField
 {
+    public static final int INCOME = 150;
+    
     public TownField(Hex coords)
     {
         super(coords);

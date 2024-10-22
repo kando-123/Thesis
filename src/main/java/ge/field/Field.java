@@ -2,6 +2,8 @@ package ge.field;
 
 import ge.entity.Entity;
 import ge.utilities.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.image.*;
 
 /**
@@ -51,5 +53,10 @@ public abstract class Field
     public void setMarked(boolean m)
     {
         marked = m;
+    }
+    
+    public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
+    {
+        graphics.drawImage(marked ? image : brightImage, xPosition, yPosition, width, height, null);
     }
 }

@@ -1,6 +1,5 @@
 package my.entity;
 
-import my.entity.EntityType;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.IOException;

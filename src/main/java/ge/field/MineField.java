@@ -8,6 +8,8 @@ import ge.utilities.Hex;
  */
 public class MineField extends CommercialField
 {
+    public static final int INCOME = 100;
+    
     public MineField(Hex coords)
     {
         super(coords);

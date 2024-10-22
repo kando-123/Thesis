@@ -19,13 +19,13 @@ public enum BuildingType
 
     public final int priceIntercept;
     public final int priceSlope;
-    public final String resourceName;
+    public final String resource;
 
     private BuildingType(int intercept, int slope)
     {
         priceIntercept = intercept;
         priceSlope = slope;
-        resourceName = name().substring(0, 1).concat(name().substring(1).toLowerCase());
+        resource = name().substring(0, 1).concat(name().substring(1).toLowerCase());
     }
     
     public int price(int number)
@@ -94,5 +94,81 @@ public enum BuildingType
                 yield (f, a) -> f instanceof PlainsField;
             }
         };
+    }
+    
+    public String getDescription()
+    {
+        return switch (this)
+        {
+            case BARRACKS ->
+            {
+                yield "Barracks is where you can place the new Infantry and Cavalry you hire.";
+            }
+            case FARM ->
+            {
+                yield "Farmfield brings extra %d Ħ after every round.".formatted(FarmField.INCOME);
+            }
+            case FORTRESS ->
+            {
+                yield "Fortress gives additional, field-fixed defence points.";
+            }
+            case MINE ->
+            {
+                yield "Mine brings extra %d Ħ after every round.".formatted(MineField.INCOME);
+            }
+            case SHIPYARD ->
+            {
+                yield "Shipyard is where you can place the new Navy ships.";
+            }
+            case TOWN ->
+            {
+                yield "Town brings extra %d Ħ after every round.".formatted(TownField.INCOME);
+            }
+            case VILLAGE ->
+            {
+                yield "Village brings extra %d Ħ after every round.".formatted(VillageField.INCOME);
+            }
+        };
+    }
+    
+    public String getConditions()
+    {
+        return switch (this)
+        {
+            case BARRACKS ->
+            {
+                yield "To build barracks, you need a plains field.";
+            }
+            case FARM ->
+            {
+                yield "To build a farmfield, you need a plains field adjacent to a village.";
+            }
+            case FORTRESS ->
+            {
+                yield "To build a fortress, you need a continental field.";
+            }
+            case MINE ->
+            {
+                yield "To build a mine, you need a mountain field.";
+            }
+            case SHIPYARD ->
+            {
+                yield "To build a shipyard, you need a plains field adjacent to a see field.";
+            }
+            case TOWN ->
+            {
+                yield "To build a town, you need a plains field.";
+            }
+            case VILLAGE ->
+            {
+                yield "To build a village, you need a plains field.";
+            }
+        };
+    }
+    
+    public String getPricing()
+    {
+        return String.format("The first %s costs %d Ħ; every next costs %d Ħ more.",
+                resource, priceIntercept, priceSlope);
     }
 }

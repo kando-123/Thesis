@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.*;
 
 /**
@@ -32,10 +33,10 @@ public class World
         HEX_HEIGHT = (int) Hex.innerRadius(HEX_WIDTH);
     }
 
-    private final int side;
+    public final int side;
     private final Map<Hex, Field> fields;
 
-    public World(WorldConfig config)
+    World(WorldConfig config)
     {
         assert (config.worldSide > 0 && config.worldSide <= 50);
         assert (config.seaPercentage >= 0.00 && config.seaPercentage <= 1.00);
@@ -54,6 +55,11 @@ public class World
         generateSeaFields(config.seaPercentage, centers);
         generateMountainFields(config.mountainsPercentage, centers);
         generateLandFields(centers);
+    }
+    
+    Field getField(Hex coords)
+    {
+        return fields.get(coords);
     }
 
     private Map<Object, Doublet<Integer>> generateCenters(int side, Doublet<Integer> offset)
@@ -87,27 +93,26 @@ public class World
     }
 
     private static final double ACCURACY = 0.05;
-    private static final int TIERS_COUNT = (int) (1.0 / ACCURACY) + 1;
+    private static final int TIERS_NUMBER = (int) (1.0 / ACCURACY) + 1;
 
     private double calculateThreshold(Map<Object, Double> noise, double percentage)
     {
         /* The i-th interval will store the number of entries whose value falls
            within the range from i*accuracy (incl.) to (i+1)*accuracy (excl.). */
-        List<Integer> noiseIntervals = new ArrayList<>(TIERS_COUNT);
-        for (int i = 0; i < TIERS_COUNT; ++i)
+        List<Integer> noiseIntervals = new ArrayList<>(TIERS_NUMBER);
+        for (int i = 0; i < TIERS_NUMBER; ++i)
         {
             noiseIntervals.add(0);
         }
-        noise.forEach((Object key, Double value) ->
+        noise.forEach((key, value) ->
         {
             int tier = (int) (value / ACCURACY);
             noiseIntervals.set(tier, noiseIntervals.get(tier) + 1);
-        }
-        );
+        });
         final int minimalSum = (int) (percentage * (double) noise.size());
         int currentSum = 0;
         double threshold = 0.0;
-        for (int i = 0; i < TIERS_COUNT; ++i)
+        for (int i = 0; i < TIERS_NUMBER; ++i)
         {
             currentSum += noiseIntervals.get(i);
             if (currentSum >= minimalSum)
@@ -121,12 +126,8 @@ public class World
 
     private void generateSeaFields(double percentage, Map<Object, Doublet<Integer>> centers)
     {
-        int westmostX = Hex.cornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left;
-        int eastmostX = Hex.cornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left + HEX_WIDTH;
-        int northmostY = Hex.cornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right;
-        int southmostY = Hex.cornerPointAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right + HEX_HEIGHT;
-        int areaWidth = eastmostX - westmostX;
-        int areaHeight = southmostY - northmostY;
+        int areaWidth = Hex.surfaceWidth(side, HEX_OUTER_RADIUS);
+        int areaHeight = Hex.surfaceHeight(side, HEX_INNER_RADIUS);
 
         int hexDimension = (int) (Math.hypot(HEX_WIDTH, HEX_HEIGHT) / Math.sqrt(2.0));
 
@@ -144,7 +145,7 @@ public class World
             assert (false);
         }
         PerlinNoise perlin = builder.get();
-        
+
         assert (perlin != null);
 
         Map<Object, Double> noise = perlin.makeNoise(centers);
@@ -171,12 +172,8 @@ public class World
 
     private void generateMountainFields(double percentage, Map<Object, Doublet<Integer>> centers)
     {
-        int westmostX = Hex.cornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left;
-        int eastmostX = Hex.cornerPointAt(+side, 0, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left + HEX_WIDTH;
-        int northmostY = Hex.cornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right;
-        int southmostY = Hex.cornerPointAt(0, +side, -side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right + HEX_HEIGHT;
-        int areaWidth = eastmostX - westmostX;
-        int areaHeight = southmostY - northmostY;
+        int areaWidth = Hex.surfaceWidth(side, HEX_OUTER_RADIUS);
+        int areaHeight = Hex.surfaceHeight(side, HEX_INNER_RADIUS);
 
         int hexDimension = (int) (Math.hypot(HEX_WIDTH, HEX_HEIGHT) / Math.sqrt(2.0));
 
@@ -194,7 +191,7 @@ public class World
             assert (false);
         }
         PerlinNoise perlin = builder.get();
-        
+
         assert (perlin != null);
 
         Map<Object, Double> noise = perlin.makeNoise(centers);
@@ -227,7 +224,7 @@ public class World
             MEADOW,
             WOOD
         }
-        WeightedGenerator<Type> generator = new WeightedGenerator<>();
+        var generator = new WeightedGenerator<Type>();
         try
         {
             generator.add(Type.GRASS, 2);
@@ -264,7 +261,7 @@ public class World
         }
     }
 
-    public void draw(Graphics2D graphics, Doublet<Double> centerOffset, double scale, Dimension panelSize)
+    void draw(Graphics2D graphics, Doublet<Double> centerOffset, double scale, Dimension panelSize)
     {
         // If both entries have entities, that which is more to the right will be drawn later.
         // If o1 has and entity and o2 does not, o1 will be drawn later.
@@ -279,7 +276,6 @@ public class World
                     boolean e2 = o2.getValue().hasEntity();
                     int p1 = o1.getKey().getP();
                     int p2 = o2.getKey().getP();
-
                     return e1 ? (e2 ? p1 - p2 : +1) : (e2 ? -1 : 0);
                 })
                 .collect(Collectors.toList());
@@ -288,8 +284,8 @@ public class World
             Hex hex = entry.getKey();
             Doublet<Integer> pixel = hex.cornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
 
-            int x = centerOffset.left.intValue() + (int) (pixel.left * scale);
-            int y = centerOffset.right.intValue() + (int) (pixel.right * scale);
+            int x = (int) (centerOffset.left + scale * pixel.left);
+            int y = (int) (centerOffset.right + scale * pixel.right);
 
             var field = entry.getValue();
 
@@ -298,7 +294,7 @@ public class World
 
             if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
             {
-                field.draw(graphics, new Doublet<>(x, y), new Dimension(w, h));
+                field.draw(graphics, x, y, w, h);
             }
         }
     }
@@ -309,7 +305,7 @@ public class World
         private final ArrayList<Hex> origins;
         private HashSet<Hex> periphery;
 
-        public Region(HashSet<Hex> root)
+        Region(HashSet<Hex> root)
         {
             assert (!root.isEmpty());
 
@@ -322,19 +318,17 @@ public class World
             periphery.addAll(root);
         }
 
-        public int size()
+        int size()
         {
             return territory.size();
         }
 
-        public void propagate(Map<Hex, Integer> map, Set<Hex> alreadyTaken)
+        void propagate(Map<Hex, Integer> map, Set<Hex> alreadyTaken)
         {
-            HashSet<Hex> acquisitions = new HashSet<>();
-
+            var acquisitions = new HashSet<Hex>();
             for (var peripheral : periphery)
             {
                 int value = map.get(peripheral);
-
                 for (var neighbor : peripheral.neighbors())
                 {
                     if (territory.contains(neighbor) || alreadyTaken.contains(neighbor) // One is unnecessary. (?)
@@ -356,7 +350,7 @@ public class World
             periphery = acquisitions;
         }
 
-        public Hex locateCapital()
+        Hex locateCapital()
         {
             int p = 0;
             int q = 0;
@@ -392,24 +386,24 @@ public class World
 
     private final static int MANIPULATION_MARGIN = 4;
 
-    public Hex[] locateCapitals(int number)
+    Hex[] locateCapitals(int number)
     {
         /* Discard the seas and the mounts. Divide the lands and woods into the periphery
            and the pool. */
-        HashSet<Hex> periphery = new HashSet<>();
-        HashSet<Hex> pool = new HashSet<>();
+        var periphery = new HashSet<Hex>();
+        var pool = new HashSet<Hex>();
         splitHexes(periphery, pool);
 
         /* Compute the inlandness for the periphery and prepare the next layer. */
-        HashMap<Hex, Integer> inlandness = new HashMap<>();
-        HashSet<Hex> landwardLayer = new HashSet<>();
+        var inlandness = new HashMap<Hex, Integer>();
+        var landwardLayer = new HashSet<Hex>();
         processShore(periphery, pool, landwardLayer, inlandness);
 
         /* Propagate landwards. */
         processLand(periphery, pool, landwardLayer, inlandness);
 
         /* Find candidates for local maxima. */
-        LinkedList<Hex> maxima = findMaximumCandidates(inlandness);
+        List<Hex> maxima = findMaximumCandidates(inlandness);
 
         /* Filter the apparent maxima out. */
         removeApparentMaxima(maxima, inlandness);
@@ -436,8 +430,7 @@ public class World
         return capitals;
     }
 
-    private void splitHexes(HashSet<Hex> periphery,
-                            HashSet<Hex> pool)
+    private void splitHexes(HashSet<Hex> periphery, HashSet<Hex> pool)
     {
         Set<Map.Entry<Hex, Field>> entries = fields.entrySet();
         for (var entry : entries)
@@ -445,7 +438,7 @@ public class World
             var key = entry.getKey();
             var value = entry.getValue();
 
-            if (value.isPlains())
+            if (value instanceof PlainsField)
             {
                 boolean isPeripheral = false;
 
@@ -458,8 +451,8 @@ public class World
                     }
                     else
                     {
-                        FieldType type = fields.get(neighbor).getType();
-                        if (type == FieldType.SEA || type == FieldType.MOUNTAINS)
+                        var field = fields.get(neighbor);
+                        if (field instanceof SeaField || field instanceof MountainsField)
                         {
                             isPeripheral = true;
                             break;
@@ -479,10 +472,7 @@ public class World
         }
     }
 
-    private void processShore(HashSet<Hex> periphery,
-                              HashSet<Hex> pool,
-                              HashSet<Hex> landwardLayer,
-                              HashMap<Hex, Integer> inlandness)
+    private void processShore(HashSet<Hex> periphery, HashSet<Hex> pool, HashSet<Hex> landwardLayer, HashMap<Hex, Integer> inlandness)
     {
         for (var hex : periphery)
         {
@@ -497,25 +487,19 @@ public class World
                 }
                 else
                 {
-                    AbstractField field = fields.get(neighbor);
-                    switch (field.getType())
+                    Field field = fields.get(neighbor);
+                    if (field instanceof SeaField)
                     {
-                        case SEA ->
-                        {
-                            ++seaNeighbors;
-                        }
-                        case MOUNTAINS ->
-                        {
-                            ++mountNeighbors;
-                        }
-                        case GRASS, MEADOW, WOOD ->
-                        {
-                            if (pool.contains(neighbor))
-                            {
-                                pool.remove(neighbor);
-                                landwardLayer.add(neighbor);
-                            }
-                        }
+                        ++seaNeighbors;
+                    }
+                    else if (field instanceof MountainsField)
+                    {
+                        ++mountNeighbors;
+                    }
+                    else if (field instanceof PlainsField && pool.contains(neighbor))
+                    {
+                        pool.remove(neighbor);
+                        landwardLayer.add(neighbor);
                     }
                 }
             }
@@ -527,10 +511,7 @@ public class World
         }
     }
 
-    private void processLand(HashSet<Hex> periphery,
-                             HashSet<Hex> pool,
-                             HashSet<Hex> landwardLayer,
-                             HashMap<Hex, Integer> inlandness)
+    private void processLand(HashSet<Hex> periphery, HashSet<Hex> pool, HashSet<Hex> landwardLayer, HashMap<Hex, Integer> inlandness)
     {
         while (!landwardLayer.isEmpty())
         {
@@ -558,9 +539,9 @@ public class World
         }
     }
 
-    private LinkedList<Hex> findMaximumCandidates(HashMap<Hex, Integer> inlandness)
+    private List<Hex> findMaximumCandidates(HashMap<Hex, Integer> inlandness)
     {
-        LinkedList<Hex> candidates = new LinkedList<>();
+        List<Hex> candidates = new LinkedList<>();
 
         for (var entry : inlandness.entrySet())
         {
@@ -640,17 +621,17 @@ public class World
         maxima.removeAll(apparentMaxima);
     }
 
-    private List<Region> initRegions(LinkedList<Hex> maxima,
+    private List<Region> initRegions(List<Hex> maxima,
                                      HashSet<Hex> takenArea)
     {
         List<Region> regions = new ArrayList<>();
         while (!maxima.isEmpty())
         {
             /* Find a whole connected group using DFS */
-            HashSet<Hex> group = new HashSet<>();
-            Stack<Hex> stack = new Stack<>();
+            var group = new HashSet<Hex>();
+            var stack = new Stack<Hex>();
 
-            Hex origin = maxima.pop();
+            Hex origin = maxima.removeFirst();
             group.add(origin);
             stack.push(origin);
 
@@ -703,7 +684,7 @@ public class World
     }
 
     private Hex[] getCapitalCandidates(int count,
-                                       java.util.List<Region> regions)
+                                       List<Region> regions)
     {
         /* Prefer larger regions. */
         regions.sort((reg1, reg2) -> reg2.size() - reg1.size());
@@ -838,49 +819,4 @@ public class World
 
         return sum;
     }
-
-//    public void substitute(AbstractField oldField, AbstractField newField)
-//    {
-//        Hex hex = oldField.getHex();
-//        if (fields.get(hex) == oldField)
-//        {
-//            newField.moveProperties(oldField);
-//            fields.put(hex, newField);
-//        }
-//    }
-
-//    public void mark(Hex hex)
-//    {
-//        AbstractField field = fields.get(hex);
-//        if (field != null)
-//        {
-//            field.mark();
-//            markedFields.add(field);
-//        }
-//    }
-//
-//    public void unmark(Hex hex)
-//    {
-//        AbstractField field = fields.get(hex);
-//        if (field != null)
-//        {
-//            field.unmark();
-//            markedFields.remove(field);
-//        }
-//    }
-//
-//    public void unmarkAll()
-//    {
-//        for (AbstractField field : markedFields)
-//        {
-//            field.unmark();
-//        }
-//        markedFields.clear();
-//    }
-//
-//    public boolean isMarked(Hex hex)
-//    {
-//        AbstractField field = fields.get(hex);
-//        return markedFields.contains(field);
-//    }
 }

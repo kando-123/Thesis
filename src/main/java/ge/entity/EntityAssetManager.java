@@ -1,4 +1,4 @@
-package ge.field;
+package ge.entity;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -11,22 +11,22 @@ import javax.swing.*;
  *
  * @author Kay Jay O'Nail
  */
-public class FieldAssetManager
+public class EntityAssetManager
 {
     private final Map<String, BufferedImage> images;
     private final Map<String, BufferedImage> brightImages;
     private final Map<String, Icon> icons;
 
-    private FieldAssetManager()
+    private EntityAssetManager()
     {
         images = new HashMap<>();
         brightImages = new HashMap();
         icons = new HashMap<>();
     }
 
-    private static final FieldAssetManager instance = new FieldAssetManager();
+    private static final EntityAssetManager instance = new EntityAssetManager();
 
-    static FieldAssetManager getInstance()
+    static EntityAssetManager getInstance()
     {
         return instance;
     }
@@ -37,7 +37,7 @@ public class FieldAssetManager
 
         if (image == null)
         {
-            String file = String.format("/Field/%s.png", name);
+            String file = String.format("/Entity/%s.png", name);
             InputStream stream = getClass().getResourceAsStream(file);
             try
             {

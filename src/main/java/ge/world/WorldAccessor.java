@@ -9,10 +9,15 @@ import ge.utilities.*;
  */
 public class WorldAccessor
 {
-    
+    private final World world;
+
+    WorldAccessor(World world)
+    {
+        this.world = world;
+    }
     
     public Field getField(Hex coords)
     {
-        throw new UnsupportedOperationException();
+        return world.getField(coords);
     }
 }
