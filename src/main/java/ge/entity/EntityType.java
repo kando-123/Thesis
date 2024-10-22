@@ -12,11 +12,13 @@ public enum EntityType
 
     public final int priceIntercept;
     public final int priceSlope;
+    public final String resource;
 
     private EntityType(int intercept, int slope)
     {
         priceIntercept = intercept;
         priceSlope = slope;
+        resource = name().substring(0, 1).concat(name().substring(1).toLowerCase());
     }
 
     public int price(int number)

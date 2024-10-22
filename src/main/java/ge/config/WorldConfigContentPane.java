@@ -92,7 +92,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(seaPercentageSliderPanel, c);
-        seaSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 4);
+        seaSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 5);
         seaSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
         Hashtable<Integer, JLabel> seaPercentageLabels = new Hashtable<>(3);
         seaPercentageLabels.put(0, new JLabel("lakes"));
@@ -137,7 +137,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
     
     private void makeButtons()
     {
-        JButton back = new JButton("Back");
+        JButton back = new JButton("Back ↺");
         back.setActionCommand("->players");
         back.addActionListener(this);
         GridBagConstraints c = new GridBagConstraints();
@@ -150,7 +150,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.anchor = GridBagConstraints.CENTER;
         add(back, c);
         
-        JButton button = new JButton("Ready");
+        JButton button = new JButton("Next →");
         button.setActionCommand("->gameplay");
         button.addActionListener(this);
         c = new GridBagConstraints();

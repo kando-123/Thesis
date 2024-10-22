@@ -6,5 +6,15 @@ package ge.player;
  */
 public class BotPlayer extends Player
 {
+    public BotPlayer(BotConfig config)
+    {
+        super(config.color);
+    }
+
+    @Override
+    void play()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

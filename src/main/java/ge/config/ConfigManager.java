@@ -22,11 +22,11 @@ public class ConfigManager
 
     private final Dimension contentPaneSize;
 
-    public ConfigManager(/*Invoker<Engine> invoker*/)
+    public ConfigManager(JFrame frame/*Invoker<Engine> invoker*/)
     {
         //this.invoker = invoker;
 
-        frame = new JFrame();
+        this.frame = frame;
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("The Global Empire");
