@@ -1,7 +1,10 @@
 package ge.engine;
 
-import ge.config.ConfigManager;
-import javax.swing.JFrame;
+import ge.config.*;
+import ge.player.*;
+import ge.utilities.Invoker;
+import ge.world.*;
+import javax.swing.*;
 
 /**
  *
@@ -11,22 +14,31 @@ public class Engine
 {
     private static Engine engine;
     
+    public static void main(String... args)
+    {
+        engine = new Engine();
+        engine.beginConfig();
+    }
+    
     private final JFrame frame;
-    private final ConfigManager configManager;
-    // private GUIManager guiManager;
-    // private WorldManager worldManager;
-    // private PlayerManager playerManager;
+    
+    private ConfigManager configManager;
+    //private GUIManager guiManager;
+    private WorldManager worldManager;
+    //private PlayerManager playerManager;
     
     private Engine()
     {
         frame = new JFrame();
-        configManager = new ConfigManager(frame);
     }
     
-    public static void main(String... args)
+    private void beginConfig()
     {
-        engine = new Engine();
+        configManager = new ConfigManager(frame, new Invoker<>(this));
     }
     
-    
+    void beginGameplay(PlayerConfig[] players, WorldConfig world)
+    {
+        worldManager = new WorldManager(world);
+    }
 }

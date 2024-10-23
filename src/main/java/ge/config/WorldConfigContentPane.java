@@ -1,8 +1,7 @@
 package ge.config;
 
 import ge.utilities.*;
-import ge.world.WorldConfig;
-//import ge.world.*;
+import ge.world.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -38,9 +37,9 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
     
     private void makeHeaderLabel()
     {
-        JLabel label = new JLabel("Select the World Parameters");
+        var label = new JLabel("World Parameters");
         label.setAlignmentX(CENTER_ALIGNMENT);
-        GridBagConstraints c = new GridBagConstraints();
+        var c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 1;
@@ -53,9 +52,9 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
     
     private void makeWorldSizeSlider()
     {
-        JPanel worldSizeSliderPanel = new JPanel();
+        var worldSizeSliderPanel = new JPanel();
         worldSizeSliderPanel.setBorder(BorderFactory.createTitledBorder("World size"));
-        GridBagConstraints c = new GridBagConstraints();
+        var c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
         c.weightx = 1;
@@ -66,7 +65,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         add(worldSizeSliderPanel, c);
         sizeSlider = new JSlider(JSlider.HORIZONTAL, 15, 30, 20);
         sizeSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
-        Hashtable<Integer, JLabel> worldSizeLabels = new Hashtable<>(3);
+        var worldSizeLabels = new Hashtable<Integer, JLabel>(3);
         worldSizeLabels.put(15, new JLabel("small"));
         worldSizeLabels.put(20, new JLabel("medium"));
         worldSizeLabels.put(25, new JLabel("big"));
@@ -82,9 +81,9 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
     
     private void makeSeaSlider()
     {
-        JPanel seaPercentageSliderPanel = new JPanel();
+        var seaPercentageSliderPanel = new JPanel();
         seaPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Sea"));
-        GridBagConstraints c = new GridBagConstraints();
+        var c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 2;
         c.weightx = 1;
@@ -93,16 +92,16 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(seaPercentageSliderPanel, c);
-        seaSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 5);
+        seaSlider = new JSlider(JSlider.HORIZONTAL, 0, 8, 4);
         seaSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
-        Hashtable<Integer, JLabel> seaPercentageLabels = new Hashtable<>(3);
+        var seaPercentageLabels = new Hashtable<Integer, JLabel>(3);
         seaPercentageLabels.put(0, new JLabel("lakes"));
-        seaPercentageLabels.put(5, new JLabel("seas"));
-        seaPercentageLabels.put(10, new JLabel("oceans"));
+        seaPercentageLabels.put(4, new JLabel("seas"));
+        seaPercentageLabels.put(8, new JLabel("oceans"));
         seaSlider.setLabelTable(seaPercentageLabels);
         seaSlider.setPaintLabels(true);
         seaSlider.setMinorTickSpacing(1);
-        seaSlider.setMajorTickSpacing(5);
+        seaSlider.setMajorTickSpacing(4);
         seaSlider.setPaintTicks(true);
         seaSlider.setSnapToTicks(true);
         seaPercentageSliderPanel.add(seaSlider);
@@ -110,9 +109,9 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
     
     private void makeMountainSlider()
     {
-        JPanel mountainsPercentageSliderPanel = new JPanel();
+        var mountainsPercentageSliderPanel = new JPanel();
         mountainsPercentageSliderPanel.setBorder(BorderFactory.createTitledBorder("Mountains"));
-        GridBagConstraints c = new GridBagConstraints();
+        var c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 3;
         c.weightx = 1.0;
@@ -121,16 +120,16 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         add(mountainsPercentageSliderPanel, c);
-        mountainSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 5);
+        mountainSlider = new JSlider(JSlider.HORIZONTAL, 0, 8, 4);
         mountainSlider.setPreferredSize(new Dimension(SLIDER_WIDTH, SLIDER_HEIGHT));
-        Hashtable<Integer, JLabel> mountsPercentageLabels = new Hashtable<>(3);
+        var mountsPercentageLabels = new Hashtable<Integer, JLabel>(3);
         mountsPercentageLabels.put(0, new JLabel("few"));
-        mountsPercentageLabels.put(5, new JLabel("medium"));
-        mountsPercentageLabels.put(10, new JLabel("many"));
+        mountsPercentageLabels.put(4, new JLabel("medium"));
+        mountsPercentageLabels.put(8, new JLabel("many"));
         mountainSlider.setLabelTable(mountsPercentageLabels);
         mountainSlider.setPaintLabels(true);
         mountainSlider.setMinorTickSpacing(1);
-        mountainSlider.setMajorTickSpacing(5);
+        mountainSlider.setMajorTickSpacing(4);
         mountainSlider.setPaintTicks(true);
         mountainSlider.setSnapToTicks(true);
         mountainsPercentageSliderPanel.add(mountainSlider);
@@ -138,10 +137,10 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
     
     private void makeButtons()
     {
-        JButton back = new JButton("Back ↺");
+        var back = new JButton("Back ↩");
         back.setActionCommand("->players");
         back.addActionListener(this);
-        GridBagConstraints c = new GridBagConstraints();
+        var c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 4;
         c.weightx = 1;
@@ -151,7 +150,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.anchor = GridBagConstraints.CENTER;
         add(back, c);
         
-        JButton button = new JButton("Next →");
+        var button = new JButton("Next ↪");
         button.setActionCommand("->gameplay");
         button.addActionListener(this);
         c = new GridBagConstraints();
@@ -168,34 +167,35 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
     private double getSeaPoints()
     {
         /*  y = a * x + b,
-                a = (yMax - yMin) / (xMax - xMin) = 40 / 10 = 4
+                a = (yMax - yMin) / (xMax - xMin) = 40 / 8 = 5
                     xMin =  0
-                    xMax = 10
+                    xMax = 8
                     yMin = 20
                     yMax = 60
                 b = yMin - a * xMin = 20 - 0 = 20
         */
-        return 4 * seaSlider.getValue() + 20;
+        return 5 * seaSlider.getValue() + 20;
     }
 
     private double getMountainPoints()
     {
         /*  y = a * x + b,
-                a = (yMax - yMin) / (xMax - xMin) = 30 / 10 = 3
+                a = (yMax - yMin) / (xMax - xMin) = 30 / 8 = 3.75
                     xMin =  0
-                    xMax = 10
+                    xMax = 8
                     yMin = 10
                     yMax = 40
                 b = yMin - a * xMin = 10 - 0 = 10
         */
-        return 3 * mountainSlider.getValue() + 10;
+        return 3.75 * mountainSlider.getValue() + 10;
     }
 
     public WorldConfig getConfig()
     {
         int size = sizeSlider.getValue();
-        double seaPercentage = 0.01 * (double) getSeaPoints();
-        double mountainsPercentage = 0.01 * (double) getMountainPoints();
+        double seaPercentage = 0.01 * getSeaPoints();
+        double mountainsPercentage = 0.01 * getMountainPoints();
+        
         return new WorldConfig(size, seaPercentage, mountainsPercentage);
     }
 

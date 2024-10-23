@@ -49,7 +49,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 2;
-        var button = new JButton("Next →");
+        var button = new JButton("Next ↪");
         button.setActionCommand("->world");
         button.addActionListener(this);
         add(button, c);
@@ -73,7 +73,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                 ? (o2.hasColor() ? 0 : +1)
                 : (o2.hasColor() ? -1 : 0));
         
-        var list = Arrays.asList(Player.ContourColor.values());
+        var list = new LinkedList<>(Arrays.asList(Player.ContourColor.values()));
         
         int firstColorlessUser = 0;
         for (int i = 0; i < userBuilders.length; ++i)
@@ -124,14 +124,14 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             configs[index++] = builder.get();
         }
         
-        // Shuffle, because why not to?
-        for (int i = 0; i < configs.length; ++i)
-        {
-            int j = random.nextInt(configs.length);
-            var config = configs[j];
-            configs[j] = configs[i];
-            configs[i] = config;
-        }
+//        //Shuffle, because why not to?
+//        for (int i = 0; i < configs.length; ++i)
+//        {
+//            int j = random.nextInt(configs.length);
+//            var config = configs[j];
+//            configs[j] = configs[i];
+//            configs[i] = config;
+//        }
         
         return configs;
     }
