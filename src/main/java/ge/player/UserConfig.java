@@ -29,6 +29,11 @@ public class UserConfig extends PlayerConfig
             return color != null;
         }
         
+        public Player.ContourColor getColor()
+        {
+            return color;
+        }
+        
         public void setName(String newName)
         {
             name = newName;

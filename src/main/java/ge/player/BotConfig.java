@@ -25,6 +25,11 @@ public class BotConfig extends PlayerConfig
             return color != null;
         }
         
+        public Player.ContourColor getColor()
+        {
+            return color;
+        }
+        
         public BotConfig get()
         {
             if (color != null)

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import javax.swing.*;
 
 /**
@@ -38,13 +39,13 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         userPanel = new UserPanel();
         userPanel.setLimit(Player.MAX_NUMBER - BotPanel.DEFAULT_SELECTION);
         add(userPanel, c);
-        
+
         c.gridx = 1;
         c.gridy = 0;
         botPanel = new BotPanel();
         botPanel.setLimit(Player.MAX_NUMBER - UserPanel.DEFAULT_SELECTION);
         add(botPanel, c);
-        
+
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 2;
@@ -64,15 +65,77 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         UserConfig.Builder[] userBuilders = userPanel.getConfigs();
         BotConfig.Builder[] botBuilders = botPanel.getConfigs();
         
-        // Generate random colors, if needed.
+        // "Colorful" builders first.
+        Arrays.sort(userBuilders, (o1, o2) -> o1.hasColor()
+                ? (o2.hasColor() ? 0 : +1)
+                : (o2.hasColor() ? -1 : 0));
+        Arrays.sort(botBuilders, (o1, o2) -> o1.hasColor()
+                ? (o2.hasColor() ? 0 : +1)
+                : (o2.hasColor() ? -1 : 0));
         
+        var list = Arrays.asList(Player.ContourColor.values());
+        
+        int firstColorlessUser = 0;
+        for (int i = 0; i < userBuilders.length; ++i)
+        {
+            if (userBuilders[i].hasColor())
+            {
+                list.remove(userBuilders[i].getColor());
+            }
+            else
+            {
+                firstColorlessUser = i;
+                break;
+            }
+        }
+        
+        int firstColorlessBot = 0;
+        for (int i = 0; i < botBuilders.length; ++i)
+        {
+            if (botBuilders[i].hasColor())
+            {
+                list.remove(botBuilders[i].getColor());
+            }
+            else
+            {
+                firstColorlessBot = i;
+            }
+        }
+        
+        var random = new Random();
+        for (int i = firstColorlessUser; i < userBuilders.length; ++i)
+        {
+            userBuilders[i].setColor(list.remove(random.nextInt(list.size())));
+        }
+        for (int i = firstColorlessBot; i < botBuilders.length; ++i)
+        {
+            botBuilders[i].setColor(list.remove(random.nextInt(list.size())));
+        }
+
         PlayerConfig[] configs = new PlayerConfig[getSelected()];
         
-        // Get ( get() ) the config objects.
+        int index = 0;
+        for (var builder : userBuilders)
+        {
+            configs[index++] = builder.get();
+        }
+        for (var builder : botBuilders)
+        {
+            configs[index++] = builder.get();
+        }
+        
+        // Shuffle, because why not to?
+        for (int i = 0; i < configs.length; ++i)
+        {
+            int j = random.nextInt(configs.length);
+            var config = configs[j];
+            configs[j] = configs[i];
+            configs[i] = config;
+        }
         
         return configs;
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -96,7 +159,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
     public void setPreferredSize(Dimension preferredSize)
     {
         super.setPreferredSize(preferredSize);
-        
+
         var panelSize = new Dimension(preferredSize);
         panelSize.width *= 0.45;
         panelSize.height *= 0.85;
@@ -121,7 +184,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         UserPanel()
         {
             super(new GridBagLayout());
-            
+
             minimum = 1;
             maximum = limit = Player.MAX_NUMBER;
             selected = DEFAULT_SELECTION;
@@ -135,9 +198,9 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             c.weighty = 0;
             c.gridwidth = 3;
             add(new JLabel("The Human Players"), c);
-            
+
             c.gridwidth = 1;
-            
+
             var group = new ButtonGroup();
             for (int i = minimum; i <= maximum; ++i)
             {
@@ -189,25 +252,25 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         {
             return selected;
         }
-        
+
         UserConfig.Builder[] getConfigs()
         {
             UserConfig.Builder[] builders = new UserConfig.Builder[selected];
             for (int i = minimum; i <= selected; ++i)
             {
                 var builder = new UserConfig.Builder();
-                
+
                 var name = names.get(i).getText();
                 builder.setName(!name.isBlank() ? name : "Anonymous");
-                
+
                 var selection = (SelectableColor) combos.get(i).getModel().getSelectedItem();
                 builder.setColor(selection.color);
-                
+
                 builders[i - minimum] = builder;
             }
             return builders;
         }
-        
+
         void addColor(SelectableColor color, Object exception)
         {
             for (var combo : combos.values())
@@ -303,7 +366,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         BotPanel()
         {
             super(new GridBagLayout());
-            
+
             minimum = 1;
             maximum = limit = Player.MAX_NUMBER - 1;
             selected = DEFAULT_SELECTION;
@@ -317,7 +380,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             c.weighty = 0;
             c.gridwidth = 3;
             add(new JLabel("The Bot Players"), c);
-            
+
             var group = new ButtonGroup();
 
             c.gridwidth = 1;
@@ -336,7 +399,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             noBotsLabel.setEnabled(selected == 0);
             names.put(0, noBotsLabel);
             add(noBotsLabel, c);
-            
+
             c.gridwidth = 1;
 
             for (int i = minimum; i <= maximum; ++i)
@@ -389,17 +452,17 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         {
             return selected;
         }
-        
+
         BotConfig.Builder[] getConfigs()
         {
             BotConfig.Builder[] builders = new BotConfig.Builder[selected];
             for (int i = minimum; i <= selected; ++i)
             {
                 var builder = new BotConfig.Builder();
-                
+
                 var selection = (SelectableColor) combos.get(i).getModel().getSelectedItem();
                 builder.setColor(selection.color);
-                
+
                 builders[i - minimum] = builder;
             }
             return builders;
@@ -438,7 +501,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         {
             removeColor(color, null);
         }
-        
+
         void disableUnused()
         {
             for (int i = minimum; i <= limit; ++i)
@@ -484,7 +547,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             }
         }
     }
-    
+
     private enum SelectableColor
     {
         RANDOM(null),
@@ -496,10 +559,10 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         BLUE(Player.ContourColor.BLUE),
         VIOLET(Player.ContourColor.VIOLET),
         MAGENTA(Player.ContourColor.MAGENTA);
-        
+
         private final Player.ContourColor color;
         private final String string;
-        
+
         private SelectableColor(Player.ContourColor color)
         {
             this.color = color;
