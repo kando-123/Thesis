@@ -141,6 +141,29 @@ public class PerlinNoise
             }
         }
     }
+    
+    private PerlinNoise(int areaWidth, int areaHeight, int chunkSize, long seed)
+    {
+        assert (areaWidth > 0 && areaHeight > 0 && chunkSize > 0);
+        this.areaWidth = areaWidth;
+        this.areaHeight = areaHeight;
+        this.chunkSize = chunkSize;
+
+        gradientCols = Math.ceilDiv(areaWidth, chunkSize) + 1;
+        gradientRows = Math.ceilDiv(areaHeight, chunkSize) + 1;
+        gradientVectors = new HashMap<>(gradientCols);
+        Random random = new Random(seed);
+        for (int i = 0; i < gradientCols; ++i)
+        {
+            for (int j = 0; j < gradientRows; ++j)
+            {
+                double angle = random.nextDouble(0, Math.TAU);
+                double xCoord = Math.cos(angle);
+                double yCoord = Math.sin(angle);
+                gradientVectors.put(new Doublet<>(i, j), new Doublet<>(xCoord, yCoord));
+            }
+        }
+    }
 
     private double getRawNoise(Doublet<Integer> pixel)
     {
@@ -315,6 +338,8 @@ public class PerlinNoise
         private double lacunarity;
         private double lowerBound;
         private double upperBound;
+        
+        private Long seed;
 
         public Builder()
         {
@@ -408,12 +433,20 @@ public class PerlinNoise
             this.upperBound = upperBound;
             return this;
         }
+        
+        public Builder setSeed(long seed)
+        {
+            this.seed = seed;
+            return this;
+        }
 
         public PerlinNoise get()
         {
             if (areaWidth > 0 && areaHeight > 0 && chunkSize > 0)
             {
-                PerlinNoise perlin = new PerlinNoise(areaWidth, areaHeight, chunkSize);
+                PerlinNoise perlin = (seed == null)
+                        ? new PerlinNoise(areaWidth, areaHeight, chunkSize)
+                        : new PerlinNoise(areaWidth, areaHeight, chunkSize, seed);
                 perlin.octavesCount = octavesCount;
                 perlin.persistence = persistence;
                 perlin.lacunarity = lacunarity;
