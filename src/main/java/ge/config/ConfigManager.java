@@ -57,10 +57,10 @@ public class ConfigManager
     {
         if (playerContentPane == null)
         {
-//            playerContentPane = new PlayerConfigContentPane(new Invoker<>(this));
-//            playerContentPane.setPreferredSize(contentPaneSize);
+            playerContentPane = new PlayerConfigContentPane(new Invoker<>(this));
+            playerContentPane.setPreferredSize(contentPaneSize);
         }
-//        frame.setContentPane(playerContentPane);
+        frame.setContentPane(playerContentPane);
         frame.pack();
     }
 
