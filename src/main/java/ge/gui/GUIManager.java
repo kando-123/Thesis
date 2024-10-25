@@ -24,11 +24,18 @@ public class GUIManager
         contentPane.add(userPanel, BorderLayout.WEST);
         contentPane.add(worldPanel, BorderLayout.CENTER);
         
+        var toolkit = Toolkit.getDefaultToolkit();
+        var size = toolkit.getScreenSize();
+        size.width *= 0.75;
+        size.height *= 0.75;
+        contentPane.setPreferredSize(size);
+        
         frame.addKeyListener(worldPanel.getKeyListener());
         
         frame.setContentPane(contentPane);
         frame.pack();
         
+        frame.setLocationRelativeTo(null);
         frame.setResizable(true);
         frame.requestFocus();
     }
