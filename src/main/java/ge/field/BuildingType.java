@@ -33,6 +33,12 @@ public enum BuildingType
         return priceIntercept + number * priceSlope;
     }
 
+    @Override
+    public String toString()
+    {
+        return resource;
+    }
+
     public BinaryPredicate<Field, WorldAccessor> getPredicate()
     {
         return switch (this)

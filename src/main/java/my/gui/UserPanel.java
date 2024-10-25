@@ -129,7 +129,7 @@ public class UserPanel extends JPanel implements ActionListener
             panel.add(button);
         }
         return panel;
-    }
+    } 
     
     private JPanel makeEntityButtonsPanel()
     {

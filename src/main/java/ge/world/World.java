@@ -72,8 +72,7 @@ public class World
         centers.put(hex.clone(), center);
         for (int ring = 1; ring < side; ++ring)
         {
-            Hex beginning = hex;
-            hex = hex.neighbor(Hex.Direction.UP);
+            final Hex beginning = hex = hex.neighbor(Hex.Direction.UP);
             var direction = Hex.Direction.RIGHT_DOWN;
             do
             {
@@ -261,7 +260,7 @@ public class World
         }
     }
 
-    void draw(Graphics2D graphics, Doublet<Double> centerOffset, double scale, Dimension panelSize)
+    void draw(Graphics2D graphics, Doublet<Double> center, double scale, Dimension size)
     {
         // If both entries have entities, that which is more to the right will be drawn later.
         // If o1 has and entity and o2 does not, o1 will be drawn later.
@@ -284,15 +283,15 @@ public class World
             Hex hex = entry.getKey();
             Doublet<Integer> pixel = hex.cornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
 
-            int x = (int) (centerOffset.left + scale * pixel.left);
-            int y = (int) (centerOffset.right + scale * pixel.right);
+            int x = (int) (center.left + scale * pixel.left);
+            int y = (int) (center.right + scale * pixel.right);
 
             var field = entry.getValue();
 
             int w = (int) (HEX_WIDTH * scale);
             int h = (int) (HEX_HEIGHT * scale);
 
-            if (x + w >= 0 && x < panelSize.width && y + h >= 0 && y < panelSize.height)
+            if (x + w >= 0 && x < size.width && y + h >= 0 && y < size.height)
             {
                 field.draw(graphics, x, y, w, h);
             }
@@ -301,11 +300,11 @@ public class World
 
     private static class Region
     {
-        private final HashSet<Hex> territory;
+        private final Set<Hex> territory;
         private final ArrayList<Hex> origins;
-        private HashSet<Hex> periphery;
+        private Set<Hex> periphery;
 
-        Region(HashSet<Hex> root)
+        Region(Set<Hex> root)
         {
             assert (!root.isEmpty());
 
@@ -430,7 +429,7 @@ public class World
         return capitals;
     }
 
-    private void splitHexes(HashSet<Hex> periphery, HashSet<Hex> pool)
+    private void splitHexes(Set<Hex> periphery, Set<Hex> pool)
     {
         Set<Map.Entry<Hex, Field>> entries = fields.entrySet();
         for (var entry : entries)
@@ -472,7 +471,7 @@ public class World
         }
     }
 
-    private void processShore(HashSet<Hex> periphery, HashSet<Hex> pool, HashSet<Hex> landwardLayer, HashMap<Hex, Integer> inlandness)
+    private void processShore(Set<Hex> periphery, Set<Hex> pool, Set<Hex> landwardLayer, Map<Hex, Integer> inlandness)
     {
         for (var hex : periphery)
         {
@@ -511,11 +510,11 @@ public class World
         }
     }
 
-    private void processLand(HashSet<Hex> periphery, HashSet<Hex> pool, HashSet<Hex> landwardLayer, HashMap<Hex, Integer> inlandness)
+    private void processLand(Set<Hex> periphery, Set<Hex> pool, Set<Hex> landwardLayer, Map<Hex, Integer> inlandness)
     {
         while (!landwardLayer.isEmpty())
         {
-            HashSet<Hex> previousLayer = periphery;
+            Set<Hex> previousLayer = periphery;
             periphery = landwardLayer;
             landwardLayer = new HashSet<>();
 
@@ -539,7 +538,7 @@ public class World
         }
     }
 
-    private List<Hex> findMaximumCandidates(HashMap<Hex, Integer> inlandness)
+    private List<Hex> findMaximumCandidates(Map<Hex, Integer> inlandness)
     {
         List<Hex> candidates = new LinkedList<>();
 
@@ -567,8 +566,7 @@ public class World
         return candidates;
     }
 
-    private void removeApparentMaxima(List<Hex> maxima,
-                                      HashMap<Hex, Integer> inlandness)
+    private void removeApparentMaxima(List<Hex> maxima, Map<Hex, Integer> inlandness)
     {
         HashSet<Hex> apparentMaxima = new HashSet<>();
         for (var candidate : maxima)
@@ -621,8 +619,7 @@ public class World
         maxima.removeAll(apparentMaxima);
     }
 
-    private List<Region> initRegions(List<Hex> maxima,
-                                     HashSet<Hex> takenArea)
+    private List<Region> initRegions(List<Hex> maxima, Set<Hex> takenArea)
     {
         List<Region> regions = new ArrayList<>();
         while (!maxima.isEmpty())
@@ -667,9 +664,7 @@ public class World
         return regions;
     }
 
-    private void propagateRegions(List<Region> regions,
-                                  HashMap<Hex, Integer> inlandness,
-                                  HashSet<Hex> takenArea)
+    private void propagateRegions(List<Region> regions, Map<Hex, Integer> inlandness, Set<Hex> takenArea)
     {
         while (takenArea.size() < inlandness.size())
         {
@@ -683,8 +678,7 @@ public class World
         }
     }
 
-    private Hex[] getCapitalCandidates(int count,
-                                       List<Region> regions)
+    private Hex[] getCapitalCandidates(int count, List<Region> regions)
     {
         /* Prefer larger regions. */
         regions.sort((reg1, reg2) -> reg2.size() - reg1.size());
@@ -700,8 +694,7 @@ public class World
         return capitalCandidates;
     }
 
-    private Hex[] findMaxWeightCombination(Hex[] candidates,
-                                           int combinationSize)
+    private Hex[] findMaxWeightCombination(Hex[] candidates, int combinationSize)
     {
         int poolSize = candidates.length;
 
@@ -733,8 +726,7 @@ public class World
         return combination;
     }
 
-    private static boolean[][] generateAllCombinationMasks(int poolLength,
-                                                           int combinationLength)
+    private static boolean[][] generateAllCombinationMasks(int poolLength, int combinationLength)
     {
         int numberOfAllCombinations = binomialCoefficient(poolLength, combinationLength);
         boolean[][] masks = new boolean[numberOfAllCombinations][poolLength];
@@ -798,8 +790,7 @@ public class World
         return product;
     }
 
-    private int computeAggregateMaskedDistance(Hex[] hexes,
-                                               boolean[] mask)
+    private int computeAggregateMaskedDistance(Hex[] hexes, boolean[] mask)
     {
         int sum = 0;
 

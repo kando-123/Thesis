@@ -261,7 +261,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
                 var builder = new UserConfig.Builder();
 
                 var name = names.get(i).getText();
-                builder.setName(!name.isBlank() ? name : "Anonymous");
+                builder.setName(!name.isBlank() ? name : "Anonymous the Conqueror");
 
                 var selection = (SelectableColor) combos.get(i).getModel().getSelectedItem();
                 builder.setColor(selection.color);

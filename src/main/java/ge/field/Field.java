@@ -1,8 +1,8 @@
 package ge.field;
 
 import ge.entity.Entity;
+import ge.player.Player;
 import ge.utilities.*;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.*;
 
@@ -18,6 +18,8 @@ public abstract class Field
     private final BufferedImage image;
     private final BufferedImage brightImage;
     private static final FieldAssetManager assetManager = FieldAssetManager.getInstance();
+    
+    private Player owner;
     
     private final Entity[] entities;
     private static final int PRIMARY = 0;
@@ -37,7 +39,7 @@ public abstract class Field
     private String getName()
     {
         String name = getClass().getName();
-        return name.substring(0, name.lastIndexOf("Field"));
+        return name.substring(name.lastIndexOf('.') + 1, name.lastIndexOf("Field"));
     }
     
     public Hex getHex()
@@ -57,6 +59,6 @@ public abstract class Field
     
     public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
     {
-        graphics.drawImage(marked ? image : brightImage, xPosition, yPosition, width, height, null);
+        graphics.drawImage(!marked ? image : brightImage, xPosition, yPosition, width, height, null);
     }
 }
