@@ -61,4 +61,24 @@ public abstract class Field
     {
         graphics.drawImage(!marked ? image : brightImage, xPosition, yPosition, width, height, null);
     }
+    
+    public void setOwner(Player newOwner)
+    {
+        owner = newOwner;
+    }
+    
+    public Player getOwner()
+    {
+        return owner;
+    }
+    
+    public boolean isOwned()
+    {
+        return owner != null;
+    }
+    
+    public boolean isOwned(Player player)
+    {
+        return owner == player;
+    }
 }
