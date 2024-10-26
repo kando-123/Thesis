@@ -1,5 +1,7 @@
 package ge.world;
 
+import ge.utilities.Hex;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -21,5 +23,10 @@ public class WorldManager
     public WorldRenderer createRenderer()
     {
         return new WorldRenderer(world);
+    }
+    
+    Hex[] locateCapitals(int number)
+    {
+        return world.locateCapitals(number);
     }
 }

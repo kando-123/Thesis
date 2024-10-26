@@ -58,15 +58,6 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     }
 
     @Override
-    public void setPreferredSize(Dimension newSize)
-    {
-        super.setPreferredSize(newSize);
-
-        worldCenter.left = newSize.width / 2.;
-        worldCenter.right = newSize.height / 2.;
-    }
-
-    @Override
     public void paintComponent(Graphics graphics)
     {
         super.paintComponent(graphics);

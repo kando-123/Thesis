@@ -55,7 +55,8 @@ public class UserPanel extends JPanel implements ActionListener
         c.weighty = 1;
         c.gridx = 0;
         c.gridy = 0;
-        userNameLabel = new JLabel("The Grand Anonymous Conqueror");
+        c.anchor = GridBagConstraints.CENTER;
+        userNameLabel = new JLabel("Anonymous The Grand Conqueror");
         userNameLabel.setForeground(Color.black);
         userNameLabel.setOpaque(true);
         userNameLabel.setBackground(Color.white);
@@ -64,7 +65,7 @@ public class UserPanel extends JPanel implements ActionListener
 
         ++c.gridy;
         c.insets.bottom = INSET;
-        userMoneyLabel = new JLabel("... that has an empty pocket!");
+        userMoneyLabel = new JLabel("...whose pocket is empty!");
         userMoneyLabel.setForeground(Color.black);
         userMoneyLabel.setOpaque(true);
         userMoneyLabel.setBackground(Color.white);

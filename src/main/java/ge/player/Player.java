@@ -1,6 +1,7 @@
 package ge.player;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 /**
  *
@@ -32,10 +33,14 @@ public abstract class Player
     public static final int MAX_NUMBER = ContourColor.values().length;
     
     private final ContourColor color;
+    private final BufferedImage contour;
+    
+    private static final ContourAssetManager ASSET_MANAGER = ContourAssetManager.getInstance();
     
     Player(ContourColor color)
     {
         this.color = color;
+        contour = ASSET_MANAGER.getImage(color.resource);
     }
     
     static Player newInstance(PlayerConfig config)
@@ -49,6 +54,11 @@ public abstract class Player
             return new BotPlayer(botConfig);
         }
         return null;
+    }
+    
+    public BufferedImage getContour()
+    {
+        return contour;
     }
     
     abstract void play();

@@ -36,19 +36,22 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
         c.gridx = 0;
         c.gridy = 0;
+        c.anchor = GridBagConstraints.EAST;
         userPanel = new UserPanel();
         userPanel.setLimit(Player.MAX_NUMBER - BotPanel.DEFAULT_SELECTION);
         add(userPanel, c);
 
         c.gridx = 1;
         c.gridy = 0;
+        c.anchor = GridBagConstraints.WEST;
         botPanel = new BotPanel();
         botPanel.setLimit(Player.MAX_NUMBER - UserPanel.DEFAULT_SELECTION);
         add(botPanel, c);
 
         c.gridx = 0;
         c.gridy = 1;
-        c.gridwidth = 2;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.CENTER;
         var button = new JButton("Next ↪");
         button.setActionCommand("->world");
         button.addActionListener(this);
@@ -75,7 +78,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         
         var list = new LinkedList<>(Arrays.asList(Player.ContourColor.values()));
         
-        int firstColorlessUser = 0;
+        int firstColorlessUser = userBuilders.length;
         for (int i = 0; i < userBuilders.length; ++i)
         {
             if (userBuilders[i].hasColor())
@@ -89,7 +92,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             }
         }
         
-        int firstColorlessBot = 0;
+        int firstColorlessBot = botBuilders.length;
         for (int i = 0; i < botBuilders.length; ++i)
         {
             if (botBuilders[i].hasColor())
@@ -115,11 +118,11 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         PlayerConfig[] configs = new PlayerConfig[getSelected()];
         
         int index = 0;
-        for (var builder : userBuilders)
+        for (var builder : botBuilders)
         {
             configs[index++] = builder.get();
         }
-        for (var builder : botBuilders)
+        for (var builder : userBuilders)
         {
             configs[index++] = builder.get();
         }

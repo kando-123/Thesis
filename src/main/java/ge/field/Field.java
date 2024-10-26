@@ -17,23 +17,20 @@ public abstract class Field
     private boolean marked;
     private final BufferedImage image;
     private final BufferedImage brightImage;
-    private static final FieldAssetManager assetManager = FieldAssetManager.getInstance();
+    
+    private static final FieldAssetManager ASSET_MANAGER = FieldAssetManager.getInstance();
     
     private Player owner;
     
-    private final Entity[] entities;
-    private static final int PRIMARY = 0;
-    private static final int SECONDARY = 1;
+    private Entity entity;
     
     protected Field(Hex coords)
     {
         this.coords = coords;
         
         var name = getName();
-        image = assetManager.getImage(name);
-        brightImage = assetManager.getBrightImage(name);
-        
-        entities = new Entity[2];
+        image = ASSET_MANAGER.getImage(name);
+        brightImage = ASSET_MANAGER.getBrightImage(name);
     }
     
     private String getName()
@@ -49,7 +46,7 @@ public abstract class Field
     
     public boolean hasEntity()
     {
-        return entities[PRIMARY] != null || entities[SECONDARY] != null;
+        return entity != null;
     }
     
     public void setMarked(boolean m)
@@ -60,6 +57,11 @@ public abstract class Field
     public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
     {
         graphics.drawImage(!marked ? image : brightImage, xPosition, yPosition, width, height, null);
+        
+        if (owner != null)
+        {
+            graphics.drawImage(owner.getContour(), xPosition, yPosition, width, height, null);
+        }
     }
     
     public void setOwner(Player newOwner)

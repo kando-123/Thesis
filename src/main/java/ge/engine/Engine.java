@@ -46,5 +46,10 @@ public class Engine
         guiManager.start();
         
         playerManager = new PlayerManager(players);
+        
+        guiManager.setWorldInvoker(new Invoker<>(worldManager));
+        guiManager.setPlayerInvoker(new Invoker<>(playerManager));
+        
+        
     }
 }

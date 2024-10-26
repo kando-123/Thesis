@@ -12,7 +12,7 @@ public abstract class Entity
     private boolean marked;
     private final BufferedImage image;
     private final BufferedImage brightImage;
-    private static final EntityAssetManager assetManager = EntityAssetManager.getInstance();
+    private static final EntityAssetManager ASSET_MANAGER = EntityAssetManager.getInstance();
 
     private final Player owner;
     
@@ -21,13 +21,13 @@ public abstract class Entity
         this.owner = owner;
         
         var name = getName();
-        this.image = assetManager.getImage(name);
-        this.brightImage = assetManager.getBrightImage(name);
+        this.image = ASSET_MANAGER.getImage(name);
+        this.brightImage = ASSET_MANAGER.getBrightImage(name);
     }
     
     private String getName()
     {
         String name = getClass().getName();
-        return name.substring(name.lastIndexOf('.'), name.lastIndexOf("Entity"));
+        return name.substring(name.lastIndexOf('.') + 1, name.lastIndexOf("Entity"));
     }
 }
