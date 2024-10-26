@@ -24,6 +24,7 @@ public class Engine
     private final JFrame frame;
     
     private ConfigManager configManager;
+    
     private ViewManager viewManager;
     private GameplayManager gameplayManager;
     
@@ -39,6 +40,8 @@ public class Engine
     
     void beginGameplay(PlayerConfig[] players, WorldConfig world)
     {
+        configManager = null;
+        
         /* The construction of the two managers would need some polishing, but not now. */
         
         gameplayManager = new GameplayManager();
@@ -49,5 +52,7 @@ public class Engine
         
         viewManager.setInvoker(new Invoker<>(gameplayManager));
         viewManager.start();
+        
+        gameplayManager.begin();
     }
 }

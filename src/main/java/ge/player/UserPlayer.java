@@ -19,11 +19,16 @@ public class UserPlayer extends Player
         this.name = config.name;
         this.invoker = invoker;
     }
+    
+    String getName()
+    {
+        return name;
+    }
 
     @Override
     public void play()
     {
         // Use the invoker to inform the View that new user data should be set.
-        throw new UnsupportedOperationException("Not supported yet.");
+        invoker.invoke(new SetUserCommand(new UserAccessor(this)));
     }
 }

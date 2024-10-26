@@ -182,4 +182,14 @@ public class UserPanel extends JPanel implements ActionListener
             }
         }
     }
+    
+    void setUserName(String name)
+    {
+        userNameLabel.setText(name);
+    }
+    
+    void setUserMoney(int money)
+    {
+        userMoneyLabel.setText(String.format("%d Ħ", money));
+    }
 }

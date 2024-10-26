@@ -37,15 +37,30 @@ public abstract class Player
     
     private static final ContourAssetManager ASSET_MANAGER = ContourAssetManager.getInstance();
     
+    private static final int INITIAL_MONEY = 1_000;
+    private int money;
+    
     protected Player(ContourColor color)
     {
         this.color = color;
         contour = ASSET_MANAGER.getImage(color.resource);
+        
+        money = INITIAL_MONEY;
     }
     
     public BufferedImage getContour()
     {
         return contour;
+    }
+    
+    int getMoney()
+    {
+        return money;
+    }
+    
+    ContourColor getColor()
+    {
+        return color;
     }
     
     public abstract void play();

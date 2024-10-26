@@ -1,6 +1,7 @@
 package ge.view;
 
 import ge.main.*;
+import ge.player.UserAccessor;
 import ge.utilities.*;
 import ge.world.*;
 import java.awt.*;
@@ -55,5 +56,12 @@ public class ViewManager
         var thread = new Thread(worldPanel);
         thread.setDaemon(true);
         thread.start();
+    }
+    
+    void setUser(UserAccessor accessor)
+    {
+        userPanel.setBackground(accessor.getColor().rgb);
+        userPanel.setUserName(accessor.getName());
+        userPanel.setUserMoney(accessor.getMoney());
     }
 }
