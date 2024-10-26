@@ -1,5 +1,6 @@
 package ge.main;
 
+import ge.field.ContinentalField;
 import ge.player.*;
 import ge.utilities.*;
 import ge.view.*;
@@ -43,8 +44,18 @@ public class GameplayManager
         Hex[] capitals = world.locateCapitals(players.size());
         for (int i = 0; i < capitals.length; ++i)
         {
-            var field = world.getField(capitals[i]);
-            field.setOwner(players.get(i));
+            var capital = capitals[i];
+            var player = players.get(i);
+            world.getField(capital).setOwner(player);
+            
+            for (var neighbor : capital.neighbors())
+            {
+                var field = world.getField(neighbor);
+                if (field != null && field instanceof ContinentalField)
+                {
+                    field.setOwner(player);
+                }
+            }
         }
     }
     

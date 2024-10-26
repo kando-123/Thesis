@@ -70,11 +70,11 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
         
         // "Colorful" builders first.
         Arrays.sort(userBuilders, (o1, o2) -> o1.hasColor()
-                ? (o2.hasColor() ? 0 : +1)
-                : (o2.hasColor() ? -1 : 0));
+                ? (o2.hasColor() ? 0 : -1)
+                : (o2.hasColor() ? +1 : 0));
         Arrays.sort(botBuilders, (o1, o2) -> o1.hasColor()
-                ? (o2.hasColor() ? 0 : +1)
-                : (o2.hasColor() ? -1 : 0));
+                ? (o2.hasColor() ? 0 : -1)
+                : (o2.hasColor() ? +1 : 0));
         
         var list = new LinkedList<>(Arrays.asList(Player.ContourColor.values()));
         
@@ -102,6 +102,7 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
             else
             {
                 firstColorlessBot = i;
+                break;
             }
         }
         
