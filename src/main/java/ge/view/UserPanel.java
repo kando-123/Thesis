@@ -178,7 +178,7 @@ public class UserPanel extends JPanel implements ActionListener
             }
             case "done" ->
             {
-                invoker.invoke(new EndRoundCommand());
+                invoker.invoke(new FinishRoundCommand());
             }
         }
     }

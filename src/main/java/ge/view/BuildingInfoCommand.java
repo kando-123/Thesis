@@ -19,6 +19,6 @@ public class BuildingInfoCommand extends Command<ViewManager>
     @Override
     public void execute(ViewManager executor)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        executor.showBuildingInfo(building);
     }
 }

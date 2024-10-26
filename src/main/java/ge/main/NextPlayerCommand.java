@@ -1,6 +1,5 @@
-package ge.player;
+package ge.main;
 
-import ge.main.*;
 import ge.utilities.*;
 
 /**
@@ -12,6 +11,7 @@ public class NextPlayerCommand extends Command<GameplayManager>
     @Override
     public void execute(GameplayManager executor)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        executor.end();
+        executor.begin();
     }
 }

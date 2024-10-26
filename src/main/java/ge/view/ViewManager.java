@@ -1,10 +1,13 @@
 package ge.view;
 
+import ge.field.BuildingType;
 import ge.main.*;
-import ge.player.UserAccessor;
+import ge.player.*;
 import ge.utilities.*;
 import ge.world.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.*;
 
 /**
@@ -21,7 +24,9 @@ public class ViewManager
     private Invoker<GameplayManager> invoker;
     
     public void init(JFrame frame, WorldRenderer renderer)
-    {        
+    {
+        this.frame = frame;
+        
         var contentPane = new JPanel(new BorderLayout());
         
         userPanel = new UserPanel(new Invoker<>(this));
@@ -63,5 +68,25 @@ public class ViewManager
         userPanel.setBackground(accessor.getColor().rgb);
         userPanel.setUserName(accessor.getName());
         userPanel.setUserMoney(accessor.getMoney());
+    }
+    
+    void showBuildingInfo(BuildingType building)
+    {
+        var info = new BuildingInfoDialog(frame, building);
+        info.addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                frame.requestFocus();
+            }
+        });
+        info.setVisible(true);
+    }
+    
+    void finish()
+    {
+        frame.requestFocus();
+        invoker.invoke(new NextPlayerCommand());
     }
 }

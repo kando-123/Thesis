@@ -2,6 +2,7 @@ package ge.field;
 
 import ge.utilities.*;
 import ge.world.*;
+import javax.swing.*;
 
 /**
  *
@@ -31,6 +32,13 @@ public enum BuildingType
     public int price(int number)
     {
         return priceIntercept + number * priceSlope;
+    }
+    
+    private static final FieldAssetManager ASSET_MANAGER = FieldAssetManager.getInstance();
+    
+    public Icon getIcon()
+    {
+        return ASSET_MANAGER.getIcon(resource);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ge.player;
 
+import ge.main.NextPlayerCommand;
 import ge.main.*;
 import ge.utilities.*;
 
@@ -22,7 +23,9 @@ public class BotPlayer extends Player
     public void play()
     {
         // Through the invoker, send messages to the gameplay manager to demand actions.
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("The %s Bot is playing.".formatted(getColor().toString()));
+        
+        invoker.invoke(new NextPlayerCommand());
     }
     
 }

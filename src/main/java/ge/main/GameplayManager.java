@@ -65,7 +65,9 @@ public class GameplayManager
     
     void end()
     {
+        // end procedure
         
+        players.addLast(players.removeFirst());
     }
     
     void begin()
