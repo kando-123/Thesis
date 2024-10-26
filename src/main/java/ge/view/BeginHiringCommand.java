@@ -1,23 +1,23 @@
-package ge.gui;
+package ge.view;
 
-import ge.entity.*;
+import ge.entity.EntityType;
 import ge.utilities.*;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class EntityInfoCommand extends Command<GUIManager>
+public class BeginHiringCommand extends Command<ViewManager>
 {
     private final EntityType entity;
 
-    public EntityInfoCommand(EntityType entity)
+    public BeginHiringCommand(EntityType entity)
     {
         this.entity = entity;
     }
     
     @Override
-    public void execute(GUIManager executor)
+    public void execute(ViewManager executor)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

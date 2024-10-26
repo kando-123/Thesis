@@ -1,7 +1,7 @@
-package ge.engine;
+package ge.main;
 
 import ge.config.*;
-import ge.gui.GUIManager;
+import ge.view.ViewManager;
 import ge.player.*;
 import ge.utilities.Invoker;
 import ge.world.*;
@@ -24,9 +24,8 @@ public class Engine
     private final JFrame frame;
     
     private ConfigManager configManager;
-    private GUIManager guiManager;
-    private WorldManager worldManager;
-    private PlayerManager playerManager;
+    private ViewManager viewManager;
+    private GameplayManager gameplayManager;
     
     private Engine()
     {
@@ -40,16 +39,15 @@ public class Engine
     
     void beginGameplay(PlayerConfig[] players, WorldConfig world)
     {
-        worldManager = new WorldManager(world);
+        /* The construction of the two managers would need some polishing, but not now. */
         
-        guiManager = new GUIManager(frame, worldManager.createRenderer());
-        guiManager.start();
+        gameplayManager = new GameplayManager();
+        viewManager = new ViewManager();
         
-        playerManager = new PlayerManager(players);
+        gameplayManager.init(players, world, new Invoker<>(viewManager));
+        viewManager.init(frame, gameplayManager.getWorldRenderer());
         
-        guiManager.setWorldInvoker(new Invoker<>(worldManager));
-        guiManager.setPlayerInvoker(new Invoker<>(playerManager));
-        
-        
+        viewManager.setInvoker(new Invoker<>(gameplayManager));
+        viewManager.start();
     }
 }

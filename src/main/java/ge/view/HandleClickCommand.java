@@ -1,4 +1,4 @@
-package ge.gui;
+package ge.view;
 
 import ge.utilities.*;
 
@@ -6,11 +6,11 @@ import ge.utilities.*;
  *
  * @author Kay Jay O'Nail
  */
-public class HandleShiftClickCommand extends Command
+public class HandleClickCommand extends Command
 {
     private final Hex hex;
 
-    public HandleShiftClickCommand(Hex hex)
+    public HandleClickCommand(Hex hex)
     {
         this.hex = hex;
     }

@@ -36,7 +36,7 @@ public class World
     public final int side;
     private final Map<Hex, Field> fields;
 
-    World(WorldConfig config)
+    public World(WorldConfig config)
     {
         assert (config.worldSide > 0 && config.worldSide <= 50);
         assert (config.seaPercentage >= 0.00 && config.seaPercentage <= 1.00);
@@ -57,7 +57,12 @@ public class World
         generateLandFields(centers);
     }
     
-    Field getField(Hex coords)
+    public WorldRenderer getRenderer()
+    {
+        return new WorldRenderer(this);
+    }
+    
+    public Field getField(Hex coords)
     {
         return fields.get(coords);
     }
@@ -221,7 +226,7 @@ public class World
         {
             GRASS,
             MEADOW,
-            WOOD
+            WOOD;
         }
         var generator = new WeightedGenerator<Type>();
         try
@@ -385,7 +390,7 @@ public class World
 
     private final static int MANIPULATION_MARGIN = 4;
 
-    Hex[] locateCapitals(int number)
+    public Hex[] locateCapitals(int number)
     {
         /* Discard the seas and the mounts. Divide the lands and woods into the periphery
            and the pool. */

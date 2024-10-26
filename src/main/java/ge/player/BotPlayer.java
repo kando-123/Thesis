@@ -1,19 +1,27 @@
 package ge.player;
 
+import ge.main.*;
+import ge.utilities.*;
+
 /**
  *
  * @author Kay Jay O'Nail
  */
 public class BotPlayer extends Player
 {
-    public BotPlayer(BotConfig config)
+    private final Invoker<GameplayManager> invoker;
+    
+    public BotPlayer(BotConfig config, Invoker<GameplayManager> invoker)
     {
         super(config.color);
+        
+        this.invoker = invoker;
     }
 
     @Override
-    void play()
+    public void play()
     {
+        // Through the invoker, send messages to the gameplay manager to demand actions.
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

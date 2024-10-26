@@ -1,15 +1,16 @@
 package ge.player;
 
-import ge.utilities.Command;
+import ge.main.*;
+import ge.utilities.*;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class NextPlayerCommand extends Command<PlayerManager>
+public class NextPlayerCommand extends Command<GameplayManager>
 {
     @Override
-    public void execute(PlayerManager executor)
+    public void execute(GameplayManager executor)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

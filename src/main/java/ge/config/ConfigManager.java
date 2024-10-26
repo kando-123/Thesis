@@ -1,6 +1,7 @@
 package ge.config;
 
-import ge.engine.*;
+import ge.main.BeginGameplayCommand;
+import ge.main.Engine;
 import ge.utilities.*;
 import java.awt.*;
 import java.awt.image.*;

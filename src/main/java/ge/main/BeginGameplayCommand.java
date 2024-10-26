@@ -1,4 +1,4 @@
-package ge.engine;
+package ge.main;
 
 import ge.player.*;
 import ge.utilities.*;

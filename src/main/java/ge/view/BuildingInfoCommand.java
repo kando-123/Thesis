@@ -1,4 +1,4 @@
-package ge.gui;
+package ge.view;
 
 import ge.field.*;
 import ge.utilities.*;
@@ -7,7 +7,7 @@ import ge.utilities.*;
  *
  * @author Kay Jay O'Nail
  */
-public class BuildingInfoCommand extends Command<GUIManager>
+public class BuildingInfoCommand extends Command<ViewManager>
 {
     private final BuildingType building;
 
@@ -17,7 +17,7 @@ public class BuildingInfoCommand extends Command<GUIManager>
     }
     
     @Override
-    public void execute(GUIManager executor)
+    public void execute(ViewManager executor)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

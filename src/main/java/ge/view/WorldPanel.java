@@ -1,4 +1,4 @@
-package ge.gui;
+package ge.view;
 
 import ge.utilities.*;
 import ge.world.*;
@@ -27,9 +27,9 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
 
     private final WorldRenderer renderer;
 
-    private final Invoker<GUIManager> invoker;
+    private final Invoker<ViewManager> invoker;
 
-    WorldPanel(WorldRenderer renderer, Invoker<GUIManager> invoker)
+    WorldPanel(WorldRenderer renderer, Invoker<ViewManager> invoker)
     {
         this.renderer = renderer;
         this.invoker = invoker;

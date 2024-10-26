@@ -1,6 +1,8 @@
 package ge.field;
 
-import ge.gui.*;
+import ge.view.BeginBuildingCommand;
+import ge.view.BuildingInfoCommand;
+import ge.view.ViewManager;
 import ge.utilities.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,7 +16,7 @@ public class BuildingButton extends JButton
 {
     private static final Color BACKGROUND_COLOR = Color.getHSBColor(210f / 360f, 0.3f, 1.0f);
     
-    public BuildingButton(BuildingType building, Invoker<GUIManager> invoker)
+    public BuildingButton(BuildingType building, Invoker<ViewManager> invoker)
     {
         super(FieldAssetManager.getInstance().getIcon(building.resource));
 

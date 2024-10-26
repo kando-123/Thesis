@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
-        <exec.mainClass>ge.engine.Engine</exec.mainClass>
+        <exec.mainClass>ge.main.Engine</exec.mainClass>
     </properties>
     <build>
         <plugins>
@@ -20,7 +20,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ge.engine.Engine</mainClass>
+                            <mainClass>ge.main.Engine</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,6 +1,6 @@
-package ge.gui;
+package ge.view;
 
-import ge.player.*;
+import ge.main.*;
 import ge.utilities.*;
 import ge.world.*;
 import java.awt.*;
@@ -10,16 +10,17 @@ import javax.swing.*;
  *
  * @author Kay Jay O'Nail
  */
-public class GUIManager
+public class ViewManager
 {
-    private final UserPanel userPanel;
-    private final WorldPanel worldPanel;
+    private JFrame frame;
     
-    private Invoker<WorldManager> worldInvoker;
-    private Invoker<PlayerManager> playerInvoker;
+    private UserPanel userPanel;
+    private WorldPanel worldPanel;
     
-    public GUIManager(JFrame frame, WorldRenderer renderer)
-    {
+    private Invoker<GameplayManager> invoker;
+    
+    public void init(JFrame frame, WorldRenderer renderer)
+    {        
         var contentPane = new JPanel(new BorderLayout());
         
         userPanel = new UserPanel(new Invoker<>(this));
@@ -44,16 +45,11 @@ public class GUIManager
         frame.requestFocus();
     }
 
-    public void setWorldInvoker(Invoker<WorldManager> worldInvoker)
+    public void setInvoker(Invoker<GameplayManager> invoker)
     {
-        this.worldInvoker = worldInvoker;
+        this.invoker = invoker;
     }
 
-    public void setPlayerInvoker(Invoker<PlayerManager> playerInvoker)
-    {
-        this.playerInvoker = playerInvoker;
-    }
-    
     public void start()
     {
         var thread = new Thread(worldPanel);

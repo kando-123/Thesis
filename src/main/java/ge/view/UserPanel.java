@@ -1,4 +1,4 @@
-package ge.gui;
+package ge.view;
 
 import ge.entity.*;
 import ge.field.*;
@@ -16,9 +16,9 @@ public class UserPanel extends JPanel implements ActionListener
     private JLabel userNameLabel;
     private JLabel userMoneyLabel;
 
-    private final Invoker<GUIManager> invoker;
+    private final Invoker<ViewManager> invoker;
     
-    public UserPanel(Invoker<GUIManager> invoker)
+    public UserPanel(Invoker<ViewManager> invoker)
     {
         super(new GridBagLayout());
         

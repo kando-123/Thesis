@@ -1,7 +1,7 @@
 package ge.player;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
+import java.awt.*;
+import java.awt.image.*;
 
 /**
  *
@@ -37,23 +37,10 @@ public abstract class Player
     
     private static final ContourAssetManager ASSET_MANAGER = ContourAssetManager.getInstance();
     
-    Player(ContourColor color)
+    protected Player(ContourColor color)
     {
         this.color = color;
         contour = ASSET_MANAGER.getImage(color.resource);
-    }
-    
-    static Player newInstance(PlayerConfig config)
-    {
-        if (config instanceof UserConfig userConfig)
-        {
-            return new UserPlayer(userConfig);
-        }
-        if (config instanceof BotConfig botConfig)
-        {
-            return new BotPlayer(botConfig);
-        }
-        return null;
     }
     
     public BufferedImage getContour()
@@ -61,5 +48,5 @@ public abstract class Player
         return contour;
     }
     
-    abstract void play();
+    public abstract void play();
 }

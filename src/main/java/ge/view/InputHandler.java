@@ -1,4 +1,4 @@
-package ge.gui;
+package ge.view;
 
 import ge.utilities.*;
 import java.awt.event.*;
