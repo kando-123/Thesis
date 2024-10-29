@@ -141,7 +141,7 @@ public class UserPanel extends JPanel implements ActionListener
         buttonsPanel.add(undoButton, c);
         
         undoButton.setEnabled(false);
-        undoButton.setToolTipText("(Not supported yet!)");
+        undoButton.setToolTipText("(not supported yet)");
 
         c.gridx = 1;
         var redoButton = new JButton("Redo ↻");
@@ -150,7 +150,7 @@ public class UserPanel extends JPanel implements ActionListener
         buttonsPanel.add(redoButton, c);
         
         redoButton.setEnabled(false);
-        redoButton.setToolTipText("(Not supported yet!)");
+        redoButton.setToolTipText("(not supported yet");
 
         c.gridx = 0;
         c.gridy = 1;

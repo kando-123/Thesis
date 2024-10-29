@@ -1,5 +1,7 @@
 package ge.entity;
 
+import javax.swing.Icon;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -13,6 +15,8 @@ public enum EntityType
     public final int priceIntercept;
     public final int priceSlope;
     public final String resource;
+    
+    private static final EntityAssetManager ASSET_MANAGER = EntityAssetManager.getInstance();
 
     private EntityType(int intercept, int slope)
     {
@@ -24,6 +28,17 @@ public enum EntityType
     public int price(int number)
     {
         return priceIntercept + number * priceSlope;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return resource;
+    }
+    
+    public Icon getIcon()
+    {
+        return ASSET_MANAGER.getIcon(resource);
     }
 
     public String getDescription()

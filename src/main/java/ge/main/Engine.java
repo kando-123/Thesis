@@ -44,11 +44,11 @@ public class Engine
         
         /* The construction of the two managers would need some polishing, but not now. */
         
-        gameplayManager = new GameplayManager();
-        viewManager = new ViewManager();
+        gameplayManager = new GameplayManager(world);
+        viewManager = new ViewManager(frame);
         
-        gameplayManager.init(players, world, new Invoker<>(viewManager));
-        viewManager.init(frame, gameplayManager.getWorldRenderer());
+        gameplayManager.makePlayers(players, new Invoker<>(viewManager));
+        viewManager.makeView(gameplayManager.getWorldRenderer());
         
         viewManager.setInvoker(new Invoker<>(gameplayManager));
         viewManager.start();

@@ -1,5 +1,6 @@
 package ge.view;
 
+import ge.entity.EntityType;
 import ge.field.BuildingType;
 import ge.main.*;
 import ge.player.*;
@@ -16,17 +17,20 @@ import javax.swing.*;
  */
 public class ViewManager
 {
-    private JFrame frame;
+    private final JFrame frame;
     
     private UserPanel userPanel;
     private WorldPanel worldPanel;
     
     private Invoker<GameplayManager> invoker;
     
-    public void init(JFrame frame, WorldRenderer renderer)
+    public ViewManager(JFrame frame)
     {
         this.frame = frame;
-        
+    }
+    
+    public void makeView(WorldRenderer renderer)
+    {
         var contentPane = new JPanel(new BorderLayout());
         
         userPanel = new UserPanel(new Invoker<>(this));
@@ -73,6 +77,20 @@ public class ViewManager
     void showBuildingInfo(BuildingType building)
     {
         var info = new BuildingInfoDialog(frame, building);
+        info.addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                frame.requestFocus();
+            }
+        });
+        info.setVisible(true);
+    }
+    
+    void showEntityInfo(EntityType entity)
+    {
+        var info = new EntityInfoDialog(frame, entity);
         info.addWindowListener(new WindowAdapter()
         {
             @Override

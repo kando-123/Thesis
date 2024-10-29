@@ -13,13 +13,17 @@ import java.util.*;
  */
 public class GameplayManager
 {
-    private World world;
-    private List<Player> players;
-
-    void init(PlayerConfig[] playerConfigs, WorldConfig worldConfig, Invoker<ViewManager> invoker)
+    private final World world;
+    private final List<Player> players;
+    
+    public GameplayManager(WorldConfig config)
     {
-        world = new World(worldConfig);
+        world = new World(config);
         players = new LinkedList<>();
+    }
+
+    void makePlayers(PlayerConfig[] playerConfigs, Invoker<ViewManager> viewInvoker)
+    {
         var selfInvoker = new Invoker<>(this);
 
         for (PlayerConfig config : playerConfigs)
@@ -28,7 +32,7 @@ public class GameplayManager
             {
                 case UserConfig userConfig ->
                 {
-                    players.add(new UserPlayer(userConfig, invoker));
+                    players.add(new UserPlayer(userConfig, viewInvoker));
                 }
                 case BotConfig botConfig ->
                 {
