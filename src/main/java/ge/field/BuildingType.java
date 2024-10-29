@@ -18,25 +18,27 @@ public enum BuildingType
     TOWN(500, 50),
     VILLAGE(150, 15);
 
-    public final int priceIntercept;
-    public final int priceSlope;
+    private final int intercept;
+    private final int slope;
+    
     public final String resource;
 
     private BuildingType(int intercept, int slope)
     {
-        priceIntercept = intercept;
-        priceSlope = slope;
+        this.intercept = intercept;
+        this.slope = slope;
+        
         resource = name().substring(0, 1).concat(name().substring(1).toLowerCase());
     }
     
     public int price(int number)
     {
-        return priceIntercept + number * priceSlope;
+        return intercept + number * slope;
     }
     
     private static final FieldAssetManager ASSET_MANAGER = FieldAssetManager.getInstance();
     
-    public Icon getIcon()
+    public Icon icon()
     {
         return ASSET_MANAGER.getIcon(resource);
     }
@@ -47,23 +49,23 @@ public enum BuildingType
         return resource;
     }
 
-    public BinaryPredicate<Field, WorldAccessor> getPredicate()
+    public UnaryPredicate<Field> predicate(WorldAccessor accessor)
     {
         return switch (this)
         {
             case BARRACKS ->
             {
-                yield (f, a) -> f instanceof PlainsField;
+                yield (f) -> f instanceof PlainsField;
             }
             case FARM ->
             {
-                yield (f, a) ->
+                yield (f) ->
                 {
                     if (f instanceof PlainsField)
                     {
                         for (var h : f.getHex().neighbors())
                         {
-                            var n = a.getField(h);
+                            var n = accessor.getField(h);
                             if (n != null && n instanceof VillageField)
                             {
                                 return true;
@@ -75,21 +77,21 @@ public enum BuildingType
             }
             case FORTRESS ->
             {
-                yield (f, a) -> f instanceof ContinentalField;
+                yield (f) -> f instanceof ContinentalField;
             }
             case MINE ->
             {
-                yield (f, a) -> f instanceof MountainsField;
+                yield (f) -> f instanceof MountainsField;
             }
             case SHIPYARD ->
             {
-                yield (f, a) ->
+                yield (f) ->
                 {
                     if (f instanceof PlainsField)
                     {
                         for (var h : f.getHex().neighbors())
                         {
-                            var n = a.getField(h);
+                            var n = accessor.getField(h);
                             if (n != null && n instanceof SeaField)
                             {
                                 return true;
@@ -101,16 +103,16 @@ public enum BuildingType
             }
             case TOWN ->
             {
-                yield (f, a) -> f instanceof PlainsField;
+                yield (f) -> f instanceof PlainsField;
             }
             case VILLAGE ->
             {
-                yield (f, a) -> f instanceof PlainsField;
+                yield (f) -> f instanceof PlainsField;
             }
         };
     }
     
-    public String getDescription()
+    public String description()
     {
         return switch (this)
         {
@@ -145,7 +147,7 @@ public enum BuildingType
         };
     }
     
-    public String getConditions()
+    public String conditions()
     {
         return switch (this)
         {
@@ -180,9 +182,9 @@ public enum BuildingType
         };
     }
     
-    public String getPricing()
+    public String pricing()
     {
         return String.format("The first %s costs %d Ħ; every next costs %d Ħ more.",
-                resource, priceIntercept, priceSlope);
+                resource, intercept, slope);
     }
 }

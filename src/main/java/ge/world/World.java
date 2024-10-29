@@ -57,7 +57,12 @@ public class World
         generateLandFields(centers);
     }
     
-    public WorldRenderer getRenderer()
+    public WorldAccessor accessor()
+    {
+        return new WorldAccessor(this);
+    }
+    
+    public WorldRenderer renderer()
     {
         return new WorldRenderer(this);
     }
@@ -65,6 +70,11 @@ public class World
     public Field getField(Hex coords)
     {
         return fields.get(coords);
+    }
+    
+    Stream<Field> fieldStream()
+    {
+        return fields.values().stream();
     }
 
     private Map<Object, Doublet<Integer>> generateCenters(int side, Doublet<Integer> offset)

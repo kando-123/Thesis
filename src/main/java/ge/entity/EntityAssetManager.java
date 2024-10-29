@@ -78,7 +78,7 @@ public class EntityAssetManager
         return brightImage;
     }
 
-    private static final int ICON_WIDTH = 80;
+    private static final int ICON_WIDTH = 70;
     private static final int ICON_HEIGHT = 69;
 
     private static BufferedImage resize(BufferedImage input)

@@ -22,12 +22,12 @@ public class EntityInfoDialog extends JDialog
         nameLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         contentPane.add(nameLabel);
         
-        var iconLabel = new JLabel(entity.getIcon());
+        var iconLabel = new JLabel(entity.icon());
         iconLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         contentPane.add(iconLabel);
         
         var descriptionTextArea = new JTextArea();
-        descriptionTextArea.setText(entity.getDescription());
+        descriptionTextArea.setText(entity.description());
         descriptionTextArea.setOpaque(false);
         descriptionTextArea.setEditable(false);
         descriptionTextArea.setBorder(BorderFactory.createTitledBorder("Description"));
@@ -36,7 +36,7 @@ public class EntityInfoDialog extends JDialog
         contentPane.add(descriptionTextArea);
         
         var conditionTextArea = new JTextArea();
-        conditionTextArea.setText(entity.getConditions());
+        conditionTextArea.setText(entity.conditions());
         conditionTextArea.setOpaque(false);
         conditionTextArea.setEditable(false);
         conditionTextArea.setBorder(BorderFactory.createTitledBorder("Requirements"));
@@ -45,7 +45,7 @@ public class EntityInfoDialog extends JDialog
         contentPane.add(conditionTextArea);
         
         var pricingTextArea = new JTextArea();
-        pricingTextArea.setText(entity.getPricing());
+        pricingTextArea.setText(entity.pricing());
         pricingTextArea.setOpaque(false);
         pricingTextArea.setEditable(false);
         pricingTextArea.setBorder(BorderFactory.createTitledBorder("Price"));

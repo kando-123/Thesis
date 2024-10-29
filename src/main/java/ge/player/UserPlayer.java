@@ -2,6 +2,7 @@ package ge.player;
 
 import ge.utilities.*;
 import ge.view.*;
+import ge.world.WorldAccessor;
 
 /**
  *
@@ -12,9 +13,9 @@ public class UserPlayer extends Player
     private final String name;
     private final Invoker<ViewManager> invoker;
     
-    public UserPlayer(UserConfig config, Invoker<ViewManager> invoker)
+    public UserPlayer(WorldAccessor accessor, UserConfig config, Invoker<ViewManager> invoker)
     {
-        super(config.color);
+        super(accessor, config.color);
         
         this.name = config.name;
         this.invoker = invoker;

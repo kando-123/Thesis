@@ -14,5 +14,10 @@ public class MineField extends CommercialField
     {
         super(coords);
     }
-    
+
+    @Override
+    public BuildingType getType()
+    {
+        return BuildingType.MINE;
+    }
 }

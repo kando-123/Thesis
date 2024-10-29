@@ -12,5 +12,10 @@ public class ShipyardField extends SpawnerField
     {
         super(coords);
     }
-    
+
+    @Override
+    public BuildingType getType()
+    {
+        return BuildingType.SHIPYARD;
+    }
 }

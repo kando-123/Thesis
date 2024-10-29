@@ -9,7 +9,7 @@ import ge.utilities.Command;
  */
 public class BeginBuildingCommand extends Command<ViewManager>
 {
-    private BuildingType building;
+    private final BuildingType building;
     
     public BeginBuildingCommand(BuildingType building)
     {
@@ -19,6 +19,6 @@ public class BeginBuildingCommand extends Command<ViewManager>
     @Override
     public void execute(ViewManager executor)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        executor.beginBuildingProcess(building);
     }
 }

@@ -1,6 +1,6 @@
 package ge.entity;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 /**
  *
@@ -36,12 +36,12 @@ public enum EntityType
         return resource;
     }
     
-    public Icon getIcon()
+    public Icon icon()
     {
         return ASSET_MANAGER.getIcon(resource);
     }
 
-    public String getDescription()
+    public String description()
     {
         return switch (this)
         {
@@ -62,7 +62,7 @@ public enum EntityType
         };
     }
 
-    public String getConditions()
+    public String conditions()
     {
         return switch (this)
         {
@@ -81,7 +81,7 @@ public enum EntityType
         };
     }
 
-    public String getPricing()
+    public String pricing()
     {
         return switch (this)
         {

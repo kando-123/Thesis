@@ -22,12 +22,12 @@ public class BuildingInfoDialog extends JDialog
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPane.add(nameLabel);
         
-        var iconLabel = new JLabel(building.getIcon());
+        var iconLabel = new JLabel(building.icon());
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPane.add(iconLabel);
         
         var descriptionTextArea = new JTextArea();
-        descriptionTextArea.setText(building.getDescription());
+        descriptionTextArea.setText(building.description());
         descriptionTextArea.setOpaque(false);
         descriptionTextArea.setEditable(false);
         descriptionTextArea.setBorder(BorderFactory.createTitledBorder("Description"));
@@ -36,7 +36,7 @@ public class BuildingInfoDialog extends JDialog
         contentPane.add(descriptionTextArea);
         
         var conditionTextArea = new JTextArea();
-        conditionTextArea.setText(building.getConditions());
+        conditionTextArea.setText(building.conditions());
         conditionTextArea.setOpaque(false);
         conditionTextArea.setEditable(false);
         conditionTextArea.setBorder(BorderFactory.createTitledBorder("Requirements"));
@@ -45,7 +45,7 @@ public class BuildingInfoDialog extends JDialog
         contentPane.add(conditionTextArea);
         
         var pricingTextArea = new JTextArea();
-        pricingTextArea.setText(building.getPricing());
+        pricingTextArea.setText(building.pricing());
         pricingTextArea.setOpaque(false);
         pricingTextArea.setEditable(false);
         pricingTextArea.setBorder(BorderFactory.createTitledBorder("Price"));

@@ -1,8 +1,8 @@
 package ge.player;
 
-import ge.main.NextPlayerCommand;
 import ge.main.*;
 import ge.utilities.*;
+import ge.world.*;
 
 /**
  *
@@ -12,9 +12,9 @@ public class BotPlayer extends Player
 {
     private final Invoker<GameplayManager> invoker;
     
-    public BotPlayer(BotConfig config, Invoker<GameplayManager> invoker)
+    public BotPlayer(WorldAccessor accessor, BotConfig config, Invoker<GameplayManager> invoker)
     {
-        super(config.color);
+        super(accessor, config.color);
         
         this.invoker = invoker;
     }

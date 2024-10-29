@@ -12,5 +12,10 @@ public class FortressField extends FortificationField
     {
         super(coords);
     }
-    
+
+    @Override
+    public BuildingType getType()
+    {
+        return BuildingType.FORTRESS;
+    }
 }

@@ -1,14 +1,14 @@
 package ge.view;
 
-import ge.entity.EntityType;
-import ge.field.BuildingType;
+import ge.entity.*;
+import ge.field.*;
 import ge.main.*;
 import ge.player.*;
 import ge.utilities.*;
+import ge.view.procedure.*;
 import ge.world.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -23,6 +23,9 @@ public class ViewManager
     private WorldPanel worldPanel;
     
     private Invoker<GameplayManager> invoker;
+    private PlayersAccessor players;
+    
+    private Procedure procedure;
     
     public ViewManager(JFrame frame)
     {
@@ -59,6 +62,11 @@ public class ViewManager
     {
         this.invoker = invoker;
     }
+    
+    public void setPlayers(PlayersAccessor players)
+    {
+        this.players = players;
+    }
 
     public void start()
     {
@@ -86,6 +94,36 @@ public class ViewManager
             }
         });
         info.setVisible(true);
+    }
+    
+    void showNoPlaceMessage()
+    {
+        JOptionPane.showMessageDialog(frame,
+                "You have no place for this building.\nShift-click the button for info.");
+        frame.requestFocus();
+    }
+    
+    void showNoMoneyMessage()
+    {
+        JOptionPane.showMessageDialog(frame,
+                "You have too little money.\nShift-click the button for info.");
+        frame.requestFocus();
+    }
+    
+    void beginBuildingProcess(BuildingType building)
+    {
+        if (procedure != null)
+        {
+            procedure.rollback();
+        }
+        
+        procedure = new BuildingProcedure(building, players.current(), new Invoker<>(this));
+        procedure.advance();
+    }
+    
+    void pursueBuilding()
+    {
+        
     }
     
     void showEntityInfo(EntityType entity)

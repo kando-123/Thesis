@@ -14,5 +14,10 @@ public class FarmField extends CommercialField
     {
         super(coords);
     }
-    
+
+    @Override
+    public BuildingType getType()
+    {
+        return BuildingType.FARM;
+    }
 }

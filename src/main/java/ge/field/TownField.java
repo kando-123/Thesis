@@ -14,5 +14,10 @@ public class TownField extends CommercialField
     {
         super(coords);
     }
-    
+
+    @Override
+    public BuildingType getType()
+    {
+        return BuildingType.TOWN;
+    }
 }

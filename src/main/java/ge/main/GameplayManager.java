@@ -32,11 +32,13 @@ public class GameplayManager
             {
                 case UserConfig userConfig ->
                 {
-                    players.add(new UserPlayer(userConfig, viewInvoker));
+                    var user = new UserPlayer(world.accessor(), userConfig, viewInvoker);
+                    players.add(user);
                 }
                 case BotConfig botConfig ->
                 {
-                    players.add(new BotPlayer(botConfig, selfInvoker));
+                    var bot = new BotPlayer(world.accessor(), botConfig, selfInvoker);
+                    players.add(bot);
                 }
                 default ->
                 {
@@ -64,7 +66,12 @@ public class GameplayManager
 
     public WorldRenderer getWorldRenderer()
     {
-        return world.getRenderer();
+        return world.renderer();
+    }
+    
+    public PlayersAccessor getPlayersAccessor()
+    {
+        return new PlayersAccessor(players);
     }
     
     void end()

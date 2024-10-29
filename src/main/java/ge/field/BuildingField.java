@@ -47,4 +47,6 @@ public abstract class BuildingField extends PropertyField
             }
         };
     }
+    
+    public abstract BuildingType getType();
 }

@@ -12,5 +12,10 @@ public class BarracksField extends SpawnerField
     {
         super(coords);
     }
-    
+
+    @Override
+    public BuildingType getType()
+    {
+        return BuildingType.BARRACKS;
+    }
 }
