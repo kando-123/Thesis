@@ -1,6 +1,7 @@
 package ge.player;
 
 import ge.field.*;
+import ge.utilities.UnaryPredicate;
 import ge.world.WorldAccessor;
 import java.awt.*;
 import java.awt.image.*;
@@ -78,5 +79,21 @@ public abstract class Player
     {
         long count = accessor.countMatching(f -> f.isOwned(this) && building.predicate(accessor).test(f));
         return building.price((int) count) <= money;
+    }
+
+    public int priceForNext(BuildingType building)
+    {
+        long current = accessor.countMatching((Field f) ->
+        {
+            if (f instanceof BuildingField b)
+            {
+                return b.getType() == building;
+            }
+            else
+            {
+                return false;
+            }
+        });
+        return building.price((int) current);
     }
 }

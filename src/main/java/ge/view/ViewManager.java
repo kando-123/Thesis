@@ -96,20 +96,6 @@ public class ViewManager
         info.setVisible(true);
     }
     
-    void showNoPlaceMessage()
-    {
-        JOptionPane.showMessageDialog(frame,
-                "You have no place for this building.\nShift-click the button for info.");
-        frame.requestFocus();
-    }
-    
-    void showNoMoneyMessage()
-    {
-        JOptionPane.showMessageDialog(frame,
-                "You have too little money.\nShift-click the button for info.");
-        frame.requestFocus();
-    }
-    
     void beginBuildingProcess(BuildingType building)
     {
         if (procedure != null)
@@ -118,12 +104,12 @@ public class ViewManager
         }
         
         procedure = new BuildingProcedure(building, players.current(), new Invoker<>(this));
-        procedure.advance();
+        procedure.advance(frame);
     }
     
     void pursueBuilding()
     {
-        
+        procedure.advance();
     }
     
     void showEntityInfo(EntityType entity)

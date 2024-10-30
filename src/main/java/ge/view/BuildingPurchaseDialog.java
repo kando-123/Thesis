@@ -49,7 +49,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
         contentPane.add(priceLabel, c);
         
         ++c.gridx;
-        JButton button = new JButton("Confirm");
+        var button = new JButton("Confirm");
         button.setActionCommand("confirm");
         button.addActionListener(this);
         button.setPreferredSize(new Dimension(100, 50));
@@ -68,6 +68,53 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
         if (e.getActionCommand().equals("confirm"))
         {
             invoker.invoke(null);
+        }
+    }
+    
+    public static class Builder
+    {
+        private JFrame frame;
+        private BuildingType building;
+        private int price;
+        private Invoker<ViewManager> invoker;
+        
+        public Builder setFrame(JFrame frame)
+        {
+            this.frame = frame;
+            return this;
+        }
+        
+        public Builder setBuilding(BuildingType building)
+        {
+            this.building = building;
+            return this;
+        }
+        
+        public Builder setPrice(int price)
+        {
+            this.price = price;
+            return this;
+        }
+        
+        public Builder setInvoker(Invoker<ViewManager> invoker)
+        {
+            this.invoker = invoker;
+            return this;
+        }
+        
+        public BuildingPurchaseDialog get()
+        {
+            BuildingPurchaseDialog dialog = null;
+            if (frame != null && building != null && price > 0 && invoker != null)
+            {
+                dialog = new BuildingPurchaseDialog(frame);
+                dialog.building = building;
+                dialog.nameLabel.setText(building.toString());
+                dialog.iconLabel.setIcon(building.icon());
+                dialog.priceLabel.setText(String.format("%d Ħ", price));
+                dialog.invoker = invoker;
+            }
+            return dialog;
         }
     }
 }

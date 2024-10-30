@@ -4,6 +4,10 @@ import ge.field.*;
 import ge.player.*;
 import ge.utilities.*;
 import ge.view.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,6 +18,8 @@ public class BuildingProcedure extends Procedure
     private final BuildingType building;
     private final Player player;
     private final Invoker<ViewManager> invoker;
+    
+    private BuildingPurchaseDialog dialog;
     
     enum BuildingStage
     {
@@ -42,7 +48,16 @@ public class BuildingProcedure extends Procedure
         {
             case INITIATED ->
             {
-                begin();
+                try
+                {
+                    var frame = (JFrame) args[0];
+                    begin(frame);
+                }
+                catch (ClassCastException cce)
+                {
+                    stage = BuildingStage.ERROR;
+                    throw new ProcessException("Wrong argument.");
+                }
             }
             case BEGUN ->
             {
@@ -59,21 +74,41 @@ public class BuildingProcedure extends Procedure
         }
     }
     
-    private void begin()
+    private void begin(JFrame frame)
     {
         if (!player.hasPlace(building))
         {
             stage = BuildingStage.ERROR;
-            invoker.invoke(new ShowNoPlaceCommand());
+            JOptionPane.showMessageDialog(frame,
+                "You have no place for this building.\nShift-click the button for info.");
+            frame.requestFocus();
         }
         else if (!player.hasMoney(building))
         {
             stage = BuildingStage.ERROR;
-            invoker.invoke(new ShowNoMoneyCommand());
+            JOptionPane.showMessageDialog(frame,
+                "You have too little money.\nShift-click the button for info.");
+            frame.requestFocus();
         }
         else
         {
-            
+            stage = BuildingStage.BEGUN;
+            var builder = new BuildingPurchaseDialog.Builder();
+            dialog = builder.setFrame(frame)
+                    .setInvoker(invoker)
+                    .setBuilding(building)
+                    .setPrice(player.priceForNext(building))
+                    .get();
+            assert (dialog != null);
+            dialog.addWindowListener(new WindowAdapter()
+            {
+                @Override
+                public void windowClosed(WindowEvent e)
+                {
+                    frame.requestFocus();
+                }
+            });
+            dialog.setVisible(true);
         }
     }
     
@@ -110,7 +145,7 @@ public class BuildingProcedure extends Procedure
     @Override
     public void rollback()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
     
 }

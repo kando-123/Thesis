@@ -1,8 +1,6 @@
 package ge.field;
 
-import ge.view.BeginBuildingCommand;
-import ge.view.BuildingInfoCommand;
-import ge.view.ViewManager;
+import ge.view.*;
 import ge.utilities.*;
 import java.awt.*;
 import java.awt.event.*;

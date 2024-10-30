@@ -316,7 +316,7 @@ public class World
     private static class Region
     {
         private final Set<Hex> territory;
-        private final ArrayList<Hex> origins;
+        private final ArrayList<Hex> core;
         private Set<Hex> periphery;
 
         Region(Set<Hex> root)
@@ -324,11 +324,11 @@ public class World
             assert (!root.isEmpty());
 
             territory = new HashSet<>();
-            origins = new ArrayList<>();
+            core = new ArrayList<>();
             periphery = new HashSet<>();
 
             territory.addAll(root);
-            origins.addAll(root);
+            core.addAll(root);
             periphery.addAll(root);
         }
 
@@ -369,23 +369,23 @@ public class World
             int p = 0;
             int q = 0;
 
-            for (var hex : origins)
+            for (var hex : core)
             {
                 p += hex.getP();
                 q += hex.getQ();
             }
 
-            p = (int) ((double) p / (double) origins.size());
-            q = (int) ((double) q / (double) origins.size());
+            p = (int) ((double) p / (double) core.size());
+            q = (int) ((double) q / (double) core.size());
 
             Hex average = Hex.newInstance(p, q, -(p + q));
 
-            Hex capital = origins.get(0);
+            Hex capital = core.get(0);
             int minimalDistance = average.distance(capital);
 
-            for (int i = 0; i < origins.size(); ++i)
+            for (int i = 0; i < core.size(); ++i)
             {
-                Hex origin = origins.get(i);
+                Hex origin = core.get(i);
                 int distance = average.distance(origin);
                 if (distance < minimalDistance)
                 {
