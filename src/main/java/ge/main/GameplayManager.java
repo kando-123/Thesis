@@ -32,7 +32,15 @@ public class GameplayManager
             {
                 case UserConfig userConfig ->
                 {
-                    var user = new UserPlayer(world.accessor(), userConfig, viewInvoker);
+                    var builder = new UserPlayer.Builder();
+                    builder.setConfig(userConfig);
+                    builder.setAccessor(world.accessor());
+                    builder.setMarker(world.marker());
+                    builder.setInvoker(viewInvoker);
+                    var user = builder.get();
+                    
+                    assert (user != null);
+                    
                     players.add(user);
                 }
                 case BotConfig botConfig ->

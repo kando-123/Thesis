@@ -1,8 +1,7 @@
 package ge.player;
 
 import ge.field.*;
-import ge.utilities.UnaryPredicate;
-import ge.world.WorldAccessor;
+import ge.world.*;
 import java.awt.*;
 import java.awt.image.*;
 
@@ -43,7 +42,7 @@ public abstract class Player
     private static final int INITIAL_MONEY = 1_000;
     private int money;
 
-    private final WorldAccessor accessor;
+    protected final WorldAccessor accessor;
 
     protected Player(WorldAccessor accessor, ContourColor color)
     {

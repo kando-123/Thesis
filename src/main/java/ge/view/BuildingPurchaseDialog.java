@@ -16,7 +16,6 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
     private final JLabel iconLabel;
     private final JLabel priceLabel;
     
-    private BuildingType building;
     private Invoker<ViewManager> invoker;
     
     private BuildingPurchaseDialog(JFrame frame)
@@ -67,7 +66,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
     {
         if (e.getActionCommand().equals("confirm"))
         {
-            invoker.invoke(null);
+            invoker.invoke(new PursueBuildingCommand());
         }
     }
     
@@ -108,7 +107,6 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
             if (frame != null && building != null && price > 0 && invoker != null)
             {
                 dialog = new BuildingPurchaseDialog(frame);
-                dialog.building = building;
                 dialog.nameLabel.setText(building.toString());
                 dialog.iconLabel.setIcon(building.icon());
                 dialog.priceLabel.setText(String.format("%d Ħ", price));

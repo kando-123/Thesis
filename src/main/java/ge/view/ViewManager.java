@@ -103,13 +103,23 @@ public class ViewManager
             procedure.rollback();
         }
         
-        procedure = new BuildingProcedure(building, players.current(), new Invoker<>(this));
+        var current = players.current();
+        
+        assert (current instanceof UserPlayer);
+        
+        var user = (UserPlayer) current;
+        procedure = new BuildingProcedure(building, user, new Invoker<>(this));
         procedure.advance(frame);
     }
     
     void pursueBuilding()
     {
         procedure.advance();
+    }
+    
+    void handleField(Field field)
+    {
+        procedure.advance(field);
     }
     
     void showEntityInfo(EntityType entity)

@@ -16,11 +16,11 @@ import javax.swing.JOptionPane;
 public class BuildingProcedure extends Procedure
 {
     private final BuildingType building;
-    private final Player player;
+    private final UserPlayer player;
     private final Invoker<ViewManager> invoker;
-    
+
     private BuildingPurchaseDialog dialog;
-    
+
     enum BuildingStage
     {
         INITIATED,
@@ -29,65 +29,66 @@ public class BuildingProcedure extends Procedure
         FINISHED,
         ERROR;
     }
-    
+
     private BuildingStage stage;
-    
-    public BuildingProcedure(BuildingType building, Player player, Invoker<ViewManager> invoker)
+
+    public BuildingProcedure(BuildingType building, UserPlayer player, Invoker<ViewManager> invoker)
     {
         this.building = building;
         this.player = player;
         this.invoker = invoker;
-        
+
         stage = BuildingStage.INITIATED;
     }
-    
+
     @Override
     public void advance(Object... args) throws ProcessException
     {
-        switch (stage)
+        try
         {
-            case INITIATED ->
+            switch (stage)
             {
-                try
+                case INITIATED ->
                 {
                     var frame = (JFrame) args[0];
                     begin(frame);
                 }
-                catch (ClassCastException cce)
+                case BEGUN ->
                 {
-                    stage = BuildingStage.ERROR;
-                    throw new ProcessException("Wrong argument.");
+                    progress();
+                }
+                case IN_PROGRESS ->
+                {
+                    var field = (Field) args[0];
+                    finish(field);
+                }
+                case FINISHED, ERROR ->
+                {
+                    throw new ProcessException("Already finished.");
                 }
             }
-            case BEGUN ->
-            {
-                progress();
-            }
-            case IN_PROGRESS ->
-            {
-                finish();
-            }
-            case FINISHED, ERROR ->
-            {
-                throw new ProcessException("Already finished.");
-            }
+        }
+        catch (ClassCastException cce)
+        {
+            stage = BuildingStage.ERROR;
+            throw new ProcessException("Wrong argument.");
         }
     }
-    
+
     private void begin(JFrame frame)
     {
         if (!player.hasPlace(building))
         {
             stage = BuildingStage.ERROR;
             JOptionPane.showMessageDialog(frame,
-                "You have no place for this building.\nShift-click the button for info.");
+                    "You have no place for this building.\nShift-click the button for info.");
             frame.requestFocus();
         }
         else if (!player.hasMoney(building))
         {
             stage = BuildingStage.ERROR;
             JOptionPane.showMessageDialog(frame,
-                "You have too little money.\nShift-click the button for info.");
+                    "You have too little money.\nShift-click the button for info.");
             frame.requestFocus();
         }
         else
@@ -111,15 +112,23 @@ public class BuildingProcedure extends Procedure
             dialog.setVisible(true);
         }
     }
-    
+
     private void progress()
     {
+        dialog.setVisible(false);
+        dialog.dispose();
+        dialog = null;
         
+        player.markPlaces(true, building);
     }
-    
-    private void finish()
+
+    private void finish(Field field)
     {
-        
+        if (field != null)
+        {
+            player.markPlaces(false, building);
+            // substitute
+        }
     }
 
     @Override
@@ -145,7 +154,7 @@ public class BuildingProcedure extends Procedure
     @Override
     public void rollback()
     {
-        
+
     }
-    
+
 }

@@ -67,6 +67,11 @@ public class World
         return new WorldRenderer(this);
     }
     
+    public WorldMarker marker()
+    {
+        return new WorldMarker(this);
+    }
+    
     public Field getField(Hex coords)
     {
         return fields.get(coords);
