@@ -81,6 +81,23 @@ public class World
     {
         return fields.values().stream();
     }
+    
+    public void substitute(Field newField) throws WrongCoordsException
+    {
+        var coords = newField.getHex();
+        if (fields.containsKey(coords))
+        {
+            fields.put(coords, newField);
+        }
+        else
+        {
+            throw new WrongCoordsException();
+        }
+    }
+    
+    public static class WrongCoordsException extends RuntimeException
+    {
+    }
 
     private Map<Object, Doublet<Integer>> generateCenters(int side, Doublet<Integer> offset)
     {

@@ -32,12 +32,12 @@ public class ViewManager
         this.frame = frame;
     }
     
-    public void makeView(WorldRenderer renderer)
+    public void makeView(WorldRenderer renderer, WorldAccessor accessor)
     {
         var contentPane = new JPanel(new BorderLayout());
         
         userPanel = new UserPanel(new Invoker<>(this));
-        worldPanel = new WorldPanel(renderer, new Invoker<>(this));
+        worldPanel = new WorldPanel(renderer, accessor, new Invoker<>(this));
         
         contentPane.add(userPanel, BorderLayout.WEST);
         contentPane.add(worldPanel, BorderLayout.CENTER);
@@ -117,9 +117,18 @@ public class ViewManager
         procedure.advance();
     }
     
-    void handleField(Field field)
+    void finishBuilding(BuildingField building)
     {
-        procedure.advance(field);
+        invoker.invoke(new BuildCommand(building));
+        procedure = null;
+    }
+    
+    void handleClick(Field field)
+    {
+        if (procedure != null)
+        {
+            procedure.advance(field);
+        }
     }
     
     void showEntityInfo(EntityType entity)
@@ -140,5 +149,10 @@ public class ViewManager
     {
         frame.requestFocus();
         invoker.invoke(new NextPlayerCommand());
+    }
+    
+    void updateMoney(int newAmount)
+    {
+        userPanel.setUserMoney(newAmount);
     }
 }

@@ -78,4 +78,13 @@ public class UserPlayer extends Player
             return user;
         }
     }
+
+    @Override
+    public void buy(BuildingType building) throws TooLittleMoneyException
+    {
+        super.buy(building);
+        
+        invoker.invoke(new UpdateMoneyCommand(getMoney()));
+    }
+    
 }

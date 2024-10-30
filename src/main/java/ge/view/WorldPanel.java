@@ -26,12 +26,14 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
     private final InputHandler inputHandler;
 
     private final WorldRenderer renderer;
+    private final WorldAccessor accessor;
 
     private final Invoker<ViewManager> invoker;
 
-    WorldPanel(WorldRenderer renderer, Invoker<ViewManager> invoker)
+    WorldPanel(WorldRenderer renderer, WorldAccessor accessor, Invoker<ViewManager> invoker)
     {
         this.renderer = renderer;
+        this.accessor = accessor;
         this.invoker = invoker;
 
         worldCenter = new Doublet<>(0., 0.);
@@ -234,8 +236,8 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         Hex hex = Hex.at(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
 
         invoker.invoke(!e.isShiftDown()
-                ? new HandleClickCommand(hex)
-                : new HandleShiftClickCommand(hex));
+                ? new HandleClickCommand(accessor.getField(hex))
+                : new HandleShiftClickCommand(accessor.getField(hex)));
     }
 
     @Override

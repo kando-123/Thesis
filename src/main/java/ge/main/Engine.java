@@ -48,7 +48,7 @@ public class Engine
         viewManager = new ViewManager(frame);
         
         gameplayManager.makePlayers(players, new Invoker<>(viewManager));
-        viewManager.makeView(gameplayManager.getWorldRenderer());
+        viewManager.makeView(gameplayManager.getWorldRenderer(), gameplayManager.getWorldAccessor());
         
         viewManager.setInvoker(new Invoker<>(gameplayManager));
         viewManager.setPlayers(gameplayManager.getPlayersAccessor());

@@ -76,7 +76,17 @@ public abstract class Player
 
     public boolean hasMoney(BuildingType building)
     {
-        long count = accessor.countMatching(f -> f.isOwned(this) && building.predicate(accessor).test(f));
+        long count = accessor.countMatching(f -> 
+        {
+            if (f.isOwned(this) && f instanceof BuildingField b)
+            {
+                return b.getType() == building;
+            }
+            else
+            {
+                return false;
+            }
+        });
         return building.price((int) count) <= money;
     }
 
@@ -94,5 +104,19 @@ public abstract class Player
             }
         });
         return building.price((int) current);
+    }
+    
+    public void buy(BuildingType building) throws TooLittleMoneyException
+    {
+        int cost = priceForNext(building);
+        if (cost > money)
+        {
+            throw new TooLittleMoneyException();
+        }
+        money -= cost;
+    }
+    
+    public static class TooLittleMoneyException extends RuntimeException
+    {
     }
 }

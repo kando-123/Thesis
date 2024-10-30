@@ -54,6 +54,11 @@ public abstract class Field
         marked = m;
     }
     
+    public boolean isMarked()
+    {
+        return marked;
+    }
+    
     public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
     {
         graphics.drawImage(!marked ? image : brightImage, xPosition, yPosition, width, height, null);

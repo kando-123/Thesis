@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class BuildingProcedure extends Procedure
 {
-    private final BuildingType building;
+    private final BuildingType type;
     private final UserPlayer player;
     private final Invoker<ViewManager> invoker;
 
@@ -34,7 +34,7 @@ public class BuildingProcedure extends Procedure
 
     public BuildingProcedure(BuildingType building, UserPlayer player, Invoker<ViewManager> invoker)
     {
-        this.building = building;
+        this.type = building;
         this.player = player;
         this.invoker = invoker;
 
@@ -77,14 +77,14 @@ public class BuildingProcedure extends Procedure
 
     private void begin(JFrame frame)
     {
-        if (!player.hasPlace(building))
+        if (!player.hasPlace(type))
         {
             stage = BuildingStage.ERROR;
             JOptionPane.showMessageDialog(frame,
                     "You have no place for this building.\nShift-click the button for info.");
             frame.requestFocus();
         }
-        else if (!player.hasMoney(building))
+        else if (!player.hasMoney(type))
         {
             stage = BuildingStage.ERROR;
             JOptionPane.showMessageDialog(frame,
@@ -97,8 +97,8 @@ public class BuildingProcedure extends Procedure
             var builder = new BuildingPurchaseDialog.Builder();
             dialog = builder.setFrame(frame)
                     .setInvoker(invoker)
-                    .setBuilding(building)
-                    .setPrice(player.priceForNext(building))
+                    .setBuilding(type)
+                    .setPrice(player.priceForNext(type))
                     .get();
             assert (dialog != null);
             dialog.addWindowListener(new WindowAdapter()
@@ -115,19 +115,30 @@ public class BuildingProcedure extends Procedure
 
     private void progress()
     {
+        stage = BuildingStage.IN_PROGRESS;
         dialog.setVisible(false);
         dialog.dispose();
         dialog = null;
         
-        player.markPlaces(true, building);
+        player.markPlaces(true, type);
     }
 
     private void finish(Field field)
     {
-        if (field != null)
+        if (field != null && field.isMarked())
         {
-            player.markPlaces(false, building);
-            // substitute
+            stage = BuildingStage.FINISHED;
+            
+            player.markPlaces(false, type);
+            var building = BuildingField.newInstance(type, field.getHex());
+            building.setOwner(player);
+            player.buy(type);
+            invoker.invoke(new FinishBuildingCommand(building));
+        }
+        else
+        {
+            stage = BuildingStage.ERROR;
+            player.markPlaces(false, type);
         }
     }
 
@@ -156,5 +167,4 @@ public class BuildingProcedure extends Procedure
     {
 
     }
-
 }

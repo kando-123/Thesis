@@ -1,23 +1,24 @@
 package ge.view;
 
+import ge.field.Field;
 import ge.utilities.*;
 
 /**
  *
  * @author Kay Jay O'Nail
  */
-public class HandleClickCommand extends Command
+public class HandleClickCommand extends Command<ViewManager>
 {
-    private final Hex hex;
+    private final Field field;
 
-    public HandleClickCommand(Hex hex)
+    public HandleClickCommand(Field field)
     {
-        this.hex = hex;
+        this.field = field;
     }
     
     @Override
-    public void execute(Object executor)
+    public void execute(ViewManager executor)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        executor.handleClick(field);
     }
 }

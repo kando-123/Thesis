@@ -77,6 +77,11 @@ public class GameplayManager
         return world.renderer();
     }
     
+    public WorldAccessor getWorldAccessor()
+    {
+        return world.accessor();
+    }
+    
     public PlayersAccessor getPlayersAccessor()
     {
         return new PlayersAccessor(players);
@@ -92,5 +97,10 @@ public class GameplayManager
     void begin()
     {
         players.getFirst().play();
+    }
+    
+    void build(BuildingField building)
+    {
+        world.substitute(building);
     }
 }
