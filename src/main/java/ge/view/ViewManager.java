@@ -115,6 +115,7 @@ public class ViewManager
     
     void finishBuilding(BuildingField building)
     {
+        frame.requestFocus();
         invoker.invoke(new BuildCommand(building));
         procedure = null;
     }

@@ -2,7 +2,6 @@ package ge.player;
 
 import ge.entity.EntityType;
 import ge.field.*;
-import ge.utilities.Hex;
 import ge.world.*;
 import java.awt.*;
 import java.awt.image.*;
