@@ -135,7 +135,7 @@ public class HiringProcedure extends Procedure
             player.markPlaces(false, type);
             var entity = Entity.newInstance(type, player);
             
-            // ...
+            invoker.invoke(new FocusCommand());
             
             field.setEntity(entity);
             

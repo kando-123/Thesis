@@ -7,7 +7,7 @@ import ge.utilities.Hex;
  *
  * @author Kay Jay O'Nail
  */
-public class CapitalField extends PropertyField implements Fortification, Spawner
+public class CapitalField extends PropertyField implements Fortification, Spawner, Commercial
 {
     public CapitalField(Hex coords)
     {

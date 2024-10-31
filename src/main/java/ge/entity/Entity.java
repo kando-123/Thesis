@@ -1,8 +1,11 @@
 package ge.entity;
 
 import ge.player.Player;
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.font.TextAttribute;
 import java.awt.image.*;
+import java.text.AttributedString;
 
 /**
  *
@@ -16,6 +19,9 @@ public abstract class Entity
     private static final EntityAssetManager ASSET_MANAGER = EntityAssetManager.getInstance();
 
     private final Player owner;
+    
+    private int number;
+    private int morale;
     
     public static final int MINIMAL_NUMBER = 1;
     public static final int MAXIMAL_NUMBER = 100;
@@ -56,6 +62,61 @@ public abstract class Entity
     
     public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
     {
-        graphics.drawImage(!marked ? image : brightImage, xPosition, yPosition, width, height, null);
+        draw(graphics, xPosition, yPosition, width, height, null);
+    }
+    
+    private static final float BAR_HEIGHT_FRACTION = 0.2f;
+    
+    public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height, String info)
+    {
+        final int minimalBarHeight = 9;
+        if (BAR_HEIGHT_FRACTION * height > minimalBarHeight)
+        {
+            drawWithBar(graphics, xPosition, yPosition, width, height, info);
+        }
+        else
+        {
+            drawWithoutBar(graphics, xPosition, yPosition, width, height);
+        }
+    }
+    
+    private void drawWithBar(Graphics2D graphics, int xPosition, int yPosition, int width, int height, String info)
+    {
+        final float iconWidthFraction = 0.7f;
+        final float iconHeightFraction = 0.7f;
+        final float sideMargin = (1 - iconWidthFraction) / 2;
+        final float topMargin = (1 - iconHeightFraction);
+        
+        int x = (int) (xPosition + sideMargin * width);
+        int y = (int) (yPosition + topMargin * height);
+        int w = (int) (iconWidthFraction * width);
+        int h = (int) (iconHeightFraction * height);
+        
+        graphics.drawImage(!marked ? image : brightImage, x, y, w, h, null);
+        
+        String bar = (info == null || info.isBlank())
+                ? String.format("N%d M%d", number, morale)
+                : String.format("N%d M%d %s", number, morale, info);
+        
+        var attributedBar = new AttributedString(bar);
+        final float size = BAR_HEIGHT_FRACTION * height;
+        attributedBar.addAttribute(TextAttribute.SIZE, size);
+        attributedBar.addAttribute(TextAttribute.BACKGROUND, Color.WHITE);
+        graphics.drawString(attributedBar.getIterator(), (float) xPosition, (float) yPosition + size);
+    }
+    
+    private void drawWithoutBar(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
+    {
+        final float iconWidthFraction = 0.8f;
+        final float iconHeightFraction = 1.0f;
+        final float sideMargin = (1 - iconWidthFraction) / 2;
+        final float topMargin = (1 - iconHeightFraction);
+        
+        int x = (int) (xPosition + sideMargin * width);
+        int y = (int) (yPosition + topMargin * height);
+        int w = (int) (iconWidthFraction * width);
+        int h = (int) (iconHeightFraction * height);
+        
+        graphics.drawImage(!marked ? image : brightImage, x, y, w, h, null);
     }
 }

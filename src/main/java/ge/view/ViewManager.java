@@ -166,4 +166,9 @@ public class ViewManager
     {
         userPanel.setUserMoney(newAmount);
     }
+    
+    void focus()
+    {
+        frame.requestFocus();
+    }
 }
