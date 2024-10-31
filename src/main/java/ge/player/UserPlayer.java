@@ -16,9 +16,9 @@ public class UserPlayer extends Player
     private WorldMarker marker;
     private Invoker<ViewManager> invoker;
     
-    private UserPlayer(WorldAccessor accessor, UserConfig config)
+    private UserPlayer(WorldScanner scanner, WorldAccessor accessor, UserConfig config)
     {
-        super(accessor, config.color);
+        super(scanner, accessor, config.color);
         
         this.name = config.name;
     }
@@ -58,6 +58,7 @@ public class UserPlayer extends Player
     public static class Builder
     {
         private UserConfig config;
+        private WorldScanner scanner;
         private WorldAccessor accessor;
         private WorldMarker marker;
         private Invoker<ViewManager> invoker;
@@ -67,6 +68,11 @@ public class UserPlayer extends Player
             this.config = config;
         }
 
+        public void setScanner(WorldScanner scanner)
+        {
+            this.scanner = scanner;
+        }
+        
         public void setAccessor(WorldAccessor accessor)
         {
             this.accessor = accessor;
@@ -85,9 +91,9 @@ public class UserPlayer extends Player
         public UserPlayer get()
         {
             UserPlayer user = null;
-            if (config != null && accessor != null && marker != null && invoker != null)
+            if (config != null && scanner != null && accessor != null && marker != null && invoker != null)
             {
-                user = new UserPlayer(accessor, config);
+                user = new UserPlayer(scanner, accessor, config);
                 user.marker = marker;
                 user.invoker = invoker;
             }

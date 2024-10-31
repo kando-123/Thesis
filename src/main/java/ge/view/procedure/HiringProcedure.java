@@ -133,13 +133,11 @@ public class HiringProcedure extends Procedure
             stage = HiringStage.FINISHED;
             
             player.markPlaces(false, type);
-            var entity = Entity.newInstance(type, player);
+            var entity = Entity.newInstance(type, player, number);
+            field.setEntity(entity);
+            player.buy(type, number);
             
             invoker.invoke(new FocusCommand());
-            
-            field.setEntity(entity);
-            
-            player.buy(type, number);
         }
         else
         {

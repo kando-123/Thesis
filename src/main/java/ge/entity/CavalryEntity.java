@@ -8,8 +8,8 @@ import ge.player.*;
  */
 public class CavalryEntity extends Entity
 {
-    public CavalryEntity(Player owner)
+    public CavalryEntity(Player owner, int number)
     {
-        super(owner);
+        super(owner, number);
     }
 }

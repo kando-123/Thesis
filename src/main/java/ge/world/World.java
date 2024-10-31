@@ -57,6 +57,11 @@ public class World
         generateLandFields(centers);
     }
     
+    public WorldScanner scanner()
+    {
+        return new WorldScanner(this);
+    }
+    
     public WorldAccessor accessor()
     {
         return new WorldAccessor(this);

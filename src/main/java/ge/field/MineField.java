@@ -20,4 +20,10 @@ public class MineField extends CommercialField
     {
         return BuildingType.MINE;
     }
+
+    @Override
+    public int getIncome()
+    {
+        return INCOME;
+    }
 }

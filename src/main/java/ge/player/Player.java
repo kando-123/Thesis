@@ -43,10 +43,12 @@ public abstract class Player
     private static final int INITIAL_MONEY = 1_000;
     private int money;
 
+    protected final WorldScanner scanner;
     protected final WorldAccessor accessor;
 
-    protected Player(WorldAccessor accessor, ContourColor color)
+    protected Player(WorldScanner scanner, WorldAccessor accessor, ContourColor color)
     {
+        this.scanner = scanner;
         this.accessor = accessor;
         this.color = color;
         contour = ASSET_MANAGER.getImage(color.resource);
@@ -72,12 +74,12 @@ public abstract class Player
 
     public boolean hasPlace(BuildingType building)
     {
-        return accessor.anyMatching(f -> f.isOwned(this) && building.predicate(accessor).test(f));
+        return scanner.anyMatching(f -> f.isOwned(this) && building.predicate(accessor).test(f));
     }
     
     public boolean hasPlace(EntityType entity)
     {
-        return accessor.anyMatching((Field f) ->
+        return scanner.anyMatching((Field f) ->
         {
             if (f.isOwned(this) && f instanceof Spawner s)
             {
@@ -92,7 +94,7 @@ public abstract class Player
 
     public boolean hasMoney(BuildingType building)
     {
-        long count = accessor.countMatching((Field f) -> 
+        long count = scanner.countMatching((Field f) -> 
         {
             if (f.isOwned(this) && f instanceof BuildingField b)
             {
@@ -113,7 +115,7 @@ public abstract class Player
 
     public int priceForNext(BuildingType building)
     {
-        long current = accessor.countMatching((Field f) ->
+        long current = scanner.countMatching((Field f) ->
         {
             if (f instanceof BuildingField b)
             {
@@ -149,5 +151,10 @@ public abstract class Player
     
     public static class TooLittleMoneyException extends RuntimeException
     {
+    }
+    
+    public void earn()
+    {
+        money += scanner.getIncome(this);
     }
 }

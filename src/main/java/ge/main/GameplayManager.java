@@ -34,6 +34,7 @@ public class GameplayManager
                 {
                     var builder = new UserPlayer.Builder();
                     builder.setConfig(userConfig);
+                    builder.setScanner(world.scanner());
                     builder.setAccessor(world.accessor());
                     builder.setMarker(world.marker());
                     builder.setInvoker(viewInvoker);
@@ -45,7 +46,7 @@ public class GameplayManager
                 }
                 case BotConfig botConfig ->
                 {
-                    var bot = new BotPlayer(world.accessor(), botConfig, selfInvoker);
+                    var bot = new BotPlayer(world.scanner(), world.accessor(), botConfig, selfInvoker);
                     players.add(bot);
                 }
                 default ->
@@ -77,6 +78,11 @@ public class GameplayManager
         return world.renderer();
     }
     
+    public WorldScanner getWorldScanner()
+    {
+        return world.scanner();
+    }
+    
     public WorldAccessor getWorldAccessor()
     {
         return world.accessor();
@@ -89,9 +95,10 @@ public class GameplayManager
     
     void end()
     {
-        // end procedure
+        var ender = players.removeFirst();
+        ender.earn();
         
-        players.addLast(players.removeFirst());
+        players.addLast(ender);
     }
     
     void begin()

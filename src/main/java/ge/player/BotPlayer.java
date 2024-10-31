@@ -12,9 +12,9 @@ public class BotPlayer extends Player
 {
     private final Invoker<GameplayManager> invoker;
     
-    public BotPlayer(WorldAccessor accessor, BotConfig config, Invoker<GameplayManager> invoker)
+    public BotPlayer(WorldScanner scanner, WorldAccessor accessor, BotConfig config, Invoker<GameplayManager> invoker)
     {
-        super(accessor, config.color);
+        super(scanner, accessor, config.color);
         
         this.invoker = invoker;
     }

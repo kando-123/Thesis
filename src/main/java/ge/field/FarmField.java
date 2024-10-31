@@ -20,4 +20,10 @@ public class FarmField extends CommercialField
     {
         return BuildingType.FARM;
     }
+
+    @Override
+    public int getIncome()
+    {
+        return INCOME;
+    }
 }

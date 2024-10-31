@@ -23,6 +23,6 @@ public class ShipyardField extends SpawnerField
     @Override
     public boolean canSpawn(EntityType type)
     {
-        return !isOccupied() && (type == EntityType.CAVALRY || type == EntityType.INFANTRY);
+        return !isOccupied() && type == EntityType.NAVY;
     }
 }

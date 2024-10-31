@@ -8,8 +8,8 @@ import ge.player.Player;
  */
 public class NavyEntity extends Entity
 {
-    public NavyEntity(Player owner)
+    public NavyEntity(Player owner, int number)
     {
-        super(owner);
+        super(owner, number);
     }
 }

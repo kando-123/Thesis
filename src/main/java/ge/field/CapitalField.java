@@ -9,6 +9,8 @@ import ge.utilities.Hex;
  */
 public class CapitalField extends PropertyField implements Fortification, Spawner, Commercial
 {
+    public static final int INCOME = 200;
+            
     public CapitalField(Hex coords)
     {
         super(coords);
@@ -18,5 +20,11 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
     public boolean canSpawn(EntityType type)
     {
         return !isOccupied() && (type == EntityType.CAVALRY || type == EntityType.INFANTRY);
+    }
+
+    @Override
+    public int getIncome()
+    {
+        return INCOME;
     }
 }

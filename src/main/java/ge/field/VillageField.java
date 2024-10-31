@@ -20,4 +20,10 @@ public class VillageField extends CommercialField
     {
         return BuildingType.VILLAGE;
     }
+
+    @Override
+    public int getIncome()
+    {
+        return INCOME;
+    }
 }

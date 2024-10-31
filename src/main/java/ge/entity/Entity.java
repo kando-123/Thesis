@@ -22,17 +22,26 @@ public abstract class Entity
     
     private int number;
     private int morale;
+    private boolean movable;
     
     public static final int MINIMAL_NUMBER = 1;
     public static final int MAXIMAL_NUMBER = 100;
     
-    protected Entity(Player owner)
+    protected Entity(Player owner, int number)
     {
         this.owner = owner;
         
         var name = getName();
         this.image = ASSET_MANAGER.getImage(name);
         this.brightImage = ASSET_MANAGER.getBrightImage(name);
+        
+        this.number = number;
+        this.morale = initialMorale(number);
+    }
+    
+    private int initialMorale(int number)
+    {
+        return number / 5;
     }
     
     private String getName()
@@ -41,21 +50,21 @@ public abstract class Entity
         return name.substring(name.lastIndexOf('.') + 1, name.lastIndexOf("Entity"));
     }
     
-    public static Entity newInstance(EntityType type, Player owner)
+    public static Entity newInstance(EntityType type, Player owner, int number)
     {
         return switch (type)
         {
             case CAVALRY ->
             {
-                yield new CavalryEntity(owner);
+                yield new CavalryEntity(owner, number);
             }
             case INFANTRY ->
             {
-                yield new InfantryEntity(owner);
+                yield new InfantryEntity(owner, number);
             }
             case NAVY ->
             {
-                yield new NavyEntity(owner);
+                yield new NavyEntity(owner, number);
             }
         };
     }
@@ -82,7 +91,7 @@ public abstract class Entity
     
     private void drawWithBar(Graphics2D graphics, int xPosition, int yPosition, int width, int height, String info)
     {
-        final float iconWidthFraction = 0.7f;
+        final float iconWidthFraction = 0.6f;
         final float iconHeightFraction = 0.7f;
         final float sideMargin = (1 - iconWidthFraction) / 2;
         final float topMargin = (1 - iconHeightFraction);
@@ -108,7 +117,7 @@ public abstract class Entity
     private void drawWithoutBar(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
     {
         final float iconWidthFraction = 0.8f;
-        final float iconHeightFraction = 1.0f;
+        final float iconHeightFraction = 0.9f;
         final float sideMargin = (1 - iconWidthFraction) / 2;
         final float topMargin = (1 - iconHeightFraction);
         
@@ -118,5 +127,10 @@ public abstract class Entity
         int h = (int) (iconHeightFraction * height);
         
         graphics.drawImage(!marked ? image : brightImage, x, y, w, h, null);
+    }
+    
+    public void setMovable(boolean m)
+    {
+        movable = m;
     }
 }
