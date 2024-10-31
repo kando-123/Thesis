@@ -1,5 +1,6 @@
 package ge.view.procedure;
 
+import ge.entity.*;
 import ge.field.*;
 import ge.player.*;
 import ge.utilities.*;
@@ -11,15 +12,16 @@ import javax.swing.*;
  *
  * @author Kay Jay O'Nail
  */
-public class BuildingProcedure extends Procedure
+public class HiringProcedure extends Procedure
 {
-    private final BuildingType type;
+    private final EntityType type;
     private final UserPlayer player;
     private final Invoker<ViewManager> invoker;
-
-    private BuildingPurchaseDialog dialog;
-
-    enum BuildingStage
+    
+    private EntityPurchaseDialog dialog;
+    private Integer number;
+    
+    private enum HiringStage
     {
         INITIATED,
         BEGUN,
@@ -27,18 +29,18 @@ public class BuildingProcedure extends Procedure
         FINISHED,
         ERROR;
     }
+    
+    private HiringStage stage;
 
-    private BuildingStage stage;
-
-    public BuildingProcedure(BuildingType building, UserPlayer player, Invoker<ViewManager> invoker)
+    public HiringProcedure(EntityType type, UserPlayer player, Invoker<ViewManager> invoker)
     {
-        this.type = building;
+        this.type = type;
         this.player = player;
         this.invoker = invoker;
-
-        stage = BuildingStage.INITIATED;
+        
+        stage = HiringStage.INITIATED;
     }
-
+    
     @Override
     public void advance(Object... args) throws ProcedureException
     {
@@ -53,11 +55,12 @@ public class BuildingProcedure extends Procedure
                 }
                 case BEGUN ->
                 {
+                    number = (Integer) args[0];
                     progress();
                 }
                 case IN_PROGRESS ->
                 {
-                    var field = (Field) args[0];
+                    var field = (Field) args[0]; 
                     finish(field);
                 }
                 case FINISHED, ERROR ->
@@ -68,37 +71,39 @@ public class BuildingProcedure extends Procedure
         }
         catch (ClassCastException cce)
         {
-            stage = BuildingStage.ERROR;
+            stage = HiringStage.ERROR;
             throw new ProcedureException("Wrong argument.");
         }
     }
-
+    
     private void begin(JFrame frame)
     {
         if (!player.hasPlace(type))
         {
-            stage = BuildingStage.ERROR;
+            stage = HiringStage.ERROR;
             JOptionPane.showMessageDialog(frame,
                     "You have no place for this building.\nShift-click the button for info.");
             frame.requestFocus();
         }
         else if (!player.hasMoney(type))
         {
-            stage = BuildingStage.ERROR;
+            stage = HiringStage.ERROR;
             JOptionPane.showMessageDialog(frame,
                     "You have too little money.\nShift-click the button for info.");
             frame.requestFocus();
         }
         else
         {
-            stage = BuildingStage.BEGUN;
-            var builder = new BuildingPurchaseDialog.Builder();
+            stage = HiringStage.BEGUN;
+            var builder = new EntityPurchaseDialog.Builder();
             dialog = builder.setFrame(frame)
                     .setInvoker(new Invoker<>(this))
-                    .setBuilding(type)
-                    .setPrice(player.priceForNext(type))
+                    .setEntity(type)
+                    .setBudget(player.getMoney())
                     .get();
+            
             assert (dialog != null);
+            
             dialog.addWindowListener(new WindowAdapter()
             {
                 @Override
@@ -110,32 +115,35 @@ public class BuildingProcedure extends Procedure
             dialog.setVisible(true);
         }
     }
-
+    
     private void progress()
     {
-        stage = BuildingStage.IN_PROGRESS;
+        stage = HiringStage.IN_PROGRESS;
         dialog.setVisible(false);
         dialog.dispose();
         dialog = null;
         
         player.markPlaces(true, type);
     }
-
+    
     private void finish(Field field)
     {
         if (field != null && field.isMarked())
         {
-            stage = BuildingStage.FINISHED;
+            stage = HiringStage.FINISHED;
             
             player.markPlaces(false, type);
-            var building = BuildingField.newInstance(type, field.getHex());
-            building.setOwner(player);
-            player.buy(type);
-            invoker.invoke(new FinishBuildingCommand(building));
+            var entity = Entity.newInstance(type, player);
+            
+            // ...
+            
+            field.setEntity(entity);
+            
+            player.buy(type, number);
         }
         else
         {
-            stage = BuildingStage.ERROR;
+            stage = HiringStage.ERROR;
             player.markPlaces(false, type);
         }
     }
@@ -163,6 +171,7 @@ public class BuildingProcedure extends Procedure
     @Override
     public void rollback()
     {
-
+        
     }
+    
 }

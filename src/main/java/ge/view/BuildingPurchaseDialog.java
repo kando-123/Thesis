@@ -2,6 +2,7 @@ package ge.view;
 
 import ge.field.*;
 import ge.utilities.*;
+import ge.view.procedure.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
     private final JLabel iconLabel;
     private final JLabel priceLabel;
     
-    private Invoker<ViewManager> invoker;
+    private Invoker<BuildingProcedure> invoker;
     
     private BuildingPurchaseDialog(JFrame frame)
     {
@@ -66,7 +67,14 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
     {
         if (e.getActionCommand().equals("confirm"))
         {
-            invoker.invoke(new PursueBuildingCommand());
+            invoker.invoke(new Command<BuildingProcedure>()
+            {
+                @Override
+                public void execute(BuildingProcedure executor)
+                {
+                    executor.advance();
+                }
+            });
         }
     }
     
@@ -75,7 +83,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
         private JFrame frame;
         private BuildingType building;
         private int price;
-        private Invoker<ViewManager> invoker;
+        private Invoker<BuildingProcedure> invoker;
         
         public Builder setFrame(JFrame frame)
         {
@@ -95,7 +103,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
             return this;
         }
         
-        public Builder setInvoker(Invoker<ViewManager> invoker)
+        public Builder setInvoker(Invoker<BuildingProcedure> invoker)
         {
             this.invoker = invoker;
             return this;

@@ -19,6 +19,6 @@ public class BeginBuildingCommand extends Command<ViewManager>
     @Override
     public void execute(ViewManager executor)
     {
-        executor.beginBuildingProcess(building);
+        executor.beginBuildingProcedure(building);
     }
 }

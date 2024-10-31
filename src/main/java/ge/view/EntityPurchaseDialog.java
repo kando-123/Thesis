@@ -1,24 +1,11 @@
-package my.gui;
+package ge.view;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import my.command.Invoker;
-import my.command.PursueHiringCommand;
-import my.entity.AbstractEntity;
-import my.utils.Spinner;
-import my.flow.Manager;
+import ge.entity.*;
+import ge.utilities.*;
+import ge.view.procedure.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 /**
  *
@@ -31,18 +18,19 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
     private final Spinner spinner;
     private final JLabel priceLabel;
     private final JButton button;
-
-    private AbstractEntity entity;
+    
+    private EntityType entity;
+    private int number;
     private int budget;
-    private Invoker<Manager> invoker;
+    private Invoker<HiringProcedure> invoker;
 
-    private EntityPurchaseDialog(JFrame frame)
+    public EntityPurchaseDialog(JFrame frame)
     {
         super(frame, true);
 
-        Container contentPane = new JPanel(new GridBagLayout());
+        var contentPane = new JPanel(new GridBagLayout());
         contentPane.setPreferredSize(new Dimension(300, 200));
-
+        
         var c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -53,33 +41,35 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
         nameLabel = new JLabel();
         nameLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         contentPane.add(nameLabel, c);
-
+        
         ++c.gridy;
         iconLabel = new JLabel();
         contentPane.add(iconLabel, c);
-
+        
         ++c.gridy;
-        Spinner.Model model = new Spinner.Model(AbstractEntity.DEFAULT_NUMBER,
-                AbstractEntity.MINIMAL_NUMBER,
-                AbstractEntity.MAXIMAL_NUMBER);
-        spinner = new Spinner(model, new Dimension(300, 50));
+        final int max = Entity.MAXIMAL_NUMBER;
+        final int min = Entity.MINIMAL_NUMBER;
+        final int def = min + (max - min) / 5;
+        spinner = new Spinner(new Spinner.Model(def, min, max), new Dimension(300, 50));
         spinner.addValueChangeListener(this);
         contentPane.add(spinner, c);
-
+        
+        number = def;
+        
         ++c.gridy;
         c.gridwidth = 1;
         priceLabel = new JLabel();
         priceLabel.setBorder(BorderFactory.createTitledBorder("Price"));
         priceLabel.setPreferredSize(new Dimension(100, 50));
         contentPane.add(priceLabel, c);
-
+        
         ++c.gridx;
-        button = new JButton("Buy");
-        button.setActionCommand("buy");
+        button = new JButton("Confirm");
+        button.setActionCommand("confirm");
         button.addActionListener(this);
         button.setPreferredSize(new Dimension(100, 50));
         contentPane.add(button, c);
-
+        
         setContentPane(contentPane);
 
         pack();
@@ -87,87 +77,81 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
         setResizable(false);
         setLocationRelativeTo(frame);
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        if (e.getActionCommand().equals("buy"))
+        if (e.getActionCommand().equals("confirm"))
         {
-            int number = entity.getNumber();
-            entity.setMorale(number / 5);
-            invoker.invoke(new PursueHiringCommand());
+            invoker.invoke(new Command<HiringProcedure>()
+            {
+                @Override
+                public void execute(HiringProcedure executor)
+                {
+                    executor.advance(number);
+                }
+            });
         }
     }
-
-    private void setEntity(AbstractEntity newEntity)
-    {
-        entity = newEntity;
-        nameLabel.setText(entity.getName());
-        iconLabel.setIcon(entity.getIcon());
-        spinner.setValue(entity.getNumber());
-        setPrice(entity.computePrice());
-    }
-
-    private void setBudget(int newBudget)
-    {
-        budget = newBudget;
-    }
-
-    private void setInvoker(Invoker<Manager> newInvoker)
-    {
-        invoker = newInvoker;
-    }
-
+    
     private void setPrice(int newPrice)
     {
         priceLabel.setText(String.format("%d Ħ", newPrice));
         priceLabel.setForeground(newPrice > budget ? Color.RED : Color.BLACK);
         button.setEnabled(newPrice <= budget);
+
     }
 
     @Override
     public void valueChanged(Spinner.ValueChangeEvent e)
     {
-        entity.setNumber(e.newValue);
-        setPrice(entity.computePrice());
+        number = e.newValue;
+        setPrice(entity.price(number));
     }
-
+    
     public static class Builder
     {
         private JFrame frame;
-        private AbstractEntity entity;
+        private EntityType entity;
         private int budget;
-        private Invoker<Manager> invoker;
-
-        public void setFrame(JFrame frame)
+        private Invoker<HiringProcedure> invoker;
+        
+        public Builder setFrame(JFrame frame)
         {
             this.frame = frame;
+            return this;
         }
 
-        public void setEntity(AbstractEntity entity)
+        public Builder setEntity(EntityType entity)
         {
             this.entity = entity;
+            return this;
         }
 
-        public void setBudget(int budget)
+        public Builder setBudget(int budget)
         {
             this.budget = budget;
+            return this;
         }
 
-        public void setInvoker(Invoker<Manager> invoker)
+        public Builder setInvoker(Invoker<HiringProcedure> invoker)
         {
             this.invoker = invoker;
+            return this;
         }
-
+        
         public EntityPurchaseDialog get()
         {
             EntityPurchaseDialog dialog = null;
             if (frame != null && entity != null && invoker != null)
             {
                 dialog = new EntityPurchaseDialog(frame);
-                dialog.setBudget(budget);
-                dialog.setEntity(entity);
-                dialog.setInvoker(invoker);
+                dialog.budget = budget;
+                dialog.entity = entity;
+                dialog.nameLabel.setText(entity.toString());
+                dialog.iconLabel.setIcon(entity.icon());
+                dialog.setPrice(entity.price(dialog.number));
+                dialog.invoker = invoker;
             }
             return dialog;
         }

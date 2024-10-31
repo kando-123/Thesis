@@ -96,7 +96,7 @@ public class ViewManager
         info.setVisible(true);
     }
     
-    void beginBuildingProcess(BuildingType building)
+    void beginBuildingProcedure(BuildingType building)
     {
         if (procedure != null)
         {
@@ -112,23 +112,10 @@ public class ViewManager
         procedure.advance(frame);
     }
     
-    void pursueBuilding()
-    {
-        procedure.advance();
-    }
-    
     void finishBuilding(BuildingField building)
     {
         invoker.invoke(new BuildCommand(building));
         procedure = null;
-    }
-    
-    void handleClick(Field field)
-    {
-        if (procedure != null)
-        {
-            procedure.advance(field);
-        }
     }
     
     void showEntityInfo(EntityType entity)
@@ -143,6 +130,30 @@ public class ViewManager
             }
         });
         info.setVisible(true);
+    }
+    
+    void beginHiringProcedure(EntityType entity)
+    {
+        if (procedure != null)
+        {
+            procedure.rollback();
+        }
+        
+        var current = players.current();
+        
+        assert (current instanceof UserPlayer);
+        
+        var user = (UserPlayer) current;
+        procedure = new HiringProcedure(entity, user, new Invoker<>(this));
+        procedure.advance(frame);
+    }
+    
+    void handleClick(Field field)
+    {
+        if (procedure != null)
+        {
+            procedure.advance(field);
+        }
     }
     
     void finish()

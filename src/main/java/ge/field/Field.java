@@ -67,6 +67,11 @@ public abstract class Field
         {
             graphics.drawImage(owner.getContour(), xPosition, yPosition, width, height, null);
         }
+        
+        if (entity != null)
+        {
+            entity.draw(graphics, xPosition, yPosition, width, height);
+        }
     }
     
     public void setOwner(Player newOwner)
@@ -87,5 +92,17 @@ public abstract class Field
     public boolean isOwned(Player player)
     {
         return owner == player;
+    }
+    
+    public boolean isOccupied()
+    {
+        return entity != null;
+    }
+    
+    public Entity setEntity(Entity newEntity)
+    {
+        var oldEntity = entity;
+        entity = newEntity;
+        return oldEntity;
     }
 }

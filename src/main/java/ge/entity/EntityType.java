@@ -12,8 +12,8 @@ public enum EntityType
     INFANTRY(0, 20),
     NAVY(130, INFANTRY.priceSlope);
 
-    public final int priceIntercept;
-    public final int priceSlope;
+    private final int priceIntercept;
+    private final int priceSlope;
     public final String resource;
     
     private static final EntityAssetManager ASSET_MANAGER = EntityAssetManager.getInstance();

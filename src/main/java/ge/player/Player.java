@@ -1,5 +1,6 @@
 package ge.player;
 
+import ge.entity.EntityType;
 import ge.field.*;
 import ge.world.*;
 import java.awt.*;
@@ -57,7 +58,7 @@ public abstract class Player
         return contour;
     }
 
-    int getMoney()
+    public int getMoney()
     {
         return money;
     }
@@ -73,10 +74,25 @@ public abstract class Player
     {
         return accessor.anyMatching(f -> f.isOwned(this) && building.predicate(accessor).test(f));
     }
+    
+    public boolean hasPlace(EntityType entity)
+    {
+        return accessor.anyMatching((Field f) ->
+        {
+            if (f.isOwned(this) && f instanceof Spawner s)
+            {
+                return s.canSpawn(entity);
+            }
+            else
+            {
+                return false;
+            }
+        });
+    }
 
     public boolean hasMoney(BuildingType building)
     {
-        long count = accessor.countMatching(f -> 
+        long count = accessor.countMatching((Field f) -> 
         {
             if (f.isOwned(this) && f instanceof BuildingField b)
             {
@@ -88,6 +104,11 @@ public abstract class Player
             }
         });
         return building.price((int) count) <= money;
+    }
+    
+    public boolean hasMoney(EntityType entity)
+    {
+        return money >= entity.price(1);
     }
 
     public int priceForNext(BuildingType building)
@@ -109,6 +130,16 @@ public abstract class Player
     public void buy(BuildingType building) throws TooLittleMoneyException
     {
         int cost = priceForNext(building);
+        if (cost > money)
+        {
+            throw new TooLittleMoneyException();
+        }
+        money -= cost;
+    }
+    
+    public void buy(EntityType entity, int number)
+    {
+        int cost = entity.price(number);
         if (cost > money)
         {
             throw new TooLittleMoneyException();

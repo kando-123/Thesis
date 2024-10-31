@@ -1,5 +1,6 @@
 package ge.field;
 
+import ge.entity.EntityType;
 import ge.utilities.Hex;
 
 /**
@@ -17,5 +18,11 @@ public class BarracksField extends SpawnerField
     public BuildingType getType()
     {
         return BuildingType.BARRACKS;
+    }
+
+    @Override
+    public boolean canSpawn(EntityType type)
+    {
+        return !isOccupied() && (type == EntityType.CAVALRY || type == EntityType.INFANTRY);
     }
 }

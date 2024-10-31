@@ -1,5 +1,6 @@
 package ge.player;
 
+import ge.entity.*;
 import ge.field.*;
 import ge.utilities.*;
 import ge.view.*;
@@ -37,6 +38,21 @@ public class UserPlayer extends Player
     public void markPlaces(boolean value, BuildingType building)
     {
         marker.mark(value, f -> f.isOwned(this) && building.predicate(accessor).test(f));
+    }
+    
+    public void markPlaces(boolean value, EntityType entity)
+    {
+        marker.mark(value, f -> 
+        {
+            if (f.isOwned(this) && f instanceof Spawner s)
+            {
+                return s.canSpawn(entity);
+            }
+            else
+            {
+                return false;
+            }
+        });
     }
     
     public static class Builder
@@ -83,8 +99,15 @@ public class UserPlayer extends Player
     public void buy(BuildingType building) throws TooLittleMoneyException
     {
         super.buy(building);
-        
         invoker.invoke(new UpdateMoneyCommand(getMoney()));
     }
+
+    @Override
+    public void buy(EntityType entity, int number)
+    {
+        super.buy(entity, number);
+        invoker.invoke(new UpdateMoneyCommand(getMoney()));
+    }
+    
     
 }

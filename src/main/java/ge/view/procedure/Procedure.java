@@ -14,17 +14,17 @@ public abstract class Procedure
     }
     
     public abstract Status status();
-    public abstract void advance(Object... args) throws ProcessException;
+    public abstract void advance(Object... args) throws ProcedureException;
     public abstract void rollback();
     
-    public static class ProcessException extends RuntimeException
+    public static class ProcedureException extends RuntimeException
     {
-        public ProcessException()
+        public ProcedureException()
         {
             super();
         }
         
-        public ProcessException(String message)
+        public ProcedureException(String message)
         {
             super(message);
         }
