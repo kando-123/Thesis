@@ -172,17 +172,17 @@ public class PerlinNoise
         //   p, q - refer to local position within the chunk, counted as fractions
         //   col, row - refer to indices
         //   a, b, c, d - refer to corners of the chunk, respectively:
-        //     top left, top right, bottom left, bottom right.
+        //     top x, top y, bottom x, bottom y.
 
-        assert (pixel.left >= 0 && pixel.right >= 0);
+        assert (pixel.x >= 0 && pixel.y >= 0);
 
         /* Adjust the coords. */
-        pixel.left %= areaWidth;
-        pixel.right %= areaHeight;
+        pixel.x %= areaWidth;
+        pixel.y %= areaHeight;
 
         /* Find the chunk's indices. */
-        int chunkCol = pixel.left / chunkSize;
-        int chunkRow = pixel.right / chunkSize;
+        int chunkCol = pixel.x / chunkSize;
+        int chunkRow = pixel.y / chunkSize;
 
         /* Find the coordinates of the corners. */
         int chunkLeftX = chunkCol * chunkSize;
@@ -191,10 +191,10 @@ public class PerlinNoise
         int chunkBottomY = chunkTopY + chunkSize;
 
         /* Find the local coordinates of the point. */
-        double pixelLeftP = (double) (pixel.left - chunkLeftX) / (double) chunkSize;
-        double pixelTopQ = (double) (pixel.right - chunkTopY) / (double) chunkSize;
-        double pixelRightP = (double) (pixel.left - chunkRightX) / (double) chunkSize;
-        double pixelBottomQ = (double) (pixel.right - chunkBottomY) / (double) chunkSize;
+        double pixelLeftP = (double) (pixel.x - chunkLeftX) / (double) chunkSize;
+        double pixelTopQ = (double) (pixel.y - chunkTopY) / (double) chunkSize;
+        double pixelRightP = (double) (pixel.x - chunkRightX) / (double) chunkSize;
+        double pixelBottomQ = (double) (pixel.y - chunkBottomY) / (double) chunkSize;
 
         /* Find the gradients. */
         var gradientA = gradientVectors.get(new Doublet<>(chunkCol, chunkRow));
@@ -203,10 +203,10 @@ public class PerlinNoise
         var gradientD = gradientVectors.get(new Doublet<>(chunkCol + 1, chunkRow + 1));
 
         /* Calculate the products. */
-        double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.left, gradientA.right);
-        double productB = dotProduct(pixelRightP, pixelTopQ, gradientB.left, gradientB.right);
-        double productC = dotProduct(pixelLeftP, pixelBottomQ, gradientC.left, gradientC.right);
-        double productD = dotProduct(pixelRightP, pixelBottomQ, gradientD.left, gradientD.right);
+        double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.x, gradientA.y);
+        double productB = dotProduct(pixelRightP, pixelTopQ, gradientB.x, gradientB.y);
+        double productC = dotProduct(pixelLeftP, pixelBottomQ, gradientC.x, gradientC.y);
+        double productD = dotProduct(pixelRightP, pixelBottomQ, gradientD.x, gradientD.y);
 
         /* Interpolate. */
         double horizontalTop = lerp(productA, productB, pixelLeftP);
@@ -222,8 +222,8 @@ public class PerlinNoise
         double maximum = -Double.MAX_VALUE;
         for (var pixel : pixels)
         {
-            assert (pixel.left >= 0 && pixel.left < areaWidth);
-            assert (pixel.right >= 0 && pixel.right < areaHeight);
+            assert (pixel.x >= 0 && pixel.x < areaWidth);
+            assert (pixel.y >= 0 && pixel.y < areaHeight);
 
             double noise = getRawNoise(pixel);
             double frequency = lacunarity;
@@ -231,8 +231,8 @@ public class PerlinNoise
             for (int i = 1; i < octavesCount; ++i)
             {
                 Doublet<Integer> newPixel = new Doublet<>(0, 0);
-                newPixel.left = (int) (frequency * (double) pixel.left);
-                newPixel.right = (int) (frequency * (double) pixel.right);
+                newPixel.x = (int) (frequency * (double) pixel.x);
+                newPixel.y = (int) (frequency * (double) pixel.y);
                 noise += amplitude * getRawNoise(newPixel);
                 frequency *= lacunarity;
                 amplitude *= persistence;
@@ -280,8 +280,8 @@ public class PerlinNoise
             Object key = entry.getKey();
             Doublet<Integer> pixel = entry.getValue();
 
-            assert (pixel.left >= 0 && pixel.left < areaWidth);
-            assert (pixel.right >= 0 && pixel.right < areaHeight);
+            assert (pixel.x >= 0 && pixel.x < areaWidth);
+            assert (pixel.y >= 0 && pixel.y < areaHeight);
 
             double noise = getRawNoise(pixel);
             double frequency = lacunarity;
@@ -289,8 +289,8 @@ public class PerlinNoise
             for (int i = 1; i < octavesCount; ++i)
             {
                 Doublet<Integer> newPixel = new Doublet<>(0, 0);
-                newPixel.left = (int) (frequency * (double) pixel.left);
-                newPixel.right = (int) (frequency * (double) pixel.right);
+                newPixel.x = (int) (frequency * (double) pixel.x);
+                newPixel.y = (int) (frequency * (double) pixel.y);
                 noise += amplitude * getRawNoise(newPixel);
                 frequency *= lacunarity;
                 amplitude *= persistence;

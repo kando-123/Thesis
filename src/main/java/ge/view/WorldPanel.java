@@ -50,8 +50,8 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         double scaledInnerRadius = scale * World.HEX_INNER_RADIUS;
         var center = hex.centralPoint(scaledOuterRadius, scaledInnerRadius);
         var size = getSize();
-        worldCenter.left = size.width - center.left;
-        worldCenter.right = size.height - center.right;
+        worldCenter.x = size.width / 2 - center.x;
+        worldCenter.y = size.height / 2 - center.y;
     }
 
     KeyListener getKeyListener()
@@ -82,39 +82,39 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
             {
                 case EAST ->
                 {
-                    worldCenter.left -= UNIT_STEP;
+                    worldCenter.x -= UNIT_STEP;
                 }
                 case SOUTH ->
                 {
-                    worldCenter.right -= UNIT_STEP;
+                    worldCenter.y -= UNIT_STEP;
                 }
                 case WEST ->
                 {
-                    worldCenter.left += UNIT_STEP;
+                    worldCenter.x += UNIT_STEP;
                 }
                 case NORTH ->
                 {
-                    worldCenter.right += UNIT_STEP;
+                    worldCenter.y += UNIT_STEP;
                 }
                 case SOUTHEAST ->
                 {
-                    worldCenter.left -= UNIT_STEP * COS_30DEG;
-                    worldCenter.right -= UNIT_STEP * SIN_30DEG;
+                    worldCenter.x -= UNIT_STEP * COS_30DEG;
+                    worldCenter.y -= UNIT_STEP * SIN_30DEG;
                 }
                 case SOUTHWEST ->
                 {
-                    worldCenter.left += UNIT_STEP * COS_30DEG;
-                    worldCenter.right -= UNIT_STEP * SIN_30DEG;
+                    worldCenter.x += UNIT_STEP * COS_30DEG;
+                    worldCenter.y -= UNIT_STEP * SIN_30DEG;
                 }
                 case NORTHWEST ->
                 {
-                    worldCenter.left += UNIT_STEP * COS_30DEG;
-                    worldCenter.right += UNIT_STEP * SIN_30DEG;
+                    worldCenter.x += UNIT_STEP * COS_30DEG;
+                    worldCenter.y += UNIT_STEP * SIN_30DEG;
                 }
                 case NORTHEAST ->
                 {
-                    worldCenter.left -= UNIT_STEP * COS_30DEG;
-                    worldCenter.right += UNIT_STEP * SIN_30DEG;
+                    worldCenter.x -= UNIT_STEP * COS_30DEG;
+                    worldCenter.y += UNIT_STEP * SIN_30DEG;
                 }
             }
         }
@@ -125,15 +125,15 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
 
             var relative = new Doublet<Double>();
             var size = getSize();
-            relative.left = size.width / 2 - worldCenter.left;
-            relative.right = size.height / 2 - worldCenter.right;
+            relative.x = size.width / 2 - worldCenter.x;
+            relative.y = size.height / 2 - worldCenter.y;
 
             var offset = new Doublet<Double>();
-            offset.left = relative.left * (SCALE_FACTOR - 1);
-            offset.right = relative.right * (SCALE_FACTOR - 1);
+            offset.x = relative.x * (SCALE_FACTOR - 1);
+            offset.y = relative.y * (SCALE_FACTOR - 1);
 
-            worldCenter.left -= offset.left;
-            worldCenter.right -= offset.right;
+            worldCenter.x -= offset.x;
+            worldCenter.y -= offset.y;
         }
         else if (inputHandler.zoomOut() && scale > MIN_SCALE)
         {
@@ -141,15 +141,15 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
 
             var relative = new Doublet<Double>();
             var size = getSize();
-            relative.left = size.width / 2 - worldCenter.left;
-            relative.right = size.height / 2 - worldCenter.right;
+            relative.x = size.width / 2 - worldCenter.x;
+            relative.y = size.height / 2 - worldCenter.y;
 
             var offset = new Doublet<Double>();
-            offset.left = relative.left * (SCALE_FACTOR - 1);
-            offset.right = relative.right * (SCALE_FACTOR - 1);
+            offset.x = relative.x * (SCALE_FACTOR - 1);
+            offset.y = relative.y * (SCALE_FACTOR - 1);
 
-            worldCenter.left += offset.left;
-            worldCenter.right += offset.right;
+            worldCenter.x += offset.x;
+            worldCenter.y += offset.y;
         }
 
         int side = renderer.getSide();
@@ -188,22 +188,22 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
             yMax = 0.5 * (panelHeight + worldHeight);
         }
 
-        if (worldCenter.left > xMax)
+        if (worldCenter.x > xMax)
         {
-            worldCenter.left = xMax;
+            worldCenter.x = xMax;
         }
-        else if (worldCenter.left < xMin)
+        else if (worldCenter.x < xMin)
         {
-            worldCenter.left = xMin;
+            worldCenter.x = xMin;
         }
 
-        if (worldCenter.right > yMax)
+        if (worldCenter.y > yMax)
         {
-            worldCenter.right = yMax;
+            worldCenter.y = yMax;
         }
-        else if (worldCenter.right < yMin)
+        else if (worldCenter.y < yMin)
         {
-            worldCenter.right = yMin;
+            worldCenter.y = yMin;
         }
     }
 
@@ -231,8 +231,8 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         Point point = e.getPoint();
         double globalX = point.x;
         double globalY = point.y;
-        double relativeX = globalX - worldCenter.left;
-        double relativeY = globalY - worldCenter.right;
+        double relativeX = globalX - worldCenter.x;
+        double relativeY = globalY - worldCenter.y;
         Hex hex = Hex.at(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
 
         invoker.invoke(!e.isShiftDown()

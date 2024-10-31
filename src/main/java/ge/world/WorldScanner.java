@@ -3,6 +3,7 @@ package ge.world;
 import ge.field.*;
 import ge.player.*;
 import ge.utilities.*;
+import java.util.stream.Stream;
 
 /**
  *
@@ -23,17 +24,17 @@ public class WorldScanner
         return new WorldScanner(world);
     }
     
-    public long countMatching(UnaryPredicate<Field> predicate)
+    public long count(UnaryPredicate<Field> predicate)
     {
         return world.fieldStream().filter(f -> predicate.test(f)).count();
     }
     
-    public boolean anyMatching(UnaryPredicate<Field> predicate)
+    public boolean any(UnaryPredicate<Field> predicate)
     {
         return world.fieldStream().anyMatch(f -> predicate.test(f));
     }
     
-    public int getIncome(Player player)
+    public int income(Player player)
     {
         return world
                 .fieldStream()
@@ -50,5 +51,26 @@ public class WorldScanner
                     }
                 })
                 .sum();
+    }
+    
+    public Hex center(Player player)
+    {
+        long n = world
+                .fieldStream()
+                .filter(f -> f.isOwned(player))
+                .count();
+        double x = world
+                .fieldStream()
+                .filter(f -> f.isOwned(player))
+                .map(f -> f.getHex())
+                .mapToDouble(h -> h.getX())
+                .sum() / n;
+        double y = world
+                .fieldStream()
+                .filter(f -> f.isOwned(player))
+                .map(f -> f.getHex())
+                .mapToDouble(h -> h.getY())
+                .sum() / n;
+        return Hex.at(x, y);
     }
 }

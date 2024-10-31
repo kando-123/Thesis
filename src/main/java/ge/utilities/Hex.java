@@ -71,6 +71,37 @@ public class Hex
 
         return new Hex((int) p, (int) q, (int) r);
     }
+    
+    public static Hex at(double x, double y)
+    {
+        // Fractional coordinates
+        double Φp = (2.0 / 3.0 * x);
+        double Φq = (-1.0 / 3.0 * x + Math.sqrt(3.0) / 3.0 * y);
+        double Φr = -(Φp + Φq);
+
+        long p = Math.round(Φp);
+        long q = Math.round(Φq);
+        long r = Math.round(Φr);
+
+        double Δp = Math.abs(p - Φp);
+        double Δq = Math.abs(q - Φq);
+        double Δr = Math.abs(r - Φr);
+
+        if (Δp > Δq && Δp > Δr)
+        {
+            p = -(q + r);
+        }
+        else if (Δq > Δr && Δq > Δp)
+        {
+            q = -(r + p);
+        }
+        else // if (Δr > Δp && Δr > Δq)
+        {
+            r = -(p + q);
+        }
+
+        return new Hex((int) p, (int) q, (int) r);
+    }
 
     /* Property accessors */
     public int getP()
@@ -86,6 +117,16 @@ public class Hex
     public int getR()
     {
         return rCoord;
+    }
+    
+    public double getX()
+    {
+        return 1.5 * pCoord;
+    }
+    
+    public double getY()
+    {
+        return (qCoord - rCoord) * INNER_TO_OUTER_RATIO;
     }
 
     /* Operators */

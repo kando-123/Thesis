@@ -1,5 +1,7 @@
 package ge.player;
 
+import ge.utilities.Hex;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -26,5 +28,10 @@ public class UserAccessor
     public Player.ContourColor getColor()
     {
         return user.getColor();
+    }
+    
+    public Hex getCenter()
+    {
+        return user.center();
     }
 }

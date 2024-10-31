@@ -115,5 +115,8 @@ public class UserPlayer extends Player
         invoker.invoke(new UpdateMoneyCommand(getMoney()));
     }
     
-    
+    public Hex center()
+    {
+        return scanner.center(this);
+    }
 }

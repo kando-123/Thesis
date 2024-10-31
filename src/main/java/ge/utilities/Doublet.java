@@ -10,13 +10,13 @@ import java.util.Objects;
  */
 public class Doublet<E>
 {
-    public E left;
-    public E right;
+    public E x;
+    public E y;
     
-    public Doublet(E left, E right)
+    public Doublet(E x, E y)
     {
-        this.left = left;
-        this.right = right;
+        this.x = x;
+        this.y = y;
     }
     
     public Doublet()
@@ -35,7 +35,7 @@ public class Doublet<E>
         {
             Doublet that = (Doublet) other;
             
-            return Objects.equals(this.left, that.left) && Objects.equals(this.right, that.right);
+            return Objects.equals(this.x, that.x) && Objects.equals(this.y, that.y);
         }
         catch (Exception e)
         {
@@ -47,14 +47,14 @@ public class Doublet<E>
     public int hashCode()
     {
         int hash = 7;
-        hash = 71 * hash + Objects.hashCode(this.left);
-        hash = 71 * hash + Objects.hashCode(this.right);
+        hash = 71 * hash + Objects.hashCode(this.x);
+        hash = 71 * hash + Objects.hashCode(this.y);
         return hash;
     }
 
     @Override
     protected Object clone() throws CloneNotSupportedException
     {
-        return new Doublet(left, right);
+        return new Doublet(x, y);
     }
 }

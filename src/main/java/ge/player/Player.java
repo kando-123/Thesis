@@ -2,6 +2,7 @@ package ge.player;
 
 import ge.entity.EntityType;
 import ge.field.*;
+import ge.utilities.Hex;
 import ge.world.*;
 import java.awt.*;
 import java.awt.image.*;
@@ -74,12 +75,12 @@ public abstract class Player
 
     public boolean hasPlace(BuildingType building)
     {
-        return scanner.anyMatching(f -> f.isOwned(this) && building.predicate(accessor).test(f));
+        return scanner.any(f -> f.isOwned(this) && building.predicate(accessor).test(f));
     }
     
     public boolean hasPlace(EntityType entity)
     {
-        return scanner.anyMatching((Field f) ->
+        return scanner.any((Field f) ->
         {
             if (f.isOwned(this) && f instanceof Spawner s)
             {
@@ -94,7 +95,7 @@ public abstract class Player
 
     public boolean hasMoney(BuildingType building)
     {
-        long count = scanner.countMatching((Field f) -> 
+        long count = scanner.count((Field f) -> 
         {
             if (f.isOwned(this) && f instanceof BuildingField b)
             {
@@ -115,7 +116,7 @@ public abstract class Player
 
     public int priceForNext(BuildingType building)
     {
-        long current = scanner.countMatching((Field f) ->
+        long current = scanner.count((Field f) ->
         {
             if (f instanceof BuildingField b)
             {
@@ -155,6 +156,6 @@ public abstract class Player
     
     public void earn()
     {
-        money += scanner.getIncome(this);
+        money += scanner.income(this);
     }
 }

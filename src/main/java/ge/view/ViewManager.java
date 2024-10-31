@@ -80,6 +80,7 @@ public class ViewManager
         userPanel.setBackground(accessor.getColor().rgb);
         userPanel.setUserName(accessor.getName());
         userPanel.setUserMoney(accessor.getMoney());
+        worldPanel.setCenter(accessor.getCenter());
     }
     
     void showBuildingInfo(BuildingType building)

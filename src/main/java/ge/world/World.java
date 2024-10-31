@@ -45,8 +45,8 @@ public class World
         side = config.worldSide;
         fields = new HashMap<>(Hex.surfaceSize(side));
 
-        int westmostX = Hex.cornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).left;
-        int northmostY = Hex.cornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).right;
+        int westmostX = Hex.cornerPointAt(-side, 0, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).x;
+        int northmostY = Hex.cornerPointAt(0, -side, +side, HEX_OUTER_RADIUS, HEX_INNER_RADIUS).y;
 
         var offset = new Doublet<Integer>(-westmostX, -northmostY);
 
@@ -109,8 +109,8 @@ public class World
         Map<Object, Doublet<Integer>> centers = new HashMap<>(Hex.surfaceSize(side));
         var hex = Hex.getOrigin();
         var center = hex.centralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
-        center.left += offset.left;
-        center.right += offset.right;
+        center.x += offset.x;
+        center.y += offset.y;
         centers.put(hex.clone(), center);
         for (int ring = 1; ring < side; ++ring)
         {
@@ -119,8 +119,8 @@ public class World
             do
             {
                 center = hex.centralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
-                center.left += offset.left;
-                center.right += offset.right;
+                center.x += offset.x;
+                center.y += offset.y;
                 centers.put(hex, center);
                 hex = hex.neighbor(direction);
                 if (hex.isRadial())
@@ -304,7 +304,7 @@ public class World
 
     void draw(Graphics2D graphics, Doublet<Double> center, double scale, Dimension size)
     {
-        // If both entries have entities, that which is more to the right will be drawn later.
+        // If both entries have entities, that which is more to the y will be drawn later.
         // If o1 has and entity and o2 does not, o1 will be drawn later.
         // If o1 has no entity and o2 does, o1 will be drawn before o2.
         // If both have no entities, they relative order is irrelevant;
@@ -325,8 +325,8 @@ public class World
             Hex hex = entry.getKey();
             Doublet<Integer> pixel = hex.cornerPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
 
-            int x = (int) (center.left + scale * pixel.left);
-            int y = (int) (center.right + scale * pixel.right);
+            int x = (int) (center.x + scale * pixel.x);
+            int y = (int) (center.y + scale * pixel.y);
 
             var field = entry.getValue();
 
