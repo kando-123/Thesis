@@ -175,14 +175,14 @@ public abstract class Entity
 
     protected abstract int radius();
 
-    public Map<Hex, List<Hex>> range(Hex center, WorldAccessor accessor)
+    public Set<Hex> range(Hex center, WorldAccessor accessor)
     {
         if (!movable)
         {
-            return new HashMap<>();
+            return new HashSet<>();
         }
 
-        Map<Hex, List<Hex>> range = new HashMap<>();
+        Set<Hex> range = new HashSet<>();
         Set<Hex> visited = new HashSet<>();
         Queue<Hex> queue = new LinkedList<>();
 
@@ -194,12 +194,6 @@ public abstract class Entity
             for (int j = queue.size(); j > 0; --j)
             {
                 Hex current = queue.remove();
-                List<Hex> oldPath = range.get(current), newPath = new ArrayList<>();
-                if (oldPath != null)
-                {
-                    newPath.addAll(oldPath);
-                    newPath.add(current);
-                }
 
                 for (var neighborHex : current.neighbors())
                 {
@@ -217,7 +211,7 @@ public abstract class Entity
                     visited.add(neighborHex);
                     if (canAccess(neighborField))
                     {
-                        range.put(neighborHex, newPath);
+                        range.add(neighborHex);
                         if (canTransit(neighborField))
                         {
                             queue.add(neighborHex);
@@ -228,7 +222,13 @@ public abstract class Entity
         }
         return range;
     }
-
+    
+    public List<Field> path(Field origin, Field target, WorldAccessor accessor)
+    {
+        // DFS
+        throw new UnsupportedOperationException();
+    }
+    
     public boolean canMerge(Entity entity)
     {
         return isFellow(entity) && entity.number < MAXIMAL_NUMBER;

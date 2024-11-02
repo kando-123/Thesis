@@ -138,11 +138,10 @@ public class GameplayManager
                 .forEach(f -> f.setMarked(value));
     }
 
-    void markForMoving(boolean value, Field field)
+    void markForMoving(boolean value, Collection<Hex> range)
     {
-        var range = field.getEntity().range(field.getHex(), world.accessor());
         world.fieldStream()
-                .filter(f -> range.containsKey(f.getHex()))
+                .filter(f -> range.contains(f.getHex()))
                 .forEach(f -> f.setMarked(value));
     }
 }

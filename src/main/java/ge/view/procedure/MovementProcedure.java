@@ -5,6 +5,8 @@ import ge.field.*;
 import ge.main.*;
 import ge.player.*;
 import ge.utilities.*;
+import ge.world.*;
+import java.util.*;
 
 /**
  *
@@ -15,6 +17,8 @@ public class MovementProcedure extends Procedure
     private final Field origin;
     private final Entity entity;
     private final UserPlayer player;
+    
+    private Set<Hex> range;
     
     private final Invoker<GameplayManager> invoker;
     
@@ -48,11 +52,13 @@ public class MovementProcedure extends Procedure
             {
                 case INITIATED ->
                 {
-                    begin();
+                    var accessor = (WorldAccessor) args[0];
+                    begin(accessor);
                 }
                 case BEGUN ->
                 {
-                    finish();
+                    var field = (Field) args[0];
+                    finish(field);
                 }
                 case FINISHED, ERROR ->
                 {
@@ -67,16 +73,31 @@ public class MovementProcedure extends Procedure
         }
     }
     
-    private void begin()
+    private void begin(WorldAccessor accessor)
     {
         stage = MovementStage.BEGUN;
         
-
+        range = entity.range(origin.getHex(), accessor);
+        
+        invoker.invoke(new MarkForMovingCommand(true, range));
     }
     
-    private void finish()
+    private void finish(Field field)
     {
-        stage = MovementStage.FINISHED;
+        if (field.isMarked())
+        {
+            stage = MovementStage.FINISHED;
+            
+            invoker.invoke(new MarkForMovingCommand(false, range));
+            origin.takeEntity();
+            field.placeEntity(entity);
+        }
+        else
+        {
+            stage = MovementStage.ERROR;
+            
+            invoker.invoke(new MarkForMovingCommand(false, range));
+        }
     }
 
     @Override

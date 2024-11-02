@@ -1,6 +1,7 @@
 package ge.field;
 
-import ge.utilities.Hex;
+import ge.entity.*;
+import ge.utilities.*;
 
 /**
  *
@@ -11,5 +12,15 @@ public class SeaField extends NaturalField
     public SeaField(Hex coords)
     {
         super(coords);
+    }
+
+    @Override
+    public Entity takeEntity()
+    {
+        if (entity != null && entity instanceof NavyEntity)
+        {
+            owner = null;
+        }
+        return super.takeEntity();
     }
 }

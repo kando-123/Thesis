@@ -137,6 +137,7 @@ public class BuildingProcedure extends Procedure
             invoker.invoke(new MarkForBuildingCommand(false, player, type));
             var building = BuildingField.newInstance(type, field.getHex());
             building.setOwner(player);
+            building.setEntity(field.takeEntity());
             player.buy(type);
             invoker.invoke(new BuildCommand(building));
         }

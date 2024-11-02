@@ -141,7 +141,7 @@ public class HiringProcedure extends Procedure
             
             invoker.invoke(new MarkForHiringCommand(false, player, type));
             var entity = Entity.newInstance(type, player, number);
-            field.setEntity(entity);
+            field.placeEntity(entity);
             player.buy(type, number);
         }
         else
@@ -179,7 +179,6 @@ public class HiringProcedure extends Procedure
             case IN_PROGRESS ->
             {
                 invoker.invoke(new MarkForHiringCommand(false, player, type));
-//                player.markPlaces(false, type);
             }
         }
         stage = HiringStage.ERROR;

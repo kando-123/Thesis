@@ -20,9 +20,8 @@ public abstract class Field
 
     private static final FieldAssetManager ASSET_MANAGER = FieldAssetManager.getInstance();
 
-    private Player owner;
-
-    private Entity entity;
+    protected Player owner;
+    protected Entity entity;
 
     protected Field(Hex coords)
     {
@@ -42,11 +41,6 @@ public abstract class Field
     public Hex getHex()
     {
         return coords;
-    }
-    
-    public Entity getEntity()
-    {
-        return entity;
     }
 
     public void setMarked(boolean m)
@@ -97,6 +91,18 @@ public abstract class Field
     public boolean isOccupied()
     {
         return entity != null;
+    }
+    
+    public Entity getEntity()
+    {
+        return entity;
+    }
+    
+    public Entity takeEntity()
+    {
+        var leaver = entity;
+        entity = null;
+        return leaver;
     }
 
     public Entity setEntity(Entity newEntity)
