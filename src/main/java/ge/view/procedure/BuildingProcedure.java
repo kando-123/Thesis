@@ -1,6 +1,7 @@
 package ge.view.procedure;
 
 import ge.field.*;
+import ge.main.*;
 import ge.player.*;
 import ge.utilities.*;
 import ge.view.*;
@@ -16,6 +17,7 @@ public class BuildingProcedure extends Procedure
     private final BuildingType type;
     private final UserPlayer player;
     private final Invoker<ViewManager> invoker;
+    private final Invoker<GameplayManager> marker;
 
     private BuildingPurchaseDialog dialog;
 
@@ -30,11 +32,12 @@ public class BuildingProcedure extends Procedure
 
     private BuildingStage stage;
 
-    public BuildingProcedure(BuildingType building, UserPlayer player, Invoker<ViewManager> invoker)
+    public BuildingProcedure(BuildingType building, UserPlayer player, Invoker<ViewManager> invoker, Invoker<GameplayManager> marker)
     {
         this.type = building;
         this.player = player;
         this.invoker = invoker;
+        this.marker = marker;
 
         stage = BuildingStage.INITIATED;
     }
@@ -118,7 +121,8 @@ public class BuildingProcedure extends Procedure
         dialog.dispose();
         dialog = null;
         
-        player.markPlaces(true, type);
+        marker.invoke(new MarkForBuildingCommand(true, player, type));
+//        player.markPlaces(true, type);
     }
 
     private void finish(Field field)
@@ -127,7 +131,8 @@ public class BuildingProcedure extends Procedure
         {
             stage = BuildingStage.FINISHED;
             
-            player.markPlaces(false, type);
+            marker.invoke(new MarkForBuildingCommand(false, player, type));
+//            player.markPlaces(false, type);
             var building = BuildingField.newInstance(type, field.getHex());
             building.setOwner(player);
             player.buy(type);
@@ -136,7 +141,8 @@ public class BuildingProcedure extends Procedure
         else
         {
             stage = BuildingStage.ERROR;
-            player.markPlaces(false, type);
+            marker.invoke(new MarkForBuildingCommand(true, player, type));
+//            player.markPlaces(false, type);
         }
     }
 
@@ -168,7 +174,8 @@ public class BuildingProcedure extends Procedure
             case IN_PROGRESS ->
             {
                 stage = BuildingStage.ERROR;
-                player.markPlaces(false, type);
+                marker.invoke(new MarkForBuildingCommand(false, player, type));
+//                player.markPlaces(false, type);
             }
         }
     }

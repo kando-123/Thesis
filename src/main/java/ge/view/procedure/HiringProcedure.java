@@ -2,6 +2,7 @@ package ge.view.procedure;
 
 import ge.entity.*;
 import ge.field.*;
+import ge.main.*;
 import ge.player.*;
 import ge.utilities.*;
 import ge.view.*;
@@ -17,6 +18,7 @@ public class HiringProcedure extends Procedure
     private final EntityType type;
     private final UserPlayer player;
     private final Invoker<ViewManager> invoker;
+    private final Invoker<GameplayManager> marker;
     
     private EntityPurchaseDialog dialog;
     private Integer number;
@@ -32,11 +34,12 @@ public class HiringProcedure extends Procedure
     
     private HiringStage stage;
 
-    public HiringProcedure(EntityType type, UserPlayer player, Invoker<ViewManager> invoker)
+    public HiringProcedure(EntityType type, UserPlayer player, Invoker<ViewManager> invoker, Invoker<GameplayManager> marker)
     {
         this.type = type;
         this.player = player;
         this.invoker = invoker;
+        this.marker = marker;
         
         stage = HiringStage.INITIATED;
     }
@@ -123,7 +126,8 @@ public class HiringProcedure extends Procedure
         dialog.dispose();
         dialog = null;
         
-        player.markPlaces(true, type);
+        marker.invoke(new MarkForHiringCommand(true, player, type));
+//        player.markPlaces(true, type);
     }
     
     private void finish(Field field)
@@ -132,7 +136,8 @@ public class HiringProcedure extends Procedure
         {
             stage = HiringStage.FINISHED;
             
-            player.markPlaces(false, type);
+            marker.invoke(new MarkForHiringCommand(false, player, type));
+//            player.markPlaces(false, type);
             var entity = Entity.newInstance(type, player, number);
             field.setEntity(entity);
             player.buy(type, number);
@@ -142,7 +147,8 @@ public class HiringProcedure extends Procedure
         else
         {
             stage = HiringStage.ERROR;
-            player.markPlaces(false, type);
+            marker.invoke(new MarkForHiringCommand(false, player, type));
+//            player.markPlaces(false, type);
         }
     }
 
@@ -173,7 +179,8 @@ public class HiringProcedure extends Procedure
         {
             case IN_PROGRESS ->
             {
-                player.markPlaces(false, type);
+                marker.invoke(new MarkForHiringCommand(false, player, type));
+//                player.markPlaces(false, type);
             }
         }
         stage = HiringStage.ERROR;

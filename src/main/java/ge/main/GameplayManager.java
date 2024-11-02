@@ -1,5 +1,6 @@
 package ge.main;
 
+import ge.entity.*;
 import ge.field.*;
 import ge.player.*;
 import ge.utilities.*;
@@ -15,7 +16,7 @@ public class GameplayManager
 {
     private final World world;
     private final List<Player> players;
-    
+
     public GameplayManager(WorldConfig config)
     {
         world = new World(config);
@@ -36,12 +37,11 @@ public class GameplayManager
                     builder.setConfig(userConfig);
                     builder.setScanner(world.scanner());
                     builder.setAccessor(world.accessor());
-                    builder.setMarker(world.marker());
                     builder.setInvoker(viewInvoker);
                     var user = builder.get();
-                    
+
                     assert (user != null);
-                    
+
                     players.add(user);
                 }
                 case BotConfig botConfig ->
@@ -77,42 +77,72 @@ public class GameplayManager
     {
         return world.renderer();
     }
-    
+
     public WorldScanner getWorldScanner()
     {
         return world.scanner();
     }
-    
+
     public WorldAccessor getWorldAccessor()
     {
         return world.accessor();
     }
-    
+
     public PlayersAccessor getPlayersAccessor()
     {
         return new PlayersAccessor(players);
     }
-    
+
     void end()
     {
         var ender = players.removeFirst();
         ender.earn();
-        
+
         players.addLast(ender);
     }
-    
+
     void begin()
     {
         players.getFirst().play();
     }
-    
+
     void build(BuildingField building)
     {
         world.substitute(building);
     }
-    
-    void mark(boolean value, UnaryPredicate<Field> predicate)
+
+    void markForBuilding(boolean value, Player player, BuildingType building)
     {
-        world.fieldStream().filter(f -> predicate.test(f)).forEach(f -> f.setMarked(value));
+        var accessor = world.accessor();
+        world.fieldStream()
+                .filter(f -> f.isOwned(player))
+                .filter(f -> building.predicate(accessor).test(f))
+                .forEach(f -> f.setMarked(value));
+    }
+
+    void markForHiring(boolean value, Player player, EntityType entity)
+    {
+        world.fieldStream()
+                .filter(f -> f.isOwned(player))
+                .filter(f ->
+                {
+                    if (f instanceof Spawner s)
+                    {
+                        return s.canSpawn(entity);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                })
+                .forEach(f -> f.setMarked(value));
+    }
+
+    void markForMoving(boolean value, Field field)
+    {
+        var range = field.getEntity().range(field.getHex(), world.accessor());
+        world.fieldStream()
+                .filter(f -> range.containsKey(f.getHex()))
+                .forEach(f -> f.setMarked(value));
     }
 }

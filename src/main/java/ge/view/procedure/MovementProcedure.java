@@ -65,7 +65,7 @@ public class MovementProcedure extends Procedure
     {
         stage = MovementStage.BEGUN;
         
-        player.markPlaces(true, entity, origin.getHex());
+//        player.markPlaces(true, entity, origin.getHex());
     }
     
     private void finish()

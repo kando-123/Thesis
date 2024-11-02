@@ -13,7 +13,6 @@ import ge.world.*;
 public class UserPlayer extends Player
 {
     private final String name;
-    private WorldMarker marker;
     private Invoker<ViewManager> invoker;
     
     private UserPlayer(WorldScanner scanner, WorldAccessor accessor, UserConfig config)
@@ -35,38 +34,11 @@ public class UserPlayer extends Player
         invoker.invoke(new SetUserCommand(new UserAccessor(this)));
     }
     
-    public void markPlaces(boolean value, BuildingType building)
-    {
-        marker.mark(value, f -> f.isOwned(this) && building.predicate(accessor).test(f));
-    }
-    
-    public void markPlaces(boolean value, EntityType entity)
-    {
-        marker.mark(value, f ->
-        {
-            if (f.isOwned(this) && f instanceof Spawner s)
-            {
-                return s.canSpawn(entity);
-            }
-            else
-            {
-                return false;
-            }
-        });
-    }
-    
-    public void markPlaces(boolean value, Entity entity, Hex hex)
-    {
-        var range = entity.range(hex, accessor);
-        marker.mark(value, f -> range.containsKey(f.getHex()));
-    }
-    
     public static class Builder
     {
         private UserConfig config;
         private WorldScanner scanner;
         private WorldAccessor accessor;
-        private WorldMarker marker;
         private Invoker<ViewManager> invoker;
 
         public void setConfig(UserConfig config)
@@ -84,11 +56,6 @@ public class UserPlayer extends Player
             this.accessor = accessor;
         }
 
-        public void setMarker(WorldMarker marker)
-        {
-            this.marker = marker;
-        }
-
         public void setInvoker(Invoker<ViewManager> invoker)
         {
             this.invoker = invoker;
@@ -97,10 +64,9 @@ public class UserPlayer extends Player
         public UserPlayer get()
         {
             UserPlayer user = null;
-            if (config != null && scanner != null && accessor != null && marker != null && invoker != null)
+            if (config != null && scanner != null && accessor != null && invoker != null)
             {
                 user = new UserPlayer(scanner, accessor, config);
-                user.marker = marker;
                 user.invoker = invoker;
             }
             return user;

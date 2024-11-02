@@ -112,7 +112,7 @@ public class ViewManager
         assert (current instanceof UserPlayer);
 
         var user = (UserPlayer) current;
-        procedure = new BuildingProcedure(building, user, new Invoker<>(this));
+        procedure = new BuildingProcedure(building, user, new Invoker<>(this), invoker);
         procedure.advance(frame);
     }
 
@@ -149,7 +149,7 @@ public class ViewManager
         assert (current instanceof UserPlayer);
 
         var user = (UserPlayer) current;
-        procedure = new HiringProcedure(entity, user, new Invoker<>(this));
+        procedure = new HiringProcedure(entity, user, new Invoker<>(this), invoker);
         procedure.advance(frame);
     }
 
