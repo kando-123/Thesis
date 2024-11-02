@@ -72,7 +72,7 @@ public class HiringProcedure extends Procedure
         catch (ClassCastException cce)
         {
             stage = HiringStage.ERROR;
-            throw new ProcedureException("Wrong argument.");
+            throw new ProcedureException(cce.getMessage());
         }
     }
     

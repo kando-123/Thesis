@@ -82,7 +82,7 @@ public class World
         return fields.get(coords);
     }
     
-    Stream<Field> fieldStream()
+    public Stream<Field> fieldStream()
     {
         return fields.values().stream();
     }
@@ -313,8 +313,8 @@ public class World
                 .stream()
                 .sorted((o1, o2) ->
                 {
-                    boolean e1 = o1.getValue().hasEntity();
-                    boolean e2 = o2.getValue().hasEntity();
+                    boolean e1 = o1.getValue().isOccupied();
+                    boolean e2 = o2.getValue().isOccupied();
                     int p1 = o1.getKey().getP();
                     int p2 = o2.getKey().getP();
                     return e1 ? (e2 ? p1 - p2 : +1) : (e2 ? -1 : 0);

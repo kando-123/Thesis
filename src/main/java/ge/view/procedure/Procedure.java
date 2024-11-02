@@ -13,9 +13,9 @@ public abstract class Procedure
         FAILURE;
     }
     
-    public abstract Status status();
     public abstract void advance(Object... args) throws ProcedureException;
     public abstract void rollback();
+    public abstract Status status();
     
     public static class ProcedureException extends RuntimeException
     {

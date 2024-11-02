@@ -110,4 +110,9 @@ public class GameplayManager
     {
         world.substitute(building);
     }
+    
+    void mark(boolean value, UnaryPredicate<Field> predicate)
+    {
+        world.fieldStream().filter(f -> predicate.test(f)).forEach(f -> f.setMarked(value));
+    }
 }

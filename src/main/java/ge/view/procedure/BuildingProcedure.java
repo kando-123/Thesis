@@ -69,7 +69,7 @@ public class BuildingProcedure extends Procedure
         catch (ClassCastException cce)
         {
             stage = BuildingStage.ERROR;
-            throw new ProcedureException("Wrong argument.");
+            throw new ProcedureException(cce.getMessage());
         }
     }
 
@@ -167,9 +167,9 @@ public class BuildingProcedure extends Procedure
         {
             case IN_PROGRESS ->
             {
+                stage = BuildingStage.ERROR;
                 player.markPlaces(false, type);
             }
         }
-        stage = BuildingStage.ERROR;
     }
 }

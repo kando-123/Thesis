@@ -63,6 +63,10 @@ public class InputHandler implements KeyListener
             {
                 zoomOut = true;
             }
+            case KeyEvent.VK_SPACE ->
+            {
+                east = south = west = north = zoomIn = zoomOut = false;
+            }
             
             case KeyEvent.VK_M ->
             {

@@ -42,7 +42,7 @@ public class UserPlayer extends Player
     
     public void markPlaces(boolean value, EntityType entity)
     {
-        marker.mark(value, f -> 
+        marker.mark(value, f ->
         {
             if (f.isOwned(this) && f instanceof Spawner s)
             {
@@ -53,6 +53,12 @@ public class UserPlayer extends Player
                 return false;
             }
         });
+    }
+    
+    public void markPlaces(boolean value, Entity entity, Hex hex)
+    {
+        var range = entity.range(hex, accessor);
+        marker.mark(value, f -> range.containsKey(f.getHex()));
     }
     
     public static class Builder
