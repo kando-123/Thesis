@@ -155,11 +155,17 @@ public class ViewManager
         if (procedure != null)
         {
             procedure.advance(field);
+            procedure = null;
         }
     }
     
     void finish()
     {
+        if (procedure != null)
+        {
+            procedure.rollback();
+            procedure = null;
+        }
         frame.requestFocus();
         invoker.invoke(new NextPlayerCommand());
     }

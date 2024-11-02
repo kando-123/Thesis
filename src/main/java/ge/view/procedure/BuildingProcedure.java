@@ -163,6 +163,13 @@ public class BuildingProcedure extends Procedure
     @Override
     public void rollback()
     {
-
+        switch (stage)
+        {
+            case IN_PROGRESS ->
+            {
+                player.markPlaces(false, type);
+            }
+        }
+        stage = BuildingStage.ERROR;
     }
 }
