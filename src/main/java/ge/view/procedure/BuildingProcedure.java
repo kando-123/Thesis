@@ -16,8 +16,7 @@ public class BuildingProcedure extends Procedure
 {
     private final BuildingType type;
     private final UserPlayer player;
-    private final Invoker<ViewManager> invoker;
-    private final Invoker<GameplayManager> marker;
+    private final Invoker<GameplayManager> invoker;
 
     private BuildingPurchaseDialog dialog;
 
@@ -32,12 +31,11 @@ public class BuildingProcedure extends Procedure
 
     private BuildingStage stage;
 
-    public BuildingProcedure(BuildingType building, UserPlayer player, Invoker<ViewManager> invoker, Invoker<GameplayManager> marker)
+    public BuildingProcedure(BuildingType building, UserPlayer player, Invoker<GameplayManager> invoker)
     {
         this.type = building;
         this.player = player;
         this.invoker = invoker;
-        this.marker = marker;
 
         stage = BuildingStage.INITIATED;
     }
@@ -109,6 +107,12 @@ public class BuildingProcedure extends Procedure
                 {
                     frame.requestFocus();
                 }
+
+                @Override
+                public void windowClosed(WindowEvent e)
+                {
+                    frame.requestFocus();
+                }
             });
             dialog.setVisible(true);
         }
@@ -121,8 +125,7 @@ public class BuildingProcedure extends Procedure
         dialog.dispose();
         dialog = null;
         
-        marker.invoke(new MarkForBuildingCommand(true, player, type));
-//        player.markPlaces(true, type);
+        invoker.invoke(new MarkForBuildingCommand(true, player, type));
     }
 
     private void finish(Field field)
@@ -131,18 +134,16 @@ public class BuildingProcedure extends Procedure
         {
             stage = BuildingStage.FINISHED;
             
-            marker.invoke(new MarkForBuildingCommand(false, player, type));
-//            player.markPlaces(false, type);
+            invoker.invoke(new MarkForBuildingCommand(false, player, type));
             var building = BuildingField.newInstance(type, field.getHex());
             building.setOwner(player);
             player.buy(type);
-            invoker.invoke(new FinishBuildingCommand(building));
+            invoker.invoke(new BuildCommand(building));
         }
         else
         {
             stage = BuildingStage.ERROR;
-            marker.invoke(new MarkForBuildingCommand(true, player, type));
-//            player.markPlaces(false, type);
+            invoker.invoke(new MarkForBuildingCommand(true, player, type));
         }
     }
 
@@ -174,7 +175,7 @@ public class BuildingProcedure extends Procedure
             case IN_PROGRESS ->
             {
                 stage = BuildingStage.ERROR;
-                marker.invoke(new MarkForBuildingCommand(false, player, type));
+                invoker.invoke(new MarkForBuildingCommand(false, player, type));
 //                player.markPlaces(false, type);
             }
         }

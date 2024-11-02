@@ -1,8 +1,10 @@
 package ge.view.procedure;
 
-import ge.entity.Entity;
-import ge.field.Field;
-import ge.player.UserPlayer;
+import ge.entity.*;
+import ge.field.*;
+import ge.main.*;
+import ge.player.*;
+import ge.utilities.*;
 
 /**
  *
@@ -14,6 +16,8 @@ public class MovementProcedure extends Procedure
     private final Entity entity;
     private final UserPlayer player;
     
+    private final Invoker<GameplayManager> invoker;
+    
     private enum MovementStage
     {
         INITIATED,
@@ -24,11 +28,13 @@ public class MovementProcedure extends Procedure
     
     private MovementStage stage;
 
-    public MovementProcedure(Field origin)
+    public MovementProcedure(Field origin, Invoker<GameplayManager> marker)
     {
         this.origin = origin;
         this.entity = origin.getEntity();
         this.player = (UserPlayer) entity.getOwner();
+        
+        this.invoker = marker;
         
         stage = MovementStage.INITIATED;
     }
@@ -65,7 +71,7 @@ public class MovementProcedure extends Procedure
     {
         stage = MovementStage.BEGUN;
         
-//        player.markPlaces(true, entity, origin.getHex());
+
     }
     
     private void finish()

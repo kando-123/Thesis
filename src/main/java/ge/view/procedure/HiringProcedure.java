@@ -17,8 +17,7 @@ public class HiringProcedure extends Procedure
 {
     private final EntityType type;
     private final UserPlayer player;
-    private final Invoker<ViewManager> invoker;
-    private final Invoker<GameplayManager> marker;
+    private final Invoker<GameplayManager> invoker;
     
     private EntityPurchaseDialog dialog;
     private Integer number;
@@ -34,12 +33,11 @@ public class HiringProcedure extends Procedure
     
     private HiringStage stage;
 
-    public HiringProcedure(EntityType type, UserPlayer player, Invoker<ViewManager> invoker, Invoker<GameplayManager> marker)
+    public HiringProcedure(EntityType type, UserPlayer player, Invoker<GameplayManager> invoker)
     {
         this.type = type;
         this.player = player;
         this.invoker = invoker;
-        this.marker = marker;
         
         stage = HiringStage.INITIATED;
     }
@@ -114,6 +112,12 @@ public class HiringProcedure extends Procedure
                 {
                     frame.requestFocus();
                 }
+
+                @Override
+                public void windowClosed(WindowEvent e)
+                {
+                    frame.requestFocus();
+                }
             });
             dialog.setVisible(true);
         }
@@ -126,8 +130,7 @@ public class HiringProcedure extends Procedure
         dialog.dispose();
         dialog = null;
         
-        marker.invoke(new MarkForHiringCommand(true, player, type));
-//        player.markPlaces(true, type);
+        invoker.invoke(new MarkForHiringCommand(true, player, type));
     }
     
     private void finish(Field field)
@@ -136,19 +139,15 @@ public class HiringProcedure extends Procedure
         {
             stage = HiringStage.FINISHED;
             
-            marker.invoke(new MarkForHiringCommand(false, player, type));
-//            player.markPlaces(false, type);
+            invoker.invoke(new MarkForHiringCommand(false, player, type));
             var entity = Entity.newInstance(type, player, number);
             field.setEntity(entity);
             player.buy(type, number);
-            
-            invoker.invoke(new FocusCommand());
         }
         else
         {
             stage = HiringStage.ERROR;
-            marker.invoke(new MarkForHiringCommand(false, player, type));
-//            player.markPlaces(false, type);
+            invoker.invoke(new MarkForHiringCommand(false, player, type));
         }
     }
 
@@ -179,7 +178,7 @@ public class HiringProcedure extends Procedure
         {
             case IN_PROGRESS ->
             {
-                marker.invoke(new MarkForHiringCommand(false, player, type));
+                invoker.invoke(new MarkForHiringCommand(false, player, type));
 //                player.markPlaces(false, type);
             }
         }

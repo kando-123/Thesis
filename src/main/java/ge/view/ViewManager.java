@@ -102,7 +102,7 @@ public class ViewManager
 
     void beginBuildingProcedure(BuildingType building)
     {
-        if (procedure != null)
+        if (procedure != null && procedure.status() == Procedure.Status.ONGOING)
         {
             procedure.rollback();
         }
@@ -112,15 +112,8 @@ public class ViewManager
         assert (current instanceof UserPlayer);
 
         var user = (UserPlayer) current;
-        procedure = new BuildingProcedure(building, user, new Invoker<>(this), invoker);
+        procedure = new BuildingProcedure(building, user, invoker);
         procedure.advance(frame);
-    }
-
-    void finishBuilding(BuildingField building)
-    {
-        frame.requestFocus();
-        invoker.invoke(new BuildCommand(building));
-        procedure = null;
     }
 
     void showEntityInfo(EntityType entity)
@@ -139,7 +132,7 @@ public class ViewManager
 
     void beginHiringProcedure(EntityType entity)
     {
-        if (procedure != null)
+        if (procedure != null && procedure.status() == Procedure.Status.ONGOING)
         {
             procedure.rollback();
         }
@@ -149,7 +142,7 @@ public class ViewManager
         assert (current instanceof UserPlayer);
 
         var user = (UserPlayer) current;
-        procedure = new HiringProcedure(entity, user, new Invoker<>(this), invoker);
+        procedure = new HiringProcedure(entity, user, invoker);
         procedure.advance(frame);
     }
 
@@ -162,7 +155,7 @@ public class ViewManager
         }
         else if (field.isOccupied())
         {
-            procedure = new MovementProcedure(field);
+            procedure = new MovementProcedure(field, invoker);
             procedure.advance(accessor);
         }
     }
@@ -181,10 +174,5 @@ public class ViewManager
     void updateMoney(int newAmount)
     {
         userPanel.setUserMoney(newAmount);
-    }
-
-    void focus()
-    {
-        frame.requestFocus();
     }
 }
