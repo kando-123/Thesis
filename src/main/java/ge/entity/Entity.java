@@ -9,12 +9,12 @@ import java.awt.Graphics2D;
 import java.awt.font.*;
 import java.awt.image.*;
 import java.text.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -50,8 +50,6 @@ public abstract class Entity
 
         this.number = number;
         this.morale = initialMorale(number);
-        
-        movable = true;
     }
 
     private int initialMorale(int number)
@@ -207,7 +205,7 @@ public abstract class Entity
                     {
                         continue;
                     }
-                    
+
                     visited.add(neighborHex);
                     if (canAccess(neighborField))
                     {
@@ -222,13 +220,122 @@ public abstract class Entity
         }
         return range;
     }
-    
-    public List<Field> path(Field origin, Field target, WorldAccessor accessor)
+
+    public static class TooFarAwayException extends Exception
     {
-        // DFS
-        throw new UnsupportedOperationException();
     }
-    
+
+    public static class GoalNotReachedException extends Exception
+    {
+    }
+
+    public List<Hex> path(Field origin, Field target, WorldAccessor accessor) throws TooFarAwayException, GoalNotReachedException
+    {
+        // A* Algo’
+        
+        // Hexes of the origin and the targer for future reference.
+        final Hex originHex = origin.getHex();
+        final Hex targetHex = target.getHex();
+        
+        // Check if it is possible to find the path at all.
+        if (originHex.distance(targetHex) > radius())
+        {
+            throw new TooFarAwayException();
+        }
+
+        // Heuristic for the A* algorithm.
+        @FunctionalInterface
+        interface Heuristic
+        {
+            int of(Hex hex);
+        }
+        final Heuristic heuristic = (Hex hex) -> hex.distance(targetHex);
+
+        // The queue of the hexes of the fields to visit.
+        // The first hex to consider is the closest to the target.
+        Queue<Hex> frontier = new PriorityQueue<>((h1, h2) -> heuristic.of(h1) - heuristic.of(h2));
+        frontier.add(originHex);
+
+        // The map of predecessors to later retrieve the path.
+        Map<Hex, Hex> predecessor = new HashMap<>();
+
+        // Distances from the origin along the currently cheapest paths.
+        Map<Hex, Integer> distance = new HashMap<>();
+        distance.put(originHex, 0);
+
+        // Propagate.
+        while (!frontier.isEmpty())
+        {
+            // Consider the hex that is closest to the target.
+            Hex current = frontier.poll();
+            
+            // If current is the target, finish with success.
+            if (current.equals(targetHex))
+            {
+                // Retrieve the path.
+                List<Hex> path = new LinkedList<>();
+                path.add(current);
+                while (predecessor.containsKey(current))
+                {
+                    current = predecessor.get(current);
+                    path.addFirst(current);
+                }
+                return path;
+            }
+            
+            // If this field is intransitable (unless it is the origin), continue.
+            var currentField = accessor.getField(current);
+            if (!canTransit(currentField) && currentField != origin)
+            {
+                continue;
+            }
+
+            // Consider the neighbors.
+            // ! Mind that some hexes can be outside of the world.
+            // ! Mind that if this field is accessible but not transitable, it cannot be
+            //   gone further.
+            //   ! However, from the origin, it can be gone to a next field, even if
+            //     the origin is intransitable.
+            for (var neighbor : current.neighbors())
+            {
+                // Access the adjacent field.
+                var field = accessor.getField(neighbor);
+
+                // If no field exists on those coordinates, continue.
+                if (field == null)
+                {
+                    continue;
+                }
+
+                // If that field is inaccesssible, continue.
+                if (!canAccess(field))
+                {
+                    continue;
+                }
+
+                // Update the path and distance if it is quicker to pass through current,
+                // or this is the first way found at all.
+                var tentative = distance.get(current) + 1;
+                var present = distance.get(neighbor);
+                if (present == null || tentative < present)
+                {
+                    predecessor.put(neighbor, current);
+                    distance.put(neighbor, tentative);
+
+                    // Add the neighbor to the frontier.
+                    if (!frontier.contains(neighbor))
+                    {
+                        frontier.add(neighbor);
+                    }
+                }
+            }
+        }
+
+        // If the available nodes have been exhausted and the solution has not been found,
+        // inform that there is no path.
+        throw new GoalNotReachedException();
+    }
+
     public boolean canMerge(Entity entity)
     {
         return isFellow(entity) && entity.number < MAXIMAL_NUMBER;

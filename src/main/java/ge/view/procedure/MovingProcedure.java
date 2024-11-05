@@ -12,11 +12,13 @@ import java.util.*;
  *
  * @author Kay Jay O'Nail
  */
-public class MovementProcedure extends Procedure
+public class MovingProcedure extends Procedure
 {
-    private final Field origin;
-    private final Entity entity;
-    private final UserPlayer player;
+    private Field origin;
+    private Entity entity;
+    private UserPlayer player;
+    
+    private final WorldAccessor accessor;
     
     private Set<Hex> range;
     
@@ -32,13 +34,10 @@ public class MovementProcedure extends Procedure
     
     private MovementStage stage;
 
-    public MovementProcedure(Field origin, Invoker<GameplayManager> marker)
+    public MovingProcedure(WorldAccessor accessor, Invoker<GameplayManager> invoker)
     {
-        this.origin = origin;
-        this.entity = origin.getEntity();
-        this.player = (UserPlayer) entity.getOwner();
-        
-        this.invoker = marker;
+        this.accessor = accessor;
+        this.invoker = invoker;
         
         stage = MovementStage.INITIATED;
     }
@@ -52,8 +51,8 @@ public class MovementProcedure extends Procedure
             {
                 case INITIATED ->
                 {
-                    var accessor = (WorldAccessor) args[0];
-                    begin(accessor);
+                    var field = (Field) args[0];
+                    begin(field);
                 }
                 case BEGUN ->
                 {
@@ -73,24 +72,56 @@ public class MovementProcedure extends Procedure
         }
     }
     
-    private void begin(WorldAccessor accessor)
+    private void begin(Field origin)
     {
         stage = MovementStage.BEGUN;
+        
+        this.origin = origin;
+        this.entity = origin.getEntity();
+        this.player = (UserPlayer) entity.getOwner();
         
         range = entity.range(origin.getHex(), accessor);
         
         invoker.invoke(new MarkForMovingCommand(true, range));
     }
     
-    private void finish(Field field)
+    private void finish(Field target)
     {
-        if (field.isMarked())
+        if (target.isMarked())
         {
             stage = MovementStage.FINISHED;
-            
             invoker.invoke(new MarkForMovingCommand(false, range));
+            
+            try
+            {
+                List<Hex> path = entity.path(origin, target, accessor);
+                Set<Field> way = new HashSet<>();
+                for (var hex : path)
+                {
+                    var place = accessor.getField(hex);
+                    for (var neighbor : hex.neighbors())
+                    {
+                        var field = accessor.getField(neighbor);
+                        if (field != null && !field.isOccupied() &&
+                            field instanceof PlainsField && !(place instanceof SeaField))
+                        {
+                            way.add(field);
+                        }
+                    }
+                }
+                for (var field : way)
+                {
+                    field.setOwner(player);
+                }
+                
+            }
+            catch (Entity.GoalNotReachedException | Entity.TooFarAwayException e)
+            {
+                System.out.println(e.toString());
+            }
+            
             origin.takeEntity();
-            field.placeEntity(entity);
+            target.placeEntity(entity);
         }
         else
         {
@@ -103,6 +134,16 @@ public class MovementProcedure extends Procedure
     @Override
     public void rollback()
     {
+        switch (stage)
+        {
+            case BEGUN ->
+            {
+                stage = MovementStage.ERROR;
+                
+                invoker.invoke(new MarkForMovingCommand(false, range));
+                range = null;
+            }
+        }
     }
 
     @Override

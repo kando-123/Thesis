@@ -131,12 +131,16 @@ public abstract class Field
             /* Militate: lose. */
             comer.defeat(entity);
             entity = comer;
+            owner = comer.getOwner();
         }
         else
         {
             /* Militate: win. */
             entity.defeat(comer);
         }
+        
+        entity.setMovable(false);
+        
         return remainder;
     }
 }

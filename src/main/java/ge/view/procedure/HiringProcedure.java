@@ -135,13 +135,13 @@ public class HiringProcedure extends Procedure
     
     private void finish(Field field)
     {
-        if (field != null && field.isMarked())
+        if (field != null && field.isMarked() && field instanceof Spawner spawner)
         {
             stage = HiringStage.FINISHED;
             
             invoker.invoke(new MarkForHiringCommand(false, player, type));
             var entity = Entity.newInstance(type, player, number);
-            field.placeEntity(entity);
+            spawner.spawn(entity);
             player.buy(type, number);
         }
         else

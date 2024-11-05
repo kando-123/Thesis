@@ -1,6 +1,6 @@
 package ge.player;
 
-import ge.entity.EntityType;
+import ge.entity.*;
 import ge.field.*;
 import ge.world.*;
 import java.awt.*;
@@ -117,7 +117,7 @@ public abstract class Player
     {
         long current = scanner.count((Field f) ->
         {
-            if (f instanceof BuildingField b)
+            if (f instanceof BuildingField b && f.isOwned(this))
             {
                 return b.getType() == building;
             }

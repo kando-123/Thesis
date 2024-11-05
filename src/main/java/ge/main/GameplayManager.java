@@ -97,6 +97,9 @@ public class GameplayManager
     {
         var ender = players.removeFirst();
         ender.earn();
+        world.fieldStream()
+                .filter(f -> f.isOwned(ender) && f.isOccupied())
+                .forEach(f -> f.getEntity().setMovable(true));
 
         players.addLast(ender);
     }

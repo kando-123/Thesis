@@ -155,8 +155,8 @@ public class ViewManager
         }
         else if (field.isOccupied())
         {
-            procedure = new MovementProcedure(field, invoker);
-            procedure.advance(accessor);
+            procedure = new MovingProcedure(accessor, invoker);
+            procedure.advance(field);
         }
     }
 

@@ -1,5 +1,6 @@
 package ge.field;
 
+import ge.entity.Entity;
 import ge.entity.EntityType;
 import ge.utilities.Hex;
 
@@ -26,5 +27,12 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
     public int getIncome()
     {
         return INCOME;
+    }
+
+    @Override
+    public void spawn(Entity entity)
+    {
+        placeEntity(entity);
+        entity.setMovable(true);
     }
 }

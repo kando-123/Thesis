@@ -1,6 +1,6 @@
 package ge.field;
 
-import ge.entity.EntityType;
+import ge.entity.*;
 
 /**
  *
@@ -9,4 +9,5 @@ import ge.entity.EntityType;
 public interface Spawner
 {
     public boolean canSpawn(EntityType type);
+    public void spawn(Entity entity);
 }
