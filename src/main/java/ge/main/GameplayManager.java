@@ -181,6 +181,10 @@ public class GameplayManager
             System.out.println(e.toString());
         }
         origin.takeEntity();
-        target.placeEntity(entity);
+        var remainder = target.placeEntity(entity);
+        if (remainder != null)
+        {
+            origin.setEntity(remainder);
+        }
     }
 }

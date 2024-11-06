@@ -159,6 +159,19 @@ public class ViewManager
             procedure.advance(field);
         }
     }
+    
+    void handleShiftClick(Field field)
+    {
+        if (procedure != null)
+        {
+            procedure.rollback();
+        }
+        if (field.isOccupied() && field.getEntity().canMove())
+        {
+            procedure = new ExtractingProcedure(field, invoker, accessor);
+            procedure.advance(frame);
+        }
+    }
 
     void finish()
     {

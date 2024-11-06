@@ -3,7 +3,6 @@ package ge.view.procedure;
 import ge.entity.*;
 import ge.field.*;
 import ge.main.*;
-import ge.player.*;
 import ge.utilities.*;
 import ge.world.*;
 import java.util.*;
@@ -16,7 +15,6 @@ public class MovingProcedure extends Procedure
 {
     private Field origin;
     private Entity entity;
-    private UserPlayer player;
     
     private final WorldAccessor accessor;
     
@@ -78,7 +76,6 @@ public class MovingProcedure extends Procedure
         
         this.origin = origin;
         this.entity = origin.getEntity();
-        this.player = (UserPlayer) entity.getOwner();
         
         range = entity.range(origin.getHex(), accessor);
         

@@ -2,6 +2,7 @@ package ge.entity;
 
 import ge.field.*;
 import ge.player.*;
+import ge.world.WorldAccessor;
 
 /**
  *
@@ -45,5 +46,11 @@ public class NavyEntity extends Entity
     protected int radius()
     {
         return RADIUS;
+    }
+
+    @Override
+    public EntityType getExtractedType()
+    {
+        return EntityType.INFANTRY;
     }
 }

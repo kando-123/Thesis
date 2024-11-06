@@ -12,14 +12,12 @@ import javax.swing.*;
  */
 public class ExtractingDialog extends JDialog implements ActionListener, Spinner.ValueChangeListener
 {
-    private final JLabel nameLabel;
     private final JLabel iconLabel;
     private final Spinner spinner;
     private final JTextArea summaryTextArea;
     
     private final Invoker<ExtractingProcedure> invoker;
     
-    private final EntityType entity;
     private final int number;
     
     private static final String PATTERN = "%d soldier%s will be extracted.\n%d will remain.";
@@ -32,7 +30,6 @@ public class ExtractingDialog extends JDialog implements ActionListener, Spinner
     ExtractingDialog(JFrame frame, EntityType entity, int number, Invoker<ExtractingProcedure> invoker)
     {
         super(frame, "Extract", true);
-        this.entity = entity;
         this.number = number;
         this.invoker = invoker;
         
@@ -44,14 +41,8 @@ public class ExtractingDialog extends JDialog implements ActionListener, Spinner
         c.gridy = 0;
         c.weightx = 1;
         c.weighty = 1;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = 2;
         c.gridheight = 1;
-        nameLabel = new JLabel(entity.toString());
-        nameLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        nameLabel.setPreferredSize(new Dimension(300, 25));
-        contentPane.add(nameLabel, c);
-
-        ++c.gridy;
         iconLabel = new JLabel(entity.icon());
         iconLabel.setPreferredSize(new Dimension(300, 75));
         contentPane.add(iconLabel, c);
@@ -83,6 +74,7 @@ public class ExtractingDialog extends JDialog implements ActionListener, Spinner
         setContentPane(contentPane);
         
         pack();
+        button.requestFocus();
         setResizable(false);
         setLocationRelativeTo(frame);
     }

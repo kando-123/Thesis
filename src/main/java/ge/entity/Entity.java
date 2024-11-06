@@ -398,4 +398,35 @@ public abstract class Entity
         number = Math.max((int) (number - number / strength * damage), MINIMAL_NUMBER);
         morale = Math.max((int) (morale - morale / strength * damage), MINIMAL_MORALE);
     }
+    
+    public int getNumber()
+    {
+        return number;
+    }
+    
+    public int getMorale()
+    {
+        return morale;
+    }
+    
+    public abstract EntityType getExtractedType();
+    
+    public boolean canExtract()
+    {
+        return movable && number > MINIMAL_NUMBER;
+    }
+    
+    public Entity extract(int extractedNumber)
+    {
+        int extractedMorale = (int) ((double) extractedNumber / number * morale);
+        
+        var extract = newInstance(getExtractedType(), owner, extractedNumber);
+        extract.morale = extractedMorale;
+        extract.movable = true;
+        
+        number -= extractedNumber;
+        morale -= extractedMorale;
+        
+        return extract;
+    }
 }

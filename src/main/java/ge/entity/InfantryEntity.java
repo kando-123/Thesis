@@ -76,4 +76,10 @@ public class InfantryEntity extends Entity
     {
         return RADIUS;
     }
+
+    @Override
+    public EntityType getExtractedType()
+    {
+        return EntityType.INFANTRY;
+    }
 }

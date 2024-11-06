@@ -76,4 +76,10 @@ public class CavalryEntity extends Entity
     {
         return RADIUS;
     }
+
+    @Override
+    public EntityType getExtractedType()
+    {
+        return EntityType.CAVALRY;
+    }
 }
