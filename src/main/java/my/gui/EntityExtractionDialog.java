@@ -46,7 +46,7 @@ public class EntityExtractionDialog extends JDialog implements ActionListener, S
 
     private EntityExtractionDialog(JFrame frame, AbstractEntity entity)
     {
-        super(frame, "Extract a Troop", true);
+        super(frame, "Extract", true);
         this.entity = entity;
         
         EntityType extractedType = entity.getExtractedType();

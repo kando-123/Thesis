@@ -1,8 +1,7 @@
-package ge.view;
+package ge.view.procedure;
 
 import ge.field.*;
 import ge.utilities.*;
-import ge.view.procedure.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -11,7 +10,7 @@ import javax.swing.*;
  *
  * @author Kay Jay O'Nail
  */
-public class BuildingPurchaseDialog extends JDialog implements ActionListener
+public class BuildingDialog extends JDialog implements ActionListener
 {
     private final JLabel nameLabel;
     private final JLabel iconLabel;
@@ -19,7 +18,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
     
     private Invoker<BuildingProcedure> invoker;
     
-    private BuildingPurchaseDialog(JFrame frame)
+    private BuildingDialog(JFrame frame)
     {
         super(frame, true);
         
@@ -78,7 +77,7 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
         }
     }
     
-    public static class Builder
+    static class Builder
     {
         private JFrame frame;
         private BuildingType building;
@@ -109,12 +108,12 @@ public class BuildingPurchaseDialog extends JDialog implements ActionListener
             return this;
         }
         
-        public BuildingPurchaseDialog get()
+        public BuildingDialog get()
         {
-            BuildingPurchaseDialog dialog = null;
+            BuildingDialog dialog = null;
             if (frame != null && building != null && price > 0 && invoker != null)
             {
-                dialog = new BuildingPurchaseDialog(frame);
+                dialog = new BuildingDialog(frame);
                 dialog.nameLabel.setText(building.toString());
                 dialog.iconLabel.setIcon(building.icon());
                 dialog.priceLabel.setText(String.format("%d Ħ", price));

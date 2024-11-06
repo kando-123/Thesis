@@ -4,7 +4,6 @@ import ge.field.*;
 import ge.main.*;
 import ge.player.*;
 import ge.utilities.*;
-import ge.view.*;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -18,7 +17,7 @@ public class BuildingProcedure extends Procedure
     private final UserPlayer player;
     private final Invoker<GameplayManager> invoker;
 
-    private BuildingPurchaseDialog dialog;
+    private BuildingDialog dialog;
 
     enum BuildingStage
     {
@@ -93,7 +92,7 @@ public class BuildingProcedure extends Procedure
         else
         {
             stage = BuildingStage.BEGUN;
-            var builder = new BuildingPurchaseDialog.Builder();
+            var builder = new BuildingDialog.Builder();
             dialog = builder.setFrame(frame)
                     .setInvoker(new Invoker<>(this))
                     .setBuilding(type)

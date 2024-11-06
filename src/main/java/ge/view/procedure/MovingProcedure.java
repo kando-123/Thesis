@@ -91,37 +91,7 @@ public class MovingProcedure extends Procedure
         {
             stage = MovementStage.FINISHED;
             invoker.invoke(new MarkForMovingCommand(false, range));
-            
-            try
-            {
-                List<Hex> path = entity.path(origin, target, accessor);
-                Set<Field> way = new HashSet<>();
-                for (var hex : path)
-                {
-                    var place = accessor.getField(hex);
-                    for (var neighbor : hex.neighbors())
-                    {
-                        var field = accessor.getField(neighbor);
-                        if (field != null && !field.isOccupied() &&
-                            field instanceof PlainsField && !(place instanceof SeaField))
-                        {
-                            way.add(field);
-                        }
-                    }
-                }
-                for (var field : way)
-                {
-                    field.setOwner(player);
-                }
-                
-            }
-            catch (Entity.GoalNotReachedException | Entity.TooFarAwayException e)
-            {
-                System.out.println(e.toString());
-            }
-            
-            origin.takeEntity();
-            target.placeEntity(entity);
+            invoker.invoke(new MoveCommand(origin, target));
         }
         else
         {

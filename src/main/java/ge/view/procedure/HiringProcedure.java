@@ -5,7 +5,6 @@ import ge.field.*;
 import ge.main.*;
 import ge.player.*;
 import ge.utilities.*;
-import ge.view.*;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -19,7 +18,7 @@ public class HiringProcedure extends Procedure
     private final UserPlayer player;
     private final Invoker<GameplayManager> invoker;
     
-    private EntityPurchaseDialog dialog;
+    private HiringDialog dialog;
     private Integer number;
     
     private enum HiringStage
@@ -96,7 +95,7 @@ public class HiringProcedure extends Procedure
         else
         {
             stage = HiringStage.BEGUN;
-            var builder = new EntityPurchaseDialog.Builder();
+            var builder = new HiringDialog.Builder();
             dialog = builder.setFrame(frame)
                     .setInvoker(new Invoker<>(this))
                     .setEntity(type)

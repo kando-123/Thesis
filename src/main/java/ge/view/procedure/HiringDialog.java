@@ -1,8 +1,7 @@
-package ge.view;
+package ge.view.procedure;
 
 import ge.entity.*;
 import ge.utilities.*;
-import ge.view.procedure.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -11,7 +10,7 @@ import javax.swing.*;
  *
  * @author Kay Jay O'Nail
  */
-public class EntityPurchaseDialog extends JDialog implements ActionListener, Spinner.ValueChangeListener
+public class HiringDialog extends JDialog implements ActionListener, Spinner.ValueChangeListener
 {
     private final JLabel nameLabel;
     private final JLabel iconLabel;
@@ -24,7 +23,7 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
     private int budget;
     private Invoker<HiringProcedure> invoker;
 
-    public EntityPurchaseDialog(JFrame frame)
+    HiringDialog(JFrame frame)
     {
         super(frame, true);
 
@@ -140,12 +139,12 @@ public class EntityPurchaseDialog extends JDialog implements ActionListener, Spi
             return this;
         }
         
-        public EntityPurchaseDialog get()
+        public HiringDialog get()
         {
-            EntityPurchaseDialog dialog = null;
+            HiringDialog dialog = null;
             if (frame != null && entity != null && invoker != null)
             {
-                dialog = new EntityPurchaseDialog(frame);
+                dialog = new HiringDialog(frame);
                 dialog.budget = budget;
                 dialog.entity = entity;
                 dialog.nameLabel.setText(entity.toString());

@@ -231,14 +231,17 @@ public abstract class Entity
 
     public List<Hex> path(Field origin, Field target, WorldAccessor accessor) throws TooFarAwayException, GoalNotReachedException
     {
-        // A* Algo’
+        // A* Algorithm
         
         // Hexes of the origin and the targer for future reference.
         final Hex originHex = origin.getHex();
         final Hex targetHex = target.getHex();
         
+        // Radius - for further reference.
+        final int radius = radius();
+        
         // Check if it is possible to find the path at all.
-        if (originHex.distance(targetHex) > radius())
+        if (originHex.distance(targetHex) > radius)
         {
             throw new TooFarAwayException();
         }
@@ -307,15 +310,23 @@ public abstract class Entity
                     continue;
                 }
 
-                // If that field is inaccesssible, continue.
+                // If that field is inaccessible, continue.
                 if (!canAccess(field))
                 {
                     continue;
                 }
 
+                // Compute the path to the neighbor.
+                var tentative = distance.get(current) + 1;
+                
+                // (If the neighbor would be unachievable, continue.)
+                if (tentative > radius)
+                {
+                    continue;
+                }
+                
                 // Update the path and distance if it is quicker to pass through current,
                 // or this is the first way found at all.
-                var tentative = distance.get(current) + 1;
                 var present = distance.get(neighbor);
                 if (present == null || tentative < present)
                 {

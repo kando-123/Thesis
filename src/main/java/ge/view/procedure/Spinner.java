@@ -1,4 +1,4 @@
-package ge.view;
+package ge.view.procedure;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -147,4 +147,40 @@ public class GameplayManager
                 .filter(f -> range.contains(f.getHex()))
                 .forEach(f -> f.setMarked(value));
     }
+
+    void move(Field origin, Field target)
+    {
+        var entity = origin.getEntity();
+        var player = entity.getOwner();
+        try
+        {
+            List<Hex> path = entity.path(origin, target, world.accessor());
+            Set<Field> way = new HashSet<>();
+            for (var hex : path)
+            {
+                var place = world.getField(hex);
+                way.add(place);
+                for (var neighbor : hex.neighbors())
+                {
+                    var field = world.getField(neighbor);
+                    if (field != null && !field.isOccupied()
+                        && field instanceof PlainsField && !(place instanceof SeaField))
+                    {
+                        way.add(field);
+                    }
+                }
+            }
+            for (var field : way)
+            {
+                field.setOwner(player);
+            }
+
+        }
+        catch (Entity.GoalNotReachedException | Entity.TooFarAwayException e)
+        {
+            System.out.println(e.toString());
+        }
+        origin.takeEntity();
+        target.placeEntity(entity);
+    }
 }
