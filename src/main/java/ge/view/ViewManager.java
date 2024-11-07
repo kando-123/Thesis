@@ -153,7 +153,8 @@ public class ViewManager
             procedure.advance(field);
             procedure = null;
         }
-        else if (field.isOccupied())
+        else if (field.isOccupied()
+                && field.isOwned(players.current()))
         {
             procedure = new MovingProcedure(accessor, invoker);
             procedure.advance(field);
@@ -166,7 +167,9 @@ public class ViewManager
         {
             procedure.rollback();
         }
-        if (field.isOccupied() && field.getEntity().canExtract())
+        if (field.isOccupied()
+                && field.getEntity().canExtract()
+                && field.isOwned(players.current()))
         {
             procedure = new ExtractingProcedure(field, invoker, accessor);
             procedure.advance(frame);
