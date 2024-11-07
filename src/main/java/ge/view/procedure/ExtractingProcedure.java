@@ -6,7 +6,7 @@ import ge.main.*;
 import ge.utilities.*;
 import ge.world.*;
 import java.awt.event.*;
-import java.util.Collection;
+import java.util.*;
 import javax.swing.*;
 
 /**
@@ -125,10 +125,10 @@ public class ExtractingProcedure extends Procedure
 
     private void finish(Field field)
     {
-        stage = ExtractingStage.FINISHED;
-        
-        if (range.contains(field.getHex()))
+        if (field != null && range.contains(field.getHex()))
         {
+            stage = ExtractingStage.FINISHED;
+            
             invoker.invoke(new MarkForMovingCommand(false, range));
             invoker.invoke(new MoveCommand(origin, field));
             
@@ -143,17 +143,22 @@ public class ExtractingProcedure extends Procedure
         {
             rollback();
         }
-        
-        // Move the extract.
-        // Merge the remainder back, if any.
-        // Place the entity back.
     }
 
     @Override
     public void rollback()
     {
-        // Merge the extract back.
-        // Place the entity back.
+        switch (stage)
+        {
+            case IN_PROGRESS ->
+            {
+                var extract = origin.getEntity();
+                extrahend.merge(extract);
+                origin.setEntity(extrahend);
+                invoker.invoke(new MarkForMovingCommand(false, range));
+            }
+        }
+        stage = ExtractingStage.ERROR;
     }
 
     @Override
