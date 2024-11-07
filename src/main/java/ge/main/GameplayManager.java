@@ -159,7 +159,10 @@ public class GameplayManager
             for (var hex : path)
             {
                 var place = world.getField(hex);
-                way.add(place);
+                if (!(place instanceof SeaField))
+                {
+                    way.add(place);
+                }
                 for (var neighbor : hex.neighbors())
                 {
                     var field = world.getField(neighbor);

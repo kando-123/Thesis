@@ -166,7 +166,7 @@ public class ViewManager
         {
             procedure.rollback();
         }
-        if (field.isOccupied() && field.getEntity().canMove())
+        if (field.isOccupied() && field.getEntity().canExtract())
         {
             procedure = new ExtractingProcedure(field, invoker, accessor);
             procedure.advance(frame);
