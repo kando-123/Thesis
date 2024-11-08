@@ -55,7 +55,7 @@ public class GameplayManager
             }
         }
 
-        Hex[] capitals = world.locateCapitals(players.size());
+        Hex[] capitals = world.locateCapitals(players.size(), new Invoker<>(this));
         for (int i = 0; i < capitals.length; ++i)
         {
             var capital = capitals[i];
@@ -152,6 +152,14 @@ public class GameplayManager
     {
         var entity = origin.getEntity();
         var player = entity.getOwner();
+        
+        origin.takeEntity();
+        var remainder = target.placeEntity(entity);
+        if (remainder != null)
+        {
+            origin.setEntity(remainder);
+        }
+        
         try
         {
             List<Hex> path = entity.path(origin, target, world.accessor());
@@ -177,17 +185,26 @@ public class GameplayManager
             {
                 field.setOwner(player);
             }
-
         }
         catch (Entity.GoalNotReachedException | Entity.TooFarAwayException e)
         {
             System.out.println(e.toString());
         }
-        origin.takeEntity();
-        var remainder = target.placeEntity(entity);
-        if (remainder != null)
+    }
+    
+    void drop(Player loser)
+    {
+        players.remove(loser);
+        world.fieldStream()
+                .filter(f -> f.isOwned(loser))
+                .forEach(f ->
+                {
+                    f.takeEntity();
+                    f.clearOwner();
+                });
+        if (players.size() == 1)
         {
-            origin.setEntity(remainder);
+            players.getFirst().win();
         }
     }
 }

@@ -1,6 +1,7 @@
 package ge.world;
 
 import ge.field.*;
+import ge.main.GameplayManager;
 import ge.utilities.*;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -422,7 +423,7 @@ public class World
 
     private final static int MANIPULATION_MARGIN = 4;
 
-    public Hex[] locateCapitals(int number)
+    public Hex[] locateCapitals(int number, Invoker<GameplayManager> invoker)
     {
         /* Discard the seas and the mounts. Divide the lands and woods into the periphery
            and the pool. */
@@ -460,7 +461,7 @@ public class World
         /* Create the capital fields. */
         for (var capital : capitals)
         {
-            fields.put(capital, new CapitalField(capital));
+            fields.put(capital, new CapitalField(capital, invoker));
         }
 
         return capitals;

@@ -72,6 +72,11 @@ public abstract class Field
     {
         owner = newOwner;
     }
+    
+    public void clearOwner()
+    {
+        owner = null;
+    }
 
     public Player getOwner()
     {

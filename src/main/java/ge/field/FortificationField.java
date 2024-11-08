@@ -1,5 +1,6 @@
 package ge.field;
 
+//import ge.entity.Entity;
 import ge.utilities.Hex;
 
 
@@ -12,5 +13,11 @@ public abstract class FortificationField extends BuildingField implements Fortif
     protected FortificationField(Hex coords)
     {
         super(coords);
-    }   
+    }
+
+//    @Override
+//    public Entity placeEntity(Entity comer)
+//    {
+//        
+//    }
 }
