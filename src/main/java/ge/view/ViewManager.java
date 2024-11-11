@@ -166,6 +166,7 @@ public class ViewManager
         if (procedure != null)
         {
             procedure.rollback();
+            procedure = null;
         }
         if (field.isOccupied()
                 && field.getEntity().canExtract()

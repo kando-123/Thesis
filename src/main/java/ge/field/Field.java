@@ -98,6 +98,11 @@ public abstract class Field
         return entity != null;
     }
     
+    public boolean isFellow(Entity comer)
+    {
+        return comer.getOwner() == owner;
+    }
+    
     public Entity getEntity()
     {
         return entity;

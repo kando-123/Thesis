@@ -154,11 +154,6 @@ public class GameplayManager
         var player = entity.getOwner();
         
         origin.takeEntity();
-        var remainder = target.placeEntity(entity);
-        if (remainder != null)
-        {
-            origin.setEntity(remainder);
-        }
         
         try
         {
@@ -189,6 +184,12 @@ public class GameplayManager
         catch (Entity.GoalNotReachedException | Entity.TooFarAwayException e)
         {
             System.out.println(e.toString());
+        }
+        
+        var remainder = target.placeEntity(entity);
+        if (remainder != null)
+        {
+            origin.setEntity(remainder);
         }
     }
     

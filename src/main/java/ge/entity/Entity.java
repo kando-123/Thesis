@@ -9,14 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.font.*;
 import java.awt.image.*;
 import java.text.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -54,7 +47,9 @@ public abstract class Entity
 
     private int initialMorale(int number)
     {
-        return number / 5;
+        final int divisor = 5;
+        
+        return number / divisor;
     }
 
     private String getName()

@@ -6,5 +6,5 @@ package ge.field;
  */
 public interface Fortification
 {
-
+    public int getFortitude();
 }
