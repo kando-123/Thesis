@@ -13,6 +13,8 @@ public abstract class FortificationField extends BuildingField implements Fortif
     {
         super(coords);
     }
+    
+    protected abstract void subtractFortitude(int newFortitude);
 
     @Override
     public Entity placeEntity(Entity comer)
@@ -30,15 +32,23 @@ public abstract class FortificationField extends BuildingField implements Fortif
             {
                 /* Move. */
                 entity = comer;
-                owner = comer.getOwner();
             }
             else
             {
                 /* Defend. */
+                int attack = comer.strength();
+                int fortitude = getFortitude();
+                subtractFortitude(attack);
                 
-                // If the comer is stronger than this
-                
-                throw new UnsupportedOperationException();
+                if (attack > fortitude)
+                {
+                    // If the comer is stronger than this,
+                    // the fortification is damaged and the comer conquers this field.
+                    comer.defeat(fortitude);
+                    entity = comer;
+                    owner = entity.getOwner();
+                }
+                // else: Just subtract the attack (done); the comer perishes.
             }
         }
         else
@@ -51,18 +61,30 @@ public abstract class FortificationField extends BuildingField implements Fortif
             else
             {
                 /* Militate. */
-                if (entity.strength() + getFortitude() < comer.strength())
+                final int defense = entity.strength();
+                final int fortitude = getFortitude();
+                final int attack = comer.strength();
+                
+                int fortitudeLoss = (int) ((double) fortitude / (fortitude + defense) * attack);
+                subtractFortitude(fortitudeLoss);
+                
+                if (defense + fortitude > attack)
                 {
-                    /* Lose. */
-                    throw new UnsupportedOperationException();
+                    /* Victory. */
+                    entity.defeat(attack - fortitudeLoss);
                 }
                 else
                 {
-                    /* Win. */
-                    throw new UnsupportedOperationException();
+                    /* Loss. */
+                    comer.defeat(defense + fortitude);
+                    entity = comer;
+                    owner = comer.getOwner();
                 }
             }
         }
+        
+        entity.setMovable(false);
+        
         return remainder;
     }
 }

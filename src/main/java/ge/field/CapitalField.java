@@ -14,6 +14,7 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
     private final Invoker<GameplayManager> invoker;
     
     private static final int FORTITUDE = 200;
+    private static final int MINIMAL_FORTITUDE = 1;
     public static final int INCOME = 200;
     
     public CapitalField(Hex coords, Invoker<GameplayManager> invoker)
@@ -42,13 +43,82 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
         placeEntity(entity);
         entity.setMovable(true);
     }
+    
+    private void subtractFortitude(int loss)
+    {
+        fortitude = Math.max(fortitude - loss, MINIMAL_FORTITUDE);
+    }
 
     @Override
     public Entity placeEntity(Entity comer)
     {
         var oldOwner = owner;
         
-        var remainder = super.placeEntity(comer);
+        Entity remainder = null;
+        if (!isOwned())
+        {
+            /* Move. */
+            entity = comer;
+            owner = comer.getOwner();
+        }
+        else if (!isOccupied())
+        {
+            if (isFellow(comer))
+            {
+                /* Move. */
+                entity = comer;
+            }
+            else
+            {
+                /* Defend. */
+                int attack = comer.strength();
+                int fortitude = getFortitude();
+                subtractFortitude(attack);
+                
+                if (attack > fortitude)
+                {
+                    // If the comer is stronger than this,
+                    // the fortification is damaged and the comer conquers this field.
+                    comer.defeat(fortitude);
+                    entity = comer;
+                    owner = entity.getOwner();
+                }
+                // else: Just subtract the attack (done); the comer perishes.
+            }
+        }
+        else
+        {
+            if (isFellow(comer))
+            {
+                /* Merge. */
+                remainder = entity.merge(comer);
+            }
+            else
+            {
+                /* Militate. */
+                final int defense = entity.strength();
+                final int fortitude = getFortitude();
+                final int attack = comer.strength();
+                
+                int fortitudeLoss = (int) ((double) fortitude / (fortitude + defense) * attack);
+                subtractFortitude(fortitudeLoss);
+                
+                if (defense + fortitude > attack)
+                {
+                    /* Victory. */
+                    entity.defeat(attack - fortitudeLoss);
+                }
+                else
+                {
+                    /* Loss. */
+                    comer.defeat(defense + fortitude);
+                    entity = comer;
+                    owner = comer.getOwner();
+                }
+            }
+        }
+        
+        entity.setMovable(false);
         
         if (owner != oldOwner)
         {

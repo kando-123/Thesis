@@ -13,6 +13,7 @@ public class FortressField extends FortificationField
     
     private static final int LEVELS = 3;
     private static final int FORTITUDE[] = { 100, 125, 150 };
+    private static final int MINIMAL_FORTITUDE = 1;
     
     public FortressField(Hex coords)
     {
@@ -27,7 +28,13 @@ public class FortressField extends FortificationField
     {
         return fortitude;
     }
-    
+
+    @Override
+    protected void subtractFortitude(int loss)
+    {
+        fortitude = Math.max(fortitude - loss, MINIMAL_FORTITUDE);
+    }
+
     private static class CannotUpgradeException extends Exception
     {
     }
