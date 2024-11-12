@@ -16,6 +16,7 @@ public class GameplayManager
 {
     private final World world;
     private final List<Player> players;
+    private Invoker<ViewManager> invoker;
 
     public GameplayManager(WorldConfig config)
     {
@@ -25,6 +26,8 @@ public class GameplayManager
 
     void makePlayers(PlayerConfig[] playerConfigs, Invoker<ViewManager> viewInvoker)
     {
+        this.invoker = viewInvoker;
+        
         var selfInvoker = new Invoker<>(this);
 
         for (PlayerConfig config : playerConfigs)
@@ -176,6 +179,7 @@ public class GameplayManager
                     }
                 }
             }
+            way.remove(target);
             for (var field : way)
             {
                 field.setOwner(player);
@@ -205,7 +209,8 @@ public class GameplayManager
                 });
         if (players.size() == 1)
         {
-            players.getFirst().win();
+            var name = players.getFirst().getName();
+            invoker.invoke(new VictoryMessageCommand(name));
         }
     }
 }

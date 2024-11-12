@@ -349,6 +349,8 @@ public abstract class Entity
 
     public Entity merge(Entity other)
     {
+        movable = false;
+        
         int aggregateNumber = number + other.number;
         int aggregateMorale = morale + other.morale;
 
@@ -392,6 +394,14 @@ public abstract class Entity
 
         number = Math.max((int) (number - number / strength * damage), MINIMAL_NUMBER);
         morale = Math.max((int) (morale - morale / strength * damage), MINIMAL_MORALE);
+    }
+    
+    public void defeat(int fortitude)
+    {
+        double strength = strength();
+
+        number = Math.max((int) (number - number / strength * fortitude), MINIMAL_NUMBER);
+        morale = Math.max((int) (morale - morale / strength * fortitude), MINIMAL_MORALE);
     }
     
     public int getNumber()

@@ -158,8 +158,5 @@ public abstract class Player
         money += scanner.income(this);
     }
     
-    public void win()
-    {
-        System.out.println("Somebody won but I cannot tell ya who. At least yet.");
-    }
+    public abstract String getName();
 }

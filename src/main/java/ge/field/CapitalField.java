@@ -118,7 +118,10 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
             }
         }
         
-        entity.setMovable(false);
+        if (entity != null)
+        {
+            entity.setMovable(false);
+        }
         
         if (owner != oldOwner)
         {

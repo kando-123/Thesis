@@ -27,5 +27,10 @@ public class BotPlayer extends Player
         
         invoker.invoke(new NextPlayerCommand());
     }
-    
+
+    @Override
+    public String getName()
+    {
+        return getColor().toString().concat(" Bot");
+    }
 }

@@ -22,7 +22,8 @@ public class UserPlayer extends Player
         this.name = config.name;
     }
     
-    String getName()
+    @Override
+    public String getName()
     {
         return name;
     }

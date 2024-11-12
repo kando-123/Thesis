@@ -192,4 +192,9 @@ public class ViewManager
     {
         userPanel.setUserMoney(newAmount);
     }
+    
+    void showVictoryMessage(String name)
+    {
+        JOptionPane.showMessageDialog(frame, name.concat(" has won."));
+    }
 }
