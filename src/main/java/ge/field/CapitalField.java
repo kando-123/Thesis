@@ -3,6 +3,9 @@ package ge.field;
 import ge.entity.*;
 import ge.main.*;
 import ge.utilities.*;
+import java.awt.*;
+import java.awt.font.*;
+import java.text.*;
 
 /**
  *
@@ -135,5 +138,38 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
     public int getFortitude()
     {
         return fortitude;
+    }
+    
+    private static final float BAR_HEIGHT_FRACTION = 0.2f;
+
+    @Override
+    public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
+    {
+        drawField(graphics, xPosition, yPosition, width, height);
+        drawContour(graphics, xPosition, yPosition, width, height);
+
+        var text = String.format("D%d", getFortitude());
+        if (entity != null)
+        {
+            entity.draw(graphics, xPosition, yPosition, width, height, text);
+        }
+        else
+        {
+            final int minimalBarHeight = 12;
+            if (BAR_HEIGHT_FRACTION * height > minimalBarHeight)
+            {
+                drawBar(graphics, xPosition, yPosition, width, height, text);
+            }
+        }
+    }
+
+    private void drawBar(Graphics2D graphics, int xPosition, int yPosition, int width, int height, String text)
+    {
+        var attributedBar = new AttributedString(text);
+        final float size = BAR_HEIGHT_FRACTION * height;
+        attributedBar.addAttribute(TextAttribute.SIZE, size);
+        attributedBar.addAttribute(TextAttribute.BACKGROUND, Color.WHITE);
+        
+        graphics.drawString(attributedBar.getIterator(), (float) (xPosition + width / 4), (float) yPosition + size);
     }
 }
