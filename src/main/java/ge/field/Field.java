@@ -52,20 +52,33 @@ public abstract class Field
     {
         return marked;
     }
-
-    public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
+    
+    protected void drawField(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
     {
         graphics.drawImage(!marked ? image : brightImage, xPosition, yPosition, width, height, null);
-
+    }
+    
+    protected void drawContour(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
+    {
         if (owner != null)
         {
             graphics.drawImage(owner.getContour(), xPosition, yPosition, width, height, null);
         }
-
+    }
+    
+    protected void drawEntity(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
+    {
         if (entity != null)
         {
             entity.draw(graphics, xPosition, yPosition, width, height);
         }
+    }
+    
+    public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
+    {
+        drawField(graphics, xPosition, yPosition, width, height);
+        drawContour(graphics, xPosition, yPosition, width, height);
+        drawEntity(graphics, xPosition, yPosition, width, height);
     }
 
     public void setOwner(Player newOwner)

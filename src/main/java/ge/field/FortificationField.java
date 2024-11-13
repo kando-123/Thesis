@@ -2,6 +2,10 @@ package ge.field;
 
 import ge.entity.*;
 import ge.utilities.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 
 /**
  *
@@ -13,7 +17,7 @@ public abstract class FortificationField extends BuildingField implements Fortif
     {
         super(coords);
     }
-    
+
     protected abstract void subtractFortitude(int newFortitude);
 
     @Override
@@ -39,7 +43,7 @@ public abstract class FortificationField extends BuildingField implements Fortif
                 int attack = comer.strength();
                 int fortitude = getFortitude();
                 subtractFortitude(attack);
-                
+
                 if (attack > fortitude)
                 {
                     // If the comer is stronger than this,
@@ -64,10 +68,10 @@ public abstract class FortificationField extends BuildingField implements Fortif
                 final int defense = entity.strength();
                 final int fortitude = getFortitude();
                 final int attack = comer.strength();
-                
+
                 int fortitudeLoss = (int) ((double) fortitude / (fortitude + defense) * attack);
                 subtractFortitude(fortitudeLoss);
-                
+
                 if (defense + fortitude > attack)
                 {
                     /* Victory. */
@@ -82,9 +86,45 @@ public abstract class FortificationField extends BuildingField implements Fortif
                 }
             }
         }
-        
-        entity.setMovable(false);
-        
+
+        if (entity != null)
+        {
+            entity.setMovable(false);
+        }
+
         return remainder;
+    }
+
+    private static final float BAR_HEIGHT_FRACTION = 0.2f;
+
+    @Override
+    public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
+    {
+        drawField(graphics, xPosition, yPosition, width, height);
+        drawContour(graphics, xPosition, yPosition, width, height);
+
+        var text = String.format("D%d", getFortitude());
+        if (entity != null)
+        {
+            entity.draw(graphics, xPosition, yPosition, width, height, text);
+        }
+        else
+        {
+            final int minimalBarHeight = 12;
+            if (BAR_HEIGHT_FRACTION * height > minimalBarHeight)
+            {
+                drawBar(graphics, xPosition, yPosition, width, height, text);
+            }
+        }
+    }
+
+    private void drawBar(Graphics2D graphics, int xPosition, int yPosition, int width, int height, String text)
+    {
+        var attributedBar = new AttributedString(text);
+        final float size = BAR_HEIGHT_FRACTION * height;
+        attributedBar.addAttribute(TextAttribute.SIZE, size);
+        attributedBar.addAttribute(TextAttribute.BACKGROUND, Color.WHITE);
+        
+        graphics.drawString(attributedBar.getIterator(), (float) (xPosition + width / 4), (float) yPosition + size);
     }
 }
