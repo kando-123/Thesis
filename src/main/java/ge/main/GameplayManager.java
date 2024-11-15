@@ -213,4 +213,9 @@ public class GameplayManager
             invoker.invoke(new VictoryMessageCommand(name));
         }
     }
+    
+    void adjustMorale(Hex coords, Player winner, Player loser)
+    {
+        
+    }
 }
