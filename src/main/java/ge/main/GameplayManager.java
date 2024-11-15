@@ -27,7 +27,7 @@ public class GameplayManager
     void makePlayers(PlayerConfig[] playerConfigs, Invoker<ViewManager> viewInvoker)
     {
         this.invoker = viewInvoker;
-        
+
         var selfInvoker = new Invoker<>(this);
 
         for (PlayerConfig config : playerConfigs)
@@ -151,13 +151,15 @@ public class GameplayManager
                 .forEach(f -> f.setMarked(value));
     }
 
+    private final Invoker<GameplayManager> self = new Invoker<>(this);
+
     void move(Field origin, Field target)
     {
         var entity = origin.getEntity();
         var player = entity.getOwner();
-        
+
         origin.takeEntity();
-        
+
         try
         {
             List<Hex> path = entity.path(origin, target, world.accessor());
@@ -189,14 +191,14 @@ public class GameplayManager
         {
             System.out.println(e.toString());
         }
-        
-        var remainder = target.placeEntity(entity);
+
+        var remainder = target.placeEntity(entity, self);
         if (remainder != null)
         {
             origin.setEntity(remainder);
         }
     }
-    
+
     void drop(Player loser)
     {
         players.remove(loser);
@@ -213,9 +215,27 @@ public class GameplayManager
             invoker.invoke(new VictoryMessageCommand(name));
         }
     }
-    
+
     void adjustMorale(Hex coords, Player winner, Player loser)
     {
-        
+        final int radius = 5;
+        world.fieldStream()
+                .filter(f -> f.getHex().distance(coords) <= radius)
+                .forEach(f ->
+                {
+                    if (f.isOccupied())
+                    {
+                        var e = f.getEntity();
+                        int d = f.getHex().distance(coords);
+                        if (f.isOwned(winner))
+                        {
+                            e.addMorale(radius - d);
+                        }
+                        else if (f.isOwned(loser))
+                        {
+                            e.addMorale(-(radius - d));
+                        }
+                    }
+                });
     }
 }

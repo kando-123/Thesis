@@ -414,6 +414,24 @@ public abstract class Entity
         return morale;
     }
     
+    public void addMorale(int increase)
+    {
+        morale += increase;
+        
+        if (morale < MINIMAL_MORALE)
+        {
+            morale = MINIMAL_MORALE;
+        }
+        else if (morale > MAXIMAL_MORALE)
+        {
+            morale = MAXIMAL_MORALE;
+        }
+        else if (morale > number)
+        {
+            morale = number;
+        }
+    }
+    
     public abstract EntityType getExtractedType();
     
     public boolean canExtract()

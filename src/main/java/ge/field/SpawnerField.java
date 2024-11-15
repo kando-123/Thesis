@@ -17,6 +17,6 @@ public abstract class SpawnerField extends BuildingField implements Spawner
     @Override
     public void spawn(Entity entity)
     {
-        placeEntity(entity);
+        setEntity(entity);
     }
 }

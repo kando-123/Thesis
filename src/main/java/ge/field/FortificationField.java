@@ -1,11 +1,12 @@
 package ge.field;
 
 import ge.entity.*;
+import ge.main.*;
+import ge.player.Player;
 import ge.utilities.*;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.font.TextAttribute;
-import java.text.AttributedString;
+import java.awt.*;
+import java.awt.font.*;
+import java.text.*;
 
 /**
  *
@@ -21,7 +22,7 @@ public abstract class FortificationField extends BuildingField implements Fortif
     protected abstract void subtractFortitude(int newFortitude);
 
     @Override
-    public Entity placeEntity(Entity comer)
+    public Entity placeEntity(Entity comer, Invoker<GameplayManager> invoker)
     {
         Entity remainder = null;
         if (!isOwned())
@@ -40,6 +41,9 @@ public abstract class FortificationField extends BuildingField implements Fortif
             else
             {
                 /* Defend. */
+                final Player defender = owner;
+                final Player attacker = comer.getOwner();
+                
                 int attack = comer.strength();
                 int fortitude = getFortitude();
                 subtractFortitude(attack);
@@ -51,8 +55,14 @@ public abstract class FortificationField extends BuildingField implements Fortif
                     comer.defeat(fortitude);
                     entity = comer;
                     owner = entity.getOwner();
+                    
+                    invoker.invoke(new AdjustMoraleCommand(coords, attacker, defender));
                 }
-                // else: Just subtract the attack (done); the comer perishes.
+                else
+                {
+                    //Just subtract the attack (done); the comer perishes.
+                    invoker.invoke(new AdjustMoraleCommand(coords, defender, attacker));
+                }
             }
         }
         else
@@ -65,6 +75,9 @@ public abstract class FortificationField extends BuildingField implements Fortif
             else
             {
                 /* Militate. */
+                final Player defender = owner;
+                final Player attacker = comer.getOwner();
+                
                 final int defense = entity.strength();
                 final int fortitude = getFortitude();
                 final int attack = comer.strength();
@@ -74,15 +87,19 @@ public abstract class FortificationField extends BuildingField implements Fortif
 
                 if (defense + fortitude > attack)
                 {
-                    /* Victory. */
+                    /* Defender's Victory. */
                     entity.defeat(attack - fortitudeLoss);
+                    
+                    invoker.invoke(new AdjustMoraleCommand(coords, defender, attacker));
                 }
                 else
                 {
-                    /* Loss. */
+                    /* Attacker's Victory. */
                     comer.defeat(defense + fortitude);
                     entity = comer;
                     owner = comer.getOwner();
+                    
+                    invoker.invoke(new AdjustMoraleCommand(coords, attacker, defender));
                 }
             }
         }

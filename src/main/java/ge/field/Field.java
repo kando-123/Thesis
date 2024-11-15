@@ -1,6 +1,7 @@
 package ge.field;
 
 import ge.entity.*;
+import ge.main.*;
 import ge.player.*;
 import ge.utilities.*;
 import java.awt.*;
@@ -135,7 +136,7 @@ public abstract class Field
         return oldEntity;
     }
 
-    public Entity placeEntity(Entity comer)
+    public Entity placeEntity(Entity comer, Invoker<GameplayManager> invoker)
     {
         Entity remainder = null;
         if (entity == null)
@@ -149,17 +150,27 @@ public abstract class Field
             /* Merge. */
             remainder = entity.merge(comer);
         }
-        else if (entity.strength() < comer.strength())
-        {
-            /* Militate: lose. */
-            comer.defeat(entity);
-            entity = comer;
-            owner = comer.getOwner();
-        }
         else
         {
-            /* Militate: win. */
-            entity.defeat(comer);
+            /* Militation. */
+            final Player defender = owner;
+            final Player attacker = comer.getOwner();
+            if (entity.strength() < comer.strength())
+            {
+                /* Attacker's victory. */
+                comer.defeat(entity);
+                entity = comer;
+                owner = comer.getOwner();
+                
+                invoker.invoke(new AdjustMoraleCommand(coords, attacker, defender));
+            }
+            else
+            {
+                /* Defender's victory. */
+                entity.defeat(comer);
+                
+                invoker.invoke(new AdjustMoraleCommand(coords, defender, attacker));
+            }
         }
         
         entity.setMovable(false);

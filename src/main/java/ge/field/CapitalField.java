@@ -2,6 +2,7 @@ package ge.field;
 
 import ge.entity.*;
 import ge.main.*;
+import ge.player.Player;
 import ge.utilities.*;
 import java.awt.*;
 import java.awt.font.*;
@@ -43,7 +44,7 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
     @Override
     public void spawn(Entity entity)
     {
-        placeEntity(entity);
+        setEntity(entity);
         entity.setMovable(true);
     }
     
@@ -53,7 +54,7 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
     }
 
     @Override
-    public Entity placeEntity(Entity comer)
+    public Entity placeEntity(Entity comer, Invoker<GameplayManager> invoker)
     {
         var oldOwner = owner;
         
@@ -74,19 +75,28 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
             else
             {
                 /* Defend. */
-                int attack = comer.strength();
-                int fortitude = getFortitude();
-                subtractFortitude(attack);
+                final Player defender = owner;
+                final Player attacker = comer.getOwner();
                 
-                if (attack > fortitude)
+                int attack = comer.strength();
+                int initialFortitude = getFortitude();
+                subtractFortitude(attack);
+
+                if (attack > initialFortitude)
                 {
                     // If the comer is stronger than this,
                     // the fortification is damaged and the comer conquers this field.
-                    comer.defeat(fortitude);
+                    comer.defeat(initialFortitude);
                     entity = comer;
                     owner = entity.getOwner();
+                    
+                    invoker.invoke(new AdjustMoraleCommand(coords, attacker, defender));
                 }
-                // else: Just subtract the attack (done); the comer perishes.
+                else
+                {
+                    //Just subtract the attack (done); the comer perishes.
+                    invoker.invoke(new AdjustMoraleCommand(coords, defender, attacker));
+                }
             }
         }
         else
@@ -99,24 +109,31 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
             else
             {
                 /* Militate. */
+                final Player defender = owner;
+                final Player attacker = comer.getOwner();
+                
                 final int defense = entity.strength();
-                final int fortitude = getFortitude();
+                final int initialFortitude = getFortitude();
                 final int attack = comer.strength();
                 
-                int fortitudeLoss = (int) ((double) fortitude / (fortitude + defense) * attack);
+                int fortitudeLoss = (int) ((double) initialFortitude / (initialFortitude + defense) * attack);
                 subtractFortitude(fortitudeLoss);
                 
-                if (defense + fortitude > attack)
+                if (defense + initialFortitude > attack)
                 {
-                    /* Victory. */
+                    /* Defender's Victory. */
                     entity.defeat(attack - fortitudeLoss);
+                    
+                    invoker.invoke(new AdjustMoraleCommand(coords, defender, attacker));
                 }
                 else
                 {
-                    /* Loss. */
-                    comer.defeat(defense + fortitude);
+                    /* Attacker's Victory. */
+                    comer.defeat(defense + initialFortitude);
                     entity = comer;
                     owner = comer.getOwner();
+                    
+                    invoker.invoke(new AdjustMoraleCommand(coords, attacker, defender));
                 }
             }
         }
