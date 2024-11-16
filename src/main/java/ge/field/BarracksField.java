@@ -15,7 +15,7 @@ public class BarracksField extends SpawnerField
     }
 
     @Override
-    public BuildingType getType()
+    public BuildingType type()
     {
         return BuildingType.BARRACKS;
     }

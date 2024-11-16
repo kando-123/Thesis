@@ -52,7 +52,7 @@ public class FortressField extends FortificationField
     }
 
     @Override
-    public BuildingType getType()
+    public BuildingType type()
     {
         return BuildingType.FORTRESS;
     }

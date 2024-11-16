@@ -91,6 +91,8 @@ public abstract class Entity
             }
         };
     }
+    
+    public abstract EntityType type();
 
     public void draw(Graphics2D graphics, int xPosition, int yPosition, int width, int height)
     {

@@ -16,7 +16,7 @@ public class FarmField extends CommercialField
     }
 
     @Override
-    public BuildingType getType()
+    public BuildingType type()
     {
         return BuildingType.FARM;
     }

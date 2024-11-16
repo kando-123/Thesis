@@ -139,9 +139,9 @@ public class HiringProcedure extends Procedure
             stage = HiringStage.FINISHED;
             
             invoker.invoke(new MarkForHiringCommand(false, player, type));
+            
             var entity = Entity.newInstance(type, player, number);
-            spawner.spawn(entity);
-            player.buy(type, number);
+            invoker.invoke(new HireCommand(spawner, entity));
         }
         else
         {

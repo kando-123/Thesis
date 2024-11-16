@@ -82,4 +82,10 @@ public class CavalryEntity extends Entity
     {
         return EntityType.CAVALRY;
     }
+
+    @Override
+    public EntityType type()
+    {
+        return EntityType.CAVALRY;
+    }
 }

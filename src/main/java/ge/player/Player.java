@@ -98,7 +98,7 @@ public abstract class Player
         {
             if (f.isOwned(this) && f instanceof BuildingField b)
             {
-                return b.getType() == building;
+                return b.type() == building;
             }
             else
             {
@@ -119,7 +119,7 @@ public abstract class Player
         {
             if (f instanceof BuildingField b && f.isOwned(this))
             {
-                return b.getType() == building;
+                return b.type() == building;
             }
             else
             {
@@ -129,9 +129,9 @@ public abstract class Player
         return building.price((int) current);
     }
     
-    public void buy(BuildingType building) throws TooLittleMoneyException
+    public void buy(BuildingField building) throws TooLittleMoneyException
     {
-        int cost = priceForNext(building);
+        int cost = priceForNext(building.type());
         if (cost > money)
         {
             throw new TooLittleMoneyException();
@@ -139,15 +139,18 @@ public abstract class Player
         money -= cost;
     }
     
-    public void buy(EntityType entity, int number)
+    public void buy(Entity entity)
     {
-        int cost = entity.price(number);
+        int number = entity.getNumber();
+        int cost = entity.type().price(number);
         if (cost > money)
         {
             throw new TooLittleMoneyException();
         }
         money -= cost;
     }
+    
+    
     
     public static class TooLittleMoneyException extends RuntimeException
     {

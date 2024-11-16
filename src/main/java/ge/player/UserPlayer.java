@@ -75,16 +75,16 @@ public class UserPlayer extends Player
     }
 
     @Override
-    public void buy(BuildingType building) throws TooLittleMoneyException
+    public void buy(BuildingField building) throws TooLittleMoneyException
     {
         super.buy(building);
         invoker.invoke(new UpdateMoneyCommand(getMoney()));
     }
 
     @Override
-    public void buy(EntityType entity, int number)
+    public void buy(Entity entity)
     {
-        super.buy(entity, number);
+        super.buy(entity);
         invoker.invoke(new UpdateMoneyCommand(getMoney()));
     }
     

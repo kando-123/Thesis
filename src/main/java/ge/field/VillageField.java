@@ -16,7 +16,7 @@ public class VillageField extends CommercialField
     }
 
     @Override
-    public BuildingType getType()
+    public BuildingType type()
     {
         return BuildingType.VILLAGE;
     }

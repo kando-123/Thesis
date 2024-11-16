@@ -115,6 +115,13 @@ public class GameplayManager
     void build(BuildingField building)
     {
         world.substitute(building);
+        building.getOwner().buy(building);
+    }
+    
+    void hire(Spawner spawner, Entity entity)
+    {
+        spawner.spawn(entity);
+        entity.getOwner().buy(entity);
     }
 
     void markForBuilding(boolean value, Player player, BuildingType building)

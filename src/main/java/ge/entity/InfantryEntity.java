@@ -82,4 +82,10 @@ public class InfantryEntity extends Entity
     {
         return EntityType.INFANTRY;
     }
+
+    @Override
+    public EntityType type()
+    {
+        return EntityType.INFANTRY;
+    }
 }

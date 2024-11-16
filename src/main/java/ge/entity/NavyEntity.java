@@ -2,7 +2,6 @@ package ge.entity;
 
 import ge.field.*;
 import ge.player.*;
-import ge.world.WorldAccessor;
 
 /**
  *
@@ -52,5 +51,11 @@ public class NavyEntity extends Entity
     public EntityType getExtractedType()
     {
         return EntityType.INFANTRY;
+    }
+
+    @Override
+    public EntityType type()
+    {
+        return EntityType.NAVY;
     }
 }
