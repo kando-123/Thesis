@@ -83,6 +83,7 @@ public class ViewManager
         userPanel.setBackground(accessor.getColor().rgb);
         userPanel.setUserName(accessor.getName());
         userPanel.setUserMoney(accessor.getMoney());
+        userPanel.resetShop();
         worldPanel.setCenter(accessor.getCenter());
     }
 

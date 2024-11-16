@@ -15,6 +15,8 @@ public class UserPanel extends JPanel implements ActionListener
 {
     private JLabel userNameLabel;
     private JLabel userMoneyLabel;
+    
+    private JTabbedPane tabbedPane;
 
     private final Invoker<ViewManager> invoker;
     
@@ -88,7 +90,7 @@ public class UserPanel extends JPanel implements ActionListener
         c.gridy = 0;
         c.weightx = 1;
         c.weighty = 1;
-        var tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         tabbedPane.add("New Building", makeBuildingButtonsPanel());
         tabbedPane.add("New Entity", makeEntityButtonsPanel());
         shopPanel.add(tabbedPane, c);
@@ -191,5 +193,10 @@ public class UserPanel extends JPanel implements ActionListener
     void setUserMoney(int money)
     {
         userMoneyLabel.setText(String.format("%d Ħ", money));
+    }
+    
+    void resetShop()
+    {
+        tabbedPane.setSelectedIndex(0);
     }
 }

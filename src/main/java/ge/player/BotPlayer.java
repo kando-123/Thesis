@@ -22,8 +22,13 @@ public class BotPlayer extends Player
     @Override
     public void play()
     {
-        // Through the invoker, send messages to the gameplay manager to demand actions.
         System.out.println("The %s Bot is playing.".formatted(getColor().toString()));
+        
+        // Recognize the situation.
+        // Repeat
+        //   List the available actions.
+        //   Pick.
+        // Decide to end.
         
         invoker.invoke(new NextPlayerCommand());
     }
