@@ -151,11 +151,18 @@ public class ViewManager
     {
         if (procedure != null)
         {
-            procedure.advance(field);
-            procedure = null;
+            try
+            {
+                procedure.advance(field);
+                procedure = null;
+            }
+            catch (Procedure.ProcedureException p)
+            {
+                procedure = new MovingProcedure(accessor, invoker);
+                procedure.advance(field);
+            }
         }
-        else if (field.isOccupied()
-                && field.isOwned(players.current()))
+        else if (field.isOccupied() && field.isOwned(players.current()))
         {
             procedure = new MovingProcedure(accessor, invoker);
             procedure.advance(field);

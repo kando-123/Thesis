@@ -96,6 +96,7 @@ public class ExtractingProcedure extends Procedure
             public void windowClosing(WindowEvent e)
             {
                 frame.requestFocus();
+                stage = ExtractingStage.ERROR;
             }
 
             @Override
@@ -154,6 +155,7 @@ public class ExtractingProcedure extends Procedure
             {
                 var extract = origin.getEntity();
                 extrahend.merge(extract);
+                extrahend.setMovable(true);
                 origin.setEntity(extrahend);
                 invoker.invoke(new MarkForMovingCommand(false, range));
             }
