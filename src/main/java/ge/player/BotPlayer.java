@@ -1,8 +1,11 @@
 package ge.player;
 
 import ge.main.*;
+import ge.player.action.Action;
 import ge.utilities.*;
 import ge.world.*;
+import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -19,16 +22,21 @@ public class BotPlayer extends Player
         this.invoker = invoker;
     }
 
+    private final Random random = new Random();
+    
     @Override
     public void play()
     {
         System.out.println("The %s Bot is playing.".formatted(getColor().toString()));
         
-        // Recognize the situation.
-        // Repeat
-        //   List the available actions.
-        //   Pick.
-        // Decide to end.
+        List<Action> actions = scanner.actions(this, accessor);
+        
+        int size = actions.size();
+        if (size > 0)
+        {
+            var action = actions.get(random.nextInt(size));
+            action.perform(invoker);
+        }
         
         invoker.invoke(new NextPlayerCommand());
     }

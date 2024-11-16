@@ -2,7 +2,12 @@ package ge.world;
 
 import ge.field.*;
 import ge.player.*;
+import ge.player.action.Action;
+import ge.player.action.BuildAction;
 import ge.utilities.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -71,5 +76,36 @@ public class WorldScanner
                 .mapToDouble(h -> h.getY())
                 .sum() / n;
         return Hex.at(x, y);
+    }
+    
+    public List<Action> actions(Player player, WorldAccessor accessor)
+    {
+        // Actions list.
+        var actions = new ArrayList<Action>();
+        
+        // Own fields.
+        var set = world.fieldStream()
+                .filter(f -> f.isOwned(player))
+                .collect(Collectors.toSet());
+        
+        // Building types.
+        var types = BuildingType.values();
+        
+        // Find what can be built.
+        for (var field : set)
+        {
+            var coords = field.getHex();
+            for (var type : types)
+            {
+                if (type.predicate(accessor).test(field) && player.hasMoney(type))
+                {
+                    var building = BuildingField.newInstance(type, coords);
+                    building.setOwner(player);
+                    actions.add(new BuildAction(building));
+                }
+            }
+        }
+        
+        return actions;
     }
 }
