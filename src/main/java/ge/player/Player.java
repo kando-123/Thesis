@@ -110,7 +110,12 @@ public abstract class Player
     
     public boolean hasMoney(EntityType entity)
     {
-        return money >= entity.price(1);
+        return hasMoney(entity, 1);
+    }
+    
+    public boolean hasMoney(EntityType entity, int number)
+    {
+        return money >= entity.price(number);
     }
 
     public int priceForNext(BuildingType building)

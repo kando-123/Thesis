@@ -1,6 +1,6 @@
 package ge.player.action;
 
-import ge.field.BuildingField;
+import ge.field.*;
 import ge.main.*;
 import ge.utilities.*;
 

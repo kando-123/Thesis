@@ -1,13 +1,12 @@
 package ge.world;
 
+import ge.entity.*;
 import ge.field.*;
 import ge.player.*;
-import ge.player.action.Action;
-import ge.player.action.BuildAction;
+import ge.player.action.*;
 import ge.utilities.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
 /**
  *
@@ -27,17 +26,17 @@ public class WorldScanner
     {
         return new WorldScanner(world);
     }
-    
+
     public long count(UnaryPredicate<Field> predicate)
     {
         return world.fieldStream().filter(f -> predicate.test(f)).count();
     }
-    
+
     public boolean any(UnaryPredicate<Field> predicate)
     {
         return world.fieldStream().anyMatch(f -> predicate.test(f));
     }
-    
+
     public int income(Player player)
     {
         return world
@@ -56,7 +55,7 @@ public class WorldScanner
                 })
                 .sum();
     }
-    
+
     public Hex center(Player player)
     {
         long n = world
@@ -77,25 +76,26 @@ public class WorldScanner
                 .sum() / n;
         return Hex.at(x, y);
     }
-    
-    public List<Action> actions(Player player, WorldAccessor accessor)
+
+    public List<Action> actions(Player player)
     {
         // Actions list.
         var actions = new ArrayList<Action>();
-        
+
         // Own fields.
         var set = world.fieldStream()
                 .filter(f -> f.isOwned(player))
                 .collect(Collectors.toSet());
         
-        // Building types.
-        var types = BuildingType.values();
-        
+        // Accessor - to avoid creating a multitude of instances in the loop.
+        var accessor = new WorldAccessor(world);
+
         // Find what can be built.
         for (var field : set)
         {
+            /* Get building action. */
             var coords = field.getHex();
-            for (var type : types)
+            for (var type : BuildingType.values())
             {
                 if (type.predicate(accessor).test(field) && player.hasMoney(type))
                 {
@@ -104,8 +104,36 @@ public class WorldScanner
                     actions.add(new BuildAction(building));
                 }
             }
+            
+            /* Get hiring action */
+            if (field instanceof Spawner spawner)
+            {
+                for (var type : EntityType.values())
+                {
+                    if (spawner.canSpawn(type))
+                    {
+                        for (int i = 1; i < Entity.MAXIMAL_NUMBER; ++i)
+                        {
+                            if (!player.hasMoney(type, i))
+                            {
+                                break;
+                            }
+                            actions.add(new HireAction(spawner, Entity.newInstance(type, player, i)));
+                        }
+                    }
+                }
+            }
+            
+            if (field.isOccupied())
+            {
+                Entity entity = field.getEntity();
+                for (var target : entity.range(coords, accessor))
+                {
+                    actions.add(new MoveAction(field, accessor.getField(target)));
+                }
+            }
         }
-        
+
         return actions;
     }
 }

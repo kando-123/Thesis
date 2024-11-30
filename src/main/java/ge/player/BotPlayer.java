@@ -29,7 +29,7 @@ public class BotPlayer extends Player
     {
         System.out.println("The %s Bot is playing.".formatted(getColor().toString()));
         
-        List<Action> actions = scanner.actions(this, accessor);
+        List<Action> actions = scanner.actions(this);
         
         int size = actions.size();
         if (size > 0)
