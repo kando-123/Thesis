@@ -88,7 +88,11 @@ public class World
         var coords = newField.getHex();
         if (fields.containsKey(coords))
         {
-            fields.put(coords, newField);
+            var old = fields.put(coords, newField);
+            if (old.isOccupied())
+            {
+                newField.setEntity(old.takeEntity());
+            }
         }
         else
         {

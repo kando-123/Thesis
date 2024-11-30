@@ -101,7 +101,10 @@ public class WorldScanner
                 {
                     var building = BuildingField.newInstance(type, coords);
                     building.setOwner(player);
-                    actions.add(new BuildAction(building));
+                    if (!actions.add(new BuildAction(building)))
+                    {
+                        return actions;
+                    }
                 }
             }
             
@@ -118,7 +121,11 @@ public class WorldScanner
                             {
                                 break;
                             }
-                            actions.add(new HireAction(spawner, Entity.newInstance(type, player, i)));
+                            var entity = Entity.newInstance(type, player, i);
+                            if (!actions.add(new HireAction(spawner, entity)))
+                            {
+                                return actions;
+                            }
                         }
                     }
                 }
@@ -129,7 +136,11 @@ public class WorldScanner
                 Entity entity = field.getEntity();
                 for (var target : entity.range(coords, accessor))
                 {
-                    actions.add(new MoveAction(field, accessor.getField(target)));
+                    var other = accessor.getField(target);
+                    if (!actions.add(new MoveAction(field, other)))
+                    {
+                        return actions;
+                    }
                 }
             }
         }

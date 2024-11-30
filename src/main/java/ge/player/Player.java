@@ -144,7 +144,7 @@ public abstract class Player
         money -= cost;
     }
     
-    public void buy(Entity entity)
+    public void buy(Entity entity) throws TooLittleMoneyException
     {
         int number = entity.getNumber();
         int cost = entity.type().price(number);
@@ -154,8 +154,6 @@ public abstract class Player
         }
         money -= cost;
     }
-    
-    
     
     public static class TooLittleMoneyException extends RuntimeException
     {
