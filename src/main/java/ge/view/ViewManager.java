@@ -51,7 +51,7 @@ public class ViewManager
         size.height *= 0.75;
         contentPane.setPreferredSize(size);
 
-        frame.addKeyListener(worldPanel.getKeyListener());
+        frame.addKeyListener(worldPanel.getInputHandler());
 
         frame.setContentPane(contentPane);
         frame.pack();
@@ -84,7 +84,11 @@ public class ViewManager
         userPanel.setUserName(accessor.getName());
         userPanel.setUserMoney(accessor.getMoney());
         userPanel.resetShop();
-        worldPanel.setCenter(accessor.getCenter());
+        
+        if (worldPanel != null && worldPanel.getInputHandler().moveCenter())
+        {
+            worldPanel.setCenter(accessor.getCenter());
+        }
     }
 
     void showBuildingInfo(BuildingType building)

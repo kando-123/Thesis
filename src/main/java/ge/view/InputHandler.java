@@ -12,6 +12,7 @@ public class InputHandler implements KeyListener
     private boolean control;
     
     private boolean moveCamera;
+    private boolean moveCenter;
     
     private boolean east;
     private boolean south;
@@ -24,6 +25,7 @@ public class InputHandler implements KeyListener
     InputHandler()
     {
         moveCamera = true;
+        moveCenter = true;
     }
     
     @Override
@@ -79,6 +81,14 @@ public class InputHandler implements KeyListener
             case KeyEvent.VK_CONTROL ->
             {
                 control = true;
+            }
+            
+            case KeyEvent.VK_C ->
+            {
+                if (control)
+                {
+                    moveCenter = !moveCenter;
+                }
             }
         }
     }
@@ -174,5 +184,10 @@ public class InputHandler implements KeyListener
     public boolean zoomOut()
     {
         return zoomOut;
+    }
+    
+    public boolean moveCenter()
+    {
+        return moveCenter;
     }
 }

@@ -54,7 +54,7 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         worldCenter.y = size.height / 2 - center.y;
     }
 
-    KeyListener getKeyListener()
+    InputHandler getInputHandler()
     {
         return inputHandler;
     }
