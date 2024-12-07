@@ -30,6 +30,12 @@ public enum EntityType
         return priceIntercept + number * priceSlope;
     }
     
+    public int maxNumber(int money)
+    {
+        int number = (money - priceIntercept) / priceSlope;
+        return (number < 0) ? 0 : number;
+    }
+    
     @Override
     public String toString()
     {

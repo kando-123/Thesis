@@ -1,11 +1,10 @@
 package ge.player;
 
 import ge.main.*;
-import ge.player.action.Action;
+import ge.player.action.*;
 import ge.utilities.*;
 import ge.world.*;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  *
@@ -29,20 +28,33 @@ public class BotPlayer extends Player
     {
         System.out.println("The %s Bot is playing.".formatted(getColor().toString()));
 
-        int i = 100;
         for (List<Action> actions = scanner.actions(this); !actions.isEmpty(); actions = scanner.actions(this))
         {
+//            int size = actions.size();
+//            
+//            assert (size > 0);
+//            System.out.print(size + ": ");
+//            
+//            var action = actions.get(random.nextInt(size));
+//            for (var a : actions)
+//            {
+//                System.out.print(a.getClass().getSimpleName().charAt(0) + " ");
+//            }
+//            System.out.println();
+//            action.perform(invoker);
+            
+            
             int size = actions.size();
-            System.out.println(size);
-            if (size > 0)
+            assert (size > 0);
+            
+            var generator = new WeightedGenerator<Action>();
+            for (var action : actions)
             {
-                var action = actions.get(random.nextInt(size));
-                action.perform(invoker);
+                generator.add(action, action.weight());
             }
-            if (--i == 0)
-            {
-                break;
-            }
+            
+            var action = generator.get();
+            action.perform(invoker);
         }
 
         invoker.invoke(new NextPlayerCommand());

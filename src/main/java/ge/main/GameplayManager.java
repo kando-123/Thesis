@@ -162,10 +162,8 @@ public class GameplayManager
 
     void move(Field origin, Field target)
     {
-        var entity = origin.getEntity();
+        var entity = origin.takeEntity();
         var player = entity.getOwner();
-
-        origin.takeEntity();
 
         try
         {
@@ -181,8 +179,10 @@ public class GameplayManager
                 for (var neighbor : hex.neighbors())
                 {
                     var field = world.getField(neighbor);
-                    if (field != null && !field.isOccupied()
-                        && field instanceof PlainsField && !(place instanceof SeaField))
+                    if (field != null
+                        && !field.isOccupied()
+                        && field instanceof PlainsField
+                        && !(place instanceof SeaField))
                     {
                         way.add(field);
                     }
@@ -198,12 +198,24 @@ public class GameplayManager
         {
             System.out.println(e.toString());
         }
-
+        
         var remainder = target.placeEntity(entity, self);
-        if (remainder != null)
-        {
+//        if (remainder != null)
+//        {
             origin.setEntity(remainder);
-        }
+//        }
+    }
+    
+    void extractAndMove(Field origin, Field target, int count)
+    {
+        var extrahend = origin.takeEntity();
+        var extract = extrahend.extract(count);
+        origin.setEntity(extract);
+        
+        move(origin, target);
+        var remainder = origin.takeEntity();
+        extrahend.merge(remainder);
+        origin.setEntity(extrahend);
     }
 
     void drop(Player loser)

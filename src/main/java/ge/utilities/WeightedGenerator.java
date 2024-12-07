@@ -22,7 +22,7 @@ public class WeightedGenerator<E>
         random = new Random();
     }
 
-    public static class NonpositiveWeightException extends Exception
+    public static class NonpositiveWeightException extends RuntimeException
     {
         public NonpositiveWeightException()
         {
@@ -30,7 +30,7 @@ public class WeightedGenerator<E>
         }
     }
     
-    public static class RepeatedElementException extends Exception
+    public static class RepeatedElementException extends RuntimeException
     {
         public RepeatedElementException()
         {
@@ -38,7 +38,7 @@ public class WeightedGenerator<E>
         }
     }
 
-    public void add(E element, int weight) throws NonpositiveWeightException, RepeatedElementException
+    public void add(E element, int weight)
     {
         if (elements.containsKey(element))
         {
@@ -55,7 +55,7 @@ public class WeightedGenerator<E>
         }
     }
 
-    public static class EmptyPoolException extends Exception
+    public static class EmptyPoolException extends RuntimeException
     {
         public EmptyPoolException()
         {
@@ -63,7 +63,7 @@ public class WeightedGenerator<E>
         }
     }
 
-    public E get() throws EmptyPoolException
+    public E get()
     {
         if (elements.isEmpty())
         {

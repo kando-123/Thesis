@@ -192,7 +192,7 @@ public class UserPanel extends JPanel implements ActionListener
     
     void setUserMoney(int money)
     {
-        userMoneyLabel.setText(String.format("%d Ħ", money));
+        userMoneyLabel.setText(String.format("%,d Ħ", money));
     }
     
     void resetShop()

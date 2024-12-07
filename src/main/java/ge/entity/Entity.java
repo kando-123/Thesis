@@ -159,9 +159,22 @@ public abstract class Entity
         movable = m;
     }
 
-    public boolean canMove()
+    public boolean canMove(Hex center, WorldAccessor accessor)
     {
-        return movable;
+        if (!movable)
+        {
+            return false;
+        }
+
+        for (var neighbor : center.neighbors())
+        {
+            var field = accessor.getField(neighbor);
+            if (field != null && canAccess(field))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected abstract boolean canAccess(Field field);
@@ -352,6 +365,7 @@ public abstract class Entity
     public Entity merge(Entity other)
     {
         movable = false;
+        other.movable = false;
         
         int aggregateNumber = number + other.number;
         int aggregateMorale = morale + other.morale;

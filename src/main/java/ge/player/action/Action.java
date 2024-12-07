@@ -10,4 +10,5 @@ import ge.utilities.*;
 public abstract class Action<T>
 {
     public abstract void perform(Invoker<T> invoker);
+    public abstract int weight();
 }

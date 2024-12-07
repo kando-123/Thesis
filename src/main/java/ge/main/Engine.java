@@ -1,9 +1,9 @@
 package ge.main;
 
 import ge.config.*;
-import ge.view.ViewManager;
+import ge.view.*;
 import ge.player.*;
-import ge.utilities.Invoker;
+import ge.utilities.*;
 import ge.world.*;
 import javax.swing.*;
 
