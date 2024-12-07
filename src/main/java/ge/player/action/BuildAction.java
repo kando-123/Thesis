@@ -1,12 +1,10 @@
 package ge.player.action;
 
 import ge.field.*;
-import ge.main.BuildCommand;
-import ge.main.GameplayManager;
-import ge.player.Player;
+import ge.main.*;
+import ge.player.*;
 import ge.utilities.*;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
 /**
  *
@@ -41,6 +39,24 @@ public class BuildAction extends Action<GameplayManager>
     @Override
     public int weight()
     {
-        return 3;
+        final int commercialWeight = 30;
+        final int spawnerWeight = 5;
+        final int fortificationWeight = 20;
+        if (type.isCommercial())
+        {
+            return commercialWeight;
+        }
+        else if (type.isSpawner())
+        {
+            return spawnerWeight;
+        }
+        else if (type.isFortification())
+        {
+            return fortificationWeight;
+        }
+        else
+        {
+            throw new RuntimeException(); // Never happens.
+        }
     }
 }

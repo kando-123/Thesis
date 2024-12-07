@@ -85,13 +85,13 @@ public class WorldScanner
             }
             
             var predicate = type.predicate(accessor);
-            var hexes = world.fieldStream()
+            var hexes = (Hex[]) world.fieldStream()
                     .filter(f -> f.isOwned(player) && predicate.test(f))
                     .map(f -> (Hex) f.getHex())
                     .toArray(Hex[]::new);
             if (hexes.length > 0)
             {
-                actions.add(new BuildAction(type, (Hex[]) hexes, player));
+                actions.add(new BuildAction(type, hexes, player));
             }
         }
         
@@ -129,6 +129,14 @@ public class WorldScanner
         for (var field : fields)
         {
             actions.add(new MoveAction(field, accessor));
+        }
+        
+        fields = world.fieldStream()
+                .filter(f -> f.isOwned(player) && f.isOccupied() && f.getEntity().canExtract(f.getHex(), accessor))
+                .toArray(Field[]::new);
+        for (var field : fields)
+        {
+            actions.add(new ExtractAction(field, accessor));
         }
 
         // Select an action and send appropriate command through the invoker:

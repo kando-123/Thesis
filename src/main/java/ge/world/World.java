@@ -457,7 +457,7 @@ public class World
         propagateRegions(regions, inlandness, takenArea);
 
         /* Find the capital candidates */
-        Hex[] capitalCandidates = getCapitalCandidates(number + MANIPULATION_MARGIN, regions);
+        Hex[] capitalCandidates = getCapitalCandidates(Math.min(number + MANIPULATION_MARGIN, regions.size()), regions);
 
         /* Find the max-weight combination */
         Hex[] capitals = findMaxWeightCombination(capitalCandidates, number);

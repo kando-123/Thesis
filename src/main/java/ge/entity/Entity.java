@@ -450,9 +450,15 @@ public abstract class Entity
     
     public abstract EntityType getExtractedType();
     
-    public boolean canExtract()
+    public boolean canExtract(Hex hex, WorldAccessor accessor)
     {
-        return movable && number > MINIMAL_NUMBER;
+        if (!movable || number <= MINIMAL_NUMBER)
+        {
+            return false;
+        }
+        var probationary = newInstance(getExtractedType(), owner, MINIMAL_NUMBER);
+        probationary.setMovable(true);
+        return probationary.canMove(hex, accessor);
     }
     
     public Entity extract(int extractedNumber)

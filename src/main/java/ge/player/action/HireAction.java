@@ -3,7 +3,7 @@ package ge.player.action;
 import ge.entity.*;
 import ge.field.*;
 import ge.main.*;
-import ge.player.Player;
+import ge.player.*;
 import ge.utilities.*;
 import java.util.*;
 
@@ -38,13 +38,16 @@ public class HireAction extends Action<GameplayManager>
                 ? maxNumber
                 : (int) RANDOM.nextInt(Entity.MINIMAL_NUMBER, maxNumber);
         var entity = Entity.newInstance(type, player, number);
+        if (type == EntityType.NAVY)
+            System.out.println("Hiring a navy");
         invoker.invoke(new HireCommand(spawner, entity));
     }
 
     @Override
     public int weight()
     {
-        return 1;
+        final int landEntityWeight = 6;
+        final int navyWeight = 1;
+        return type == EntityType.NAVY ? navyWeight : landEntityWeight;
     }
-
 }

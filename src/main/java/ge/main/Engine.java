@@ -45,7 +45,7 @@ public class Engine
         /* The construction of the two managers would need some polishing, but not now. */
         
         gameplayManager = new GameplayManager(world);
-        viewManager = new ViewManager(frame);
+        viewManager = new ViewManager(frame, new Invoker<>(this));
         
         gameplayManager.makePlayers(players, new Invoker<>(viewManager));
         viewManager.makeView(gameplayManager.getWorldRenderer(), gameplayManager.getWorldAccessor());
@@ -55,5 +55,12 @@ public class Engine
         viewManager.start();
         
         gameplayManager.begin();
+    }
+    
+    void reset()
+    {
+        configManager = new ConfigManager(frame, new Invoker<>(this));
+        viewManager = null;
+        gameplayManager = null;
     }
 }

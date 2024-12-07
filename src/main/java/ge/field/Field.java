@@ -138,6 +138,8 @@ public abstract class Field
 
     public Entity placeEntity(Entity comer, Invoker<GameplayManager> invoker)
     {
+        assert (comer.getNumber() > 0);
+        
         Entity remainder = null;
         if (entity == null)
         {

@@ -27,10 +27,13 @@ public class ViewManager
     private PlayersAccessor players;
 
     private Procedure procedure;
+    
+    private final Invoker<Engine> engineInvoker;
 
-    public ViewManager(JFrame frame)
+    public ViewManager(JFrame frame, Invoker<Engine> engineInvoker)
     {
         this.frame = frame;
+        this.engineInvoker = engineInvoker;
     }
 
     public void makeView(WorldRenderer renderer, WorldAccessor accessor)
@@ -181,7 +184,7 @@ public class ViewManager
             procedure = null;
         }
         if (field.isOccupied()
-                && field.getEntity().canExtract()
+                && field.getEntity().canExtract(field.getHex(), accessor)
                 && field.isOwned(players.current()))
         {
             procedure = new ExtractingProcedure(field, invoker, accessor);
@@ -208,5 +211,12 @@ public class ViewManager
     void showVictoryMessage(String name)
     {
         JOptionPane.showMessageDialog(frame, name.concat(" has won."));
+        engineInvoker.invoke(new ResetCommand());
+    }
+    
+    void showHumanityLossMessage()
+    {
+        JOptionPane.showMessageDialog(frame, "All human players lost. AI overtook the world.");
+        engineInvoker.invoke(new ResetCommand());
     }
 }

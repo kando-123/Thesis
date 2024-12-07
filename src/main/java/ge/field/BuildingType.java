@@ -187,4 +187,29 @@ public enum BuildingType
         return String.format("The first %s costs %d Ħ; every next costs %d Ħ more.",
                 resource, intercept, slope);
     }
+    
+    public boolean isCommercial()
+    {
+        return switch (this)
+        {
+            case FARM, MINE, TOWN, VILLAGE ->
+            {
+                yield true;
+            }
+            default ->
+            {
+                yield false;
+            }
+        };
+    }
+    
+    public boolean isSpawner()
+    {
+        return this == BARRACKS || this == SHIPYARD;
+    }
+    
+    public boolean isFortification()
+    {
+        return this == FORTRESS;
+    }
 }

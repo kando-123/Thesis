@@ -1,9 +1,15 @@
 package ge.player.action;
 
+import ge.entity.Entity;
+import ge.entity.EntityType;
 import ge.field.Field;
+import ge.main.ExtractAndMoveCommand;
 import ge.main.GameplayManager;
+import ge.utilities.Hex;
 import ge.utilities.Invoker;
+import ge.world.WorldAccessor;
 import java.util.Collection;
+import java.util.Random;
 
 /**
  *
@@ -12,26 +18,49 @@ import java.util.Collection;
 public class ExtractAction extends Action<GameplayManager>
 {
     private final Field origin;
-    private final int maximum;
-    private final Collection<Field> range;
+    private final WorldAccessor accessor;
 
-    public ExtractAction(Field origin, int maximum, Collection<Field> range)
+    public ExtractAction(Field origin, WorldAccessor accessor)
     {
         this.origin = origin;
-        this.maximum = maximum;
-        this.range = range;
+        this.accessor = accessor;
     }
+    
+    private static final Random RANDOM = new Random();
+    
+    public static class SomethingFuckedUpException extends RuntimeException {}
     
     @Override
     public void perform(Invoker<GameplayManager> invoker)
     {
-        throw new UnsupportedOperationException();
-        //invoker.invoke(new MoveCommand(origin, target));
+        var extrahend = origin.getEntity();
+        
+        var probationary = Entity.newInstance(extrahend.getExtractedType(), null, Entity.MINIMAL_NUMBER);
+        probationary.setMovable(true);
+        
+        int number = extrahend.getNumber();
+        int count = RANDOM.nextInt(Entity.MINIMAL_NUMBER, number);
+        
+        var range = probationary.range(origin.getHex(), accessor).toArray(Hex[]::new);
+        
+        if (range.length == 0)
+        {
+            System.out.println("Extraction error at: " + origin.getHex());
+        }
+        
+        var hex = range.length == 1 ? range[0] : range[RANDOM.nextInt(range.length)];
+        var field = accessor.getField(hex);
+        
+        invoker.invoke(new ExtractAndMoveCommand(origin, field, count));
     }
 
     @Override
     public int weight()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final int disembarkWeight = 20;
+        final int splitTroopWeight = 5;
+        return (origin.getEntity().type() == EntityType.NAVY)
+                ? disembarkWeight
+                : splitTroopWeight;
     }
 }

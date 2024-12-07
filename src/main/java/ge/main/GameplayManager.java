@@ -164,7 +164,7 @@ public class GameplayManager
     {
         var entity = origin.takeEntity();
         var player = entity.getOwner();
-
+        
         try
         {
             List<Hex> path = entity.path(origin, target, world.accessor());
@@ -196,14 +196,14 @@ public class GameplayManager
         }
         catch (Entity.GoalNotReachedException | Entity.TooFarAwayException e)
         {
-            System.out.println(e.toString());
+            System.out.println(e.toString() + " on path from " + origin.getHex() + " to " + target.getHex());
         }
         
         var remainder = target.placeEntity(entity, self);
-//        if (remainder != null)
-//        {
-            origin.setEntity(remainder);
-//        }
+        if (remainder != null)
+        {
+            origin.placeEntity(remainder, self);
+        }
     }
     
     void extractAndMove(Field origin, Field target, int count)
@@ -214,8 +214,11 @@ public class GameplayManager
         
         move(origin, target);
         var remainder = origin.takeEntity();
-        extrahend.merge(remainder);
-        origin.setEntity(extrahend);
+        if (remainder != null)
+        {
+            extrahend.merge(remainder);
+        }
+        origin.placeEntity(extrahend, null);
     }
 
     void drop(Player loser)
@@ -232,6 +235,10 @@ public class GameplayManager
         {
             var name = players.getFirst().getName();
             invoker.invoke(new VictoryMessageCommand(name));
+        }
+        else if (!players.stream().anyMatch(p -> p instanceof UserPlayer))
+        {
+            invoker.invoke(new HumanityLossMessageCommand());
         }
     }
 

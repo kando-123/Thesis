@@ -29,7 +29,8 @@ public class MoveAction extends Action<GameplayManager>
     public void perform(Invoker<GameplayManager> invoker)
     {
         var entity = origin.getEntity();
-        var range = entity.range(origin.getHex(), accessor).toArray(Hex[]::new);var hex = range[RANDOM.nextInt(range.length)];
+        var range = entity.range(origin.getHex(), accessor).toArray(Hex[]::new);
+        var hex = range[RANDOM.nextInt(range.length)];
         var field = accessor.getField(hex);
         invoker.invoke(new MoveCommand(origin, field));
     }
@@ -37,6 +38,7 @@ public class MoveAction extends Action<GameplayManager>
     @Override
     public int weight()
     {
-        return 5;
+        final int moveWeight = 60;
+        return moveWeight;
     }
 }

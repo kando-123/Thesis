@@ -21,28 +21,17 @@ public class BotPlayer extends Player
         this.invoker = invoker;
     }
 
-    private final Random random = new Random();
-
     @Override
     public void play()
     {
-        System.out.println("The %s Bot is playing.".formatted(getColor().toString()));
-
-        for (List<Action> actions = scanner.actions(this); !actions.isEmpty(); actions = scanner.actions(this))
+        for (int i = 0; i < 20; ++i)
         {
-//            int size = actions.size();
-//            
-//            assert (size > 0);
-//            System.out.print(size + ": ");
-//            
-//            var action = actions.get(random.nextInt(size));
-//            for (var a : actions)
-//            {
-//                System.out.print(a.getClass().getSimpleName().charAt(0) + " ");
-//            }
-//            System.out.println();
-//            action.perform(invoker);
+            List<Action> actions = scanner.actions(this);
             
+            if (actions.isEmpty())
+            {
+                break;
+            }
             
             int size = actions.size();
             assert (size > 0);
