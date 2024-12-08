@@ -142,7 +142,7 @@ public class BuildingProcedure extends Procedure
         else
         {
             stage = BuildingStage.ERROR;
-            invoker.invoke(new MarkForBuildingCommand(true, player, type));
+            invoker.invoke(new MarkForBuildingCommand(false, player, type));
         }
     }
 
