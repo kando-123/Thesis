@@ -1,8 +1,6 @@
 package ge.entity;
 
-import ge.view.BeginHiringCommand;
-import ge.view.EntityInfoCommand;
-import ge.view.ViewManager;
+import ge.view.*;
 import ge.utilities.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -28,13 +26,13 @@ public class EntityButton extends JButton
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                if (e.isShiftDown())
-                {
-                    invoker.invoke(new EntityInfoCommand(entity));
-                }
-                else
+                if (e.getButton() == MouseEvent.BUTTON1)
                 {
                     invoker.invoke(new BeginHiringCommand(entity));
+                }
+                else if (e.getButton() == MouseEvent.BUTTON3)
+                {
+                    invoker.invoke(new EntityInfoCommand(entity));
                 }
             }
         });

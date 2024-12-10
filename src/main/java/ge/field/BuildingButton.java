@@ -26,13 +26,13 @@ public class BuildingButton extends JButton
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                if (e.isShiftDown())
-                {
-                    invoker.invoke(new BuildingInfoCommand(building));
-                }
-                else
+                if (e.getButton() == MouseEvent.BUTTON1)
                 {
                     invoker.invoke(new BeginBuildingCommand(building));
+                }
+                else if (e.getButton() == MouseEvent.BUTTON3)
+                {
+                    invoker.invoke(new BuildingInfoCommand(building));
                 }
             }
         });

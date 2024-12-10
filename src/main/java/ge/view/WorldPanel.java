@@ -235,9 +235,17 @@ public class WorldPanel extends JPanel implements Runnable, MouseListener
         double relativeY = globalY - worldCenter.y;
         Hex hex = Hex.at(relativeX, relativeY, World.HEX_OUTER_RADIUS * scale, World.HEX_INNER_RADIUS * scale);
 
-        invoker.invoke(!e.isShiftDown()
-                ? new HandleClickCommand(accessor.getField(hex))
-                : new HandleShiftClickCommand(accessor.getField(hex)));
+        switch (e.getButton())
+        {
+            case MouseEvent.BUTTON1 ->
+            {
+                invoker.invoke(new HandleClickCommand(accessor.getField(hex)));
+            }
+            case MouseEvent.BUTTON3 ->
+            {
+                invoker.invoke(new HandleShiftClickCommand(accessor.getField(hex)));
+            }
+        }
     }
 
     @Override

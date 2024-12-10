@@ -96,7 +96,7 @@ public class UserPanel extends JPanel implements ActionListener
         shopPanel.add(tabbedPane, c);
         
         ++c.gridy;
-        var label = new JLabel("Shift-click to see info");
+        var label = new JLabel("Right-click to see info");
         label.setOpaque(true);
         label.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         label.setForeground(Color.DARK_GRAY);

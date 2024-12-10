@@ -31,6 +31,8 @@ public class Engine
     private Engine()
     {
         frame = new JFrame();
+        
+        // Menu
     }
     
     private void beginConfig()
