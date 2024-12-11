@@ -189,4 +189,22 @@ public class CapitalField extends PropertyField implements Fortification, Spawne
         
         graphics.drawString(attributedBar.getIterator(), (float) (xPosition + width / 4), (float) yPosition + size);
     }
+
+    @Override
+    public boolean isDamaged()
+    {
+        return fortitude < FORTITUDE;
+    }
+
+    @Override
+    public boolean isMaximal()
+    {
+        return true;
+    }
+
+    @Override
+    public void upgrade() throws CannotUpgradeException
+    {
+        throw new CannotUpgradeException();
+    }
 }

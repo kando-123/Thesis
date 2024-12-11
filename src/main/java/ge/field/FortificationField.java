@@ -111,7 +111,7 @@ public abstract class FortificationField extends BuildingField implements Fortif
 
         return remainder;
     }
-
+    
     private static final float BAR_HEIGHT_FRACTION = 0.2f;
 
     @Override

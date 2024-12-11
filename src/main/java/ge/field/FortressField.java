@@ -19,8 +19,8 @@ public class FortressField extends FortificationField
     {
         super(coords);
         
-        level = 0;
-        fortitude = FORTITUDE[level];
+        level = 1;
+        fortitude = FORTITUDE[level - 1];
     }
 
     @Override
@@ -34,16 +34,25 @@ public class FortressField extends FortificationField
     {
         fortitude = Math.max(fortitude - loss, MINIMAL_FORTITUDE);
     }
-
-    private static class CannotUpgradeException extends Exception
+    
+    @Override
+    public boolean isDamaged()
     {
+        return fortitude < FORTITUDE[level - 1];
     }
     
-    private void upgrade() throws CannotUpgradeException 
+    @Override
+    public boolean isMaximal()
     {
-        if (level < LEVELS - 1)
+        return level == LEVELS;
+    }
+    
+    @Override
+    public void upgrade() throws CannotUpgradeException
+    {
+        if (level < LEVELS)
         {
-            fortitude = FORTITUDE[++level];
+            fortitude = FORTITUDE[level++];
         }
         else
         {

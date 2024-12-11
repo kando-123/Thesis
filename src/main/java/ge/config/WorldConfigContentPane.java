@@ -150,7 +150,7 @@ public class WorldConfigContentPane extends JPanel implements ActionListener
         c.anchor = GridBagConstraints.CENTER;
         add(back, c);
         
-        var button = new JButton("Next ↪");
+        var button = new JButton("Play ✓");
         button.setActionCommand("->gameplay");
         button.addActionListener(this);
         c = new GridBagConstraints();

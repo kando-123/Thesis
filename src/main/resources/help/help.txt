@@ -1,0 +1,119 @@
+Configuration
+	Players
+	World
+Gameplay
+	Country
+	Buildings
+		Building Procedure
+		Commercial
+		Spawners
+		Fortifications
+		Capital
+	Entities
+		Spawning Procedure
+		Movement Procedure
+			Merging Scenario
+			Militation Scenario
+		Extraction Procedure
+	Victory
+
+Players Configuration
+
+In "The Global Empire", there can be up to eight players. They can be human players and bots. There must be at least one human player. There must be at least two players in total.
+Later, the User can come back to this view.
+
+Number of Players
+In the players configuration view, the User can choose how many human players and bots there will be. On selecting the number of players of one kind by clicking appropriate circle button, the last buttons in the other kind will be disabled, because it is impossible to declare more players than the limit is.
+
+Parameters of Players
+For every declared player, their color can be chosen. Option "Random" can also be selected. Every color is unique: once a player is assigned certain color, no one else can have that color (it is dropped from other lists).
+Human players can introduce their names. They do not have to be unique (but it is advised). Inputting an empty name results in the player being named "Anonymous the Conqueror".
+
+
+World Configuration
+
+After players configuration, the User is to parameterize the world. They can choose: how big, marine and mountainous the world will be. The parameters are selected with sliders.
+From this view, the User can come back to players configuration view. After clicking "Play", the gameplay begins and one cannot come back to configuration.
+
+World Size
+The world is a hexagon comprising hexagonal fields. The world size is defined by the side of the map. The value ranges from 15 to 30. Four values are named: small (15), medium (20), big (25) and large (30). Medium is the default value.
+
+Sea Share
+With the next slider, the User decides how much of the world surface will be sea. The value ranges from 20% to 60%. Three values are named: lakes (20%), seas (40%) and oceans (60%). Seas is the default value.
+
+Mountains Share
+The last slider serves defining how much of the land surface should will be mountains. The value ranges from 10% to 40%. Three values are named: few (10%), medium (25%) and many (40%). Medium is the default value.
+
+
+Country
+
+Every player owns a country. A country consists at least of the player's capital. Initially, the land fields adjacent to the capital belong to the country, too. The owner can conquer new territories, construct buildings within the country and spawn entities that can be later moved. The country is destroyed when the capital is conquered. Then, the fields become nobody's and the entities perish.
+
+Buildings
+
+The User can purchase buildings to develop their country. There are commercial buildings, spawners and fortifications. The price for a building increases with the number of the buildings of that type the player already possesses.
+
+Building Procedure
+To buy and construct a new building, the player left-clicks appropriate button in the shop. If they have no place or money for the building, a message is shown. Otherwise, the player is shown a confirmation window with the price. After clicking "Confirm", the fields are lit where the building can be placed. After clicking one of these fields, the building is placed there. In case of clicking somewhere else, the procedure is canceled.
+To see information window about a building, the button can be right-clicked.
+
+Commercial Buildings
+The commercial buildings bring income after every round. There are four types in this category:
+	- town,
+	- village,
+	- farmfield,
+	- mine.
+They differ in requirements for fields where they can be built, the income they produce and the price.
+
+TYPE      | INCOME | PRICE*     | REQUIREMENTS
+town      | 150    | 500 + 50n | plains field
+village   |  25    | 150 + 15n | plains field
+farmfield |  50    | 100 + 10n | plains field next to a village
+mine      | 100    | 250 + 25n | mountains field
+*The price is given with parameter n - the number of buildings of that kind the player already has in their country. E.g. when you are building the first town (n = 0), it costs 500 Ħ, the second (n = 1) - 550 Ħ, the third (n = 2) - 600 Ħ etc.
+
+Spawners
+To spawn a new entity, you need a spawner. There are two kinds of spawners: barracks and shipyard. In barracks, the land entities can be spawned: infantry and cavalry. In a shipyard, navy can be spawned. In the round it was spawned, the entity cannot be moved.
+
+TYPE     | PRICE*     | REQUIREMENTS
+Barracks | 250 + 25n  | plains field
+Shipyard | 700 + 100n | plains field next to a sea
+*The price is given with parameter n - the number of buildings of that kind the player already has in their country.
+
+Fortifications
+In the current version of the game, there is only one fortification field: the fortress. It gives 100 additional, field-fixed defense points that play a role in militation (see: Actions/Movement Procedure/Militation Scenario).
+
+A fotress costs 750 Ħ, every next one costs 50 Ħ more. It can be build on a land field (plains or mountains).
+
+Capital
+
+The capital is technically not considered a 'building' because it cannot be built; it is single for all the lifetime of a player's country. However, it has the features of:
+- commercial field: it brings 200 Ħ every round,
+- spawner: infantry and cavalry can be spawned there AND they can be moved immediately after spawning,
+- fortification: it has 200 defense points.
+
+
+Entities
+
+To conquer new territories and fight the others, the player can spawn entities. There are three types of entities:
+- infantry,
+- cavalry,
+- navy.
+
+Spawning Procedure
+To spawn an entity, the player left-###
+
+
+
+
+They differ in how they move and how much they cost. An entity is actually thought of as a troop of soldiers. Their number ranges from 1 to 100.
+
+TYPE     | PRICE*    | MOVEMENT
+infantry | 20n       | up to 2 continental fields
+cavalry  | 25n       | up to 4 plains fields, up to 1 mountains field
+navy     | 130 + 20n | up to 4 sea fields
+
+An entity cannot go through a field that is occupied by another one. In some cases, however, it is possible to go onto that field (and end the move there).
+
+Land entities conquer the fields they pass through AND the neighboring plains fields. Thus, cavalry is good for conquering vast plains territories.
+

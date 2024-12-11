@@ -197,6 +197,7 @@ public class ViewManager
             procedure = new ExtractingProcedure(field, invoker, accessor);
             procedure.advance(frame);
         }
+        // Repair and upgrade a fortification.
     }
 
     void finish()

@@ -7,4 +7,11 @@ package ge.field;
 public interface Fortification
 {
     public int getFortitude();
+    
+    public static class CannotUpgradeException extends Exception
+    {
+    }
+    public abstract boolean isDamaged();
+    public abstract boolean isMaximal();
+    public abstract void upgrade() throws CannotUpgradeException;
 }

@@ -49,7 +49,7 @@ public class Main extends JFrame
 
         // Create tree structure for help topics
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Help Topics");
-        DefaultMutableTreeNode topic1 = new DefaultMutableTreeNode("Topic 1");
+        DefaultMutableTreeNode topic1 = new DefaultMutableTreeNode("Players Configuration");
         DefaultMutableTreeNode topic2 = new DefaultMutableTreeNode("Topic 2");
 
         root.add(topic1);

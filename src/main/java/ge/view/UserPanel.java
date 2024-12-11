@@ -137,22 +137,22 @@ public class UserPanel extends JPanel implements ActionListener
         c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
 
-        var undoButton = new JButton("Undo ↺");
-        undoButton.setActionCommand("undo");
-        undoButton.addActionListener(this);
-        buttonsPanel.add(undoButton, c);
-        
-        undoButton.setEnabled(false);
-        undoButton.setToolTipText("(not supported yet)");
-
-        c.gridx = 1;
-        var redoButton = new JButton("Redo ↻");
-        redoButton.setActionCommand("redo");
-        redoButton.addActionListener(this);
-        buttonsPanel.add(redoButton, c);
-        
-        redoButton.setEnabled(false);
-        redoButton.setToolTipText("(not supported yet");
+//        var undoButton = new JButton("Undo ↺");
+//        undoButton.setActionCommand("undo");
+//        undoButton.addActionListener(this);
+//        buttonsPanel.add(undoButton, c);
+//        
+//        undoButton.setEnabled(false);
+//        undoButton.setToolTipText("(not supported yet)");
+//
+//        c.gridx = 1;
+//        var redoButton = new JButton("Redo ↻");
+//        redoButton.setActionCommand("redo");
+//        redoButton.addActionListener(this);
+//        buttonsPanel.add(redoButton, c);
+//        
+//        redoButton.setEnabled(false);
+//        redoButton.setToolTipText("(not supported yet");
 
         c.gridx = 0;
         c.gridy = 1;
