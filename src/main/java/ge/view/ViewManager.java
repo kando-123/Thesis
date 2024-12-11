@@ -224,7 +224,7 @@ public class ViewManager
     
     void showHumanityLossMessage()
     {
-        JOptionPane.showMessageDialog(frame, "All human players lost. AI overtook the world.");
+        JOptionPane.showMessageDialog(frame, "All human players lost. AI took over the world.");
         engineInvoker.invoke(new ResetCommand());
     }
 }

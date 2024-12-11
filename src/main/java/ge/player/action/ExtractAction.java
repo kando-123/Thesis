@@ -47,11 +47,13 @@ public class ExtractAction extends Action<GameplayManager>
         {
             System.out.println("Extraction error at: " + origin.getHex());
         }
-        
-        var hex = range.length == 1 ? range[0] : range[RANDOM.nextInt(range.length)];
-        var field = accessor.getField(hex);
-        
-        invoker.invoke(new ExtractAndMoveCommand(origin, field, count));
+        else
+        {
+            var hex = range.length == 1 ? range[0] : range[RANDOM.nextInt(range.length)];
+            var field = accessor.getField(hex);
+
+            invoker.invoke(new ExtractAndMoveCommand(origin, field, count));
+        }
     }
 
     @Override

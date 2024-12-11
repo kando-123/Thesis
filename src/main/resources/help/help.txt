@@ -1,21 +1,25 @@
 Configuration
-	Players
-	World
+    Players
+    World
 Gameplay
-	Country
-	Buildings
-		Building Procedure
-		Commercial
-		Spawners
-		Fortifications
-		Capital
-	Entities
-		Spawning Procedure
-		Movement Procedure
-			Merging Scenario
-			Militation Scenario
-		Extraction Procedure
-	Victory
+    Country
+    Buildings
+        Building Procedure
+        Commercial
+        Spawners
+        Fortifications
+        Capital
+    Entities
+        Spawning Procedure
+        Movement Procedure
+            Merging Scenario
+            Militation Scenario
+        Extraction Procedure
+    Victory
+View
+    Shifting
+    Zooming
+    Resetting
 
 Players Configuration
 
@@ -42,7 +46,7 @@ Sea Share
 With the next slider, the User decides how much of the world surface will be sea. The value ranges from 20% to 60%. Three values are named: lakes (20%), seas (40%) and oceans (60%). Seas is the default value.
 
 Mountains Share
-The last slider serves defining how much of the land surface should will be mountains. The value ranges from 10% to 40%. Three values are named: few (10%), medium (25%) and many (40%). Medium is the default value.
+The last slider serves defining how much of the land surface will be mountains. The value ranges from 10% to 40%. Three values are named: few (10%), medium (25%) and many (40%). Medium is the default value.
 
 
 Country
@@ -65,7 +69,7 @@ The commercial buildings bring income after every round. There are four types in
 	- mine.
 They differ in requirements for fields where they can be built, the income they produce and the price.
 
-TYPE      | INCOME | PRICE*     | REQUIREMENTS
+TYPE      | INCOME | PRICE*    | REQUIREMENTS
 town      | 150    | 500 + 50n | plains field
 village   |  25    | 150 + 15n | plains field
 farmfield |  50    | 100 + 10n | plains field next to a village
@@ -101,19 +105,61 @@ To conquer new territories and fight the others, the player can spawn entities. 
 - navy.
 
 Spawning Procedure
-To spawn an entity, the player left-###
+To spawn an entity, the User left-clicks appropriate button. In case the player has too little money to buy even a single soldier, a message is shown. Otherwise, a window is shown and the User can select how many soldiers they want to buy and how much it will cost.
+There are different prices for the entities. An entity is actually thought of as a troop of soldiers. Their number ranges from 1 to 100. The price depends on the number of soldiers, as shown below.
 
+TYPE     | PRICE*   
+infantry | 20n      
+cavalry  | 25n      
+navy     | 130 + 20n
 
+Movement Procedure
+To move an entity, one needs to left-click it. If the entity can move, the movement range is lit. When the User clicks one of them, the entity is moved there.
+The entities differ in the way they move, as shown in the table below.
 
-
-They differ in how they move and how much they cost. An entity is actually thought of as a troop of soldiers. Their number ranges from 1 to 100.
-
-TYPE     | PRICE*    | MOVEMENT
-infantry | 20n       | up to 2 continental fields
-cavalry  | 25n       | up to 4 plains fields, up to 1 mountains field
-navy     | 130 + 20n | up to 4 sea fields
+TYPE     | MOVEMENT
+infantry | up to 2 continental fields
+cavalry  | up to 4 plains fields, up to 1 mountains field
+navy     | up to 4 sea fields
 
 An entity cannot go through a field that is occupied by another one. In some cases, however, it is possible to go onto that field (and end the move there).
 
+An entity can move at most once a round.
+
 Land entities conquer the fields they pass through AND the neighboring plains fields. Thus, cavalry is good for conquering vast plains territories.
 
+Merge Scenario
+Two troops belonging to the same player can be joined. This can simply be done by moving an entity to a field where a fellow troop stays.
+Merging can happen only in the following cases:
+Only these merges can happen:
+- infantry joins infantry,
+- cavalry joins cavalry,
+- infantry embarks navy.
+The resulting troop cannot have a number greater than maximal. The surplus soldiers will remain on the original field, none will disappear.
+
+Militation Scenario
+Apart from number, the entities are characterized by morale. It is a value that raises or drops when a nearby fellow wins or loses, respectively.
+If an entity encounters another player's entity or fortification, a battle happens. The force of the attacker is number + morale, the defender's is number + morale + fortification's fortitude. The attacker wins if and only if they are stronger. The loser perishes, but the winner is damaged by as many points as the loser's force. The damage is split among the number, morale (and fortitude) proportionally.
+
+Extraction Procedure
+A troop can be extracted from an entity. To do this, the User right-clicks the entity. A window appears for the User to select how many soldiers they want to extract. Then, the original entity is replaced with the extracted one, which is normally moved. After that, the remaining original troop is placed back.
+If the movement is canceled by clicking outside of the lit range, the extraction is reverted.
+Extraction is impossible if the entity comprises 1 soldier, if the entity cannot move (it has already been moved or it has just been spawned in a spawner), or if the extracted entity would have no range of movement.
+
+
+Victory
+
+The goal is to remain the last country alive. If the human player wins, an information of their victory is shown. If the last human player loses with only bots remaining, the game is continued and an information is shown that AI took over the world.
+
+
+View
+
+Shifting
+The world can be moved by means of WSAD keys or arrows. By default, it is the camera that is moved over the world (W = the User flied northwards). To move the world (W = the world is moved northwards), use Ctrl+M.
+By default, at the beginning of a human player's move, the world is moved so that the center of the world be in the center of the world panel. To disable this, use Ctrl+C.
+
+Zooming
+Keys QE and numpad PageUp/PageDown serve zooming out and in.
+
+Resetting
+If a key is pressed, and a dialog window is opened before the key was released, the game does not 'see' it should stop shifting or zooming the world. In such case, retype the key or simply press space.

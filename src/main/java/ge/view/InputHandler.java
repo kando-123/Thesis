@@ -57,11 +57,11 @@ public class InputHandler implements KeyListener
                 north = true;
             }
             
-            case KeyEvent.VK_E, KeyEvent.VK_ADD ->
+            case KeyEvent.VK_E, KeyEvent.VK_PAGE_DOWN ->
             {
                 zoomIn = true;
             }
-            case KeyEvent.VK_Q, KeyEvent.VK_SUBTRACT ->
+            case KeyEvent.VK_Q, KeyEvent.VK_PAGE_UP ->
             {
                 zoomOut = true;
             }
@@ -115,11 +115,11 @@ public class InputHandler implements KeyListener
             {
                 north = false;
             }
-            case KeyEvent.VK_E, KeyEvent.VK_ADD ->
+            case KeyEvent.VK_E, KeyEvent.VK_PAGE_DOWN ->
             {
                 zoomIn = false;
             }
-            case KeyEvent.VK_Q, KeyEvent.VK_SUBTRACT ->
+            case KeyEvent.VK_Q, KeyEvent.VK_PAGE_UP ->
             {
                 zoomOut = false;
             }
