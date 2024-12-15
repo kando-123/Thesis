@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <h1>Buildings</h1>
+
+            <p>The User can purchase buildings to develop their country. There are commercial buildings, spawners and fortifications. The price for a building increases with the number of the buildings of that type the player already possesses.</p>
+
+            <h2>Building Procedure</h2>
+            <p>To buy and construct a new building, the player left-clicks appropriate button in the shop. If they have no place or money for the building, a message is shown. Otherwise, the player is shown a confirmation window with the price. After clicking "Confirm", the fields are lit where the building can be placed. After clicking one of these fields, the building is placed there. In case of clicking somewhere else, the procedure is canceled.</p>
+            <p>To see information window about a building, the button can be right-clicked.</p>
+
+            <h2>Commercial Buildings</h2>
+            <p>The commercial buildings bring income after every round. There are four types in this category:</p>
+            <ul>
+                <li>town,</li>
+                <li>village,</li>
+                <li>farmfield,</li>
+                <li>mine.</li>
+            </ul>
+            <p>They differ in requirements for fields where they can be built, the income they produce and the price.</p>
+
+            <table border="1">
+                <tr>
+                    <th>TYPE</th>
+                    <th>INCOME</th>
+                    <th>PRICE*</th>
+                    <th>REQUIREMENTS</th>
+                </tr>
+                <tr>
+                    <td>town</td>
+                    <td>150</td>
+                    <td>500 + 50<i>n</i></td>
+                    <td>plains field</td>
+                </tr>
+                <tr>
+                    <td>village</td>
+                    <td>25</td>
+                    <td>150 + 15<i>n</i></td>
+                    <td>plains field</td>
+                </tr>
+                <tr>
+                    <td>farmfield</td>
+                    <td>50</td>
+                    <td>100 + 10<i>n</i></td>
+                    <td>plains field next to a village</td>
+                </tr>
+                <tr>
+                    <td>mine</td>
+                    <td>100</td>
+                    <td>250 + 25<i>n</i></td>
+                    <td>mountains field</td>
+                </tr>
+            </table>
+            <p>*The price is given with parameter n - the number of buildings of that kind the player already has in their country. E.g. when you are building the first town (n = 0), it costs 500 ĦexCoins, the second (n = 1) - 550 Ħ, the third (n = 2) - 600 Ħ etc.</p>
+
+            <h2>Spawners</h2>
+            <p>To spawn a new entity, you need a spawner. There are two kinds of spawners: barracks and shipyard. In barracks, the land entities can be spawned: infantry and cavalry. In a shipyard, navy can be spawned. In the round it was spawned, the entity cannot be moved.</p>
+
+            <table border="1">
+                <tr>
+                    <th>TYPE</th>
+                    <th>PRICE*</th>
+                    <th>REQUIREMENTS</th>
+                </tr>
+                <tr>
+                    <td>Barracks</td>
+                    <td>250 + 25<i>n</i></td>
+                    <td>plains field</td>
+                </tr>
+                <tr>
+                    <td>Shipyard</td>
+                    <td>700 + 100<i>n</i></td>
+                    <td>plains field next to a sea</td>
+                </tr>
+            </table>
+            <p>*The price is given with parameter n - the number of buildings of that kind the player already has in their country.</p>
+
+            <h2>Fortifications</h2>
+            <p>In the current version of the game, there is only one fortification field: the fortress. It gives 100 additional, field-fixed defense points that play a role in militation (see: Actions/Movement Procedure/Militation Scenario).</p>
+
+            <p>A fotress costs 750 ĦexCoins, every next one costs 50 Ħ more. It can be build on a land field (plains or mountains).</p>
+
+            <h2>Capital</h2>
+
+            <p>The capital is technically not considered a <q>building</q> because it cannot be built; it is single for all the lifetime of a player's country. However, it joins the features of:</p>
+            <ul>
+                <li>commercial field: it brings 200 ĦexCoins every round,</li>
+                <li>spawner: infantry and cavalry can be spawned there AND they can be moved immediately after spawning,</li>
+                <li>fortification: it has 200 defense points.</li>
+            </ul>
+        </div>
+    </body>
+</html>

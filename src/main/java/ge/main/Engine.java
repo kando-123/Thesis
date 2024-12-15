@@ -5,6 +5,7 @@ import ge.view.*;
 import ge.player.*;
 import ge.utilities.*;
 import ge.world.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -31,8 +32,21 @@ public class Engine
     private Engine()
     {
         frame = new JFrame();
-        
-        // Menu
+        var menuBar = new JMenuBar();
+        var helpMenu = new JMenu("Help");
+        var helpItem = new JMenuItem("Show Help");
+        helpItem.addActionListener((ActionEvent e) -> showHelpWindow());
+        helpMenu.add(helpItem);
+        menuBar.add(helpMenu);
+        frame.setJMenuBar(menuBar);
+    }
+    
+    private void showHelpWindow()
+    {
+        var help = new HelpFrame(frame);
+        help.setSize(600, 400);
+        help.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        help.setLocationRelativeTo(null);
     }
     
     private void beginConfig()

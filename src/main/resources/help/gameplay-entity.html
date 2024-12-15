@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <h1>Entities</h1>
+
+            <p>To conquer new territories and fight the others, the player can spawn entities. There are three types of entities:</p>
+            <ul>
+                <li>infantry</li>
+                <li>cavalry</li>
+                <li>navy</li>
+            </ul>
+
+            <h2>Spawning Procedure</h2>
+            <p>To spawn an entity, the User left-clicks appropriate button. In case the player has too little money to buy even a single soldier, a message is shown. Otherwise, a window is shown and the User can select how many soldiers they want to buy and how much it will cost.</p>
+            <p>There are different prices for the entities. An entity is actually thought of as a troop of soldiers. Their number ranges from 1 to 100. The price depends on the number of soldiers, as shown below.</p>
+
+            <table border="1">
+                <tr>
+                    <th>TYPE</th>
+                    <th>PRICE*</th>
+                </tr>
+                <tr>
+                    <td>infantry</td>
+                    <td>20<i>n</i></td>
+                </tr>
+                <tr>
+                    <td>cavalry</td>
+                    <td>25<i>n</i></td>
+                </tr>
+                <tr>
+                    <td>navy</td>
+                    <td>130 + 20<i>n</i></td>
+                </tr>
+            </table>
+
+            <h2>Movement Procedure</h2>
+            <p>To move an entity, one needs to left-click it. If the entity can move, the movement range is lit. When the User clicks one of them, the entity is moved there.</p>
+            <p>The entities differ in the way they move, as shown in the table below.</p>
+
+            <table border="1">
+                <tr>
+                    <th>TYPE</th>
+                    <th>MOVEMENT</th>
+                </tr>
+                <tr>
+                    <td>infantry</td>
+                    <td>up to 2 continental fields</td>
+                </tr>
+                <tr>
+                    <td>cavalry</td>
+                    <td>up to 4 plains fields, up to 1 mountains field</td>
+                </tr>
+                <tr>
+                    <td>navy</td>
+                    <td>up to 4 sea fields</td>
+                </tr>
+            </table>
+
+            <p>An entity cannot go through a field that is occupied by another one. In some cases, however, it is possible to go onto that field (and end the move there).</p>
+
+            <p>An entity can move at most once a round.</p>
+
+            <p>Land entities conquer the fields they pass through <em>and</em> the neighboring plains fields. Thus, cavalry is good for conquering vast plains territories.
+
+            <h3>Merge Scenario</h3>
+            <p>Two troops belonging to the same player can be joined. This can simply be done by moving an entity to a field where a fellow troop stays.</p>
+            <p> Merging can happen only in the following cases:</p>
+            <ul>
+                <li>infantry joins infantry,</li>
+                <li>cavalry joins cavalry,</li>
+                <li>infantry embarks navy.</li>
+            </ul>
+            <p>The resulting troop cannot have a number greater than maximal. The surplus soldiers, if any, will remain on the original field, none will disappear.</p>
+
+            <h3>Militation Scenario</h3>
+            <p>Apart from number, the entities are characterized by morale. It is a value that raises or drops when a nearby fellow wins or loses, respectively.</p>
+            <p>If an entity encounters another player's entity or fortification, a battle happens. The force of the attacker is number + morale, the defender's is number + morale + fortification's fortitude. The attacker wins if and only if they are stronger. The loser perishes, but the winner is damaged by as many points as the loser's force. The damage is split among the number, morale (and fortitude) proportionally.</p>
+
+            <h2>Extraction Procedure</h2>
+            <p>A troop can be extracted from an entity. To do this, the User right-clicks the entity. A window appears for the User to select how many soldiers they want to extract. Then, the original entity is replaced with the extracted one, which is normally moved. After that, the remaining original troop is placed back.</p>
+            <p>If the movement is canceled by clicking outside of the lit range, the extraction is reverted.</p>
+            <p>Extraction is impossible if the entity comprises 1 soldier, if the entity cannot move (it has already been moved or it has just been spawned in a spawner), or if the extracted entity would have no range of movement.</p>
+        </div>
+    </body>
+</html>
