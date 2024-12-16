@@ -1,8 +1,8 @@
 package ge.main;
 
-import ge.field.BuildingType;
-import ge.player.Player;
-import ge.utilities.Command;
+import ge.field.*;
+import ge.player.*;
+import ge.utilities.*;
 
 /**
  *
