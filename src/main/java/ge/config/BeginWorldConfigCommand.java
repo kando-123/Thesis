@@ -11,6 +11,6 @@ public class BeginWorldConfigCommand extends Command<ConfigManager>
     @Override
     public void execute(ConfigManager executor)
     {
-        executor.beginWorldConfig();
+        executor.doWorldConfig();
     }
 }

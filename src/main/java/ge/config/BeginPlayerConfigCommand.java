@@ -11,6 +11,6 @@ public class BeginPlayerConfigCommand extends Command<ConfigManager>
     @Override
     public void execute(ConfigManager executor)
     {
-        executor.beginPlayerConfig();
+        executor.doPlayerConfig();
     }
 }

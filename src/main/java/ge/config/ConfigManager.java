@@ -9,20 +9,46 @@ import javax.imageio.*;
 import javax.swing.*;
 
 /**
- *
+ * Manager of the configuration stage of the game.
+ * 
+ * The object administers the frame it receives on construction. When the configuration is
+ * finished, the engine is informed by appropriate command.
+ * 
  * @author Kay Jay O'Nail
  */
 public class ConfigManager
 {
+    /**
+     * Invoker to the Engine object that created this ConfigManager.
+     */
     private final Invoker<Engine> invoker;
 
+    /**
+     * Frame where the manager puts views.
+     */
     private JFrame frame;
 
+    /**
+     * Content pane used at player configuration.
+     */
     private PlayerConfigContentPane playerContentPane;
+    
+    /**
+     * Content pane used at world configuration.
+     */
     private WorldConfigContentPane worldContentPane;
 
+    /**
+     * Size of the content pane.
+     */
     private final Dimension contentPaneSize;
 
+    /**
+     * Constructor.
+     * 
+     * @param frame frame the manager will use
+     * @param invoker invoker the manager will call the engine through
+     */
     public ConfigManager(JFrame frame, Invoker<Engine> invoker)
     {
         this.invoker = invoker;
@@ -54,7 +80,10 @@ public class ConfigManager
         }
     }
 
-    void beginPlayerConfig()
+    /**
+     * Begins or comes back to the player configuration content pane.
+     */
+    void doPlayerConfig()
     {
         if (playerContentPane == null)
         {
@@ -65,7 +94,10 @@ public class ConfigManager
         frame.pack();
     }
 
-    void beginWorldConfig()
+    /**
+     * Begins or comes back to the world configuration content pane.
+     */
+    void doWorldConfig()
     {
         if (worldContentPane == null)
         {
@@ -76,6 +108,10 @@ public class ConfigManager
         frame.pack();
     }
 
+    /**
+     * Releases configuration content panes and invokes the engine. This method should
+     * terminate the life of this object.
+     */
     void finishConfiguration()
     {
         var playerConfigs = playerContentPane.getConfigs();
