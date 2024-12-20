@@ -79,14 +79,14 @@ public class BuildingProcedure extends Procedure
         {
             stage = BuildingStage.ERROR;
             JOptionPane.showMessageDialog(frame,
-                    "You have no place for this building.\nShift-click the button for info.");
+                    "You have no place for this building.\nRight-click the button for info.");
             frame.requestFocus();
         }
         else if (!player.hasMoney(type))
         {
             stage = BuildingStage.ERROR;
             JOptionPane.showMessageDialog(frame,
-                    "You have too little money.\nShift-click the button for info.");
+                    "You have too little money.\nRight-click the button for info.");
             frame.requestFocus();
         }
         else
