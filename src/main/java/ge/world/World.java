@@ -336,7 +336,7 @@ public class World
     private static class Region
     {
         private final Set<Hex> territory;
-        private final ArrayList<Hex> core;
+        private final List<Hex> core;
         private Set<Hex> periphery;
 
         Region(Set<Hex> root)
