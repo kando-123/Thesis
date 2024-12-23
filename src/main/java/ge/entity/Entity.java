@@ -30,7 +30,7 @@ public abstract class Entity
 
     public static final int MINIMAL_NUMBER = 1;
     public static final int MAXIMAL_NUMBER = 100;
-    public static final int MINIMAL_MORALE = 1;
+    public static final int MINIMAL_MORALE = 0;
     public static final int MAXIMAL_MORALE = 100;
 
     protected Entity(Player owner, int number)

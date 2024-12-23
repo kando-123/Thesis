@@ -126,7 +126,7 @@ public class World
         return centers;
     }
 
-    private static final double ACCURACY = 0.05;
+    private static final double ACCURACY = 0.01;
     private static final int TIERS_NUMBER = (int) (1.0 / ACCURACY) + 1;
 
     private double calculateThreshold(Map<Object, Double> noise, double percentage)
@@ -143,6 +143,7 @@ public class World
             int tier = (int) (value / ACCURACY);
             noiseIntervals.set(tier, noiseIntervals.get(tier) + 1);
         });
+        
         final int minimalSum = (int) (percentage * (double) noise.size());
         int currentSum = 0;
         double threshold = 0.0;
