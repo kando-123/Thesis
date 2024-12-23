@@ -41,7 +41,7 @@ public class PerlinNoise
      * The grid of the gradients. The gradients are stored as pairs of <i>x</i>
      * and <i>y</i> coordinates.
      */
-    private final Map<Doublet<Integer>, Doublet<Double>> gradientVectors;
+    private final Doublet<Double> gradientVectors[][];
 
     /**
      * Number of octaves in noise generation. The default value is <code>1</code>.
@@ -87,7 +87,7 @@ public class PerlinNoise
     private static double dotProduct(double x1, double y1, double x2, double y2)
     {
         return x1 * x2 + y1 * y2;
-}
+    }
 
     /**
      * Linear interpolation.
@@ -128,7 +128,7 @@ public class PerlinNoise
 
         gradientCols = Math.ceilDiv(areaWidth, chunkSize) + 1;
         gradientRows = Math.ceilDiv(areaHeight, chunkSize) + 1;
-        gradientVectors = new HashMap<>(gradientCols);
+        gradientVectors = new Doublet[gradientCols][gradientRows];
         Random random = new Random();
         for (int i = 0; i < gradientCols; ++i)
         {
@@ -137,7 +137,7 @@ public class PerlinNoise
                 double angle = random.nextDouble(0, Math.TAU);
                 double xCoord = Math.cos(angle);
                 double yCoord = Math.sin(angle);
-                gradientVectors.put(new Doublet<>(i, j), new Doublet<>(xCoord, yCoord));
+                gradientVectors[i][j] = new Doublet<>(xCoord, yCoord);
             }
         }
     }
@@ -151,7 +151,7 @@ public class PerlinNoise
 
         gradientCols = Math.ceilDiv(areaWidth, chunkSize) + 1;
         gradientRows = Math.ceilDiv(areaHeight, chunkSize) + 1;
-        gradientVectors = new HashMap<>(gradientCols);
+        gradientVectors = new Doublet[gradientCols][gradientRows];
         Random random = new Random(seed);
         for (int i = 0; i < gradientCols; ++i)
         {
@@ -160,7 +160,7 @@ public class PerlinNoise
                 double angle = random.nextDouble(0, Math.TAU);
                 double xCoord = Math.cos(angle);
                 double yCoord = Math.sin(angle);
-                gradientVectors.put(new Doublet<>(i, j), new Doublet<>(xCoord, yCoord));
+                gradientVectors[i][j] = new Doublet<>(xCoord, yCoord);
             }
         }
     }
@@ -197,10 +197,10 @@ public class PerlinNoise
         double pixelBottomQ = (double) (pixel.y - chunkBottomY) / (double) chunkSize;
 
         /* Find the gradients. */
-        var gradientA = gradientVectors.get(new Doublet<>(chunkCol, chunkRow));
-        var gradientB = gradientVectors.get(new Doublet<>(chunkCol + 1, chunkRow));
-        var gradientC = gradientVectors.get(new Doublet<>(chunkCol, chunkRow + 1));
-        var gradientD = gradientVectors.get(new Doublet<>(chunkCol + 1, chunkRow + 1));
+        var gradientA = gradientVectors[chunkCol][chunkRow];
+        var gradientB = gradientVectors[chunkCol + 1][chunkRow];
+        var gradientC = gradientVectors[chunkCol][chunkRow + 1];
+        var gradientD = gradientVectors[chunkCol + 1][chunkRow + 1];
 
         /* Calculate the products. */
         double productA = dotProduct(pixelLeftP, pixelTopQ, gradientA.x, gradientA.y);
