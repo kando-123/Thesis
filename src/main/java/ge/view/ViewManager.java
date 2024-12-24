@@ -218,7 +218,7 @@ public class ViewManager
     
     void showVictoryMessage(String name)
     {
-        JOptionPane.showMessageDialog(frame, name.concat(" has won."));
+        JOptionPane.showMessageDialog(frame, name.concat(" wins and becomes The Global Emperor."));
         engineInvoker.invoke(new ResetCommand());
     }
     

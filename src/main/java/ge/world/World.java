@@ -126,10 +126,10 @@ public class World
         return centers;
     }
 
-    private static final double ACCURACY = 0.01;
-    private static final int TIERS_NUMBER = (int) (1.0 / ACCURACY) + 1;
+    private static final double PRECISION = 0.01;
+    private static final int TIERS_NUMBER = (int) (1.0 / PRECISION) + 1;
 
-    private double calculateThreshold(Map<Object, Double> noise, double percentage)
+    private static double calculateThreshold(Map<Object, Double> noise, double percentage)
     {
         /* The i-th interval will store the number of entries whose value falls
            within the range from i*accuracy (incl.) to (i+1)*accuracy (excl.). */
@@ -140,11 +140,11 @@ public class World
         }
         noise.forEach((key, value) ->
         {
-            int tier = (int) (value / ACCURACY);
+            int tier = (int) (value / PRECISION);
             noiseIntervals.set(tier, noiseIntervals.get(tier) + 1);
         });
         
-        final int minimalSum = (int) (percentage * (double) noise.size());
+        final int minimalSum = (int) (percentage * noise.size());
         int currentSum = 0;
         double threshold = 0.0;
         for (int i = 0; i < TIERS_NUMBER; ++i)
@@ -152,7 +152,7 @@ public class World
             currentSum += noiseIntervals.get(i);
             if (currentSum >= minimalSum)
             {
-                threshold = (double) (i + 1) * ACCURACY;
+                threshold = (double) (i + 1) * PRECISION;
                 break;
             }
         }

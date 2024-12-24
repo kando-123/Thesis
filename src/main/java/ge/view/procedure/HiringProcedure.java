@@ -82,14 +82,14 @@ public class HiringProcedure extends Procedure
         {
             stage = HiringStage.ERROR;
             JOptionPane.showMessageDialog(frame,
-                    "You have no place for this building.\nShift-click the button for info.");
+                    "You have no place for this entity.\nRight-click the button for info.");
             frame.requestFocus();
         }
         else if (!player.hasMoney(type))
         {
             stage = HiringStage.ERROR;
             JOptionPane.showMessageDialog(frame,
-                    "You have too little money.\nShift-click the button for info.");
+                    "You have too little money.\nRight-click the button for info.");
             frame.requestFocus();
         }
         else
