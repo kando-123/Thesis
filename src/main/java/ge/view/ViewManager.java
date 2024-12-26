@@ -167,16 +167,17 @@ public class ViewManager
                 }
                 catch (Procedure.ProcedureException p)
                 {
-                    procedure = new MovingProcedure(accessor, invoker);
-                    procedure.advance(field);
+                    //procedure = new MovingProcedure(accessor, invoker);
+                    //procedure.advance(field);
                 }
             }
             else
             {
                 procedure.rollback();
+                procedure = null;
             }
         }
-        else if (field.isOccupied() && field.isOwned(players.current()))
+        else if (field != null && field.isOccupied() && field.isOwned(players.current()))
         {
             procedure = new MovingProcedure(accessor, invoker);
             procedure.advance(field);
