@@ -12,5 +12,4 @@ public class GrassField extends PlainsField
     {
         super(coords);
     }
-    
 }

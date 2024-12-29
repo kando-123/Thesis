@@ -167,8 +167,7 @@ public class ViewManager
                 }
                 catch (Procedure.ProcedureException p)
                 {
-                    //procedure = new MovingProcedure(accessor, invoker);
-                    //procedure.advance(field);
+                    
                 }
             }
             else

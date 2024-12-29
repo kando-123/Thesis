@@ -12,5 +12,4 @@ public abstract class PlainsField extends ContinentalField
     {
         super(coords);
     }
-    
 }

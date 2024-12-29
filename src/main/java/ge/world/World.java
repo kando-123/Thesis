@@ -133,26 +133,35 @@ public class World
     {
         /* The i-th interval will store the number of entries whose value falls
            within the range from i*accuracy (incl.) to (i+1)*accuracy (excl.). */
-        List<Integer> noiseIntervals = new ArrayList<>(TIERS_NUMBER);
+        int[] counters = new int[TIERS_NUMBER];
         for (int i = 0; i < TIERS_NUMBER; ++i)
         {
-            noiseIntervals.add(0);
+            counters[i] = 0;
         }
         noise.forEach((key, value) ->
         {
             int tier = (int) (value / PRECISION);
-            noiseIntervals.set(tier, noiseIntervals.get(tier) + 1);
+            ++counters[tier];
         });
+        
+        int maximum = counters[0];
+        for (int i = 1; i < counters.length; ++i)
+        {
+            if (counters[i] > maximum)
+            {
+                maximum = counters[i];
+            }
+        }
         
         final int minimalSum = (int) (percentage * noise.size());
         int currentSum = 0;
         double threshold = 0.0;
         for (int i = 0; i < TIERS_NUMBER; ++i)
         {
-            currentSum += noiseIntervals.get(i);
+            currentSum += counters[i];
             if (currentSum >= minimalSum)
             {
-                threshold = (double) (i + 1) * PRECISION;
+                threshold = i * PRECISION;
                 break;
             }
         }
@@ -604,10 +613,10 @@ public class World
 
     private void removeApparentMaxima(List<Hex> maxima, Map<Hex, Integer> inlandness)
     {
-        HashSet<Hex> apparentMaxima = new HashSet<>();
+        HashSet<Hex> removables = new HashSet<>();
         for (var candidate : maxima)
         {
-            if (apparentMaxima.contains(candidate))
+            if (removables.contains(candidate))
             {
                 continue;
             }
@@ -623,24 +632,24 @@ public class World
                         // This candidate and all candidates joint to it must be removed
                         Stack<Hex> stack = new Stack<>();
 
-                        apparentMaxima.add(candidate);
+                        removables.add(candidate);
                         stack.push(candidate);
                         while (!stack.isEmpty())
                         {
                             Hex peek = stack.peek();
 
                             Hex next = null;
-                            for (var further : peek.neighbors())
+                            for (var nextCandidate : peek.neighbors())
                             {
-                                if (maxima.contains(further) && !apparentMaxima.contains(further))
+                                if (maxima.contains(nextCandidate) && !removables.contains(nextCandidate))
                                 {
-                                    next = further;
+                                    next = nextCandidate;
                                     break;
                                 }
                             }
                             if (next != null)
                             {
-                                apparentMaxima.add(next);
+                                removables.add(next);
                                 stack.push(next);
                             }
                             else
@@ -652,7 +661,7 @@ public class World
                 }
             }
         }
-        maxima.removeAll(apparentMaxima);
+        maxima.removeAll(removables);
     }
 
     private List<Region> initRegions(List<Hex> maxima, Set<Hex> takenArea)
@@ -734,7 +743,7 @@ public class World
     {
         int poolSize = candidates.length;
 
-        boolean[][] masks = generateAllCombinationMasks(poolSize, combinationSize);
+        Mask[] masks = generateAllCombinationMasks(poolSize, combinationSize);
 
         int maximumIndex = 0;
         int maximumValue = computeAggregateMaskedDistance(candidates, masks[0]);
@@ -750,10 +759,10 @@ public class World
         }
 
         Hex[] combination = new Hex[combinationSize];
-        boolean[] mask = masks[maximumIndex];
+        Mask mask = masks[maximumIndex];
         for (int i = 0, j = 0; i < poolSize; ++i)
         {
-            if (mask[i])
+            if (mask.get(i) == 1)
             {
                 combination[j++] = candidates[i];
             }
@@ -761,25 +770,88 @@ public class World
 
         return combination;
     }
-
-    private static boolean[][] generateAllCombinationMasks(int poolLength, int combinationLength)
+    
+    private static class Mask
     {
-        int numberOfAllCombinations = binomialCoefficient(poolLength, combinationLength);
-        boolean[][] masks = new boolean[numberOfAllCombinations][poolLength];
-
-        int[] indexes = new int[combinationLength];
-
-        for (int i = 0; i < combinationLength; ++i)
+        private static final int MAX_LENGTH = 32;
+        
+        private int register;
+        private int length;
+        
+        public Mask(int length)
         {
-            indexes[i] = poolLength - combinationLength + i;
+            if (length > MAX_LENGTH || length <= 0)
+            {
+                throw new OutOfRangeException();
+            }
+            this.length = length;
+        }
+        
+        public int get(int bit)
+        {
+            if (bit < 0 || bit >= length)
+            {
+                throw new OutOfRangeException();
+            }
+            else
+            {
+                return (register & (1 << bit)) >>> bit;
+            }
+        }
+        
+        public void set(int bit)
+        {
+            if (bit < 0 || bit >= length)
+            {
+                throw new OutOfRangeException();
+            }
+            else
+            {
+                register |= 1 << bit;
+            }
+        }
+        
+        public void clear(int bit)
+        {
+            if (bit < 0 || bit >= length)
+            {
+                throw new OutOfRangeException();
+            }
+            else
+            {
+                register &= ~(1 << bit);
+            }
+        }
+        
+        static class OutOfRangeException extends RuntimeException
+        {
+            
+        }
+    }
+
+    private static Mask[] generateAllCombinationMasks(int n, int k)
+    {
+        int m = binomialCoefficient(n, k);
+        Mask[] masks = new Mask[m];
+        
+        for (int i = 0; i < masks.length; ++i)
+        {
+            masks[i] = new Mask(n);
         }
 
-        for (int j = 0; j < combinationLength; ++j)
+        int[] indexes = new int[k];
+
+        for (int i = 0; i < k; ++i)
         {
-            masks[0][indexes[j]] = true;
+            indexes[i] = n - k + i;
         }
 
-        for (int i = 1; i < numberOfAllCombinations; ++i)
+        for (int j = 0; j < k; ++j)
+        {
+            masks[0].set(indexes[j]);
+        }
+
+        for (int i = 1; i < m; ++i)
         {
             if (indexes[0] > 0)
             {
@@ -800,9 +872,9 @@ public class World
                 }
             }
 
-            for (int j = 0; j < combinationLength; ++j)
+            for (int j = 0; j < k; ++j)
             {
-                masks[i][indexes[j]] = true;
+                masks[i].set(indexes[j]);
             }
         }
 
@@ -826,17 +898,17 @@ public class World
         return product;
     }
 
-    private int computeAggregateMaskedDistance(Hex[] hexes, boolean[] mask)
+    private int computeAggregateMaskedDistance(Hex[] hexes, Mask mask)
     {
         int sum = 0;
 
         for (int i = 0; i < hexes.length; ++i)
         {
-            if (mask[i])
+            if (mask.get(i) == 1)
             {
                 for (int j = i + 1; j < hexes.length; ++j)
                 {
-                    if (mask[j])
+                    if (mask.get(j) == 1)
                     {
                         sum += hexes[i].distance(hexes[j]);
                     }

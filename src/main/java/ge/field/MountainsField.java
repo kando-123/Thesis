@@ -12,5 +12,4 @@ public class MountainsField extends ContinentalField
     {
         super(coords);
     }
-    
 }

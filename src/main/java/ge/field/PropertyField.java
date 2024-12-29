@@ -12,5 +12,4 @@ public abstract class PropertyField extends Field
     {
         super(coords);
     }
-    
 }
