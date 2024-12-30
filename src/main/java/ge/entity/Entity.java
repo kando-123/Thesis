@@ -237,6 +237,10 @@ public abstract class Entity
 
     public static class GoalNotReachedException extends Exception
     {
+        public GoalNotReachedException(String message)
+        {
+            super(message);
+        }
     }
 
     public List<Hex> path(Field origin, Field target, WorldAccessor accessor) throws TooFarAwayException, GoalNotReachedException
@@ -280,24 +284,24 @@ public abstract class Entity
         while (!frontier.isEmpty())
         {
             // Consider the hex that is closest to the target.
-            Hex current = frontier.poll();
+            Hex currentHex = frontier.poll();
             
             // If current is the target, finish with success.
-            if (current.equals(targetHex))
+            if (currentHex.equals(targetHex))
             {
                 // Retrieve the path.
                 List<Hex> path = new LinkedList<>();
-                path.add(current);
-                while (predecessor.containsKey(current))
+                path.add(currentHex);
+                while (predecessor.containsKey(currentHex))
                 {
-                    current = predecessor.get(current);
-                    path.addFirst(current);
+                    currentHex = predecessor.get(currentHex);
+                    path.addFirst(currentHex);
                 }
                 return path;
             }
             
             // If this field is intransitable (unless it is the origin), continue.
-            var currentField = accessor.getField(current);
+            var currentField = accessor.getField(currentHex);
             if (!canTransit(currentField) && currentField != origin)
             {
                 continue;
@@ -309,7 +313,7 @@ public abstract class Entity
             //   gone further.
             //   ! However, from the origin, it can be gone to a next field, even if
             //     the origin is intransitable.
-            for (var neighbor : current.neighbors())
+            for (var neighbor : currentHex.neighbors())
             {
                 // Access the adjacent field.
                 var field = accessor.getField(neighbor);
@@ -321,13 +325,13 @@ public abstract class Entity
                 }
 
                 // If that field is inaccessible, continue.
-                if (!canAccess(field))
-                {
-                    continue;
-                }
+//                if (!canAccess(field))
+//                {
+//                    continue;
+//                }
 
                 // Compute the path to the neighbor.
-                var tentative = distance.get(current) + 1;
+                var tentative = distance.get(currentHex) + 1;
                 
                 // (If the neighbor would be unachievable, continue.)
                 if (tentative > radius)
@@ -340,7 +344,7 @@ public abstract class Entity
                 var present = distance.get(neighbor);
                 if (present == null || tentative < present)
                 {
-                    predecessor.put(neighbor, current);
+                    predecessor.put(neighbor, currentHex);
                     distance.put(neighbor, tentative);
 
                     // Add the neighbor to the frontier.
@@ -354,7 +358,7 @@ public abstract class Entity
 
         // If the available nodes have been exhausted and the solution has not been found,
         // inform that there is no path.
-        throw new GoalNotReachedException();
+        throw new GoalNotReachedException(getName());
     }
 
     public boolean canMerge(Entity entity)

@@ -614,26 +614,26 @@ public class World
     private void removeApparentMaxima(List<Hex> maxima, Map<Hex, Integer> inlandness)
     {
         HashSet<Hex> removables = new HashSet<>();
-        for (var candidate : maxima)
+        for (var maximum : maxima)
         {
-            if (removables.contains(candidate))
+            if (removables.contains(maximum))
             {
                 continue;
             }
 
-            int candidateValue = inlandness.get(candidate);
-            for (var neighbor : candidate.neighbors())
+            int value = inlandness.get(maximum);
+            for (var neighbor : maximum.neighbors())
             {
                 if (inlandness.containsKey(neighbor))
                 {
                     int neighborValue = inlandness.get(neighbor);
-                    if (neighborValue == candidateValue && !maxima.contains(neighbor))
+                    if (neighborValue == value && !maxima.contains(neighbor))
                     {
                         // This candidate and all candidates joint to it must be removed
                         Stack<Hex> stack = new Stack<>();
 
-                        removables.add(candidate);
-                        stack.push(candidate);
+                        removables.add(maximum);
+                        stack.push(maximum);
                         while (!stack.isEmpty())
                         {
                             Hex peek = stack.peek();

@@ -98,6 +98,11 @@ public class GameplayManager
 
     void end()
     {
+        if (players.isEmpty())
+        {
+            return;
+        }
+        
         var ender = players.removeFirst();
         ender.earn();
         world.fieldStream()
@@ -109,7 +114,10 @@ public class GameplayManager
 
     void begin()
     {
-        players.getFirst().play();
+        if (!players.isEmpty())
+        {
+            players.getFirst().play();
+        }
     }
 
     void build(BuildingField building)
@@ -238,6 +246,7 @@ public class GameplayManager
         }
         else if (!players.stream().anyMatch(p -> p instanceof UserPlayer))
         {
+            dispose();
             invoker.invoke(new HumanityLossMessageCommand());
         }
     }
@@ -263,5 +272,10 @@ public class GameplayManager
                         }
                     }
                 });
+    }
+    
+    void dispose()
+    {
+        players.clear();
     }
 }

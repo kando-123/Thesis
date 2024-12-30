@@ -38,8 +38,6 @@ public class HireAction extends Action<GameplayManager>
                 ? maxNumber
                 : (int) RANDOM.nextInt(Entity.MINIMAL_NUMBER, maxNumber);
         var entity = Entity.newInstance(type, player, number);
-        if (type == EntityType.NAVY)
-            System.out.println("Hiring a navy");
         invoker.invoke(new HireCommand(spawner, entity));
     }
 
