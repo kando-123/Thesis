@@ -43,7 +43,7 @@ public class Engine
     
     private void showHelpWindow()
     {
-        var help = new HelpFrame(frame);
+        var help = new HelpDialog(frame);
         help.setSize(600, 400);
         help.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         help.setLocationRelativeTo(null);

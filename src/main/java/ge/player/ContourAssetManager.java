@@ -1,11 +1,9 @@
 package ge.player;
 
-import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import javax.imageio.*;
-import javax.swing.*;
 
 /**
  *

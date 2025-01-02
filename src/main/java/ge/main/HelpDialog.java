@@ -10,11 +10,11 @@ import javax.swing.tree.*;
  *
  * @author Kay Jay O'Nail
  */
-public class HelpFrame extends JDialog
+public class HelpDialog extends JDialog
 {
     private final JEditorPane editorPane;
 
-    public HelpFrame(JFrame parent)
+    public HelpDialog(JFrame parent)
     {
         super(parent, "Help");
         

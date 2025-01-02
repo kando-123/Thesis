@@ -6,7 +6,7 @@ import ge.utilities.Hex;
  *
  * @author Kay Jay O'Nail
  */
-public abstract class BuildingField extends PropertyField
+public abstract class BuildingField extends Field
 {
     protected BuildingField(Hex coords)
     {

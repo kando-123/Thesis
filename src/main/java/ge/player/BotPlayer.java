@@ -24,7 +24,8 @@ public class BotPlayer extends Player
     @Override
     public void play()
     {
-        for (int i = 0; i < 20; ++i)
+        final int moves = 20;
+        for (int i = 0; i < moves; ++i)
         {
             List<Action> actions = scanner.actions(this);
             

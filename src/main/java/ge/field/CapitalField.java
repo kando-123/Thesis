@@ -12,7 +12,7 @@ import java.text.*;
  *
  * @author Kay Jay O'Nail
  */
-public class CapitalField extends PropertyField implements Fortification, Spawner, Commercial
+public class CapitalField extends Field implements Fortification, Spawner, Commercial
 {
     private int fortitude;
     private final Invoker<GameplayManager> invoker;

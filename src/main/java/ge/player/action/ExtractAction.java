@@ -8,7 +8,6 @@ import ge.main.GameplayManager;
 import ge.utilities.Hex;
 import ge.utilities.Invoker;
 import ge.world.WorldAccessor;
-import java.util.Collection;
 import java.util.Random;
 
 /**
@@ -27,8 +26,6 @@ public class ExtractAction extends Action<GameplayManager>
     }
     
     private static final Random RANDOM = new Random();
-    
-    public static class SomethingFuckedUpException extends RuntimeException {}
     
     @Override
     public void perform(Invoker<GameplayManager> invoker)
