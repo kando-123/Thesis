@@ -242,6 +242,7 @@ public class GameplayManager
         if (players.size() == 1)
         {
             var name = players.getFirst().getName();
+            dispose();
             invoker.invoke(new VictoryMessageCommand(name));
         }
         else if (!players.stream().anyMatch(p -> p instanceof UserPlayer))

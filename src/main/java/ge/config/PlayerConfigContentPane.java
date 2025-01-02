@@ -244,7 +244,13 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
             for (int i = minimum; i <= maximum; ++i)
             {
-                radios.get(i).setEnabled(i <= limit);
+                var radio = radios.get(i);
+                
+                boolean disabled = i > limit;
+                radio.setEnabled(!disabled);
+                radio.setToolTipText(disabled
+                        ? "You cannot select more than " + Player.MAX_NUMBER + " players."
+                        : null);
             }
         }
 
@@ -444,7 +450,13 @@ public class PlayerConfigContentPane extends JPanel implements ActionListener
 
             for (int i = minimum; i <= maximum; ++i)
             {
-                radios.get(i).setEnabled(i <= limit);
+                var radio = radios.get(i);
+                
+                boolean disabled = i > limit;
+                radio.setEnabled(!disabled);
+                radio.setToolTipText(disabled
+                        ? "You cannot select more than " + Player.MAX_NUMBER + " players."
+                        : null);
             }
         }
 

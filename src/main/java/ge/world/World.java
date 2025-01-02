@@ -636,10 +636,10 @@ public class World
                         stack.push(maximum);
                         while (!stack.isEmpty())
                         {
-                            Hex peek = stack.peek();
+                            Hex peak = stack.peek();
 
                             Hex next = null;
-                            for (var nextCandidate : peek.neighbors())
+                            for (var nextCandidate : peak.neighbors())
                             {
                                 if (maxima.contains(nextCandidate) && !removables.contains(nextCandidate))
                                 {
