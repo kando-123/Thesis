@@ -7,7 +7,7 @@ import ge.utilities.Hex;
  *
  * @author Kay Jay O'Nail
  */
-public class WorldAccessor
+public class WorldAccessor implements FieldAccessor
 {
     private final World world;
     
@@ -16,6 +16,7 @@ public class WorldAccessor
         this.world = world;
     }
     
+    @Override
     public Field getField(Hex coords)
     {
         return world.getField(coords);

@@ -32,7 +32,8 @@ public class ExtractAction extends Action<GameplayManager>
     {
         var extrahend = origin.getEntity();
         
-        var probationary = Entity.newInstance(extrahend.getExtractedType(), null, Entity.MINIMAL_NUMBER);
+        var probationary = Entity.newInstance(extrahend.getExtractedType(),
+                extrahend.getOwner(), extrahend.getNumber() - 1);
         probationary.setMovable(true);
         
         int number = extrahend.getNumber();

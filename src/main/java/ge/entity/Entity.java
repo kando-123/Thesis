@@ -183,7 +183,7 @@ public abstract class Entity
 
     protected abstract int radius();
 
-    public Set<Hex> range(Hex center, WorldAccessor accessor)
+    public Set<Hex> range(Hex center, FieldAccessor accessor)
     {
         if (!movable)
         {
@@ -231,21 +231,34 @@ public abstract class Entity
         return range;
     }
 
-    public static class TooFarAwayException extends Exception
+    public static class TooFarAwayException extends RuntimeException
     {
     }
 
-    public static class GoalNotReachedException extends Exception
+    public static class GoalNotReachedException extends RuntimeException
     {
         public GoalNotReachedException(String message)
         {
             super(message);
         }
     }
+    
+    public static class InaccessibleTargetException extends RuntimeException
+    {
+        public InaccessibleTargetException(String message)
+        {
+            super(message);
+        }
+    }
 
-    public List<Hex> path(Field origin, Field target, WorldAccessor accessor) throws TooFarAwayException, GoalNotReachedException
+    public List<Hex> path(Field origin, Field target, FieldAccessor accessor) throws TooFarAwayException, GoalNotReachedException
     {
         // A* Algorithm
+        
+        if (!canAccess(target))
+        {
+            throw new InaccessibleTargetException(getName());
+        }
         
         // Hexes of the origin and the targer for future reference.
         final Hex originHex = origin.getHex();
@@ -460,7 +473,7 @@ public abstract class Entity
         {
             return false;
         }
-        var probationary = newInstance(getExtractedType(), owner, MINIMAL_NUMBER);
+        var probationary = newInstance(getExtractedType(), owner, number - 1);
         probationary.setMovable(true);
         return probationary.canMove(hex, accessor);
     }

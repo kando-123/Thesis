@@ -1,5 +1,7 @@
 package ge.utilities;
 
+import java.util.function.Consumer;
+
 /**
  *
  * @author Kay Jay O'Nail
@@ -402,6 +404,36 @@ public class Hex
             int length = values.length;
             int index = (ordinal() + (length / 2)) % length;
             return values[index];
+        }
+    }
+    
+    public static class NonpositiveRadiusException extends RuntimeException
+    {
+    }
+    
+    public static void processSurfaceSpirally(int radius, Consumer<Hex> consumer)
+    {
+        if (radius <= 0)
+        {
+            throw new NonpositiveRadiusException();
+        }
+        
+        Hex hex = getOrigin();
+        consumer.accept(hex);
+        for (int ring = 0; ring < radius; ++ring)
+        {
+            final Hex start = hex = hex.neighbor(Hex.Direction.UP);
+            Direction direction = Hex.Direction.RIGHT_DOWN;
+            do
+            {
+                consumer.accept(hex);
+                hex = hex.neighbor(direction);
+                if (hex.isRadial())
+                {
+                    direction = direction.next();
+                }
+            }
+            while (!hex.equals(start));
         }
     }
 }

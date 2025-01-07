@@ -100,29 +100,15 @@ public class World
     private Map<Object, Doublet<Integer>> generateCenters(int side, Doublet<Integer> offset)
     {
         Map<Object, Doublet<Integer>> centers = new HashMap<>(Hex.surfaceSize(side));
-        var hex = Hex.getOrigin();
-        var center = hex.centralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
-        center.x += offset.x;
-        center.y += offset.y;
-        centers.put(hex.clone(), center);
-        for (int ring = 1; ring < side; ++ring)
+        
+        Hex.processSurfaceSpirally(side - 1, (Hex hex) ->
         {
-            final Hex beginning = hex = hex.neighbor(Hex.Direction.UP);
-            var direction = Hex.Direction.RIGHT_DOWN;
-            do
-            {
-                center = hex.centralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
-                center.x += offset.x;
-                center.y += offset.y;
-                centers.put(hex, center);
-                hex = hex.neighbor(direction);
-                if (hex.isRadial())
-                {
-                    direction = direction.next();
-                }
-            }
-            while (!hex.equals(beginning));
-        }
+            var center = hex.centralPoint(HEX_OUTER_RADIUS, HEX_INNER_RADIUS);
+            center.x += offset.x;
+            center.y += offset.y;
+            centers.put(hex.clone(), center);
+        });
+        
         return centers;
     }
 
