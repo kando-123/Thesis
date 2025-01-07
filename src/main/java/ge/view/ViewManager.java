@@ -167,7 +167,7 @@ public class ViewManager
                 }
                 catch (Procedure.ProcedureException p)
                 {
-                    
+                    procedure = null;
                 }
             }
             else
@@ -180,6 +180,10 @@ public class ViewManager
         {
             procedure = new MovingProcedure(accessor, invoker);
             procedure.advance(field);
+            if (procedure.status() == Procedure.Status.FAILURE)
+            {
+                procedure = null;
+            }
         }
     }
     

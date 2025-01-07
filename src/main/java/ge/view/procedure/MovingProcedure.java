@@ -79,7 +79,14 @@ public class MovingProcedure extends Procedure
         
         range = entity.range(origin.getHex(), accessor);
         
-        invoker.invoke(new MarkForMovingCommand(true, range));
+        if (!range.isEmpty())
+        {
+            invoker.invoke(new MarkForMovingCommand(true, range));
+        }
+        else
+        {
+            stage = MovementStage.ERROR;
+        }
     }
     
     private void finish(Field target)

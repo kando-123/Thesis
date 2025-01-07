@@ -461,7 +461,7 @@ public class PerlinNoise
             }
         }
 
-        public static class WrongValueException extends Exception
+        public static class WrongValueException extends RuntimeException
         {
         }
     }

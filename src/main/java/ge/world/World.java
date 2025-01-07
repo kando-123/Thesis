@@ -743,7 +743,7 @@ public class World
     {
         int poolSize = candidates.length;
 
-        Mask[] masks = generateAllCombinationMasks(poolSize, combinationSize);
+        Mask[] masks = generateCombinationMasks(poolSize, combinationSize);
 
         int maximumIndex = 0;
         int maximumValue = computeAggregateMaskedDistance(candidates, masks[0]);
@@ -829,7 +829,7 @@ public class World
         }
     }
 
-    private static Mask[] generateAllCombinationMasks(int n, int k)
+    private static Mask[] generateCombinationMasks(int n, int k)
     {
         int m = binomialCoefficient(n, k);
         Mask[] masks = new Mask[m];
