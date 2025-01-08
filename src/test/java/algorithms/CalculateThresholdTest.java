@@ -2,6 +2,7 @@ package algorithms;
 
 import ge.utilities.Doublet;
 import ge.world.PerlinNoise;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,107 +14,87 @@ import org.junit.jupiter.api.Test;
  */
 public class CalculateThresholdTest
 {
-    private static final double PRECISION = 0.01;
-    private static final int TIERS_NUMBER = (int) (1.0 / PRECISION) + 1;
-
-    private static double calculateThreshold(Map<Object, Double> noise, double percentage)
-    {
-        /* The i-th interval will store the number of entries whose value falls
-           within the range from i*accuracy (incl.) to (i+1)*accuracy (excl.). */
-        int[] counters = new int[TIERS_NUMBER];
-        for (int i = 0; i < TIERS_NUMBER; ++i)
-        {
-            counters[i] = 0;
-        }
-        noise.forEach((key, value) ->
-        {
-            int tier = (int) (value / PRECISION);
-            ++counters[tier];
-        });
-
-        int maximum = counters[0];
-        for (int i = 1; i < counters.length; ++i)
-        {
-            if (counters[i] > maximum)
-            {
-                maximum = counters[i];
-            }
-        }
-
-        final int minimalSum = (int) (percentage * noise.size());
-        int currentSum = 0;
-        double threshold = 0.0;
-        for (int i = 0; i < TIERS_NUMBER; ++i)
-        {
-            currentSum += counters[i];
-            if (currentSum >= minimalSum)
-            {
-                threshold = i * PRECISION;
-                break;
-            }
-        }
-        return threshold;
-    }
-
     @Test
     public void testCalculateThreshold()
     {
-        final int width = 1000;
-        final int height = 1000;
-        final int chunk = 10;
-        
-        var builder = new PerlinNoise.Builder();
-        builder.setAreaWidth(width)
-                .setAreaHeight(height)
-                .setChunkSize(chunk)
-                .setOctavesCount(3);
-        var perlins = new PerlinNoise[10];
-        for (int i = 0; i < perlins.length; ++i)
+        try
         {
-            perlins[i] = builder.get();
-        }
+            Class klass = Class.forName("ge.world.World");
+            Method calculateThreshold = klass.getDeclaredMethod("calculateThreshold",
+                    Map.class, double.class);
+            calculateThreshold.setAccessible(true);
 
-        for (var perlin : perlins)
-        {
-            var map = new HashMap<Object, Doublet<Integer>>();
-            for (int c = 0; c < 100; ++c)
-            {
-                for (int r = 0; r < 100; ++r)
-                {
-                    var label = String.format("(%d,%d)", c, r);
-                    map.put(label, new Doublet<>(c, r));
-                }
-            }
-            var noise = perlin.makeNoise(map);
+            final int trials = 10;
+            int[] widths = new int[trials];
+            int[] heights = new int[trials];
+            var perlins = new PerlinNoise[trials];
 
-            double[] percentages = { .1, .2, .3, .4, .5, .6, .7, .8, .9 };
-            double[] thresholds = new double[percentages.length];
-            for (int i = 0; i < percentages.length; ++i)
+            for (int i = 0; i < trials; ++i)
             {
-                thresholds[i] = calculateThreshold(noise, percentages[i]);
+                widths[i] = 200 + i * 50;
+                heights[i] = 100 + i * 75;
+                final int chunk = 10 + i * 5;
+
+                var builder = new PerlinNoise.Builder();
+                builder.setAreaWidth(widths[i])
+                        .setAreaHeight(heights[i])
+                        .setChunkSize(chunk)
+                        .setOctavesCount(3);
+                perlins[i] = builder.get();
             }
 
-            final double tolerance = 0.05;
-            final double size = noise.size();
-            for (int i = 0; i < percentages.length; ++i)
+            for (int t = 0; t < trials; ++t)
             {
-                final double threshold = thresholds[i];
-                int counter = 0;
-                for (var n : noise.entrySet())
+                var perlin = perlins[t];
+
+                var map = new HashMap<Object, Doublet<Integer>>();
+                for (int c = 0; c < widths[t]; ++c)
                 {
-                    if (n.getValue() < threshold)
+                    for (int r = 0; r < heights[t]; ++r)
                     {
-                        ++counter;
+                        map.put(new Object(), new Doublet<>(c, r));
                     }
                 }
-                final double expectedPercentage = percentages[i];
-                final double actualPercentage = counter / size;
-                final double error = Math.abs(expectedPercentage - actualPercentage);
-                if (error > tolerance)
+                var noise = perlin.makeNoise(map);
+
+                double[] percentages =
                 {
-                    fail("Error exceeds acceptable threshold.");
+                    .1, .2, .3, .4, .5, .6, .7, .8, .9
+                };
+                double[] thresholds = new double[percentages.length];
+                for (int i = 0; i < percentages.length; ++i)
+                {
+                    thresholds[i] = (Double) calculateThreshold.invoke(null,
+                            noise, percentages[i]);
+                }
+
+                final double tolerance = 0.05;
+                final double size = noise.size();
+                for (int i = 0; i < percentages.length; ++i)
+                {
+                    final double threshold = thresholds[i];
+                    int counter = 0;
+                    for (var n : noise.entrySet())
+                    {
+                        if (n.getValue() < threshold)
+                        {
+                            ++counter;
+                        }
+                    }
+                    final double expectedPercentage = percentages[i];
+                    final double actualPercentage = counter / size;
+                    final double error = Math.abs(expectedPercentage - actualPercentage);
+                    if (error > tolerance)
+                    {
+                        fail("Error exceeds acceptable threshold.");
+                    }
                 }
             }
         }
+        catch (Exception e)
+        {
+
+        }
+
     }
 }

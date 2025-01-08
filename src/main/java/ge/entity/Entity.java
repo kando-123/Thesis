@@ -376,7 +376,9 @@ public abstract class Entity
 
     public boolean canMerge(Entity entity)
     {
-        return isFellow(entity) && entity.number < MAXIMAL_NUMBER;
+        return isFellow(entity)
+               && number < MAXIMAL_NUMBER
+               && entity.number < MAXIMAL_NUMBER;
     }
 
     public Entity merge(Entity other)

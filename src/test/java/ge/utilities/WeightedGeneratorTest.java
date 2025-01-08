@@ -40,8 +40,6 @@ public class WeightedGeneratorTest
     @Test
     public void testAdd()
     {
-        System.out.println("add");
-        
         var instance = new WeightedGenerator();
         
         /* Nonpositive weights. */

@@ -436,4 +436,20 @@ public class Hex
             while (!hex.equals(start));
         }
     }
+    
+    public static void processRing(int radius, Consumer<Hex> consumer)
+    {
+        Direction direction = Direction.RIGHT_DOWN;
+        Hex hex = Hex.newInstance(0, -radius, +radius);
+        do
+        {
+            consumer.accept(hex);
+            hex = hex.neighbor(direction);
+            if (hex.isRadial())
+            {
+                direction = direction.next();
+            }
+        }
+        while (hex.pCoord != 0 || hex.qCoord != -radius || hex.rCoord != +radius);
+    }
 }

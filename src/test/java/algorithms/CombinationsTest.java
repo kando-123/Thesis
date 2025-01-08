@@ -84,7 +84,7 @@ public class CombinationsTest
     @Test
     public void testGenerateCombinationMasks()
     {
-        var pairs = new Pair[3];
+        var pairs = new Pair[5];
         var sets = new Set[pairs.length];
         pairs[0] = new Pair(5, 3);
         sets[0] = Set.of("11100",
@@ -101,6 +101,10 @@ public class CombinationsTest
                 "011000", "010100", "010010", "010001",
                 "001100", "001010", "001001", "000110",
                 "000101", "000011");
+        pairs[3] = new Pair(3, 3);
+        sets[3] = Set.of("111");
+        pairs[4] = new Pair(3, 0);
+        sets[4] = Set.of("000");
         for (int i = 0; i < pairs.length; ++i)
         {
             var masks = generateCombinationMasks(pairs[i].x, pairs[i].y);
