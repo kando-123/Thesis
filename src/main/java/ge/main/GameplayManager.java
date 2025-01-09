@@ -58,7 +58,7 @@ public class GameplayManager
             }
         }
 
-        Hex[] capitals = world.locateCapitals(players.size(), new Invoker<>(this));
+        Hex[] capitals = world.locateCapitals(players.size());
         for (int i = 0; i < capitals.length; ++i)
         {
             var capital = capitals[i];

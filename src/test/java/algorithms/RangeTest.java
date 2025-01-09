@@ -215,6 +215,7 @@ public class RangeTest
         var owner = new MockPlayer();
         var enemy = new MockPlayer();
         var cavalry = new CavalryEntity(owner, 1);
+        cavalry.setMovable(true);
 
         Map<Hex, Field> world = new HashMap<>();
 
@@ -325,30 +326,30 @@ public class RangeTest
         landOccupiedByEnemy.setEntity(new InfantryEntity(enemy, 1));
         world.put(hex, landOccupiedByEnemy);
         accessibles.add(hex);
-        
+
         hex = Hex.newInstance(0, +4, -4);
         var landOccupiedByMergeableFellow = new WoodField(hex);
         landOccupiedByMergeableFellow.setEntity(new CavalryEntity(owner, 1));
         world.put(hex, landOccupiedByMergeableFellow);
         accessibles.add(hex);
-        
+
         hex = Hex.newInstance(-4, 0, +4);
         world.put(hex, new SeaField(hex));
         inaccessibles.add(hex);
-        
+
         hex = Hex.newInstance(+4, 0, -4);
         var landOccupiedByUnmergeableFellow = new GrassField(hex);
         landOccupiedByUnmergeableFellow.setOwner(owner);
         landOccupiedByUnmergeableFellow.setEntity(new CavalryEntity(owner, 100));
         world.put(hex, landOccupiedByUnmergeableFellow);
         inaccessibles.add(hex);
-        
+
         Hex.processSurfaceSpirally(4, h ->
         {
             if (!accessibles.contains(h) && !inaccessibles.contains(h))
             {
                 world.put(h, new MeadowField(h));
-                
+
                 if (h.getRing() > 0)
                 {
                     accessibles.add(h);
@@ -383,6 +384,56 @@ public class RangeTest
     }
 
     @Test
+    public void testNavyIntransition()
+    {
+        var owner = new MockPlayer();
+        var enemy = new MockPlayer();
+        var navy = new NavyEntity(owner, 1);
+        navy.setMovable(true);
+
+        Map<Hex, Field> world = new HashMap<>();
+
+        Hex hex = Hex.getOrigin();
+        world.put(hex, new SeaField(hex));
+
+        Hex.processRing(1, h ->
+        {
+            if (h.getP() == 0)
+            {
+                world.put(h, new MountainsField(h));
+            }
+            else if (h.getQ() == 0)
+            {
+                var sea = new SeaField(h);
+                sea.setOwner(owner);
+                sea.setEntity(new NavyEntity(owner, 1));
+                world.put(h, sea);
+            }
+            else
+            {
+                var sea = new SeaField(h);
+                sea.setOwner(enemy);
+                sea.setEntity(new NavyEntity(enemy, 1));
+                world.put(h, sea);
+            }
+        });
+        Hex.processRing(2, h -> world.put(h, new SeaField(h)));
+
+        var accessor = new MockAccessor(world);
+
+        Set<Hex> range = navy.range(Hex.getOrigin(), accessor);
+
+        // The fields in the second ring should not belong to the range.
+        for (var h : range)
+        {
+            if (h.getRing() == 2)
+            {
+                fail("Intransitable field was transited.");
+            }
+        }
+    }
+
+    @Test
     public void testNavy()
     {
         var owner = new MockPlayer();
@@ -395,27 +446,27 @@ public class RangeTest
         Hex hex = Hex.newInstance(0, -4, +4);
         world.put(hex, new MeadowField(hex));
         inaccessibles.add(hex);
-        
+
         hex = Hex.newInstance(+4, -4, 0);
         var occupiedFellowSea = new SeaField(hex);
         occupiedFellowSea.setOwner(owner);
         occupiedFellowSea.setEntity(new NavyEntity(owner, 1));
         world.put(hex, occupiedFellowSea);
         inaccessibles.add(hex);
-        
+
         hex = Hex.newInstance(0, +4, -4);
         var occupiedEnemySea = new SeaField(hex);
         occupiedEnemySea.setOwner(enemy);
         occupiedEnemySea.setEntity(new NavyEntity(enemy, 1));
         world.put(hex, occupiedEnemySea);
         accessibles.add(hex);
-        
+
         Hex.processSurfaceSpirally(4, h ->
         {
             if (!accessibles.contains(h) && !inaccessibles.contains(h))
             {
                 world.put(h, new SeaField(h));
-                
+
                 if (h.getRing() > 0)
                 {
                     accessibles.add(h);

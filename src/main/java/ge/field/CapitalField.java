@@ -15,16 +15,14 @@ import java.text.*;
 public class CapitalField extends Field implements Fortification, Spawner, Commercial
 {
     private int fortitude;
-    private final Invoker<GameplayManager> invoker;
     
     private static final int FORTITUDE = 200;
     private static final int MINIMAL_FORTITUDE = 1;
     public static final int INCOME = 200;
     
-    public CapitalField(Hex coords, Invoker<GameplayManager> invoker)
+    public CapitalField(Hex coords)
     {
         super(coords);
-        this.invoker = invoker;
         
         fortitude = FORTITUDE;
     }
@@ -145,6 +143,11 @@ public class CapitalField extends Field implements Fortification, Spawner, Comme
         
         if (owner != oldOwner)
         {
+            var fortress = new FortressField(coords);
+            fortress.setOwner(owner);
+            fortress.setEntity(entity);
+            invoker.invoke(new BuildCommand(fortress));
+            
             invoker.invoke(new DropCommand(oldOwner));
         }
         
